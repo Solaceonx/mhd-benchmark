@@ -16,6 +16,7 @@ Every run set is a self-contained directory (a bundle) that is copied to
 | `sherlock_ramses2/` | RAMSES II speed test | `mhd-results-ramses2` |
 | `sherlock_mhdale/` | MHD-ALE trial and 13-test chain | |
 | `sherlock_turb/` | Driven turbulence | `mhd-results-turb` |
+| `sherlock_checks/` | Courant-number and single-precision checks of Tom's kernels | `mhd-results-checks` |
 
 ## Sending, checking, fetching
 

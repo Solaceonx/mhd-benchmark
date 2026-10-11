@@ -71,6 +71,15 @@ planar tests cannot run; the original code's remap allowed periodicity in y only
 takes the wave speed for the timestep from |B|/√ρ without squaring the Alfvén speed, which looks too small for
 strong fields and is a question for the author. It builds on Sherlock and its regression suite passes.
 
+**Tests with a mean field stop on fine grids.** Of the 62 production runs 45 completed. Every test with a non-zero
+mean magnetic field (the blasts with a field, both Brio–Wu tubes, the entropy wave, the rotor, both
+Kelvin–Helmholtz tests) stops within its first 50 steps at 256² and 512² with "Mean-field potential decomposition
+failed its native flux check", and runs to the end at 128² and below. Tests without a mean field (Orszag–Tang,
+field loop, GEM, current sheet, the blast without a field) run at every grid. The 256² and 512² runs used 16 MPI
+ranks and the coarser ones 8 or fewer, so whether the grid or the rank count triggers it is not separated yet
+(`sherlock_mhdale/rank_check.sh` does that). The code has no restart, and the current sheet at 512² did not fit in
+48 hours; Orszag–Tang at 512² took 20 hours on 16 ranks.
+
 ## RAMSES II
 
 nvfortran 25.1 fails with an internal compiler error on `cooling/cooling_module.f90` at the Makefile's `-O4`. The

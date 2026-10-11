@@ -15,16 +15,17 @@ Eric Moseley; started July 2026, most runs from September and October 2026 on St
 | RAMSES | constrained transport | CPU | every test, two set-ups |
 | Athena++ | constrained transport | CPU | every test, two set-ups |
 | AREPO | Powell source terms | CPU | 17 planar tests, static and moving mesh |
-| RAMSES II | constrained transport | H100 | speed test only, result not in hand |
-| MHD-ALE | exact by construction | CPU | 13 planar tests set up, production not confirmed |
+| RAMSES II | constrained transport | H100 | speed test only |
+| MHD-ALE | exact by construction | CPU | 13 planar tests; 45 of 62 runs complete |
 
 26 tests, grids from 32 to 512 cells a side (references to 4096²), 1,261 runs in the main sweep plus 164 with AREPO,
-and a pilot of driven turbulence at Mach 3 to 50. Details: [codes](docs/codes.md), [tests](docs/tests.md).
+and a pilot of driven turbulence at Mach 3 to 50 (48 runs so far, plus 4 of a cross-check). Details: [codes](docs/codes.md), [tests](docs/tests.md).
 
 ## What came out
 
 - **Speed.** The GLM kernels reach 2.0 × 10⁹ cell updates per second on one H100 (3.1 to 3.4 × 10⁹ on grids divisible
-  by 6), against 0.2 to 0.4 × 10⁹ for AthenaK on the same card. [Sweep results](docs/results-sweep.md).
+  by 6), against 0.2 to 0.4 × 10⁹ for AthenaK and 0.9 × 10⁹ for RAMSES II's constrained transport on the same card.
+  [Sweep results](docs/results-sweep.md).
 - **Accuracy.** The single-precision GLM kernels are second order and within about 25 % of same-order CT codes on
   shock tubes, Kelvin–Helmholtz, blasts and reconnection. The half-precision kernels stop converging past 64 to 128
   cells.
@@ -45,6 +46,7 @@ and a pilot of driven turbulence at Mach 3 to 50. Details: [codes](docs/codes.md
 | `SWEEP.md` | Plan of the comprehensive sweep, with the later additions |
 | `sherlock_sweep/` | The sweep as it ran on Sherlock: tests, adapters for each code, the job coordinator |
 | `sherlock_turb/` | Driven turbulence: one driver for Tom's kernels and RAMSES |
+| `sherlock_checks/` | Tom's kernels at other Courant numbers and with single-precision tiles |
 | `sherlock_arepo/`, `sherlock_ramses2/`, `sherlock_mhdale/` | Add-on codes |
 | `sherlock_mhd/`, `sherlock_rerun/`, `sherlock_movies/`, `sherlock_gem/`, `marlowe_mhd/` | The first campaign (21 tests) and its follow-ups |
 | `scripts/` | Analysis, figures, the notebook builders, the first CPU studies on a laptop |

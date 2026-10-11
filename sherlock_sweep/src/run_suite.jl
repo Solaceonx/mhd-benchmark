@@ -38,7 +38,13 @@ const CT_BY_GAMMA=Dict(CTMHD.GAMMA=>CTMHD,CTMHD_gamma7_5.GAMMA=>CTMHD_gamma7_5,C
 #   glm_constch  glm_hll16 with a constant cleaning speed (Tomida et al. 2026 "D1c"): c_h fixed at
 #                its t=0 value and dt capped so c_h dt/dx never exceeds the variable scheme's value
 #   ct           constrained-transport prototype, CTMHD.step!
-const METHODS=("glm","glm_hll16","glm_hlld","glm_ppm","glm_constch","ct")
+# Checks of what half precision does (sherlock_checks/). step_plm! lists the tile/precision/solver triples its author
+# uses; the kernels behind it (integrator_plm!, integrator_plm_ppm!) are generic in all three, so these call the same
+# unedited kernels for triples step_plm! does not list (plm_unlisted! below):
+#   glm_hll32    the production kernel with a Float32 tile: HLL, TB=6 when N%6==0, else TB=4
+#   glm_ppm32    the PPM kernel with a Float32 tile
+#   glm_hlld_x   glm_hlld's own triple called through plm_unlisted!: must reproduce glm_hlld bit for bit
+const METHODS=("glm","glm_hll16","glm_hlld","glm_ppm","glm_constch","ct","glm_hll32","glm_ppm32","glm_hlld_x")
 # Core study: the original tiled GLM path versus the CT prototype. Additional
 # GLM kernels remain available through an explicit `methods` list.
 const DEFAULT_METHODS=["glm","ct"]
@@ -49,7 +55,10 @@ const SOLVER_TEXT=Dict(
     :glm_hlld=>"original step_plm!: Float32 tile TB=4, MonCen PLM, Hancock, HLLD, c_h proportional to 1/dt",
     :glm_ppm=>"original step_plm! recon=:ppm: lean parabolic PPM, f16, HLL, c_h proportional to 1/dt",
     :glm_constch=>"original step_plm! f16/HLL; driver holds c_h constant via glm_ch_scale and caps dt (Tomida D1c)",
-    :ct=>"original CTMHD.step!, 7 kernels, transverse-free Hancock, HLL, arithmetic edge EMF")
+    :ct=>"original CTMHD.step!, 7 kernels, transverse-free Hancock, HLL, arithmetic edge EMF",
+    :glm_hll32=>"original integrator_plm! with a Float32 shared tile (a triple step_plm! does not list), MonCen PLM, Hancock, HLL, c_h proportional to 1/dt",
+    :glm_ppm32=>"original integrator_plm_ppm! with a Float32 shared tile (a triple step_plm! does not list), lean parabolic PPM, HLL, c_h proportional to 1/dt",
+    :glm_hlld_x=>"original integrator_plm!, Float32 tile TB=4, HLLD, launched by the driver as glm_hll32 is (control for that launch)")
 function ct_module(gamma)
     haskey(CT_BY_GAMMA,Float32(gamma)) || error("CT adapter supports gamma in $(sort(collect(keys(CT_BY_GAMMA)))); got $gamma")
     CT_BY_GAMMA[Float32(gamma)]
@@ -131,6 +140,19 @@ function timestep(s,p,pfloor)
 end
 "Params with a different glm_ch_scale (Params is immutable)."
 with_ch_scale(p,scale)=G.Params(;Dict(f=>getfield(p,f) for f in fieldnames(G.Params))...,glm_ch_scale=Float32(scale))
+"""
+The kernel behind step_plm! for a (tile, precision, Riemann solver) triple that step_plm! does not list. The lines
+before the launch are step_plm!'s own, copied; the launchers and kernels are the vendored ones, unedited.
+"""
+function plm_unlisted!(uold,unew,afield,p,dt::Float32,t::Float32,tv::Val{TB},hv::Val,rv::Val;ppm::Bool=false) where {TB}
+    N=p.N;dx=G.dxof(p);pfl=G.pfloor(p)
+    N%TB==0 || error("N=$N not divisible by the tile size $TB")
+    ch=p.courant*dx/dt/Float32(G.NDIM)*p.glm_ch_scale
+    glm_fac=p.glm_cp_coef>0 ? exp(-(ch*ch/(p.glm_cp_coef*p.boxlen*ch))*dt) : 1.0f0
+    ramp=min(t/p.turb_T,1.0f0);nb=N÷TB
+    (ppm ? G._plm_ppm_launch : G._plm_launch)(tv,hv,rv,192,nb,unew,uold,afield,p,pfl,dt,dx,ch,glm_fac,ramp,false)
+    nothing
+end
 function advance!(s,p,dt,t)
     m=s.method
     if m===:glm
@@ -145,6 +167,11 @@ function advance!(s,p,dt,t)
         # step_plm! sets c_h = courant*dx/(3dt)*scale; this scale makes c_h == ch0.
         pc=with_ch_scale(p,3f0*s.ch0*dt*p.N/p.courant)
         G.step_plm!(s.u,s.other,s.force,pc,dt,Float32(t);half=true,riemann=:hll)
+    elseif m===:glm_hll32 || m===:glm_ppm32
+        tile=p.N%6==0 ? Val(6) : Val(4)      # as step_plm! chooses
+        plm_unlisted!(s.u,s.other,s.force,p,dt,Float32(t),tile,Val(false),Val(:hll);ppm=m===:glm_ppm32)
+    elseif m===:glm_hlld_x
+        plm_unlisted!(s.u,s.other,s.force,p,dt,Float32(t),Val(4),Val(false),Val(:hlld))
     end
     if is_glm(m)
         s.u,s.other=s.other,s.u
@@ -436,7 +463,9 @@ end
 "Validate a parsed config; returns (grids, seeds)."
 function check_config(config)
     problem_of(config) in Problems.NAMES || error("Unknown problem $(problem_of(config))")
-    0<config["cfl"]<=.5 && config["t_end"]>0 && config["frames"]>=2 && config["repeats"]>=1 || error("Invalid CFL/time/frame/repetition settings")
+    # cfl is the Courant number of the solver's own rule (the sum over the three directions), stable up to 1; the
+    # sweep ran 0.25, the solver's default is 0.7
+    0<config["cfl"]<=1 && config["t_end"]>0 && config["frames"]>=2 && config["repeats"]>=1 || error("Invalid CFL/time/frame/repetition settings")
     get(config,"pressure_policy","stop") in ("stop","floor") || error("pressure_policy must be \"stop\" or \"floor\"")
     get(config,"glm_ch_scale",1.0)>0 && get(config,"glm_cp_coef",.18)>=0 || error("Invalid cleaning parameters")
     all(f->0<=f<config["frames"],get(config,"snapshot_frames",[0])) || error("snapshot_frames outside 0:frames-1")

@@ -1,0 +1,21 @@
+# sherlock_checks: the trial (checks.py configs). Orszag-Tang to t = 0.05 with the new kernels and the control.
+# FLASH 35.2.2 (Athena normalization, same dynamics).
+# Sweep config written by tools/make_sweep_configs.py from sherlock_mhd/configs/orszag_tang.toml.
+name = "orszag_tang"
+seeds = [42]
+t_end = 0.05
+frames = 3
+exact_reference = "Athena++ 1024^2 reference at t=0,.1,.25,.5"
+cfl = 0.25
+max_run_seconds = 172800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+grids = [32, 48]
+methods = ["glm_hlld", "glm_hlld_x", "glm_hll32", "glm_ppm32"]
+split_methods = true
+repeats = 1
+checkpoint_seconds = 900
+max_steps_per_n = 58
+restart_every = 5
+reference_n = 4096
+reference_check_n = 2048

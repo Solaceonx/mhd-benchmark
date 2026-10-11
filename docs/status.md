@@ -4,15 +4,12 @@ As of 2026-10-11.
 
 ## Waiting on results
 
-- **Turbulence at Mach 30 and 50.** RAMSES ran; the measurement was fixed for negative densities and resubmitted;
-  the GPU runs were queued for an H100. Results are not fetched, and the Turbulence page's layouts assume two Mach
-  numbers.
-- **Cross-check of the RAMSES projection.** Tom's Euler kernel driven with RAMSES's released projection
-  (`gpu-hydro_ramsesproj`, 128³) was queued; not fetched.
-- **RAMSES II speed test.** The build passed after the compiler workaround and the job was submitted; no result in
-  hand.
-- **MHD-ALE.** Tom's fork builds on Sherlock, its regression suite passes, and our 13 tests start from the right
-  states. Whether the production runs finished is not recorded here.
+- **Courant-number and single-precision checks** (`sherlock_checks/`): built and checked without a GPU; to be
+  submitted. They answer the first two items of "Not run" below.
+- **Turbulence data to fetch.** The Mach 30 and 50 runs and the projection cross-check are finished on Sherlock
+  ([results](results-turbulence.md)); the Turbulence page and its figures still show Mach 3 and 10 only.
+- **MHD-ALE.** 45 of 62 runs complete; whether the stops on fine grids come from the grid or the rank count needs
+  the two short runs of `rank_check.sh` ([issues found](issues-found.md#mhd-ale)).
 
 ## To report
 

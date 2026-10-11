@@ -16,8 +16,15 @@ records; the notebook's Sweep and Papers pages show them run by run.
 | CT prototype | 1.21 |
 | AthenaK, PLM/HLLE/RK2, 512³ | 0.28 to 0.40 |
 | AthenaK, PPM4/HLLD/RK3, 512³ | 0.19 to 0.23 |
+| RAMSES II (CT), single precision, HLL | 0.44 to 0.47; 0.77 to 0.90 with `nsubgrid` = 2 |
+| RAMSES II, single precision, HLLD | 0.37; 0.60 to 0.70 with `nsubgrid` = 2 |
+| RAMSES II, double precision (its default), HLL / HLLD | 0.16 / 0.13; 0.32 to 0.35 / 0.21 to 0.23 with `nsubgrid` = 2 |
 
 The science tests all ran on power-of-two grids, so they never saw the production kernel at its best speed.
+RAMSES II's constrained transport, at its best setting here, is 2.2 times slower than the GLM kernels on a
+power-of-two grid and 2.3 to 3.2 times faster than AthenaK's matched set-up. At 512³ it holds 18 to 20 GB on the
+card in single precision and 33 to 35 GB in double. Its energies at the end agree between the two precisions to
+10⁻⁷. Only speed was measured for RAMSES II (`sherlock_ramses2/`).
 
 **Time to solution** on 3D Orszag–Tang at 512³: GLM LLF 1,211 s, production 1,232 s, CT prototype 1,648 s, AthenaK
 PLM 1,930 s, AthenaK PPM 3,387 s, Athena++ PLM about 7,650 s on 128 cores. Tom's kernels took 17,302 steps against

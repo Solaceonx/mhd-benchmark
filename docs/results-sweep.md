@@ -65,7 +65,7 @@ use to compare their codes. In the Mach 9 decay the growth of magnetic energy ag
 
 ## What the comparison papers show, redrawn
 
-The Papers page redraws 40 figures of Tomida et al. 2026, Kritsuk et al. 2011, Gardiner & Stone 2005 and 2008, Birn
+The Papers page redraws 43 figures of Tomida et al. 2026, Kritsuk et al. 2011, Gardiner & Stone 2005 and 2008, Birn
 et al. 2001 and Ugalino et al. 2026 from these runs (`scripts/paper_*.py`). Only Tomida et al. is CC BY, so only its
 original figures are shown beside ours.
 

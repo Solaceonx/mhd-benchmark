@@ -16,7 +16,7 @@ page or add a test.
 | 05 | Entropy wave | Convergence against the exact answer | `run_entropy_wave.jl`, `render_validation_movies.py` |
 | 06 | GPU suite | The first Sherlock campaign: 21 tests, stills and movies | `build_gpu_suite.py`, `render_suite_movies.py`, `rebuild_gpu_page.sh` |
 | 07 | Sweep | Every run of the sweep: finished, stopped by its solver, or missing | `build_sweep_plan.py` |
-| 08 | Papers | 40 figures of the comparison papers redrawn from the sweep | `build_paper_figures.py`, `paper_*.py` |
+| 08 | Papers | 43 figures of the comparison papers redrawn from the sweep | `build_paper_figures.py`, `paper_*.py` |
 | 09 | Turbulence | The driven-turbulence pilot | `build_turbulence.py`, `turb_figures.py` |
 
 All builders are in `scripts/`. Page 06 needs the archives in `sherlock_mhd/returns/`, which are not in this

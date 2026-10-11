@@ -1,0 +1,13 @@
+# Grid aligned: div(B) is trivially zero.
+name = "alfven"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 1.0
+frames = 21
+exact_reference = "exact circularly polarized Alfven wave along x, one period"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

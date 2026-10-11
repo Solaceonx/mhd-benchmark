@@ -1,0 +1,43 @@
+# Driven-turbulence pilot (README.md). Units: box length 1, mean density 1, sound speed 1.
+gamma_minus_one = 1.0e-5       # nearly isothermal, the same value in every code (the Float32 nearest to 1 + this)
+machs = [3, 10]                # target rms Mach numbers; a run is named by its target, its own Mach is a result
+grids = [128, 256]
+t_end_T = 10                   # run length in autocorrelation times T = L/(2 M cs)
+steady_from_T = 2              # the statistics start here (summarize.py)
+frames_per_T = 4               # spectra and density distribution this often (the times RAMSES writes an output)
+series_per_T = 40              # GPU driver: lines of series.csv per T (a multiple of frames_per_T)
+slices_every = 4               # a midplane slice every this many frames
+comp_frac = 0.0                # 0: solenoidal driving, 1: compressive
+spectrum = "parabolic"         # amplitude 1 - (k - 2)^2 for 1 < |k| < 3: driving on the largest scales only
+turb_ndt = 100                 # steps of the Ornstein-Uhlenbeck process per T
+
+# hydro: his Euler kernel with a Float32 tile. glm: his original MHD kernel with zero field. hydro16: the Euler kernel
+# as it runs by default, with a Float16 tile; it is expected to stop in its trial, because it stores the energy flux in
+# half precision (largest number 65504) and this gas has an internal energy of 1e5 (see README.md), and is then left out.
+[gpu]
+methods = ["hydro", "glm", "hydro16"]
+seeds = [1, 2]                 # two realisations of the driving: their difference is the error bar of a time average
+cfl = 0.5                      # in the kernels' own rule dt = cfl dx / max(sum over directions of |v| + c)
+
+# check_methods: Tom's Euler kernel driven with RAMSES's projection as released (see [ramses]), on check_grids only.
+# Not results: they show that the released projection alone moves his kernel to where released RAMSES sits.
+check_methods = ["hydro_ramsesproj"]
+check_grids = [128]
+
+# projections: "released" is RAMSES's driving as it is, whose solenoidal projection is wrong for modes with components
+# of different sign (a fifth of the force's power is compressive at comp_frac = 0); "fixed" has it corrected. Runs are
+# named ramses-... and ramsesfix-... The driving strengths were found with "released" and are kept for both.
+[ramses]
+variants = ["matched", "best"]
+projections = ["released", "fixed"]
+seed = 1
+
+# The driving strength for each target Mach number, found once with RAMSES (matched) on a small grid and then used
+# unchanged by every code and grid. guess: where the search starts, per-component rms acceleration.
+[calibration]
+n = 64
+t_end_T = 6
+from_T = 2
+tolerance = 0.05
+max_iterations = 5
+guess = { "3" = 15.0, "10" = 165.0 }

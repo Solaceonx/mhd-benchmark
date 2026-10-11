@@ -1,0 +1,21 @@
+# Gate: checkpoint/restart must reproduce an uninterrupted run. Orszag-Tang at 64^2, every GPU-driver method; a
+# checkpoint after every step, and a timestep jump so the per-step dense diagnostics are resumed too;
+# jobs/05_resume_check.sbatch stops each method right after one checkpoint, resumes it, and compares every
+# output with an uninterrupted run.
+name = "gate_resume"
+problem = "orszag_tang"
+grids = [64]
+seeds = [42]
+t_end = 0.05
+frames = 5
+repeats = 1
+methods = ["glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "ct"]
+checkpoint_seconds = 1e-6
+dt_jump = [0.01, 0.5, 5]
+external_runs = false
+exact_reference = "none"
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

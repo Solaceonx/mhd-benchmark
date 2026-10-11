@@ -1,0 +1,23 @@
+# Tomida et al. (2026) sec. III.1 KH: rho=1, p=10, gamma=5/3, vx=+-1 (tanh width 0.05), vy=0.01 sin(2 pi x) exp(-y^2/0.2^2), Bx=0.01 (beta=2e5). Their single layer with outflow y boundaries becomes a periodic double layer at y=1/4, 3/4.
+# Sweep config written by tools/make_sweep_configs.py from sherlock_rerun/configs/kh_uniform.toml.
+name = "kh_uniform"
+seeds = [42]
+t_end = 3.0
+frames = 31
+beta = 200000.0
+exact_reference = "none; compare morphology and magnetic energy"
+cfl = 0.25
+max_run_seconds = 172800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+grids = [64, 128, 256, 512]
+methods = ["glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "ct"]
+split_methods = true
+repeats = 5
+repeats_by_grid = { "256" = 3, "384" = 1, "512" = 1 }
+checkpoint_seconds = 900
+max_steps_per_n = 666
+restart_every = 7
+snapshot_frames_by_grid = { "256" = [0, 6, 12, 18, 24, 30], "512" = [0, 10, 20, 30] }
+reference_n = 4096
+reference_check_n = 2048

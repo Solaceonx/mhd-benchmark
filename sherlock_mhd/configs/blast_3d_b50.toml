@@ -1,0 +1,22 @@
+# FLASH 35.2.8 blast, 3D, Bx=50/sqrt(4pi), p=1000 inside r=0.1, 0.1 outside. Periodic: images interact only near t=0.01.
+name = "blast_3d_b50"
+problem = "blast"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 0.01
+frames = 11
+snapshot_frames = [0, 5, 10]
+gamma = "7/5"
+slurm_time = "02:00:00"
+dim = 3
+bx = 50.0
+pressure_policy = "floor"
+reference_n = 384
+reference_check_n = 192
+exact_reference = "none"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

@@ -1,0 +1,86 @@
+{
+  "reference_N": 1024,
+  "comparison_grids": [
+    32,
+    64,
+    128
+  ],
+  "times": [
+    0,
+    0.1,
+    0.25,
+    0.5
+  ],
+  "coordinate_mapping": "Athena x,y shifted +0.5 to periodic unit square",
+  "array_order": "numpy y,x[,vector_component]",
+  "restriction": "volume average of conserved fields and cell-centered B; magnetic vector, not magnitude",
+  "limitations": "Finite numerical reference. Local initial B is center sampled; Athena uses discrete curl. Retain initial discrepancies. Not a face-divergence reference.",
+  "athena_run": {
+    "N": 1024,
+    "meshblock": 128,
+    "threads": 4,
+    "commit": "823614c90b594472747a0ac2a699e4a454f300d2",
+    "configuration": "This Athena++ executable is configured with:\n  Problem generator:          orszag_tang\n  Coordinate system:          cartesian\n  Equation of state:          adiabatic\n  Riemann solver:             hlld\n  Magnetic fields:            ON\n  Relativistic dynamics:      OFF \n  General relativity:         OFF \n  Radiative Transfer:         OFF\n  Implicit Radiation:         OFF\n  Cosmic Ray Transport:       OFF\n  Cosmic Ray Diffusion:       OFF\n  Self-Gravity:               OFF\n  Super-Time-Stepping:        OFF\n  Floating-point precision:   double\n  Number of ghost cells:      3\n  MPI parallelism:            OFF\n  OpenMP parallelism:         ON\n  FFT:                        OFF\n  HDF5 output:                OFF\n  Compiler:                   clang++-apple\n  Compilation command:        clang++ -O3 -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include  -L/opt/homebrew/opt/libomp/lib  -lomp\n",
+    "input": "/Users/lyxia/Projects/research/abel_mhd/scripts/athena/athinput.reference",
+    "segments": [
+      {
+        "time": 0.1,
+        "seconds": 213.01286704093218,
+        "directory": "t0.100",
+        "command": [
+          "/Users/lyxia/Projects/research/abel_mhd/external/athena/bin/athena",
+          "-i",
+          "/Users/lyxia/Projects/research/abel_mhd/scripts/athena/athinput.reference",
+          "mesh/nx1=1024",
+          "mesh/nx2=1024",
+          "meshblock/nx1=128",
+          "meshblock/nx2=128",
+          "time/tlim=0.10000000000000001"
+        ]
+      },
+      {
+        "time": 0.25,
+        "seconds": 350.8955800840631,
+        "directory": "t0.250",
+        "command": [
+          "/Users/lyxia/Projects/research/abel_mhd/external/athena/bin/athena",
+          "-r",
+          "/Users/lyxia/Projects/research/abel_mhd/scripts/out/athena_1024/t0.100/OrszagTang.final.rst",
+          "time/tlim=0.25"
+        ]
+      },
+      {
+        "time": 0.5,
+        "seconds": 652.87385020894,
+        "directory": "t0.500",
+        "command": [
+          "/Users/lyxia/Projects/research/abel_mhd/external/athena/bin/athena",
+          "-r",
+          "/Users/lyxia/Projects/research/abel_mhd/scripts/out/athena_1024/t0.250/OrszagTang.final.rst",
+          "time/tlim=0.5"
+        ]
+      }
+    ],
+    "wall_seconds": 1216.793082584045,
+    "coordinate_shift": [
+      0.5,
+      0.5
+    ],
+    "precision": "double evolution; stock VTK outputs float32",
+    "completed": true
+  },
+  "sha256": {
+    "athena1024_N32_t0.000.npz": "bd2481b3429c0b26f579a6022a066db647cb0e751de7b32e757b67b9387cd153",
+    "athena1024_N64_t0.000.npz": "ee6bee73f35476d7a7fc220bb8fe96b615e278cc3be676b5e9dee21449916398",
+    "athena1024_N128_t0.000.npz": "f4748aac853a08833b1ffece29b17e563b2112ff75af48e2d4d2d895f595450b",
+    "athena1024_N32_t0.100.npz": "f44fbe99f44e01a83091691c0278b16db8f8d4cf8d2e290e277683a31cb7ff1d",
+    "athena1024_N64_t0.100.npz": "86b7af10c0abc4992d639c638b07accbc1cb3f740efc99a72c2e1538109f9844",
+    "athena1024_N128_t0.100.npz": "7e24b49958da6096406b67892e991eebbd847c20c0f1de39c8fe1783d7b00128",
+    "athena1024_N32_t0.250.npz": "3bcd6efc25fb837a74f81b1c302d57d418f6fea88a55a7aeebb9ce80e1787f78",
+    "athena1024_N64_t0.250.npz": "3aa2f37cbc1d47101966ad614dee1f0d36b0f0bffd9043b971f5f617aeb68598",
+    "athena1024_N128_t0.250.npz": "42f3bf61278efcdfca4adae1752c6046e260b4bf3392977fdc255f70624a0429",
+    "athena1024_N32_t0.500.npz": "7a5925d721a59854e80c926205a24d57f03de29ae817a2674a4b08992c4d53ff",
+    "athena1024_N64_t0.500.npz": "fdea699cb71dc1dce0dd19fecb06785dd301519f8b9316decf59569aa5b51957",
+    "athena1024_N128_t0.500.npz": "28034c09af5a21c9feb2c66452388da5851cf55154ae19785e544d53c578426a"
+  }
+}

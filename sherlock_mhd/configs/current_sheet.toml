@@ -1,0 +1,14 @@
+# FLASH 35.2.6 / Gardiner & Stone (2005), [0,2]^2 box scaled to unit box: t=2.5 here is t=5 there. Reconnection driven by numerical resistivity.
+name = "current_sheet"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 2.5
+frames = 21
+u0 = 0.1
+exact_reference = "none"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

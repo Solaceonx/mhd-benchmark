@@ -1,0 +1,248 @@
+method = "best"
+turb_T = 0.05
+steps = 3076
+converted = true
+code = "ramses"
+precision = "double; frames stored as Float32"
+spectrum = "parabolic"
+turb_ndt = 100
+t_end_T = 10.0
+N = 128
+cfl = 0.8
+t_end = 0.5
+solver = "RAMSES hydro solver, MUSCL, slope_type=2, riemann=hllc, courant_factor=0.8"
+a_rms = 165.0
+device = "CPU sh02-01n16.int x 32 ranks"
+status = "complete"
+measured_with = "turb_measure.jl: measure.jl on the CPU (16 threads), frames read as Float32"
+mach_target = 10
+comp_frac = 0.0
+measured = true
+gamma = 1.0000100135803223
+seed = 1
+slices_every = 4
+
+[[frames]]
+steps = 0
+time = 0.0
+slice = "slice_000.bin"
+frame = 0
+file = "tmp_000.bin"
+[[frames]]
+steps = 27
+time = 0.0125
+frame = 1
+file = "tmp_001.bin"
+[[frames]]
+steps = 70
+time = 0.025
+frame = 2
+file = "tmp_002.bin"
+[[frames]]
+steps = 130
+time = 0.0375
+frame = 3
+file = "tmp_003.bin"
+[[frames]]
+steps = 201
+time = 0.05
+slice = "slice_004.bin"
+frame = 4
+file = "tmp_004.bin"
+[[frames]]
+steps = 276
+time = 0.0625
+frame = 5
+file = "tmp_005.bin"
+[[frames]]
+steps = 352
+time = 0.075
+frame = 6
+file = "tmp_006.bin"
+[[frames]]
+steps = 435
+time = 0.0875
+frame = 7
+file = "tmp_007.bin"
+[[frames]]
+steps = 521
+time = 0.1
+slice = "slice_008.bin"
+frame = 8
+file = "tmp_008.bin"
+[[frames]]
+steps = 606
+time = 0.1125
+frame = 9
+file = "tmp_009.bin"
+[[frames]]
+steps = 688
+time = 0.125
+frame = 10
+file = "tmp_010.bin"
+[[frames]]
+steps = 768
+time = 0.1375
+frame = 11
+file = "tmp_011.bin"
+[[frames]]
+steps = 847
+time = 0.15
+slice = "slice_012.bin"
+frame = 12
+file = "tmp_012.bin"
+[[frames]]
+steps = 925
+time = 0.1625
+frame = 13
+file = "tmp_013.bin"
+[[frames]]
+steps = 1003
+time = 0.175
+frame = 14
+file = "tmp_014.bin"
+[[frames]]
+steps = 1082
+time = 0.1875
+frame = 15
+file = "tmp_015.bin"
+[[frames]]
+steps = 1165
+time = 0.2
+slice = "slice_016.bin"
+frame = 16
+file = "tmp_016.bin"
+[[frames]]
+steps = 1253
+time = 0.2125
+frame = 17
+file = "tmp_017.bin"
+[[frames]]
+steps = 1346
+time = 0.225
+frame = 18
+file = "tmp_018.bin"
+[[frames]]
+steps = 1424
+time = 0.2375
+frame = 19
+file = "tmp_019.bin"
+[[frames]]
+steps = 1499
+time = 0.25
+slice = "slice_020.bin"
+frame = 20
+file = "tmp_020.bin"
+[[frames]]
+steps = 1576
+time = 0.2625
+frame = 21
+file = "tmp_021.bin"
+[[frames]]
+steps = 1655
+time = 0.275
+frame = 22
+file = "tmp_022.bin"
+[[frames]]
+steps = 1733
+time = 0.2875
+frame = 23
+file = "tmp_023.bin"
+[[frames]]
+steps = 1812
+time = 0.3
+slice = "slice_024.bin"
+frame = 24
+file = "tmp_024.bin"
+[[frames]]
+steps = 1893
+time = 0.3125
+frame = 25
+file = "tmp_025.bin"
+[[frames]]
+steps = 1971
+time = 0.325
+frame = 26
+file = "tmp_026.bin"
+[[frames]]
+steps = 2048
+time = 0.3375
+frame = 27
+file = "tmp_027.bin"
+[[frames]]
+steps = 2122
+time = 0.35
+slice = "slice_028.bin"
+frame = 28
+file = "tmp_028.bin"
+[[frames]]
+steps = 2197
+time = 0.3625
+frame = 29
+file = "tmp_029.bin"
+[[frames]]
+steps = 2273
+time = 0.375
+frame = 30
+file = "tmp_030.bin"
+[[frames]]
+steps = 2352
+time = 0.3875
+frame = 31
+file = "tmp_031.bin"
+[[frames]]
+steps = 2434
+time = 0.4
+slice = "slice_032.bin"
+frame = 32
+file = "tmp_032.bin"
+[[frames]]
+steps = 2516
+time = 0.4125
+frame = 33
+file = "tmp_033.bin"
+[[frames]]
+steps = 2594
+time = 0.425
+frame = 34
+file = "tmp_034.bin"
+[[frames]]
+steps = 2671
+time = 0.4375
+frame = 35
+file = "tmp_035.bin"
+[[frames]]
+steps = 2751
+time = 0.45
+slice = "slice_036.bin"
+frame = 36
+file = "tmp_036.bin"
+[[frames]]
+steps = 2831
+time = 0.4625
+frame = 37
+file = "tmp_037.bin"
+[[frames]]
+steps = 2913
+time = 0.475
+frame = 38
+file = "tmp_038.bin"
+[[frames]]
+steps = 2992
+time = 0.4875
+frame = 39
+file = "tmp_039.bin"
+[[frames]]
+steps = 3076
+time = 0.5
+slice = "slice_040.bin"
+frame = 40
+file = "tmp_040.bin"
+state = "state_final.bin"
+
+[perf]
+code_seconds = 534.2908337560001
+steps_this_attempt = 3076
+wall_seconds = 551.1318951160647
+ranks = 32
+cell_updates_per_second_per_rank = 377301.5055917308

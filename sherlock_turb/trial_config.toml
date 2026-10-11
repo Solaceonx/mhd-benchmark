@@ -1,0 +1,21 @@
+# The trial of check.sh: the pilot's set-up on a 32^3 box for half a driving time (three frames).
+gamma_minus_one = 1.0e-5
+machs = [3]
+grids = [32]
+t_end_T = 0.5
+steady_from_T = 0.25
+frames_per_T = 4
+series_per_T = 40
+slices_every = 4
+comp_frac = 0.0
+spectrum = "parabolic"
+turb_ndt = 100
+
+[gpu]
+methods = ["hydro", "glm", "hydro16"]
+seeds = [1]
+cfl = 0.5
+
+[ramses]
+variants = ["matched"]
+seed = 1

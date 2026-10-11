@@ -1,0 +1,128 @@
+{
+  "review_date": "2026-09-25",
+  "platform": "Mac CPU; no NVIDIA device",
+  "julia_version": "1.12.5",
+  "scope": "Mac CPU audit of the updated bundle. Sherlock setup success was reported in user-provided job logs; no GPU simulation has run.",
+  "checks": {
+    "initial_conditions": {
+      "passed": 244,
+      "configs": 25
+    },
+    "analysis_unit_tests": {
+      "passed": 7
+    },
+    "export_format_checks": {
+      "passed": 16
+    },
+    "synthetic_roundtrip": {
+      "runs": 8,
+      "failures": 0,
+      "spectra_parseval_checks": 40
+    },
+    "shell_syntax": "passed",
+    "mocked_submission_routes": 4,
+    "vendor_files_identical_to_local_originals": true,
+    "driver_load": "passed",
+    "cuda_functional": false,
+    "external_pipeline_regressions": 3,
+    "mocked_campaign_submissions": {
+      "gates": 8,
+      "matrix": 145,
+      "total": 153,
+      "resume_without_duplicates": true
+    },
+    "restricted_reference_postprocess_skips_full_384_cubed_state": true,
+    "cost_model": {
+      "central_gpu_hours": 11,
+      "central_cpu_core_hours": 704,
+      "pessimistic_gpu_hours": 22,
+      "pessimistic_cpu_core_hours": 1252,
+      "uncompressed_return_gib": 36.2,
+      "source": "two-method core matrix; fixed overhead calibrated from H100 gates, throughput rates still provisional"
+    }
+  },
+  "matrix": {
+    "gpu": {
+      "commands": 25,
+      "tasks": 80
+    },
+    "athenak": {
+      "commands": 48,
+      "tasks": 156
+    },
+    "ramses": {
+      "commands": 46,
+      "tasks": 150
+    },
+    "athenak_reference": {
+      "commands": 13,
+      "tasks": 13
+    },
+    "athenapp_reference": {
+      "commands": 13,
+      "tasks": 13
+    }
+  },
+  "pending": [
+    "H100 GPU smoke and solver compilation",
+    "AthenaK CUDA and RAMSES/Athena++ MPI builds and pilots",
+    "Production benchmarks and high-resolution references"
+  ],
+  "limitations": [
+    "No GPU performance or accuracy results established by these checks",
+    "Synthetic fixtures excluded from transfer archive",
+    "FP32 GLM/CT versus FP64 AthenaK precision difference remains",
+    "H100 cost rates remain assumptions until measured",
+    "External CPU validation described in PROJECT_SUMMARY.md was not rerun in this review"
+  ],
+  "user_reported_sherlock_setup": {
+    "job_id": "45188121",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "initial_condition_checks_passed": 244
+  },
+  "review_2026_09_28": {
+    "scope": "Dependency and literature cross-check of the Marlowe bundle (Mac CPU; no GPU run)",
+    "literature_corrections": {
+      "current_sheet": "vx = 0.1 sin(pi y) on [0,2]^2 per Gardiner & Stone (2005) sec. 5.5 and RAMSES patch/mhd/sheet; previously FLASH's sin(2 pi y) (twice the wavenumber)",
+      "kh_uniform/kh_localized": "Tomida et al. (2026) sec. III.1-2: p=10, vx=+-1, a=0.05, vy=0.01 sin(2 pi x) exp(-y^2/0.2^2), Bx=0.01; previously p=1, vx=+-0.5, sin(4 pi x), sigma=0.1. Localized band: sech^2 with the Gaussian's FWHM (w=0.0945)",
+      "kh_localized_dtjump": "Tomida sec. III.3 timing: dt x 1/40 for 100 steps at t=3.0, run to t=3.2; methods glm, glm_hll16, glm_constch, ct so the c_h policy is compared on one kernel"
+    },
+    "verified_against_sources": [
+      "rotor: Athena++ inputs/mhd/athinput.rotor and Toth (2000)/FLASH taper f u0/r",
+      "brio_wu: FLASH 35.2.1 and Athena++ athinput.bw",
+      "orszag_tang_3d: Helzel, Rossmanith & Taetz (2011) eqs. 125-127",
+      "field_loop_novz and alfven_oblique: Gardiner & Stone (2005) sec. 3.3.1-3.3.2",
+      "field_loop: FLASH 35.2.7 vz = u0",
+      "blast: FLASH 35.2.8 (beta = 2.513e-4 at 100/sqrt(4 pi))",
+      "decay_supersonic: Kritsuk et al. (2011) B0=0.3, beta0=22 (smooth IC, documented)"
+    ],
+    "operational_fixes": [
+      "preempted/requeued jobs write a fresh -restartN directory (attempt_suffix now used) and request --requeue",
+      "setup job loads the CUDA modules so CUDA.jl's local-runtime precompilation records the toolkit version",
+      "preflight checks CUDA.jl toolkit discovery variables and an nvcc + g++ sm_90 compile",
+      "SCIENTIFIC_INPUTS.sha256 had a stale src/problems.jl entry; regenerated and extended to the driver, error norms, CUDA preference and external-code adapters"
+    ],
+    "checks": {
+      "initial_conditions": "279 passed",
+      "cpp_julia_initial_conditions": "56 passed, worst 1.1e-7",
+      "analysis_unit_tests": "passed",
+      "external_pipeline": "passed",
+      "export_format": "16 passed",
+      "driver_load_and_config_validation": "25 configs"
+    },
+    "sherlock_difference": "The Sherlock campaign ran current_sheet and the three KH tests with the earlier setups; do not pool them with Marlowe results",
+    "not_verifiable_from_the_mac": [
+      "GPU evolution",
+      "Marlowe module names and internet access from compute nodes",
+      "nvhpc CUDA version vs host GCC (preflight now checks)"
+    ],
+    "measurement_additions": [
+      "GPU driver: device-wide used memory after warmup and peak over outputs, CUDA pool bytes (CUDA.MemoryInfo)",
+      "AthenaK: peak device memory and rise above baseline from nvidia-smi sampling every 0.2 s",
+      "diagnostics: psi_max and kh_localized leakage band |B| (max, rms) at every output, for every code",
+      "kh_localized_dtjump: per-step dense_diagnostics.csv from the drop until 300 steps after; smoke moves the drop to t=0 (5 steps) so the gate exercises this path",
+      "analysis builder reads MHD_ANALYSIS_BUNDLE so Marlowe results use Marlowe configs"
+    ]
+  }
+}

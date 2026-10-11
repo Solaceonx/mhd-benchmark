@@ -1,0 +1,14 @@
+# Not a FLASH problem; supersonic decay in the spirit of Kritsuk et al. (2011).
+name = "decay"
+grids = [32, 64]
+seeds = [42, 43, 44]
+t_end = 0.5
+frames = 5
+mach = 2.0
+exact_reference = "none; 3D unforced MHD Mach 2"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

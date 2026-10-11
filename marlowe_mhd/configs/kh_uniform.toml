@@ -1,0 +1,17 @@
+# Tomida et al. (2026) sec. III.1 KH: rho=1, p=10, gamma=5/3, vx=+-1 (tanh width 0.05), vy=0.01 sin(2 pi x) exp(-y^2/0.2^2), Bx=0.01 (beta=2e5). Their single layer with outflow y boundaries becomes a periodic double layer at y=1/4, 3/4.
+name = "kh_uniform"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 3.0
+slurm_time = "03:00:00"
+frames = 31
+beta = 2e5
+reference_n = 2048
+reference_check_n = 1024
+exact_reference = "none; compare morphology and magnetic energy"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

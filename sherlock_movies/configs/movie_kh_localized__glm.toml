@@ -1,0 +1,26 @@
+# Movie run of kh_localized (glm): physics identical to configs/kh_localized.toml in sherlock_rerun; dense outputs for video, not timing.
+# Tomida et al. (2026) sec. III.2 KH with Bx confined to the lower layer: their Gaussian (B0=0.01, sigma=0.1) is replaced by a sech^2 band of equal FWHM (w=0.0945) so the potential is analytic. Upper-layer field growth above its ~1e-6 initial tail measures non-local div(B)-error leakage.
+name = "movie_kh_localized__glm"
+problem = "kh_localized"
+t_end = 3.0
+b_peak = 0.01
+b_width = 0.0945
+cfl = 0.25
+max_steps = 200000
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+seeds = [42]
+methods = ["glm"]
+# 241 outputs shorten many steps; keep the CFL-step c_h on those (the original c_h ~ 1/dt made GLM fail)
+glm_ch_at_outputs = "cfl"
+repeats = 1
+frames = 241
+grids = [384]
+# 384^2 runs as a z-invariant 384^3 cube: 128G, as throughput_ot3d at 384^3 (16G was OOM-killed)
+slurm_mem = "128G"
+max_run_seconds = 7200
+slurm_time = "02:00:00"
+external_runs = false
+reference_n = 1536
+movie_truth = "athenak:reference"
+exact_reference = "none; AthenaK PPM/HLLD/RK3 1536^2 block-averaged to 384^2 is the truth panel"

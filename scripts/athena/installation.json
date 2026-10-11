@@ -1,0 +1,28 @@
+{
+  "repository": "https://github.com/PrincetonUniversity/athena",
+  "commit": "823614c90b594472747a0ac2a699e4a454f300d2",
+  "source_modified": false,
+  "binary_sha256": "6e1f49c085bc17fa498f835b0370cadd59be650d152a4864dfef630f1a0b7f6c",
+  "configure": [
+    "python3",
+    "configure.py",
+    "--prob",
+    "orszag_tang",
+    "-b",
+    "--flux",
+    "hlld",
+    "--nghost",
+    "3",
+    "--cxx",
+    "clang++-apple",
+    "-omp",
+    "--include",
+    "/opt/homebrew/opt/libomp/include",
+    "--lib_path",
+    "/opt/homebrew/opt/libomp/lib"
+  ],
+  "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)\nTarget: arm64-apple-darwin25.3.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "openmp_prefix": "/opt/homebrew/opt/libomp",
+  "precision": "double; stock VTK writer stores float32",
+  "runtime_settings": "scripts/athena/athinput.reference: PPM, RK3, CFL 0.3, four threads"
+}

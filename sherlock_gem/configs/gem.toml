@@ -1,0 +1,22 @@
+# GEM magnetic reconnection challenge (Birn et al. 2001, JGR 106, 3715), MHD version: no Hall term and no explicit resistivity, so reconnection proceeds by each code's numerical resistivity. Harris sheet Bx = tanh(z/lambda), lambda = 0.5 d_i, n = sech^2(z/lambda) + 0.2, n0 (Ti+Te) = B0^2/2, perturbation psi0 = 0.1 cos(2 pi x/Lx) cos(pi z/Lz), Lx x Lz = 25.6 x 12.8 d_i, run to Omega_i t = 40. Periodic double sheet (y = 1/4, 3/4) in the unit square: lengths and times / 25.6. Measured: reconnected flux (half the integral of |By| along each sheet).
+name = "gem"
+grids = [64, 128, 256]
+seeds = [42]
+t_end = 1.5625
+frames = 41
+gem_lx = 25.6
+gem_lambda = 0.5
+gem_psi0 = 0.1
+gem_nbg = 0.2
+display_time_scale = 25.6
+display_time_label = "Omega_i t"
+slurm_time = "03:00:00"
+slurm_mem = "64G"
+reference_n = 2048
+exact_reference = "none; ideal-MHD reconnection is set by numerical resistivity. Compare reconnected flux with AthenaK PPM/HLLD/RK3 at 2048^2 (lambda = 40 cells)"
+repeats = 5
+cfl = 0.25
+max_steps = 400000
+max_run_seconds = 3600
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

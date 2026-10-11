@@ -1,0 +1,18 @@
+# kh_localized with Tomida et al. (2026) sec. III.3 sudden timestep change: at t = 3.0 dt is multiplied by 1/40 for 100 steps, then the run continues to t = 3.2. GPU driver only. glm_hll16 (c_h proportional to 1/dt) and glm_constch share one kernel, isolating the c_h policy.
+name = "kh_localized_dtjump"
+problem = "kh_localized"
+grids = [64, 128]
+seeds = [42]
+t_end = 3.2
+frames = 33
+b_peak = 0.01
+b_width = 0.0945
+dt_jump = [3.0, 0.025, 100]
+methods = ["glm", "glm_hll16", "glm_constch", "ct"]
+exact_reference = "none; compare with kh_localized (no timestep jump)"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

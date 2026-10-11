@@ -1,0 +1,16 @@
+# Brio-Wu with normal (1,1)/sqrt(2): 0.05/sqrt(2) is the same scaled time as brio_wu. Div(B) stress test.
+name = "brio_wu_rotated"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 0.035355339059327376
+frames = 11
+gamma = "2"
+reference_n = 2048
+reference_check_n = 1024
+exact_reference = "none; 1D Brio-Wu reference to be added"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

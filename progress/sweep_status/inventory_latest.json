@@ -1,0 +1,115 @@
+{
+ "listing": "inventory_20261007T181743Z.tsv.gz",
+ "roots": {
+  "mhd-results-sweep": {
+   "record": {
+    "files": 8473,
+    "bytes": 43057020,
+    "here": 7465,
+    "here_bytes": 39422800,
+    "listed": 7476,
+    "oldest": 1790791664.0,
+    "first_purge": "2026-12-29"
+   },
+   "diagnostics": {
+    "files": 7433,
+    "bytes": 104094186,
+    "here": 6769,
+    "here_bytes": 98465956,
+    "listed": 6785,
+    "oldest": 1790791794.0,
+    "first_purge": "2026-12-29"
+   },
+   "other": {
+    "files": 26208,
+    "bytes": 591240489070,
+    "here": 0,
+    "here_bytes": 0,
+    "listed": 0,
+    "oldest": 1790791664.0,
+    "first_purge": "2026-12-29"
+   },
+   "restricted": {
+    "files": 1712,
+    "bytes": 59516780544,
+    "here": 0,
+    "here_bytes": 0,
+    "listed": 0,
+    "oldest": 1790792370.0,
+    "first_purge": "2026-12-29"
+   },
+   "slice": {
+    "files": 3203,
+    "bytes": 7710879744,
+    "here": 269,
+    "here_bytes": 180781056,
+    "listed": 269,
+    "oldest": 1790791893.0,
+    "first_purge": "2026-12-29"
+   },
+   "state": {
+    "files": 17904,
+    "bytes": 1807391268864,
+    "here": 509,
+    "here_bytes": 801423360,
+    "listed": 509,
+    "oldest": 1790791716.0,
+    "first_purge": "2026-12-29"
+   },
+   "log": {
+    "files": 20302,
+    "bytes": 4804854556,
+    "here": 0,
+    "here_bytes": 0,
+    "listed": 0,
+    "oldest": 1790791792.0,
+    "first_purge": "2026-12-29"
+   },
+   "reference": {
+    "files": 2477,
+    "bytes": 68243890176,
+    "here": 68,
+    "here_bytes": 184320000,
+    "listed": 68,
+    "oldest": 1790805612.0,
+    "first_purge": "2026-12-29"
+   }
+  },
+  "mhd-results-ramses2": {
+   "log": {
+    "files": 15,
+    "bytes": 247188,
+    "here": 0,
+    "here_bytes": 0,
+    "listed": 0,
+    "oldest": 1791280647.0,
+    "first_purge": "2027-01-04"
+   },
+   "other": {
+    "files": 6,
+    "bytes": 3855,
+    "here": 0,
+    "here_bytes": 0,
+    "listed": 0,
+    "oldest": 1791280666.0,
+    "first_purge": "2027-01-04"
+   }
+  }
+ },
+ "scratch": {
+  "mhd-codes": 644583424,
+  "mhd-codes-gem": 607092736,
+  "mhd-codes-rerun": 607559680,
+  "mhd-codes-sweep": 1603418624,
+  "mhd-results": 63904174080,
+  "mhd-results-arepo-checks": 352337920,
+  "mhd-results-gem": 2980110336,
+  "mhd-results-mhdale-trial": 4096,
+  "mhd-results-movies": 48835530752,
+  "mhd-results-ramses2": 352256,
+  "mhd-results-rerun": 10003816448,
+  "mhd-results-sweep": 2539322380288,
+  "mhd-study": 79135195136,
+  "mhd-venv-arepo": 147218432
+ }
+}

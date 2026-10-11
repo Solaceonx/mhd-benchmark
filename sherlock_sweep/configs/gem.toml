@@ -1,0 +1,28 @@
+# GEM magnetic reconnection challenge (Birn et al. 2001, JGR 106, 3715), MHD version: no Hall term and no explicit resistivity, so reconnection proceeds by each code's numerical resistivity. Harris sheet Bx = tanh(z/lambda), lambda = 0.5 d_i, n = sech^2(z/lambda) + 0.2, n0 (Ti+Te) = B0^2/2, perturbation psi0 = 0.1 cos(2 pi x/Lx) cos(pi z/Lz), Lx x Lz = 25.6 x 12.8 d_i, run to Omega_i t = 40. Periodic double sheet (y = 1/4, 3/4) in the unit square: lengths and times / 25.6. Measured: reconnected flux (half the integral of |By| along each sheet).
+# Sweep config written by tools/make_sweep_configs.py from sherlock_gem/configs/gem.toml.
+name = "gem"
+seeds = [42]
+t_end = 1.5625
+frames = 41
+gem_lx = 25.6
+gem_lambda = 0.5
+gem_psi0 = 0.1
+gem_nbg = 0.2
+display_time_scale = 25.6
+display_time_label = "Omega_i t"
+exact_reference = "none; ideal-MHD reconnection is set by numerical resistivity. Compare reconnected flux with AthenaK PPM/HLLD/RK3 at 2048^2 (lambda = 40 cells)"
+cfl = 0.25
+max_run_seconds = 172800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+grids = [64, 128, 256, 512]
+methods = ["glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "ct"]
+split_methods = true
+repeats = 5
+repeats_by_grid = { "256" = 3, "384" = 1, "512" = 1 }
+checkpoint_seconds = 900
+max_steps_per_n = 174
+restart_every = 10
+snapshot_frames_by_grid = { "256" = [0, 8, 16, 24, 32, 40], "512" = [0, 13, 27, 40] }
+reference_n = 4096
+reference_check_n = 2048

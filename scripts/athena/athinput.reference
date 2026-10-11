@@ -1,0 +1,53 @@
+<comment>
+problem = Orszag-Tang reference for the local GLM/CT CPU comparison
+coordinate_mapping = local x = Athena x1 + 0.5; local y = Athena x2 + 0.5
+
+<job>
+problem_id = OrszagTang
+
+<output1>
+file_type = hst
+dt = 0.01
+
+<output2>
+file_type = vtk
+variable = cons
+dt = 1000
+
+<output3>
+file_type = rst
+dt = 1000
+
+<time>
+cfl_number = 0.3
+nlim = -1
+tlim = 0.1
+integrator = rk3
+xorder = 3
+ncycle_out = 100
+
+<mesh>
+nx1 = 64
+x1min = -0.5
+x1max = 0.5
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 64
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+num_threads = 4
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 1
+
+<hydro>
+gamma = 1.6666666666666667

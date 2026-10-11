@@ -1,0 +1,651 @@
+[
+  {
+    "id": "orszag-tang",
+    "page": "index.html",
+    "kind": "ot",
+    "number": "01",
+    "title": "Orszag–Tang vortex",
+    "nav": "Orszag–Tang",
+    "status": "Active study",
+    "description": "A common starting point. Two ways to evolve the magnetic field. An independent reference to measure what each one gets right.",
+    "chips": [
+      "2D ideal MHD",
+      "Periodic unit square",
+      "γ = 5/3",
+      "CPU · 4 threads"
+    ],
+    "document": "../scripts/MHD_SPECTRA.md"
+  },
+  {
+    "id": "hydro-decay",
+    "page": "hydro-decay.html",
+    "kind": "generic",
+    "number": "02",
+    "title": "Supersonic turbulence decay",
+    "nav": "Hydro decay",
+    "status": "Baseline complete",
+    "description": "The first decay experiment: a Mach 10 random velocity field evolves freely, forming shocks and converting kinetic energy into heat.",
+    "chips": [
+      "3D hydrodynamics",
+      "64³ cells",
+      "γ = 1.01",
+      "B = 0 · no forcing"
+    ],
+    "document": "../scripts/DECAY.md",
+    "columns": [
+      {
+        "subtitle": "Hydro baseline · MHD code with B = 0",
+        "status": "Run complete",
+        "cards": [
+          {
+            "title": "Watch the decay",
+            "text": "This is pure hydrodynamics through the original SIMD solver. Magnetic fields and the GLM variable remain zero.",
+            "video": "../scripts/out/decay_64/decaying_turbulence.mp4",
+            "poster": "../scripts/out/decay_64/preview.png",
+            "caption": "64³ · 121 saved frames · five initial box crossing times"
+          },
+          {
+            "title": "What changed",
+            "stats": [
+              [
+                "Initial → final Mach",
+                "10 → 0.979"
+              ],
+              [
+                "Kinetic energy remaining",
+                "1.436%"
+              ],
+              [
+                "CPU run time",
+                "33.4 s"
+              ],
+              [
+                "Accepted / rejected steps",
+                "1,665 / 217"
+              ]
+            ],
+            "text": "Rejected trial states were retried at a smaller timestep; they are not part of the accepted solution."
+          },
+          {
+            "title": "Validation",
+            "items": [
+              "Mass and total-energy drift below 5 × 10⁻⁹",
+              "Finite, positive accepted states",
+              "B and ψ stayed exactly zero"
+            ],
+            "links": [
+              [
+                "Run manifest",
+                "../scripts/out/decay_64/manifest.txt"
+              ],
+              [
+                "Time histories · CSV",
+                "../scripts/out/decay_64/diagnostics.csv"
+              ],
+              [
+                "Animated GIF",
+                "../scripts/out/decay_64/decaying_turbulence.gif"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "subtitle": "No magnetic field to constrain",
+        "status": "Not applicable",
+        "cards": [
+          {
+            "title": "A hydro experiment",
+            "empty": true,
+            "text": "CT evolves staggered magnetic fields. With B = 0, there is no magnetic constraint to compare in this run. No separate CT simulation was performed."
+          },
+          {
+            "title": "Keep the comparison meaningful",
+            "text": "A future hydro comparison would test reconstruction, fluxes and time integration. It would not isolate GLM versus CT."
+          }
+        ]
+      },
+      {
+        "subtitle": "Initial conditions known · evolved reference absent",
+        "status": "Reference needed",
+        "cards": [
+          {
+            "title": "What we know",
+            "stats": [
+              [
+                "Initial density",
+                "ρ = 1"
+              ],
+              [
+                "Initial sound speed",
+                "cₛ = 1"
+              ],
+              [
+                "Initial rms Mach",
+                "10"
+              ],
+              [
+                "Velocity modes",
+                "1 ≤ |k| ≤ 3"
+              ]
+            ],
+            "text": "A periodic, solenoidal random field, seed 42. There is no exact analytical solution for the subsequent shocked flow."
+          },
+          {
+            "title": "What is still missing",
+            "items": [
+              "A finer, independently computed hydro reference",
+              "A matched initial-field resolution study",
+              "A check of sensitivity to numerical dissipation"
+            ],
+            "text": "The current decay rate is a low-resolution demonstration, not a converged physical measurement."
+          },
+          {
+            "title": "Equation of state matters",
+            "text": "γ = 1.01 is near-isothermal, not exactly isothermal. Dissipated kinetic energy heats the gas; the final rms sound speed is 1.224."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "isothermal-decay",
+    "page": "isothermal-decay.html",
+    "kind": "generic",
+    "number": "03",
+    "title": "Prepared isothermal decay",
+    "nav": "Prepared decay",
+    "status": "Parked experiment",
+    "description": "Drive a periodic box toward Mach 10, switch the forcing off, then compare unchanged decay with a velocity-band perturbation. Preserved here as an earlier branch of the research.",
+    "chips": [
+      "3D hydrodynamics",
+      "64³ cells",
+      "P = ρcₛ²",
+      "Spectral-gap work parked"
+    ],
+    "document": "../scripts/SPECTRAL_GAP.md",
+    "columns": [
+      {
+        "subtitle": "Dedicated isothermal hydro solver · no GLM field",
+        "status": "Run complete",
+        "cards": [
+          {
+            "title": "Control and perturbed decay",
+            "video": "../scripts/out/spectral_gap_64/spectral_gap_comparison.mp4",
+            "poster": "../scripts/out/spectral_gap_64/preview.png",
+            "caption": "Two hydrodynamic branches, not a GLM–CT comparison",
+            "text": "Four conserved fields: density and momentum. There is no magnetic field or total-energy equation."
+          },
+          {
+            "title": "Preparation and outcome",
+            "stats": [
+              [
+                "Prepared Mach",
+                "10.341"
+              ],
+              [
+                "Preparation",
+                "8 crossing times"
+              ],
+              [
+                "Control / gap final Mach",
+                "1.651 / 1.496"
+              ],
+              [
+                "Preparation + decay",
+                "77.2 s"
+              ]
+            ]
+          },
+          {
+            "title": "Saved analysis",
+            "image": "../scripts/out/spectral_gap_64/preparation.png",
+            "caption": "Practical stationarity checks before branching",
+            "links": [
+              [
+                "Initial comparison",
+                "../scripts/out/spectral_gap_64/initial_comparison.png"
+              ],
+              [
+                "Spectra over time",
+                "../scripts/out/spectral_gap_64/spectra_vs_time.png"
+              ],
+              [
+                "Gap recovery",
+                "../scripts/out/spectral_gap_64/gap_recovery.png"
+              ],
+              [
+                "Validation JSON",
+                "../scripts/out/spectral_gap_64/validation.json"
+              ],
+              [
+                "Run metadata",
+                "../scripts/out/spectral_gap_64/metadata.toml"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "subtitle": "No magnetic field to constrain",
+        "status": "Not applicable",
+        "cards": [
+          {
+            "title": "Both branches are hydrodynamic",
+            "empty": true,
+            "text": "The control and gap branches use the same hydro solver. Neither is CT; the original GLM code is only the numerical-workflow lineage."
+          },
+          {
+            "title": "Research status",
+            "text": "Spectral-gap work is parked while the active comparison focuses on GLM and CT in Orszag–Tang MHD. The saved experiment is retained for reproducibility."
+          }
+        ]
+      },
+      {
+        "subtitle": "Control branch and analytical checks · no exact flow",
+        "status": "Reference limited",
+        "cards": [
+          {
+            "title": "The control is not exact truth",
+            "text": "It is the unperturbed branch of the same solver, useful for measuring response to the perturbation. It is not an independent numerical reference."
+          },
+          {
+            "title": "A precisely defined perturbation",
+            "stats": [
+              [
+                "Removed velocity band",
+                "4 ≤ |k| < 7"
+              ],
+              [
+                "Velocity variance removed",
+                "13.69%"
+              ],
+              [
+                "Turbulent kinetic energy removed",
+                "15.76%"
+              ],
+              [
+                "Density",
+                "Unchanged"
+              ]
+            ],
+            "text": "The branches start with different kinetic energy. Subsequent differences cannot be attributed to the band location alone."
+          },
+          {
+            "title": "Verified, and still open",
+            "items": [
+              "Filtered velocity power is negligible initially",
+              "Momentum preserved within rounding",
+              "Kinetic-spectrum Parseval check passed"
+            ],
+            "text": "Higher resolutions and multiple matched realizations would be needed for a physical recovery timescale. Band recovery does not directly measure spectral energy flux.",
+            "links": [
+              [
+                "Preparation model · Lane et al.",
+                "https://arxiv.org/abs/2110.14816"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "acoustic-wave",
+    "page": "acoustic-wave.html",
+    "kind": "generic",
+    "number": "04",
+    "title": "Small-amplitude acoustic wave",
+    "nav": "Acoustic check",
+    "status": "Validation passed",
+    "description": "A smooth wave checks that the isothermal hydro solver transports sound accurately before we ask it to handle shocks and turbulence.",
+    "chips": [
+      "Isothermal hydro",
+      "32³ and 64³",
+      "Amplitude 10⁻³",
+      "cₛ = 1 · t = 0.2"
+    ],
+    "document": "../scripts/check_isothermal.jl",
+    "columns": [
+      {
+        "subtitle": "Hydro validation · not a GLM evolution test",
+        "status": "Check passed",
+        "cards": [
+          {
+            "title": "Watch the acoustic wave",
+            "video": "media/acoustic-hydro.mp4",
+            "poster": "media/acoustic-hydro.png",
+            "caption": "21 times · t = 0 → 0.2 · linked playback",
+            "text": "A new run with saved output times. The analytical wave is a linear approximation; the solver evolves nonlinear hydrodynamics.",
+            "links": [
+              [
+                "Saved profiles",
+                "../scripts/out/acoustic_movie/profiles.csv"
+              ]
+            ]
+          },
+          {
+            "title": "Density error decreases",
+            "stats": [
+              [
+                "Mean |δρ| · 32³",
+                "4.95 × 10⁻⁶"
+              ],
+              [
+                "Mean |δρ| · 64³",
+                "1.11 × 10⁻⁶"
+              ],
+              [
+                "Error ratio",
+                "≈ 4.46"
+              ]
+            ],
+            "text": "Historical check without intermediate output. The movie uses a new output-clipped run; its measurements are saved separately."
+          },
+          {
+            "title": "Other checks",
+            "items": [
+              "Uniform moving state preserved exactly",
+              "Mean density conserved within 10⁻⁶",
+              "64³ error below the configured threshold"
+            ],
+            "links": [
+              [
+                "Executable validation source",
+                "../scripts/check_isothermal.jl"
+              ],
+              [
+                "Isothermal solver",
+                "../scripts/isothermal_hydro.jl"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "subtitle": "Hydrodynamic limit · B = 0",
+        "status": "Not applicable",
+        "cards": [
+          {
+            "title": "No distinct CT branch",
+            "empty": true,
+            "text": "This validates the dedicated isothermal hydro solver. A magnetized wave would be a separate physics test with GLM and CT implementations."
+          },
+          {
+            "title": "A useful future extension",
+            "text": "The entropy-wave page now adds an exact smooth magnetized test. Alfvén and magnetosonic propagation remain future tests."
+          }
+        ]
+      },
+      {
+        "subtitle": "Linear analytical reference",
+        "status": "Analytical check",
+        "cards": [
+          {
+            "title": "Watch the acoustic wave",
+            "video": "media/acoustic-truth.mp4",
+            "poster": "media/acoustic-truth.png",
+            "caption": "21 times · t = 0 → 0.2 · linked playback",
+            "text": "A new run with saved output times. The analytical wave is a linear approximation; the solver evolves nonlinear hydrodynamics.",
+            "links": [
+              [
+                "Saved profiles",
+                "../scripts/out/acoustic_movie/profiles.csv"
+              ]
+            ]
+          },
+          {
+            "title": "A wave traveling at the sound speed",
+            "formula": "ρ(x,t) ≈ 1 + 10⁻³ sin[2π(x − t)]",
+            "text": "The comparison uses the small-amplitude linear acoustic solution. The simulation evolves nonlinear equations, so finite-amplitude corrections remain; this is not an exact nonlinear reference."
+          },
+          {
+            "title": "What this establishes",
+            "text": "The smooth-wave density error decreases substantially on refinement. Two resolutions and a finite-amplitude reference do not establish a universal convergence order for shocked flows."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "entropy-wave",
+    "page": "entropy-wave.html",
+    "kind": "generic",
+    "number": "05",
+    "title": "Magnetized entropy advection",
+    "nav": "Entropy wave",
+    "status": "Exact-reference check",
+    "description": "A smooth density pattern crosses a magnetized periodic box. An exact solution lets us measure numerical error without relying on another solver.",
+    "chips": [
+      "2D ideal MHD",
+      "16² → 128²",
+      "Finite amplitude 0.2",
+      "One advection period"
+    ],
+    "document": "../scripts/CPU_BENCHMARKS.md",
+    "columns": [
+      {
+        "subtitle": "Shared planar MHD solver · uniform magnetic field",
+        "status": "Validation passed",
+        "cards": [
+          {
+            "title": "One full advection period",
+            "video": "media/entropy-glm.mp4",
+            "poster": "media/entropy-glm.png",
+            "caption": "64² · 41 saved times · play any movie to play all three"
+          },
+          {
+            "title": "Measured density convergence",
+            "stats": [
+              [
+                "Mean error · 16²",
+                "1.897e-02"
+              ],
+              [
+                "Mean error · 32²",
+                "3.894e-03"
+              ],
+              [
+                "Mean error · 64²",
+                "1.189e-03"
+              ],
+              [
+                "Mean error · 128²",
+                "3.292e-04"
+              ],
+              [
+                "Successive orders",
+                "2.28, 1.71, 1.85"
+              ]
+            ],
+            "text": "Order = log₂(error at N / error at 2N), measured at t = 1. Specific to this smooth test and resolution range."
+          },
+          {
+            "title": "Checks passed",
+            "items": [
+              "Identical initial conserved fields for GLM and CT",
+              "Positive density and pressure at every RK stage",
+              "Mass and energy drift below 10⁻⁵",
+              "Density error decreases at every refinement"
+            ]
+          },
+          {
+            "title": "Convergence and records",
+            "image": "../scripts/out/entropy_wave/convergence.png",
+            "links": [
+              [
+                "Every saved norm · CSV",
+                "../scripts/out/entropy_wave/errors.csv"
+              ],
+              [
+                "Validation",
+                "../scripts/out/entropy_wave/validation.json"
+              ],
+              [
+                "Run metadata",
+                "../scripts/out/entropy_wave/metadata.toml"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "subtitle": "Shared planar MHD solver · uniform magnetic field",
+        "status": "Validation passed",
+        "cards": [
+          {
+            "title": "One full advection period",
+            "video": "media/entropy-ct.mp4",
+            "poster": "media/entropy-ct.png",
+            "caption": "64² · 41 saved times · play any movie to play all three"
+          },
+          {
+            "title": "Measured density convergence",
+            "stats": [
+              [
+                "Mean error · 16²",
+                "1.897e-02"
+              ],
+              [
+                "Mean error · 32²",
+                "3.894e-03"
+              ],
+              [
+                "Mean error · 64²",
+                "1.189e-03"
+              ],
+              [
+                "Mean error · 128²",
+                "3.294e-04"
+              ],
+              [
+                "Successive orders",
+                "2.28, 1.71, 1.85"
+              ]
+            ],
+            "text": "Order = log₂(error at N / error at 2N), measured at t = 1. Specific to this smooth test and resolution range."
+          },
+          {
+            "title": "Checks passed",
+            "items": [
+              "Identical initial conserved fields for GLM and CT",
+              "Positive density and pressure at every RK stage",
+              "Mass and energy drift below 10⁻⁵",
+              "Density error decreases at every refinement"
+            ]
+          },
+          {
+            "title": "Convergence and records",
+            "image": "../scripts/out/entropy_wave/convergence.png",
+            "links": [
+              [
+                "Every saved norm · CSV",
+                "../scripts/out/entropy_wave/errors.csv"
+              ],
+              [
+                "Validation",
+                "../scripts/out/entropy_wave/validation.json"
+              ],
+              [
+                "Run metadata",
+                "../scripts/out/entropy_wave/metadata.toml"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "subtitle": "Exact nonlinear cell averages",
+        "status": "Exact reference",
+        "cards": [
+          {
+            "title": "One full advection period",
+            "video": "media/entropy-truth.mp4",
+            "poster": "media/entropy-truth.png",
+            "caption": "64² · 41 saved times · play any movie to play all three"
+          },
+          {
+            "title": "An exact nonlinear solution",
+            "formula": "ρ = 1 + 0.2 sin[2π(x + y − t)]",
+            "text": "Uniform velocity (0.5, 0.5), pressure 1 and magnetic field (0.3, 0.2) stay constant. Density translates. Exact cell averages multiply the sinusoidal amplitude by sinc(1/N)²; initial states use the same averages."
+          },
+          {
+            "title": "What this tests",
+            "text": "Smooth multidimensional entropy transport at finite amplitude. The uniform magnetic field does not exercise Alfvén waves, reconnection or shock capture. These still need separate tests."
+          },
+          {
+            "title": "Convergence and records",
+            "image": "../scripts/out/entropy_wave/convergence.png",
+            "links": [
+              [
+                "Every saved norm · CSV",
+                "../scripts/out/entropy_wave/errors.csv"
+              ],
+              [
+                "Validation",
+                "../scripts/out/entropy_wave/validation.json"
+              ],
+              [
+                "Run metadata",
+                "../scripts/out/entropy_wave/metadata.toml"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gpu-suite",
+    "page": "gpu-suite.html",
+    "kind": "gpu",
+    "number": "06",
+    "title": "GPU test suite",
+    "nav": "GPU suite",
+    "status": "Awaiting Sherlock runs",
+    "description": "Twenty tests run with the same GLM and CT GPU kernels: exact waves, the FLASH MHD problems adapted to a periodic box, blasts and turbulence. Pick a test and a grid to compare the two methods and the reference.",
+    "chips": [
+      "GPU · CUDA.jl",
+      "FLASH §35.2 problems",
+      "32³ – 128³",
+      "5 timing repeats"
+    ],
+    "document": "../sherlock_mhd/README.md"
+  },
+  {
+    "id": "sweep-plan",
+    "page": "sweep-plan.html",
+    "kind": "sweep",
+    "number": "07",
+    "title": "Comprehensive sweep",
+    "nav": "Sweep",
+    "status": "Complete",
+    "document": "../sherlock_sweep/SWEEP_RUN.md",
+    "description": "Every test at every grid with every code.",
+    "chips": []
+  },
+  {
+    "id": "paper-figures",
+    "page": "paper-figures.html",
+    "kind": "papers",
+    "number": "08",
+    "title": "Paper figures",
+    "nav": "Papers",
+    "status": "43 figures",
+    "document": "../scripts/paper_figures.py",
+    "description": "The figures of the comparison papers, redrawn with every code.",
+    "chips": []
+  },
+  {
+    "id": "turbulence",
+    "page": "turbulence.html",
+    "kind": "turbulence",
+    "number": "09",
+    "title": "Driven turbulence",
+    "nav": "Turbulence",
+    "status": "32 runs",
+    "document": "../sherlock_turb/README.md",
+    "description": "Driven hydrodynamic turbulence in Tom Abel's kernels and RAMSES: the pilot.",
+    "chips": []
+  }
+]

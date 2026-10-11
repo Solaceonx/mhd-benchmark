@@ -1,0 +1,175 @@
+{
+  "families": [
+    "Exact waves",
+    "Shock tubes",
+    "Vortices and sheets",
+    "Reconnection",
+    "Kelvin–Helmholtz",
+    "Field loops",
+    "Blast waves",
+    "Turbulence",
+    "Benchmarks"
+  ],
+  "tests": {
+    "uniform": {
+      "family": "Exact waves",
+      "source": "Preservation gate",
+      "divb": false,
+      "focus": "A constant state must stay constant to round-off. Any drift is an implementation error, not a method difference."
+    },
+    "entropy": {
+      "family": "Exact waves",
+      "source": "Exact solution",
+      "divb": false,
+      "focus": "Density advects diagonally with uniform B. Measures the hydro part only: the magnetic constraint is never tested."
+    },
+    "alfven": {
+      "family": "Exact waves",
+      "source": "Exact solution",
+      "divb": false,
+      "focus": "Circularly polarized Alfvén wave along x. Grid aligned, so ∇·B = 0 trivially for both methods."
+    },
+    "alfven_oblique": {
+      "family": "Exact waves",
+      "source": "Tóth (2000)",
+      "divb": true,
+      "focus": "The same exact wave travelling along (1,2). Multidimensional induction: the first exact test where the two ∇·B treatments can differ."
+    },
+    "brio_wu": {
+      "family": "Shock tubes",
+      "source": "FLASH 35.2.1",
+      "divb": false,
+      "focus": "Coplanar shock tube, γ = 2. Grid aligned: compares wave resolution (compound wave, slow shock), not ∇·B control."
+    },
+    "brio_wu_rotated": {
+      "family": "Shock tubes",
+      "source": "FLASH 35.2.1, rotated",
+      "divb": true,
+      "focus": "Brio–Wu with the shock normal at 45°. The classic stress test: ∇·B errors appear at the discontinuities and corrupt the plateaus."
+    },
+    "orszag_tang": {
+      "family": "Vortices and sheets",
+      "source": "FLASH 35.2.2",
+      "divb": true,
+      "focus": "Interacting shocks form 2D MHD turbulence. Compared against the Athena++ 1024² reference at t = 0.1, 0.25, 0.5."
+    },
+    "orszag_tang_3d": {
+      "family": "Vortices and sheets",
+      "source": "FLASH 35.2.2 (3D)",
+      "divb": true,
+      "focus": "Orszag–Tang with an out-of-plane velocity perturbation (ε = 0.2). No reference: compare morphology and energy exchange."
+    },
+    "rotor": {
+      "family": "Vortices and sheets",
+      "source": "FLASH 35.2.5",
+      "divb": true,
+      "focus": "A dense rotating disk winds up the field and launches torsional Alfvén waves. Look at the rotor shape and magnetic pressure."
+    },
+    "current_sheet": {
+      "family": "Reconnection",
+      "source": "Gardiner & Stone (2005) §5.5; FLASH 35.2.6",
+      "divb": true,
+      "focus": "Two current sheets reconnect by numerical resistivity alone. Island count and magnetic energy loss measure dissipation."
+    },
+    "field_loop": {
+      "family": "Field loops",
+      "source": "FLASH 35.2.7",
+      "divb": true,
+      "focus": "A weak loop advects with vz = √5. Bz grows in proportion to vz·∇·B, so any Bz is a direct ∇·B error signal."
+    },
+    "field_loop_novz": {
+      "family": "Field loops",
+      "source": "Gardiner & Stone (2005)",
+      "divb": true,
+      "focus": "The in-plane loop (vz = 0). Magnetic energy decay and loop symmetry after two crossings."
+    },
+    "field_loop_3d": {
+      "family": "Field loops",
+      "source": "FLASH 35.2.7 (3D)",
+      "divb": true,
+      "focus": "A tilted cylinder of loops advected through a cube. Growth of the field component along the loop axis measures ∇·B errors."
+    },
+    "blast_2d_b0": {
+      "family": "Blast waves",
+      "source": "FLASH 35.2.8 (2D)",
+      "divb": false,
+      "focus": "Unmagnetized control: GLM and CT should agree up to their hydro differences."
+    },
+    "blast_2d_b50": {
+      "family": "Blast waves",
+      "source": "FLASH 35.2.8 (2D)",
+      "divb": true,
+      "focus": "Strongly magnetized cylindrical blast. Watch for negative pressures and the anisotropic shock shape."
+    },
+    "blast_2d_b100": {
+      "family": "Blast waves",
+      "source": "FLASH 35.2.8 (2D)",
+      "divb": true,
+      "focus": "β ≈ 2.5 × 10⁻⁴. Robustness test: count cells that needed the pressure floor."
+    },
+    "blast_3d_b0": {
+      "family": "Blast waves",
+      "source": "FLASH 35.2.8",
+      "divb": false,
+      "focus": "Unmagnetized spherical control."
+    },
+    "blast_3d_b50": {
+      "family": "Blast waves",
+      "source": "FLASH 35.2.8",
+      "divb": true,
+      "focus": "Magnetized spherical blast, Bx = 50/√4π."
+    },
+    "blast_3d_b100": {
+      "family": "Blast waves",
+      "source": "FLASH 35.2.8",
+      "divb": true,
+      "focus": "The FLASH figure case, Bx = 100/√4π. Robustness and anisotropy."
+    },
+    "decay": {
+      "family": "Turbulence",
+      "source": "Supersonic decay",
+      "divb": true,
+      "focus": "Mach 2 decaying MHD turbulence, three seeds. Compare energy decay and spectra; no reference solution."
+    },
+    "kh_uniform": {
+      "family": "Kelvin–Helmholtz",
+      "source": "Tomida et al. (2026) §III.1",
+      "divb": true,
+      "focus": "Double shear layer with a uniform weak field (β = 2×10⁵). Compare vortex growth and magnetic amplification; Tomida et al. found conventional Dedner stretched the vortices.",
+      "defaultField": "vorticity"
+    },
+    "kh_localized": {
+      "family": "Kelvin–Helmholtz",
+      "source": "Tomida et al. (2026) §III.2",
+      "divb": true,
+      "focus": "Field confined to the lower shear layer. Field appearing at the upper layer before the layers mix is non-local ∇·B-error leakage (Tomida et al.: 10⁻⁴–10⁻² for Dedner).",
+      "defaultField": "vorticity"
+    },
+    "kh_localized_dtjump": {
+      "family": "Kelvin–Helmholtz",
+      "source": "Tomida et al. (2026) §III.3",
+      "divb": true,
+      "focus": "The localized-field KH with dt divided by 40 for 100 steps at t = 3.0 (run to 3.2). GLM variants that tie c_h to 1/dt see c_h jump 40-fold, so ψ and ∇·B ripples jump; constant-c_h GLM (same kernel as the production path) and CT should not react.",
+      "defaultField": "vorticity"
+    },
+    "decay_supersonic": {
+      "family": "Turbulence",
+      "source": "after Kritsuk et al. (2011)",
+      "divb": true,
+      "focus": "Mach 9, γ = 1.01, mean field 0.3 along z. Kinetic decay should agree across codes; magnetic energy and spectral bandwidth separate the methods."
+    },
+    "throughput_ot3d": {
+      "family": "Benchmarks",
+      "source": "Throughput",
+      "divb": false,
+      "focus": "Cell-updates per second and memory at 96³–384³, where the GLM production kernel can use its fastest tiles. Not an accuracy test."
+    },
+    "gem": {
+      "family": "Reconnection",
+      "source": "Birn et al. (2001) GEM challenge (MHD version)",
+      "divb": true,
+      "defaultField": "current",
+      "focus": "Double Harris sheet with the GEM perturbation: an X-point forms and flux reconnects through each code's numerical resistivity (no Hall term, no explicit η). Reconnected flux vs Ωᵢt and the current sheet at the X-point separate the methods; the X-point is also where ∇·B cleaning is most stressed."
+    }
+  }
+}

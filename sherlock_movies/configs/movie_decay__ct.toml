@@ -1,0 +1,21 @@
+# Movie run of decay (ct): physics identical to configs/decay.toml in sherlock_mhd; dense outputs for video, not timing.
+# Not a FLASH problem; supersonic decay in the spirit of Kritsuk et al. (2011).
+name = "movie_decay__ct"
+problem = "decay"
+t_end = 0.5
+mach = 2.0
+cfl = 0.25
+max_steps = 200000
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+seeds = [42]
+methods = ["ct"]
+repeats = 1
+frames = 241
+grids = [256]
+slice_output = true
+max_run_seconds = 3600
+slurm_time = "01:30:00"
+external_runs = false
+exact_reference = "none"
+movie_scale = "adaptive"

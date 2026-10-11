@@ -1,0 +1,18 @@
+# Double shear layer with Bx confined to the lower layer (sech^2 band, peak 0.01, width 0.1), after Tomida et al. (2026) sec. III.2. Field at the upper layer measures non-local div(B)-error leakage.
+name = "kh_localized"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 3.0
+slurm_time = "03:00:00"
+frames = 31
+b_peak = 0.01
+b_width = 0.1
+reference_n = 2048
+reference_check_n = 1024
+exact_reference = "none; leakage measured at the field-free upper layer"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

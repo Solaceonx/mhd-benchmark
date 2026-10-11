@@ -1,0 +1,30 @@
+# Movie run of gem (glm): physics identical to configs/gem.toml; 241 outputs at 512^2 (lambda = 10 cells) for video, not timing.
+# GEM magnetic reconnection challenge (Birn et al. 2001, JGR 106, 3715), MHD version: no Hall term and no explicit resistivity, so reconnection proceeds by each code's numerical resistivity. Harris sheet Bx = tanh(z/lambda), lambda = 0.5 d_i, n = sech^2(z/lambda) + 0.2, n0 (Ti+Te) = B0^2/2, perturbation psi0 = 0.1 cos(2 pi x/Lx) cos(pi z/Lz), Lx x Lz = 25.6 x 12.8 d_i, run to Omega_i t = 40. Periodic double sheet (y = 1/4, 3/4) in the unit square: lengths and times / 25.6. Measured: reconnected flux (half the integral of |By| along each sheet).
+name = "movie_gem__glm"
+problem = "gem"
+seeds = [42]
+methods = ["glm"]
+t_end = 1.5625
+frames = 241
+grids = [512]
+repeats = 1
+gem_lx = 25.6
+gem_lambda = 0.5
+gem_psi0 = 0.1
+gem_nbg = 0.2
+display_time_scale = 25.6
+display_time_label = "Omega_i t"
+# 512^2 runs as a z-invariant 512^3 cube (4.8 GB state); per-output diagnostics need the memory and time.
+slurm_mem = "256G"
+slurm_time = "04:00:00"
+max_run_seconds = 14400
+external_runs = false
+cfl = 0.25
+max_steps = 400000
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+# 241 outputs shorten many steps; keep the CFL-step c_h on those (the original c_h ~ 1/dt made GLM fail)
+glm_ch_at_outputs = "cfl"
+reference_n = 2048
+movie_truth = "athenak:reference"
+exact_reference = "none; AthenaK PPM/HLLD/RK3 2048^2 block-averaged to 512^2 is the truth panel"

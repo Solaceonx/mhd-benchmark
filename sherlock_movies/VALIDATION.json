@@ -1,0 +1,119 @@
+{
+  "review_date": "2026-09-25",
+  "platform": "Mac CPU; no NVIDIA device",
+  "julia_version": "1.12.5",
+  "scope": "Mac CPU audit of the updated bundle. Sherlock setup success was reported in user-provided job logs; no GPU simulation has run.",
+  "checks": {
+    "initial_conditions": {
+      "passed": 244,
+      "configs": 25
+    },
+    "analysis_unit_tests": {
+      "passed": 7
+    },
+    "export_format_checks": {
+      "passed": 16
+    },
+    "synthetic_roundtrip": {
+      "runs": 8,
+      "failures": 0,
+      "spectra_parseval_checks": 40
+    },
+    "shell_syntax": "passed",
+    "mocked_submission_routes": 4,
+    "vendor_files_identical_to_local_originals": true,
+    "driver_load": "passed",
+    "cuda_functional": false,
+    "external_pipeline_regressions": 3,
+    "mocked_campaign_submissions": {
+      "gates": 8,
+      "matrix": 145,
+      "total": 153,
+      "resume_without_duplicates": true
+    },
+    "restricted_reference_postprocess_skips_full_384_cubed_state": true,
+    "cost_model": {
+      "central_gpu_hours": 23,
+      "central_cpu_core_hours": 773,
+      "pessimistic_gpu_hours": 43,
+      "pessimistic_cpu_core_hours": 1343,
+      "uncompressed_return_gib": 58.6,
+      "source": "assumed rates; H100 uncalibrated"
+    }
+  },
+  "matrix": {
+    "gpu": {
+      "commands": 25,
+      "tasks": 80
+    },
+    "athenak": {
+      "commands": 48,
+      "tasks": 156
+    },
+    "ramses": {
+      "commands": 46,
+      "tasks": 150
+    },
+    "athenak_reference": {
+      "commands": 13,
+      "tasks": 13
+    },
+    "athenapp_reference": {
+      "commands": 13,
+      "tasks": 13
+    }
+  },
+  "pending": [
+    "H100 GPU smoke and solver compilation",
+    "AthenaK CUDA and RAMSES/Athena++ MPI builds and pilots",
+    "Production benchmarks and high-resolution references"
+  ],
+  "limitations": [
+    "No GPU performance or accuracy results established by these checks",
+    "Synthetic fixtures excluded from transfer archive",
+    "FP32 GLM/CT versus FP64 AthenaK precision difference remains",
+    "H100 cost rates remain assumptions until measured",
+    "External CPU validation described in PROJECT_SUMMARY.md was not rerun in this review"
+  ],
+  "user_reported_sherlock_setup": {
+    "job_id": "45188121",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "initial_condition_checks_passed": 244
+  },
+  "rerun_2026_09_28": {
+    "purpose": "Sherlock GPU-only rerun of current_sheet, kh_uniform, kh_localized, kh_localized_dtjump with the corrected setups",
+    "science_files_identical_to": "marlowe_mhd (src/problems.jl, src/run_suite.jl, codes/common/abel_problems.hpp, codes/external.py, four configs; kh_localized_dtjump adds slurm_time 02:00:00)",
+    "separate_paths": {
+      "codes": "$SCRATCH/mhd-codes-rerun",
+      "results": "$SCRATCH/mhd-results-rerun",
+      "job_prefix": "rerun-"
+    },
+    "mac_checks": {
+      "check_initial_conditions.jl": "45/45 passed",
+      "check_shared_ic.jl": "8/8 passed, worst C++/Julia difference 4.2e-8",
+      "submit_campaign.py --dry-run --gpu-only": "12 matrix commands behind 4 gates"
+    },
+    "estimate": "4 GPU-h [2-8] plus gates (tools/estimate_cost.jl)",
+    "resume_fix": "On --resume, finished gates are dropped from every dependency list, not only the matrix: the first submission stopped after gate:smoke on QOSMaxSubmitJobPerUserLimit, and a smoke job that finishes and ages out of slurmctld before the other gates are submitted would give \"Job dependency problem\". Mock-tested with smoke completed and pending.",
+    "owners_partition": "GPU jobs use --partition=gpu,owners --requeue (submit_campaign.py; AthenaK partition from MHD_GPU_PARTITION in codes/plan.py). jobs/common.sh writes requeued attempts under $MHD_RESULTS/restartN; sourced at run time, so it also covers jobs queued before the change once their partition and Requeue flag are updated with scontrol."
+  },
+  "movies_v2_2026_09_29": {
+    "purpose": "dense-output video runs; not timed, not in the accuracy comparison",
+    "configs": 24,
+    "layout": "2D: GLM, CT at 384^2 + AthenaK PPM/HLLD/RK3 1536^2 restricted to 384^2; 3D: GLM, CT, AthenaK at 256^3 saving the z midplane; 241 outputs; one job per method",
+    "output_only_code_change": "slice_output in src/run_suite.jl (write_snapshot plane) and codes/external.py (write_state plane); postprocess_external.jl skips midplane-only groups",
+    "mac_checks": {
+      "check_initial_conditions.jl": "235/235 passed",
+      "check_shared_ic.jl": "48/48 passed, worst C++/Julia difference 7.3e-8",
+      "slice writers": "Julia write_snapshot and Python write_state midplane slices match the array midplane; planar default unchanged",
+      "tools/submit_movies.sh": "mock submission: 1 smoke + 24 GPU-driver jobs (afterok smoke) + 12 AthenaK jobs"
+    },
+    "first_submission": {
+      "completed": "smoke, 11 of 12 AthenaK truth runs, 5 3D CT and 2 3D GLM runs",
+      "out_of_memory": "all 14 2D GPU-driver jobs (16 GB); now slurm_mem = 128G",
+      "failed": "GLM decay, decay_supersonic, orszag_tang_3d: Nonphysical/nonfinite state; c_h inflated on output-shortened steps; now glm_ch_at_outputs = cfl",
+      "athenak_kh_localized_reference": "ran to t=3 but output t=1.2375 missing; renderer holds the previous output for <=2% of frames"
+    }
+  }
+}

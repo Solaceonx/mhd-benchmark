@@ -1,0 +1,23 @@
+# Movie run of blast_3d_b50 (ct): physics identical to configs/blast_3d_b50.toml in sherlock_mhd; dense outputs for video, not timing.
+# FLASH 35.2.8 blast, 3D, Bx=50/sqrt(4pi), p=1000 inside r=0.1, 0.1 outside. Periodic: images interact only near t=0.01.
+name = "movie_blast_3d_b50__ct"
+problem = "blast"
+t_end = 0.01
+gamma = "7/5"
+dim = 3
+bx = 50.0
+pressure_policy = "floor"
+cfl = 0.25
+max_steps = 200000
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+seeds = [42]
+methods = ["ct"]
+repeats = 1
+frames = 241
+grids = [256]
+slice_output = true
+max_run_seconds = 3600
+slurm_time = "01:30:00"
+external_runs = false
+exact_reference = "none"

@@ -1,0 +1,24 @@
+# Throughput benchmark: 3D Orszag-Tang for a short time including grids divisible by 6, where the GLM
+# production kernel can use its fastest TB=6 tiles. Measures cell-updates per second and memory,
+# not accuracy. GPU codes only.
+# Sweep config written by tools/make_sweep_configs.py from sherlock_mhd/configs/throughput_ot3d.toml.
+name = "throughput_ot3d"
+problem = "orszag_tang_3d"
+seeds = [42]
+t_end = 0.05
+frames = 2
+epsilon = 0.2
+exact_reference = "none; throughput benchmark"
+cfl = 0.25
+max_run_seconds = 172800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+grids = [64, 96, 128, 192, 256, 384, 512]
+methods = ["glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "ct"]
+split_methods = true
+repeats = 5
+checkpoint_seconds = 900
+max_steps_per_n = 15
+restart_every = 1
+snapshot_frames = []
+cpu_codes = false

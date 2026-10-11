@@ -1,0 +1,70 @@
+{
+ "time": "2026-10-01T16:45Z",
+ "about": "Output of `tools/sweep.py runs` and `status` on Sherlock, pasted 2026-10-01 (the coordinator's last step in it is 16:41:23 UTC). What follows is known from the same session, mostly from the `audit` of 17:24 UTC, and is not in that text; each item was already true at 16:45.",
+ "redo": {
+  "athenapp_best": [
+   "brio_wu_rotated"
+  ],
+  "athenapp_matched": [
+   "brio_wu_rotated",
+   "alfven_oblique"
+  ]
+ },
+ "redo_reason": "Athena++ prints the time it reached with 6 digits; before patch 5 the converter rejected those outputs. The failure pattern (60% and 20% of the run) is exactly what that gives. To be rerun with the fixed driver.",
+ "open": [
+  [
+   "athenak_reference",
+   4096,
+   "kh_uniform",
+   "two jobs collided in it; removed and queued again at 16:41 UTC"
+  ],
+  [
+   "ramses_best",
+   128,
+   "field_loop_3d",
+   "failed before the oct-pool fix of patch 5; removed and queued again at 16:41 UTC"
+  ],
+  [
+   "ramses_best",
+   128,
+   "blast_3d_b50",
+   "failed before the oct-pool fix of patch 5; removed and queued again at 16:41 UTC"
+  ],
+  [
+   "athenak_matched",
+   512,
+   "current_sheet",
+   "AthenaK finished, but the job was interrupted while converting its output and every retry failed; no job is working on it"
+  ],
+  [
+   "athenak_matched",
+   512,
+   "brio_wu",
+   "AthenaK finished, but the job was interrupted while converting its output and every retry failed; no job is working on it"
+  ]
+ ],
+ "open_reason": "From the retries of that day and the audit of 17:24 UTC.",
+ "timing": [
+  "decay, RAMSES best, 128³, seed 42: the data repeat is complete; a timing repeat failed (the step was force-terminated). Deleted and queued again at 17:23 UTC",
+  "decay, Athena++ best, 256³, seed 42: the data repeat is complete; a timing repeat failed where two jobs ran in its directory. Deleted and queued again at 17:23 UTC"
+ ],
+ "remarks": [
+  "The summary counts 18 runs as running and 26 as not started. 30 CPU jobs and 1 GPU job were in the queue; 9 CPU jobs were not yet submitted.",
+  "Audit, 17:24 UTC: Slurm requeued 104 jobs after preemption. In 6 units two jobs ran at the same time (the coordinator bug fixed in patch 7); of their runs, the kh_uniform reference failed, the CT run of kh_localized at 512³ is damaged, and a timing repeat of decay (Athena++ best, 256³) failed. Every other finished run passed the check of its records and files.",
+  "At 17:23 UTC the nine Athena++ runs marked “to rerun” and the two runs with a failed timing repeat were deleted and queued again."
+ ],
+ "override": [
+  [
+   "ct",
+   512,
+   "kh_localized",
+   "redo",
+   "two jobs ran in its directory; its record lists 28 of 31 outputs"
+  ]
+ ],
+ "stuck": [
+  "blast_3d_b0, RAMSES matched, 512³: its job stopped while writing the initial data",
+  "blast_3d_b100, RAMSES matched, 256³: its job stopped while writing the initial data",
+  "current_sheet and brio_wu, AthenaK matched, 512³: converted output is missing (see above)"
+ ]
+}

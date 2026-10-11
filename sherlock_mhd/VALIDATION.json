@@ -1,0 +1,85 @@
+{
+  "review_date": "2026-09-25",
+  "platform": "Mac CPU; no NVIDIA device",
+  "julia_version": "1.12.5",
+  "scope": "Mac CPU audit of the updated bundle. Sherlock setup success was reported in user-provided job logs; no GPU simulation has run.",
+  "checks": {
+    "initial_conditions": {
+      "passed": 244,
+      "configs": 25
+    },
+    "analysis_unit_tests": {
+      "passed": 7
+    },
+    "export_format_checks": {
+      "passed": 16
+    },
+    "synthetic_roundtrip": {
+      "runs": 8,
+      "failures": 0,
+      "spectra_parseval_checks": 40
+    },
+    "shell_syntax": "passed",
+    "mocked_submission_routes": 4,
+    "vendor_files_identical_to_local_originals": true,
+    "driver_load": "passed",
+    "cuda_functional": false,
+    "external_pipeline_regressions": 3,
+    "mocked_campaign_submissions": {
+      "gates": 8,
+      "matrix": 145,
+      "total": 153,
+      "resume_without_duplicates": true
+    },
+    "restricted_reference_postprocess_skips_full_384_cubed_state": true,
+    "cost_model": {
+      "central_gpu_hours": 23,
+      "central_cpu_core_hours": 773,
+      "pessimistic_gpu_hours": 43,
+      "pessimistic_cpu_core_hours": 1343,
+      "uncompressed_return_gib": 58.6,
+      "source": "assumed rates; H100 uncalibrated"
+    }
+  },
+  "matrix": {
+    "gpu": {
+      "commands": 25,
+      "tasks": 80
+    },
+    "athenak": {
+      "commands": 48,
+      "tasks": 156
+    },
+    "ramses": {
+      "commands": 46,
+      "tasks": 150
+    },
+    "athenak_reference": {
+      "commands": 13,
+      "tasks": 13
+    },
+    "athenapp_reference": {
+      "commands": 13,
+      "tasks": 13
+    }
+  },
+  "pending": [
+    "H100 GPU smoke and solver compilation",
+    "AthenaK CUDA and RAMSES/Athena++ MPI builds and pilots",
+    "Production benchmarks and high-resolution references"
+  ],
+  "limitations": [
+    "No GPU performance or accuracy results established by these checks",
+    "Synthetic fixtures excluded from transfer archive",
+    "FP32 GLM/CT versus FP64 AthenaK precision difference remains",
+    "H100 cost rates remain assumptions until measured",
+    "External CPU validation described in PROJECT_SUMMARY.md was not rerun in this review"
+  ],
+  "user_reported_sherlock_setup": {
+    "job_id": "45188121",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "initial_condition_checks_passed": 244
+  },
+  "owners_partition_2026_09_28": "GPU jobs use --partition=gpu,owners --requeue (submit_campaign.py; AthenaK partition from MHD_GPU_PARTITION in codes/plan.py). jobs/common.sh writes requeued attempts under $MHD_RESULTS/restartN; sourced at run time, so it also covers jobs queued before the change once their partition and Requeue flag are updated with scontrol. Job-control change only; no physics file changed."
+}

@@ -1,0 +1,15 @@
+# FLASH 35.2.2 (Athena normalization, same dynamics).
+name = "orszag_tang"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 0.5
+frames = 21
+reference_n = 2048
+reference_check_n = 1024
+exact_reference = "Athena++ 1024^2 reference at t=0,.1,.25,.5"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

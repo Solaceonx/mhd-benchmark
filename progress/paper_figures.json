@@ -1,0 +1,1850 @@
+{
+ "status_time": "2026-10-06T05:22:33Z",
+ "figures": [
+  {
+   "id": "tomida-1-gpu",
+   "file": "media/papers/tomida-1-gpu.png",
+   "missing": [],
+   "paper": "tomida",
+   "paper_fig": "Fig. 1",
+   "kind": "reproduced",
+   "test": "kh_uniform",
+   "title": "Kelvin\u2013Helmholtz, uniform field: field strength and cleaning variable at t = 3, GLM kernels and CT prototype",
+   "caption": "Field strength |B| (logarithmic colour; arrows: field direction) at t = 3 on 128\u00b2 and 256\u00b2 cells, the paper's h = 1/128 and 1/256, with the paper's colour range. Below each: the divergence-cleaning variable \u03c8 of the GLM kernels, also in the paper's range (CT has none).",
+   "differs": "Our box is the periodic unit square with two shear layers (y = 1/4 and 3/4) instead of one layer with outflow boundaries, so two vortices appear, half a box apart in x; CFL 0.25 instead of 0.4."
+  },
+  {
+   "id": "tomida-1-other",
+   "file": "media/papers/tomida-1-other.png",
+   "missing": [],
+   "paper": "tomida",
+   "paper_fig": "Fig. 1",
+   "kind": "reproduced",
+   "test": "kh_uniform",
+   "title": "Kelvin\u2013Helmholtz, uniform field: field strength at t = 3, other codes",
+   "caption": "Field strength |B| (logarithmic colour; arrows: field direction) at t = 3 on 128\u00b2 and 256\u00b2 cells, the paper's h = 1/128 and 1/256, with the paper's colour range. The two right columns are the references (AthenaK 4096\u00b2, Athena++ 2048\u00b2) averaged to the same cells.",
+   "differs": "Our box is the periodic unit square with two shear layers (y = 1/4 and 3/4) instead of one layer with outflow boundaries, so two vortices appear, half a box apart in x; CFL 0.25 instead of 0.4."
+  },
+  {
+   "id": "tomida-2",
+   "file": "media/papers/tomida-2.png",
+   "missing": [],
+   "paper": "tomida",
+   "paper_fig": "Fig. 2",
+   "kind": "reproduced",
+   "test": "kh_uniform",
+   "title": "Kelvin\u2013Helmholtz, uniform field: field strength across the lower layer at t = 3",
+   "caption": "|B| along y at x = 1/2, through the centre of the lower vortex: one panel per method, one line per grid (light to dark).",
+   "differs": "The paper cuts its single layer at x = 0; we cut the lower of our two layers at its vortex centre and add 512\u00b2."
+  },
+  {
+   "id": "tomida-4-gpu",
+   "file": "media/papers/tomida-4-gpu.png",
+   "missing": [],
+   "paper": "tomida",
+   "paper_fig": "Fig. 4",
+   "kind": "reproduced",
+   "test": "kh_localized",
+   "title": "Kelvin\u2013Helmholtz, field confined to the lower layer: field strength and cleaning variable at t = 3, GLM kernels and CT prototype",
+   "caption": "Field strength |B| (logarithmic colour; arrows: field direction) at t = 3 on 128\u00b2 and 256\u00b2 cells, the paper's h = 1/128 and 1/256, with the paper's colour range. Below each: the cleaning variable \u03c8 of the GLM kernels within \u00b12e-04, ten times the paper's range, which would saturate every panel here. The upper vortex (centred at the left and right edges, y = 3/4) starts without field: it stays dark in the codes of the next figure and fills with field in the GLM kernels.",
+   "differs": "Our box is the periodic unit square with two shear layers (y = 1/4 and 3/4) instead of one layer with outflow boundaries, so two vortices appear, half a box apart in x; CFL 0.25 instead of 0.4. The confined field is a sech\u00b2 band with the full width at half maximum of the paper's Gaussian; it leaves a 2\u00d710\u207b\u2076 tail at the upper layer, where the paper's field is zero."
+  },
+  {
+   "id": "tomida-4-other",
+   "file": "media/papers/tomida-4-other.png",
+   "missing": [],
+   "paper": "tomida",
+   "paper_fig": "Fig. 4",
+   "kind": "reproduced",
+   "test": "kh_localized",
+   "title": "Kelvin\u2013Helmholtz, field confined to the lower layer: field strength at t = 3, other codes",
+   "caption": "Field strength |B| (logarithmic colour; arrows: field direction) at t = 3 on 128\u00b2 and 256\u00b2 cells, the paper's h = 1/128 and 1/256, with the paper's colour range. The two right columns are the references (AthenaK 4096\u00b2, Athena++ 2048\u00b2) averaged to the same cells.",
+   "differs": "Our box is the periodic unit square with two shear layers (y = 1/4 and 3/4) instead of one layer with outflow boundaries, so two vortices appear, half a box apart in x; CFL 0.25 instead of 0.4. The confined field is a sech\u00b2 band with the full width at half maximum of the paper's Gaussian; it leaves a 2\u00d710\u207b\u2076 tail at the upper layer, where the paper's field is zero."
+  },
+  {
+   "id": "tomida-5",
+   "file": "media/papers/tomida-5.png",
+   "missing": [
+    "GLM PPM at N = 512: solver stopped at t = 2.7"
+   ],
+   "paper": "tomida",
+   "paper_fig": "Fig. 5",
+   "kind": "reproduced",
+   "test": "kh_localized",
+   "title": "Kelvin\u2013Helmholtz, confined field: field strength along a cut through the field-free vortex at t = 3",
+   "caption": "|B| along y at x = 0 on a logarithmic axis: the cut crosses the magnetized layer (y = 1/4) and the centre of the upper vortex (y = 3/4), which starts with only the 2\u00d710\u207b\u2076 tail of the field. Field at y \u2248 3/4 above the reference line has leaked there. One panel per method, one line per grid (light to dark).",
+   "differs": "The paper's field-free region is everything outside its single layer; ours is the inside of the second vortex, because by t = 3 the flow has carried field from the magnetized layer to the rest of the periodic box. The confined field is a sech\u00b2 band with the full width at half maximum of the paper's Gaussian; it leaves a 2\u00d710\u207b\u2076 tail at the upper layer, where the paper's field is zero."
+  },
+  {
+   "id": "tomida-5-core",
+   "file": "media/papers/tomida-5-core.png",
+   "missing": [
+    "GLM PPM at N = 512: solver stopped at t = 2.7"
+   ],
+   "paper": "tomida",
+   "paper_fig": "Fig. 5",
+   "kind": "extension",
+   "test": "kh_localized",
+   "title": "Kelvin\u2013Helmholtz, confined field: field inside the field-free vortex against resolution",
+   "caption": "Median |B| at t = 3 in a disc of radius 0.06 around the centre of the upper vortex, for each grid. Grey: the 4096\u00b2 reference averaged to the same cells; dotted: the field that was there at the start. A method on the grey line keeps the region as clean as the reference; one above it has put field there.",
+   "differs": "Not a figure of the paper: its leakage (Fig. 5) reduced to one number per run, so that all grids and methods fit on one axis.",
+   "finding": "At 128\u00b2, the six AthenaK, RAMSES and Athena++ set-ups have 0.9 to 1.8 times the reference's field there; the GLM kernels 11 to 110 times; the CT prototype 389 times. At 512\u00b2, the six AthenaK, RAMSES and Athena++ set-ups have 1.0 times the reference's field there; the GLM kernels 8 to 13 times; the CT prototype 3.38 times. At t = 1.2, before the vortices have rolled up, the GLM kernels are still within a factor 1.3 of the reference (256\u00b2).",
+   "table": {
+    "columns": [
+     "Method",
+     "64\u00b2",
+     "128\u00b2",
+     "256\u00b2",
+     "512\u00b2",
+     "\u00f7 reference, 128\u00b2",
+     "\u00f7 reference, 256\u00b2",
+     "\u00f7 reference, 512\u00b2",
+     "\u00f7 reference at t = 1.2, 256\u00b2"
+    ],
+    "keys": [
+     "method",
+     "b64",
+     "b128",
+     "b256",
+     "b512",
+     "r128",
+     "r256",
+     "r512",
+     "e256"
+    ],
+    "rows": [
+     {
+      "method": "CT prototype",
+      "b64": 0.0006781714666358421,
+      "r64": 1596.2849871024514,
+      "b128": 0.0001595547338245889,
+      "r128": 389.20017269662,
+      "b256": 9.680891214654964e-06,
+      "r256": 23.498284541496023,
+      "b512": 1.401212758384866e-06,
+      "r512": 3.3755440960761827,
+      "e256": 5.162665248752256,
+      "key": "ct"
+     },
+     {
+      "method": "GLM tiled LLF (original path)",
+      "b64": 0.00010685422137606885,
+      "r64": 251.51425234280967,
+      "b128": 4.314577664709232e-05,
+      "r128": 105.2450361055365,
+      "b256": 8.792265966279089e-06,
+      "r256": 21.34133757513781,
+      "b512": 5.17655813838881e-06,
+      "r512": 12.470411903881642,
+      "e256": 0.8825592840093118,
+      "key": "glm"
+     },
+     {
+      "method": "GLM f16/HLL (production)",
+      "b64": 0.00010746172424769126,
+      "r64": 252.94419707109947,
+      "b128": 4.5287270811825624e-05,
+      "r128": 110.46876014533406,
+      "b256": 1.0968864082079721e-05,
+      "r256": 26.62456209687832,
+      "b512": 4.989309350665416e-06,
+      "r512": 12.01932655933647,
+      "e256": 1.3333626839848711,
+      "key": "glm_hll16"
+     },
+     {
+      "method": "GLM HLLD",
+      "b64": 1.253220790504707e-05,
+      "r64": 29.49840315947025,
+      "b128": 7.931407991182026e-06,
+      "r128": 19.346999527378955,
+      "b256": 4.1666114239761094e-06,
+      "r256": 10.113554490337085,
+      "b512": 3.2237990043428164e-06,
+      "r512": 7.766183708310718,
+      "e256": 0.9326753692645475,
+      "key": "glm_hlld"
+     },
+     {
+      "method": "GLM PPM",
+      "b64": 4.482230483389005e-05,
+      "r64": 105.50307085108918,
+      "b128": 4.30511265942506e-06,
+      "r128": 10.501415723388709,
+      "b256": 4.600402527440511e-06,
+      "r256": 11.166489241359319,
+      "b512": null,
+      "r512": null,
+      "e256": 1.0533463727528083,
+      "key": "glm_ppm"
+     },
+     {
+      "method": "GLM constant c\u2095",
+      "b64": 0.00011208677811087479,
+      "r64": 263.83068287824193,
+      "b128": 4.481663830554592e-05,
+      "r128": 109.32075125628361,
+      "b256": 1.1294226159834608e-05,
+      "r256": 27.414308672123685,
+      "b512": 5.351089261232327e-06,
+      "r512": 12.890860188962245,
+      "e256": 1.3304458761061015,
+      "key": "glm_constch"
+     },
+     {
+      "method": "AthenaK PLM/HLLE/RK2",
+      "b64": 2.084341348481319e-07,
+      "r64": 0.4906137999409841,
+      "b128": 4.704779989551098e-07,
+      "r128": 1.1476320009696255,
+      "b256": 4.5833704390584925e-07,
+      "r256": 1.1125147504295823,
+      "b512": 4.172506518423872e-07,
+      "r512": 1.0051635385007363,
+      "e256": 1.0032797346582394,
+      "key": "athenak_matched"
+     },
+     {
+      "method": "AthenaK PPM/HLLD/RK3",
+      "b64": 4.3734196953518085e-07,
+      "r64": 1.029418745176576,
+      "b128": 3.8405309461944377e-07,
+      "r128": 0.9368166469751182,
+      "b256": 4.2302865961395796e-07,
+      "r256": 1.0268112297108112,
+      "b512": 4.164785637137139e-07,
+      "r512": 1.0033035657672607,
+      "e256": 0.9947013379286789,
+      "key": "athenak_best"
+     },
+     {
+      "method": "RAMSES HLL",
+      "b64": 4.452726309077196e-07,
+      "r64": 1.0480859942567777,
+      "b128": 7.324304606099796e-07,
+      "r128": 1.7866098668752766,
+      "b256": 5.257235460042972e-07,
+      "r256": 1.2760810136439018,
+      "b512": 4.2326899868855146e-07,
+      "r512": 1.0196618329554092,
+      "e256": 1.0204260322372751,
+      "key": "ramses_matched"
+     },
+     {
+      "method": "RAMSES HLLD",
+      "b64": 5.755607703373067e-07,
+      "r64": 1.354759175304423,
+      "b128": 4.618808145054613e-07,
+      "r128": 1.126660979977002,
+      "b256": 4.031026659304043e-07,
+      "r256": 0.9784451589673043,
+      "b512": 4.136756474631497e-07,
+      "r512": 0.996551295389496,
+      "e256": 0.9981566851840467,
+      "key": "ramses_best"
+     },
+     {
+      "method": "Athena++ PLM/HLLE/VL2",
+      "b64": 2.3775635479864856e-07,
+      "r64": 0.5596326569679777,
+      "b128": 4.82306399890316e-07,
+      "r128": 1.1764848941201866,
+      "b256": 4.6044456699575484e-07,
+      "r256": 1.1176303101591871,
+      "b512": 4.18693876795594e-07,
+      "r512": 1.0086402906505827,
+      "e256": 1.003768926741694,
+      "key": "athenapp_matched"
+     },
+     {
+      "method": "Athena++ PPM/HLLD/RK3",
+      "b64": 3.81619008351998e-07,
+      "r64": 0.8982576292203797,
+      "b128": 4.0725051385153493e-07,
+      "r128": 0.9934018660709769,
+      "b256": 4.092189238725859e-07,
+      "r256": 0.9932910617119814,
+      "b512": 4.1471523786353186e-07,
+      "r512": 0.9990556854026105,
+      "e256": 1.0018625488961013,
+      "key": "athenapp_best"
+     }
+    ]
+   }
+  },
+  {
+   "id": "tomida-6",
+   "file": "media/papers/tomida-6.png",
+   "missing": [],
+   "paper": "tomida",
+   "paper_fig": "Figs. 6 and 8",
+   "kind": "reproduced",
+   "test": "kh_localized_dtjump",
+   "title": "Kelvin\u2013Helmholtz with a sudden timestep change: field strength and cleaning variable, N = 128",
+   "caption": "At t = 3 the timestep is cut to 1/40 for 100 steps, then restored. Left: |B| just before the change and at the next two outputs; right: the cleaning variable \u03c8 at the same times. Kernels whose cleaning speed follows 1/\u0394t (LLF, f16/HLL, HLLD, PPM) are the paper's \"v\" models; constant c_h is its D1c; CT is its CT.",
+   "differs": "Our box is the periodic unit square with two shear layers (y = 1/4 and 3/4) instead of one layer with outflow boundaries, so two vortices appear, half a box apart in x; CFL 0.25 instead of 0.4. Our outputs are 0.1 apart, so the paper's snapshots 10\u207b\u2074 to 4\u00d710\u207b\u00b2 after the change are not available as images; the next figure resolves those steps."
+  },
+  {
+   "id": "tomida-7",
+   "file": "media/papers/tomida-7.png",
+   "missing": [],
+   "paper": "tomida",
+   "paper_fig": "Fig. 7",
+   "kind": "reproduced",
+   "test": "kh_localized_dtjump",
+   "title": "Sudden timestep change: the cleaning variable against time, and the field it leaves behind, N = 256",
+   "caption": "Left: largest |\u03c8| at every output and, from the timestep change (dashed line) to 300 steps after it, at every step. Middle: the same around the change. Right: median |B| inside the field-free upper vortex just before the change (open marks) and at the end of the run (filled), with their ratio; grey line: the reference at t = 3.",
+   "differs": "The paper uses a fixed timestep before the change; ours is the CFL step (0.25), cut to 1/40 for 100 steps. \"Before\" is taken from the run without the change, which is the same solution up to t = 3 (bit for bit at 128\u00b2, where both states are kept).",
+   "finding": "With a cleaning speed that follows 1/\u0394t the largest \u03c8 jumps 15- to 59-fold, and at the end of the run the field inside the field-free vortex is 9.19 to 223 times what it was before the change on 512\u00b2 (1.95 to 45 times on 256\u00b2, 1.1 to 27 on 128\u00b2). With the constant speed \u03c8 changes by a factor 1.2 to 1.5 and that field by 0.8 to 1.1; in the CT prototype the field changes by 1.1 to 1.2. The paper reports about a 40-fold jump of \u03c8 in its variable-speed models and no effect with a constant speed or CT.",
+   "table": {
+    "columns": [
+     "Method",
+     "\u03c8 jump, 128\u00b2",
+     "\u03c8 jump, 256\u00b2",
+     "\u03c8 jump, 512\u00b2",
+     "field after \u00f7 before, 128\u00b2",
+     "256\u00b2",
+     "512\u00b2"
+    ],
+    "keys": [
+     "method",
+     "p128",
+     "p256",
+     "p512",
+     "c128",
+     "c256",
+     "c512"
+    ],
+    "rows": [
+     {
+      "method": "CT prototype",
+      "p128": null,
+      "c128": 1.1683109445151456,
+      "p256": null,
+      "c256": 1.0508247021158854,
+      "p512": null,
+      "c512": 1.112609497871761
+     },
+     {
+      "method": "GLM tiled LLF (original path)",
+      "p128": 39.98299921803148,
+      "c128": 1.0979648864088536,
+      "p256": 26.981379529897353,
+      "c256": 1.9537214991943306,
+      "p512": 33.83418489866534,
+      "c512": 9.193977013455184
+     },
+     {
+      "method": "GLM f16/HLL (production)",
+      "p128": 34.77186562118124,
+      "c128": 1.2611086240685512,
+      "p256": 15.387546673100834,
+      "c256": 4.421720399355483,
+      "p512": 32.480193162373375,
+      "c512": 26.774209073404354
+     },
+     {
+      "method": "GLM HLLD",
+      "p128": 58.55755470808527,
+      "c128": 26.940232586432934,
+      "p256": 58.695043675119564,
+      "c256": 44.79794759191571,
+      "p512": 53.4562211276391,
+      "c512": 222.80741437560124
+     },
+     {
+      "method": "GLM PPM",
+      "p128": 50.609144170708255,
+      "c128": 11.651507757441694,
+      "p256": 53.22086699072571,
+      "c256": 23.298348080608697,
+      "p512": null,
+      "c512": null
+     },
+     {
+      "method": "GLM constant c\u2095",
+      "p128": 1.4628925252658793,
+      "c128": 0.7530293078617761,
+      "p256": 1.2075352653664697,
+      "c256": 0.8040421502994854,
+      "p512": 1.4697096611898404,
+      "c512": 1.1167247256798436
+     }
+    ]
+   }
+  },
+  {
+   "id": "kritsuk-1-512",
+   "file": "media/papers/kritsuk-1-512.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 512: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 512: not in the plan",
+    "GLM HLLD at N = 512: solver stopped at t = 0.02",
+    "GLM PPM at N = 512: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 512: solver stopped at t = 0",
+    "GLM f16/HLL at N = 512: solver stopped at t = 0",
+    "RAMSES HLL at N = 512: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 1",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay at 512\u00b3: energies and rms Mach numbers against time",
+   "caption": "Mean specific kinetic energy, mean magnetic energy, sonic and Alfv\u00e9nic rms Mach numbers, with the paper's definitions. \u27e8u\u00b2\u27e9 is the sum of the velocity spectrum over shells up to N/2 (it leaves out the mean flow, about 1 %).",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal."
+  },
+  {
+   "id": "kritsuk-1-256",
+   "file": "media/papers/kritsuk-1-256.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 256: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 256: not in the plan",
+    "GLM HLLD at N = 256: solver stopped at t = 0.02",
+    "GLM PPM at N = 256: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 256: solver stopped at t = 0",
+    "GLM f16/HLL at N = 256: solver stopped at t = 0",
+    "RAMSES HLL at N = 256: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 1",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay at 256\u00b3: energies and rms Mach numbers against time",
+   "caption": "Mean specific kinetic energy, mean magnetic energy, sonic and Alfv\u00e9nic rms Mach numbers, with the paper's definitions. \u27e8u\u00b2\u27e9 is the sum of the velocity spectrum over shells up to N/2 (it leaves out the mean flow, about 1 %).",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal."
+  },
+  {
+   "id": "kritsuk-2-512",
+   "file": "media/papers/kritsuk-2-512.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 512: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 512: not in the plan",
+    "GLM HLLD at N = 512: solver stopped at t = 0.02",
+    "GLM PPM at N = 512: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 512: solver stopped at t = 0",
+    "GLM f16/HLL at N = 512: solver stopped at t = 0",
+    "RAMSES HLL at N = 512: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 2",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay at 512\u00b3: small-scale kinetic and magnetic measures against time",
+   "caption": "The paper's proxies for the dissipation rates: 2\u03a9 + 4/3\u0394 (enstrophy and dilatation) and the mean squared current J\u00b2, in box units.",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal. Computed as (2\u03c0k)\u00b2-weighted sums of the shell spectra up to k = N/2, so modes in the corners of the Fourier cube are left out (a few per cent); the paper does not state its normalisation."
+  },
+  {
+   "id": "kritsuk-2-256",
+   "file": "media/papers/kritsuk-2-256.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 256: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 256: not in the plan",
+    "GLM HLLD at N = 256: solver stopped at t = 0.02",
+    "GLM PPM at N = 256: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 256: solver stopped at t = 0",
+    "GLM f16/HLL at N = 256: solver stopped at t = 0",
+    "RAMSES HLL at N = 256: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 2",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay at 256\u00b3: small-scale kinetic and magnetic measures against time",
+   "caption": "The paper's proxies for the dissipation rates: 2\u03a9 + 4/3\u0394 (enstrophy and dilatation) and the mean squared current J\u00b2, in box units.",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal. Computed as (2\u03c0k)\u00b2-weighted sums of the shell spectra up to k = N/2, so modes in the corners of the Fourier cube are left out (a few per cent); the paper does not state its normalisation."
+  },
+  {
+   "id": "kritsuk-3-512",
+   "file": "media/papers/kritsuk-3-512.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 512: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 512: not in the plan",
+    "GLM HLLD at N = 512: solver stopped at t = 0.02",
+    "GLM PPM at N = 512: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 512: solver stopped at t = 0",
+    "GLM f16/HLL at N = 512: solver stopped at t = 0",
+    "RAMSES HLL at N = 512: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 3",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay at 512\u00b3: velocity and magnetic power spectra",
+   "caption": "Velocity spectra compensated by k^(5/3) (left) and magnetic spectra (right) at t = 0.02, 0.06 and 0.2, the paper's three snapshots.",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal."
+  },
+  {
+   "id": "kritsuk-3-256",
+   "file": "media/papers/kritsuk-3-256.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 256: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 256: not in the plan",
+    "GLM HLLD at N = 256: solver stopped at t = 0.02",
+    "GLM PPM at N = 256: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 256: solver stopped at t = 0",
+    "GLM f16/HLL at N = 256: solver stopped at t = 0",
+    "RAMSES HLL at N = 256: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 3",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay at 256\u00b3: velocity and magnetic power spectra",
+   "caption": "Velocity spectra compensated by k^(5/3) (left) and magnetic spectra (right) at t = 0.02, 0.06 and 0.2, the paper's three snapshots.",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal."
+  },
+  {
+   "id": "kritsuk-4",
+   "file": "media/papers/kritsuk-4.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 256: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 256: not in the plan",
+    "GLM HLLD at N = 256: solver stopped at t = 0.02",
+    "GLM PPM at N = 256: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 256: solver stopped at t = 0",
+    "GLM f16/HLL at N = 256: solver stopped at t = 0",
+    "RAMSES HLL at N = 256: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 4",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay: spectra of the 256\u00b3 runs divided by the 512\u00b3 reference",
+   "caption": "Velocity (left) and magnetic (right) power spectra of each 256\u00b3 run divided by the 512\u00b3 reference's at the same time, at the first output (t = 0.02, the paper's time) and at the end. Dotted lines: the paper's \u00b125 % tolerance; the wavenumber where a curve leaves it, as a fraction of the Nyquist wavenumber, is the effective bandwidth (table below). At t = 0.02 our smooth start has only just formed its first shocks, so t = 0.2 is the fairer time to read.",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal. The paper's reference is its least diffusive code at 1024\u00b3 filtered to 256\u00b3; ours is AthenaK PLM/HLLE at 512\u00b3, unfiltered, which is itself a second-order scheme."
+  },
+  {
+   "id": "kritsuk-5-512",
+   "file": "media/papers/kritsuk-5-512.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 512: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 512: not in the plan",
+    "GLM HLLD at N = 512: solver stopped at t = 0.02",
+    "GLM PPM at N = 512: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 512: solver stopped at t = 0",
+    "GLM f16/HLL at N = 512: solver stopped at t = 0",
+    "RAMSES HLL at N = 512: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 5",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay at 512\u00b3: dilatational over solenoidal velocity power",
+   "caption": "\u03c7(k) at the first and the last output.",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal."
+  },
+  {
+   "id": "kritsuk-5-256",
+   "file": "media/papers/kritsuk-5-256.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 256: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 256: not in the plan",
+    "GLM HLLD at N = 256: solver stopped at t = 0.02",
+    "GLM PPM at N = 256: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 256: solver stopped at t = 0",
+    "GLM f16/HLL at N = 256: solver stopped at t = 0",
+    "RAMSES HLL at N = 256: taken out of the sweep"
+   ],
+   "paper": "kritsuk",
+   "paper_fig": "Fig. 5",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "title": "Mach 9 decay at 256\u00b3: dilatational over solenoidal velocity power",
+   "caption": "\u03c7(k) at the first and the last output.",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal."
+  },
+  {
+   "id": "kritsuk-table-1",
+   "paper": "kritsuk",
+   "paper_fig": "Table 1",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "file": null,
+   "missing": [],
+   "title": "Mach 9 decay: selected numbers against the 512\u00b3 reference (seed 42)",
+   "caption": "E_K, E_M: mean specific kinetic and magnetic energy at t = 0.2 over the reference's, for the 512\u00b3 runs (code against code at one grid) and the 256\u00b3 runs. 2\u03a9 + 4/3\u0394 and J\u00b2: at t = 0.02 over the reference's. Bandwidth: fraction of the Nyquist wavenumber up to which a 256\u00b3 spectrum stays within 25 % of the reference's. \u03c7: dilatational over solenoidal velocity power at t = 0.2, around k = 10 and summed above k = 100. The reference is AthenaK PLM/HLLE at 512\u00b3, so that row's 512\u00b3 entries are 1 by construction.",
+   "differs": "Every code starts from the same smooth random velocity field at rms Mach 9 with a uniform field (\u03b2\u2080 = 22), not from the paper's driven, saturated state, so the field is first amplified here; values are not comparable with the paper's, the kind of measurement is. \u03b3 = 1.01 instead of isothermal. The paper compares 512\u00b3 runs with a 1024\u00b3 reference; we have no grid above 512\u00b3 yet (stage 4).",
+   "table": {
+    "columns": [
+     "Method",
+     "E_K / ref, 512\u00b3",
+     "E_M / ref, 512\u00b3",
+     "E_K / ref, 256\u00b3",
+     "E_M / ref, 256\u00b3",
+     "2\u03a9 + 4/3\u0394 / ref, 256\u00b3, t = 0.02",
+     "J\u00b2 / ref, 256\u00b3, t = 0.02",
+     "u bandwidth, t = 0.02",
+     "u bandwidth, t = 0.2",
+     "B bandwidth, t = 0.02",
+     "B bandwidth, t = 0.2",
+     "\u03c7 at k \u2248 10, 512\u00b3",
+     "\u03c7\u0304 (k > 100), 512\u00b3",
+     ""
+    ],
+    "keys": [
+     "method",
+     "ek512",
+     "em512",
+     "ek",
+     "em",
+     "omega",
+     "j2",
+     "ub1",
+     "ub",
+     "bb1",
+     "bb",
+     "chi10",
+     "chi",
+     "note"
+    ],
+    "rows": [
+     {
+      "method": "CT prototype",
+      "ek512": 0.901301893457597,
+      "em512": 0.766898657671719,
+      "ek": 0.8701773968994466,
+      "em": 0.6068847475438579,
+      "omega": 0.4661490854785675,
+      "j2": 0.2592996054501133,
+      "ub1": 0.1328125,
+      "ub": 0.046875,
+      "bb1": 0.28125,
+      "bb": 0.046875,
+      "chi10": 0.4905843555464459,
+      "chi": 12.729830374938812,
+      "note": ""
+     },
+     {
+      "method": "GLM tiled LLF (original path)",
+      "ek512": 0.9805981422459501,
+      "em512": 0.836396390359326,
+      "ek": 0.9793107489604543,
+      "em": 0.6875702327252389,
+      "omega": 0.4628222580217706,
+      "j2": 0.1938530167564226,
+      "ub1": 0.2265625,
+      "ub": 0.140625,
+      "bb1": 0.3203125,
+      "bb": 0.09375,
+      "chi10": 0.39399178738028456,
+      "chi": 5.2621606700818,
+      "note": ""
+     },
+     {
+      "method": "GLM f16/HLL (production)",
+      "ek512": null,
+      "em512": null,
+      "ek": null,
+      "em": null,
+      "omega": null,
+      "j2": null,
+      "ub1": null,
+      "ub": null,
+      "bb1": null,
+      "bb": null,
+      "chi10": null,
+      "chi": null,
+      "note": "512\u00b3: solver stopped at t = 0; 256\u00b3: solver stopped at t = 0"
+     },
+     {
+      "method": "GLM HLLD",
+      "ek512": null,
+      "em512": null,
+      "ek": null,
+      "em": null,
+      "omega": 0.631322236699478,
+      "j2": 0.47293466724336614,
+      "ub1": 0.546875,
+      "ub": null,
+      "bb1": 0.7265625,
+      "bb": null,
+      "chi10": null,
+      "chi": null,
+      "note": "512\u00b3: solver stopped at t = 0.02; 256\u00b3: solver stopped at t = 0.02"
+     },
+     {
+      "method": "GLM PPM",
+      "ek512": null,
+      "em512": null,
+      "ek": null,
+      "em": null,
+      "omega": null,
+      "j2": null,
+      "ub1": null,
+      "ub": null,
+      "bb1": null,
+      "bb": null,
+      "chi10": null,
+      "chi": null,
+      "note": "512\u00b3: solver stopped at t = 0; 256\u00b3: solver stopped at t = 0"
+     },
+     {
+      "method": "GLM constant c\u2095",
+      "ek512": null,
+      "em512": null,
+      "ek": null,
+      "em": null,
+      "omega": null,
+      "j2": null,
+      "ub1": null,
+      "ub": null,
+      "bb1": null,
+      "bb": null,
+      "chi10": null,
+      "chi": null,
+      "note": "512\u00b3: solver stopped at t = 0; 256\u00b3: solver stopped at t = 0"
+     },
+     {
+      "method": "AthenaK PLM/HLLE/RK2",
+      "ek512": 1.0,
+      "em512": 1.0,
+      "ek": 0.976955567988344,
+      "em": 0.749370837522939,
+      "omega": 0.5995263507724844,
+      "j2": 0.4730748602616092,
+      "ub1": 0.46875,
+      "ub": 0.1640625,
+      "bb1": 0.734375,
+      "bb": 0.1015625,
+      "chi10": 0.3666048492151792,
+      "chi": 1.8910875581432927,
+      "note": ""
+     },
+     {
+      "method": "AthenaK PPM/HLLD/RK3",
+      "ek512": null,
+      "em512": null,
+      "ek": null,
+      "em": null,
+      "omega": null,
+      "j2": null,
+      "ub1": null,
+      "ub": null,
+      "bb1": null,
+      "bb": null,
+      "chi10": null,
+      "chi": null,
+      "note": "512\u00b3: not in the plan; 256\u00b3: not in the plan"
+     },
+     {
+      "method": "RAMSES HLL",
+      "ek512": null,
+      "em512": null,
+      "ek": null,
+      "em": null,
+      "omega": null,
+      "j2": null,
+      "ub1": null,
+      "ub": null,
+      "bb1": null,
+      "bb": null,
+      "chi10": null,
+      "chi": null,
+      "note": "512\u00b3: taken out of the sweep; 256\u00b3: taken out of the sweep"
+     },
+     {
+      "method": "RAMSES HLLD",
+      "ek512": 0.9812826626995321,
+      "em512": 1.1622702073735423,
+      "ek": 0.9827814710440217,
+      "em": 0.8695752774465919,
+      "omega": 0.6281160772428559,
+      "j2": 0.4592269195586731,
+      "ub1": 0.53125,
+      "ub": 0.2734375,
+      "bb1": 0.65625,
+      "bb": 0.2109375,
+      "chi10": 0.3584646772190784,
+      "chi": 0.49952994628380043,
+      "note": ""
+     },
+     {
+      "method": "Athena++ PLM/HLLE/VL2",
+      "ek512": 0.9978389641395177,
+      "em512": 1.0004943117424334,
+      "ek": 0.9729624089915622,
+      "em": 0.7456512689131128,
+      "omega": 0.6268307815719664,
+      "j2": 0.47395539977766,
+      "ub1": 0.53125,
+      "ub": 0.1640625,
+      "bb1": 0.734375,
+      "bb": 0.078125,
+      "chi10": 0.3650025050602506,
+      "chi": 1.8533345412611562,
+      "note": ""
+     },
+     {
+      "method": "Athena++ PPM/HLLD/RK3",
+      "ek512": null,
+      "em512": null,
+      "ek": null,
+      "em": null,
+      "omega": 0.6740206797782065,
+      "j2": 0.5043209706002094,
+      "ub1": 1.0,
+      "ub": null,
+      "bb1": 1.0,
+      "bb": null,
+      "chi10": null,
+      "chi": null,
+      "note": "512\u00b3: state not finite after t = 0.02; 256\u00b3: state not finite after t = 0.02"
+     },
+     {
+      "method": "In the paper: RAMSES",
+      "ek512": 1.069,
+      "em512": 0.87,
+      "ek": null,
+      "em": null,
+      "omega": "1.07 (512\u00b3)",
+      "j2": "1.18 (512\u00b3)",
+      "ub1": 0.24,
+      "ub": null,
+      "bb1": 0.09,
+      "bb": null,
+      "chi10": null,
+      "chi": 0.33,
+      "note": "driven start; reference: PPML at 1024\u00b3"
+     },
+     {
+      "method": "In the paper: its nine codes",
+      "ek512": "1.000 \u2013 1.077",
+      "em512": "0.70 \u2013 0.94",
+      "ek": null,
+      "em": null,
+      "omega": "0.76 \u2013 1.93 (512\u00b3)",
+      "j2": "0.79 \u2013 1.46 (512\u00b3)",
+      "ub1": "0.15 \u2013 0.28",
+      "ub": null,
+      "bb1": "0.07 \u2013 0.20",
+      "bb": null,
+      "chi10": "\u2248 0.33",
+      "chi": "0.27 \u2013 0.86",
+      "note": "driven start; reference: PPML at 1024\u00b3"
+     }
+    ],
+    "reference": true
+   }
+  },
+  {
+   "id": "gem-1",
+   "file": "media/papers/gem-1.png",
+   "missing": [
+    "GLM HLLD at N = 128: solver stopped at t = 0.391",
+    "GLM HLLD at N = 256: solver stopped at t = 0",
+    "GLM HLLD at N = 512: solver stopped at t = 0",
+    "GLM HLLD at N = 64: solver stopped at t = 1.05",
+    "GLM PPM at N = 128: solver stopped at t = 0.586",
+    "GLM PPM at N = 512: solver stopped at t = 0.938",
+    "GLM f16/HLL at N = 512: solver stopped at t = 0.82"
+   ],
+   "paper": "gem",
+   "paper_fig": "Fig. 1",
+   "kind": "analogue",
+   "test": "gem",
+   "finding": "Flux at \u03a9_i t = 40 on 512\u00b2: CT prototype 0.71; the GLM kernels that reach the end 0.40 to 0.41; AthenaK, RAMSES and Athena++ 0.21 to 0.52. The 4096\u00b2 reference stays at 0.20 until \u03a9_i t \u2248 29, rises to 0.62 and ends at 0.50; without reconnection the flux would stay at 0.20.",
+   "title": "GEM reconnection challenge: reconnected flux against time",
+   "caption": "Reconnected flux (half the integral of |B_y| along a current sheet, mean of the two sheets) against time in inverse ion cyclotron times, for each grid. The flux starts at 0.2 B\u2080 d_i, the size of the challenge's initial perturbation.",
+   "differs": "Ideal MHD: no Hall term and no explicit resistivity (the challenge's MHD runs use \u03b7 = 0.005), so reconnection is numerical and should vanish with resolution; the paper's Fig. 1 compares physical models. Periodic double sheet instead of conducting walls. The resistive runs are stage 2 of the sweep."
+  },
+  {
+   "id": "stone05-loop-gpu",
+   "file": "media/papers/stone05-loop-gpu.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Figs. 2, 3, 6",
+   "kind": "reproduced",
+   "test": "field_loop_novz",
+   "title": "Field loop advection: magnetic pressure at t = 0.2 and t = 2, N = 64 (GLM kernels and CT prototype)",
+   "caption": "B_x\u00b2 + B_y\u00b2 in units of the loop's B\u2080\u00b2 (dark 0, light 1) early (the paper's t = 0.19) and after the loop has returned to the centre.",
+   "differs": "Same loop (B\u2080 = 10\u207b\u00b3, R = 0.3, v = (2, 1)) and the same cell size as the paper's 2N \u00d7 N grid on a 2 \u00d7 1 box, on the unit square: four crossings in x and two in y by t = 2."
+  },
+  {
+   "id": "stone05-loop-other",
+   "file": "media/papers/stone05-loop-other.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Figs. 2, 3, 6",
+   "kind": "reproduced",
+   "test": "field_loop_novz",
+   "title": "Field loop advection: magnetic pressure at t = 0.2 and t = 2, N = 64 (other codes)",
+   "caption": "B_x\u00b2 + B_y\u00b2 in units of the loop's B\u2080\u00b2 (dark 0, light 1) early (the paper's t = 0.19) and after the loop has returned to the centre.",
+   "differs": "Same loop (B\u2080 = 10\u207b\u00b3, R = 0.3, v = (2, 1)) and the same cell size as the paper's 2N \u00d7 N grid on a 2 \u00d7 1 box, on the unit square: four crossings in x and two in y by t = 2."
+  },
+  {
+   "id": "stone05-loop-energy",
+   "file": "media/papers/stone05-loop-energy.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 7",
+   "kind": "reproduced",
+   "test": "field_loop_novz",
+   "finding": "Energy left at t = 2 on the paper's grid (N = 64): CT prototype 0.35; GLM kernels 0.82 to 0.90; AthenaK, RAMSES and Athena++ 0.77 to 0.90. The paper's own scheme: 0.92.",
+   "title": "Field loop advection: magnetic energy against time",
+   "caption": "Volume-averaged magnetic energy over its initial value. Dashed grey in the N = 64 panels: the curve the paper fits to its own result at this cell size, 1 \u2212 (t/\u03c4)^\u03b1 with \u03b1 = 0.291, \u03c4 = 1.06\u00d710\u2074 (0.92 left at t = 2). The table gives the same fit for each method.",
+   "differs": "Same loop (B\u2080 = 10\u207b\u00b3, R = 0.3, v = (2, 1)) and the same cell size as the paper's 2N \u00d7 N grid on a 2 \u00d7 1 box, on the unit square: four crossings in x and two in y by t = 2.",
+   "table": {
+    "columns": [
+     "Method",
+     "N",
+     "energy left at t = 2",
+     "\u03b1",
+     "\u03c4"
+    ],
+    "keys": [
+     "method",
+     "n",
+     "final",
+     "alpha",
+     "tau"
+    ],
+    "rows": [
+     {
+      "key": "ct",
+      "method": "CT prototype",
+      "n": 32,
+      "final": 0.18061649128583618,
+      "alpha": 0.5244936897327426,
+      "tau": 2.507160874437198,
+      "ended": false
+     },
+     {
+      "key": "glm",
+      "method": "GLM tiled LLF (original path)",
+      "n": 32,
+      "final": 0.5643328885683591,
+      "alpha": 0.45915872703605454,
+      "tau": 12.517418660885435,
+      "ended": false
+     },
+     {
+      "key": "glm_hll16",
+      "method": "GLM f16/HLL (production)",
+      "n": 32,
+      "final": 0.6426252791872883,
+      "alpha": 0.45796732880723484,
+      "tau": 19.91933812726611,
+      "ended": false
+     },
+     {
+      "key": "glm_hlld",
+      "method": "GLM HLLD",
+      "n": 32,
+      "final": 0.6585482777822671,
+      "alpha": 0.45654069031577554,
+      "tau": 22.22111827499448,
+      "ended": false
+     },
+     {
+      "key": "glm_ppm",
+      "method": "GLM PPM",
+      "n": 32,
+      "final": 0.7749071629382636,
+      "alpha": 0.4722519880596466,
+      "tau": 49.38003309828576,
+      "ended": false
+     },
+     {
+      "key": "glm_constch",
+      "method": "GLM constant c\u2095",
+      "n": 32,
+      "final": 0.6426297859645075,
+      "alpha": 0.4579741856680496,
+      "tau": 19.919004727333842,
+      "ended": false
+     },
+     {
+      "key": "ct",
+      "method": "CT prototype",
+      "n": 64,
+      "final": 0.35175484167382903,
+      "alpha": 0.5841418645751366,
+      "tau": 3.902591201966124,
+      "ended": false
+     },
+     {
+      "key": "glm",
+      "method": "GLM tiled LLF (original path)",
+      "n": 64,
+      "final": 0.815493055583997,
+      "alpha": 0.3395197312154462,
+      "tau": 292.05919578343463,
+      "ended": false
+     },
+     {
+      "key": "glm_hll16",
+      "method": "GLM f16/HLL (production)",
+      "n": 64,
+      "final": 0.8382619939555463,
+      "alpha": 0.35435421403323936,
+      "tau": 344.63140155030896,
+      "ended": false
+     },
+     {
+      "key": "glm_hlld",
+      "method": "GLM HLLD",
+      "n": 64,
+      "final": 0.8430006760013777,
+      "alpha": 0.357675025614838,
+      "tau": 358.3227548126717,
+      "ended": false
+     },
+     {
+      "key": "glm_ppm",
+      "method": "GLM PPM",
+      "n": 64,
+      "final": 0.8957765455718042,
+      "alpha": 0.37287923038924375,
+      "tau": 846.3293106555246,
+      "ended": false
+     },
+     {
+      "key": "glm_constch",
+      "method": "GLM constant c\u2095",
+      "n": 64,
+      "final": 0.8382839935160286,
+      "alpha": 0.3543457575867903,
+      "tau": 344.7743678624666,
+      "ended": false
+     },
+     {
+      "key": "ct",
+      "method": "CT prototype",
+      "n": 128,
+      "final": 0.5357866829982652,
+      "alpha": 0.6122402756572735,
+      "tau": 6.811138657462933,
+      "ended": false
+     },
+     {
+      "key": "glm",
+      "method": "GLM tiled LLF (original path)",
+      "n": 128,
+      "final": 0.9015774542820268,
+      "alpha": 0.32328366920481005,
+      "tau": 2606.008629403774,
+      "ended": false
+     },
+     {
+      "key": "glm_hll16",
+      "method": "GLM f16/HLL (production)",
+      "n": 128,
+      "final": 0.911521530512595,
+      "alpha": 0.34227521206692596,
+      "tau": 2401.0522780226543,
+      "ended": false
+     },
+     {
+      "key": "glm_hlld",
+      "method": "GLM HLLD",
+      "n": 128,
+      "final": 0.913516525781837,
+      "alpha": 0.34825621005895274,
+      "tau": 2276.2038783938897,
+      "ended": false
+     },
+     {
+      "key": "glm_ppm",
+      "method": "GLM PPM",
+      "n": 128,
+      "final": 0.9448768971073207,
+      "alpha": 0.35057821193080746,
+      "tau": 7663.064699561927,
+      "ended": false
+     },
+     {
+      "key": "glm_constch",
+      "method": "GLM constant c\u2095",
+      "n": 128,
+      "final": 0.91152873097761,
+      "alpha": 0.34224101566864046,
+      "tau": 2403.6586294019935,
+      "ended": false
+     },
+     {
+      "key": "athenak_matched",
+      "method": "AthenaK PLM/HLLE/RK2",
+      "n": 32,
+      "final": 0.46420086365761587,
+      "alpha": 0.5109390731981538,
+      "tau": 6.815074251173195,
+      "ended": false
+     },
+     {
+      "key": "athenak_best",
+      "method": "AthenaK PPM/HLLD/RK3",
+      "n": 32,
+      "final": 0.783258917631556,
+      "alpha": 0.37921266308756885,
+      "tau": 119.03674932319382,
+      "ended": false
+     },
+     {
+      "key": "ramses_matched",
+      "method": "RAMSES HLL",
+      "n": 32,
+      "final": 0.6055385937108754,
+      "alpha": 0.49036583186404853,
+      "tau": 14.126473782102831,
+      "ended": false
+     },
+     {
+      "key": "ramses_best",
+      "method": "RAMSES HLLD",
+      "n": 32,
+      "final": 0.6320587616905985,
+      "alpha": 0.48289828411175845,
+      "tau": 16.984433985735112,
+      "ended": false
+     },
+     {
+      "key": "athenapp_matched",
+      "method": "Athena++ PLM/HLLE/VL2",
+      "n": 32,
+      "final": 0.4723819114747797,
+      "alpha": 0.5118696965741214,
+      "tau": 7.025413036228205,
+      "ended": false
+     },
+     {
+      "key": "athenapp_best",
+      "method": "Athena++ PPM/HLLD/RK3",
+      "n": 32,
+      "final": 0.8130705629584547,
+      "alpha": 0.34038100941099236,
+      "tau": 280.59298919104293,
+      "ended": false
+     },
+     {
+      "key": "athenak_matched",
+      "method": "AthenaK PLM/HLLE/RK2",
+      "n": 64,
+      "final": 0.7734324922534307,
+      "alpha": 0.3805188146249372,
+      "tau": 102.25606459049219,
+      "ended": false
+     },
+     {
+      "key": "athenak_best",
+      "method": "AthenaK PPM/HLLD/RK3",
+      "n": 64,
+      "final": 0.8884373073622163,
+      "alpha": 0.32777876336299,
+      "tau": 1633.7873353447928,
+      "ended": false
+     },
+     {
+      "key": "ramses_matched",
+      "method": "RAMSES HLL",
+      "n": 64,
+      "final": 0.8390633111137624,
+      "alpha": 0.3449846492707491,
+      "tau": 417.1711732680653,
+      "ended": false
+     },
+     {
+      "key": "ramses_best",
+      "method": "RAMSES HLLD",
+      "n": 64,
+      "final": 0.8538151609673507,
+      "alpha": 0.329477786594279,
+      "tau": 713.6542021274113,
+      "ended": false
+     },
+     {
+      "key": "athenapp_matched",
+      "method": "Athena++ PLM/HLLE/VL2",
+      "n": 64,
+      "final": 0.7815894790552195,
+      "alpha": 0.37293396212651286,
+      "tau": 120.72775606316792,
+      "ended": false
+     },
+     {
+      "key": "athenapp_best",
+      "method": "Athena++ PPM/HLLD/RK3",
+      "n": 64,
+      "final": 0.8993497822188989,
+      "alpha": 0.29705729210930376,
+      "tau": 4576.3498965437375,
+      "ended": false
+     },
+     {
+      "key": "athenak_matched",
+      "method": "AthenaK PLM/HLLE/RK2",
+      "n": 128,
+      "final": 0.8812439051372604,
+      "alpha": 0.35275159351935337,
+      "tau": 839.5364902578434,
+      "ended": false
+     },
+     {
+      "key": "athenak_best",
+      "method": "AthenaK PPM/HLLD/RK3",
+      "n": 128,
+      "final": 0.9381022726794317,
+      "alpha": 0.33243200936897677,
+      "tau": 8732.847966131221,
+      "ended": false
+     },
+     {
+      "key": "ramses_matched",
+      "method": "RAMSES HLL",
+      "n": 128,
+      "final": 0.9134063319804581,
+      "alpha": 0.33000315636619415,
+      "tau": 3365.5849084227298,
+      "ended": false
+     },
+     {
+      "key": "ramses_best",
+      "method": "RAMSES HLLD",
+      "n": 128,
+      "final": 0.9215711065119011,
+      "alpha": 0.3168714540618596,
+      "tau": 6251.3280171689175,
+      "ended": false
+     },
+     {
+      "key": "athenapp_matched",
+      "method": "Athena++ PLM/HLLE/VL2",
+      "n": 128,
+      "final": 0.8860159578800237,
+      "alpha": 0.34363082821953894,
+      "tau": 1101.8653202630767,
+      "ended": false
+     },
+     {
+      "key": "athenapp_best",
+      "method": "Athena++ PPM/HLLD/RK3",
+      "n": 128,
+      "final": 0.9450036835967591,
+      "alpha": 0.2959973974201506,
+      "tau": 36344.10782640749,
+      "ended": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "stone05-loop-lines",
+   "file": "media/papers/stone05-loop-lines.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 8",
+   "kind": "reproduced",
+   "test": "field_loop_novz",
+   "title": "Field loop advection: field lines at t = 2, N = 64",
+   "caption": "Contours of A_z (computed from the cell-centred field), same levels in every panel.",
+   "differs": "Same loop (B\u2080 = 10\u207b\u00b3, R = 0.3, v = (2, 1)) and the same cell size as the paper's 2N \u00d7 N grid on a 2 \u00d7 1 box, on the unit square: four crossings in x and two in y by t = 2."
+  },
+  {
+   "id": "stone05-alfven",
+   "file": "media/papers/stone05-alfven.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 9",
+   "kind": "analogue",
+   "test": "alfven_oblique",
+   "title": "Circularly polarized Alfv\u00e9n wave oblique to the grid: profile after one period",
+   "caption": "In-plane field component across the wave against phase, averaged over cells of equal phase, for three grids (light to dark).",
+   "differs": "Travelling wave only, along (1, 2) on the unit square (the paper's angle) after one period; the paper shows five periods on 2N \u00d7 N grids with N = 4 \u2026 64, where the damping is much larger."
+  },
+  {
+   "id": "stone05-shock-bn",
+   "file": "media/papers/stone05-shock-bn.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 10",
+   "kind": "analogue",
+   "test": "brio_wu_rotated",
+   "finding": "Largest departure of B\u2081 from 0.75: GLM kernels 6.3\u00d710\u207b\u2075 to 3.9\u00d710\u207b\u00b3; CT prototype 8.1\u00d710\u207b\u2077; AthenaK, RAMSES and Athena++ at most 6.1\u00d710\u207b\u2078, the precision of the saved states.",
+   "title": "Rotated shock tube: the field component along the shock normal, N = 256",
+   "caption": "Mean over each diagonal (line) and the spread across its cells (band). The exact solution keeps it at 0.75.",
+   "differs": "Brio\u2013Wu states rotated by 45\u00b0, periodic (two mirrored Riemann problems); the paper rotates the Ryu\u2013Jones 2a problem by tan\u207b\u00b9(1/2)."
+  },
+  {
+   "id": "stone05-convergence",
+   "file": "media/papers/stone05-convergence.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 11",
+   "kind": "analogue",
+   "test": "alfven",
+   "finding": "Between N = 256 and 512 the error no longer falls (order below 0.5; error at 512 in brackets) for: entropy wave: GLM f16/HLL (4.0\u00d710\u207b\u00b3), GLM PPM (3.1\u00d710\u207b\u00b3), GLM const. c\u2095 (3.9\u00d710\u207b\u00b3); Alfv\u00e9n wave along x: GLM f16/HLL (5.9\u00d710\u207b\u2074), GLM HLLD (5.5\u00d710\u207b\u2075), GLM PPM (2.4\u00d710\u207b\u2074), GLM const. c\u2095 (5.9\u00d710\u207b\u2074); Alfv\u00e9n wave along (1, 2): GLM f16/HLL (1.9\u00d710\u207b\u00b3), GLM PPM (1.9\u00d710\u207b\u00b3), GLM const. c\u2095 (2.1\u00d710\u207b\u00b3), AthenaK PPM/HLLD (3.2\u00d710\u207b\u2074), Athena++ PPM/HLLD (1.1\u00d710\u207b\u2074).",
+   "title": "Convergence on smooth waves: L1 error against resolution",
+   "caption": "Norm of the L1 errors of density, momentum, energy and field after one period. Dotted and dashed: first and second order.",
+   "differs": "Finite-amplitude waves with exact solutions (entropy wave, circularly polarized Alfv\u00e9n wave, aligned and oblique) instead of the paper's four linear modes of amplitude 10\u207b\u2076.",
+   "table": {
+    "columns": [
+     "Test",
+     "Method",
+     "order (fit over all grids)",
+     "order between the two finest grids",
+     "error at finest grid",
+     "finest N"
+    ],
+    "keys": [
+     "test",
+     "method",
+     "order",
+     "last",
+     "finest",
+     "n"
+    ],
+    "rows": [
+     {
+      "test": "entropy wave",
+      "key": "ct",
+      "method": "CT prototype",
+      "order": 0.8796550112181155,
+      "last": 0.9666349954382797,
+      "finest": 0.007704622902904029,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "glm",
+      "method": "GLM tiled LLF (original path)",
+      "order": 1.725732955659659,
+      "last": 0.5104932515910703,
+      "finest": 4.242776207305524e-05,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "glm_hll16",
+      "method": "GLM f16/HLL (production)",
+      "order": -0.06780705030612798,
+      "last": -0.3270744629937656,
+      "finest": 0.003985914346867406,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "glm_hlld",
+      "method": "GLM HLLD",
+      "order": 1.815975371345689,
+      "last": 1.4256848171336178,
+      "finest": 3.452730486316109e-05,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "glm_ppm",
+      "method": "GLM PPM",
+      "order": -0.15231388786496067,
+      "last": -0.7485012159143257,
+      "finest": 0.003087300966223004,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "glm_constch",
+      "method": "GLM constant c\u2095",
+      "order": -0.07456119649181153,
+      "last": -0.3398508318839376,
+      "finest": 0.003913975679103917,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "athenak_matched",
+      "method": "AthenaK PLM/HLLE/RK2",
+      "order": 1.992887868035257,
+      "last": 2.085372733069356,
+      "finest": 4.8170751050250855e-05,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "athenak_best",
+      "method": "AthenaK PPM/HLLD/RK3",
+      "order": 2.080267694332087,
+      "last": 2.088369137425215,
+      "finest": 9.214412853447054e-06,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "ramses_matched",
+      "method": "RAMSES HLL",
+      "order": 2.2748877747006926,
+      "last": 2.272559810505938,
+      "finest": 5.206470108136473e-06,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "ramses_best",
+      "method": "RAMSES HLLD",
+      "order": 2.026021610404607,
+      "last": 2.055473428700749,
+      "finest": 1.3984367263973435e-05,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "athenapp_matched",
+      "method": "Athena++ PLM/HLLE/VL2",
+      "order": 2.0800360575826486,
+      "last": 2.15014059638241,
+      "finest": 3.624153326504548e-05,
+      "n": 512
+     },
+     {
+      "test": "entropy wave",
+      "key": "athenapp_best",
+      "method": "Athena++ PPM/HLLD/RK3",
+      "order": 3.5410106681832256,
+      "last": 2.091247548580634,
+      "finest": 3.370017471287892e-09,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "ct",
+      "method": "CT prototype",
+      "order": 0.970727738440788,
+      "last": 0.9909137696573109,
+      "finest": 0.001788585607215188,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "glm",
+      "method": "GLM tiled LLF (original path)",
+      "order": 1.604044452413728,
+      "last": 0.5451553911088106,
+      "finest": 5.0572454885722835e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "glm_hll16",
+      "method": "GLM f16/HLL (production)",
+      "order": 0.6491150332311226,
+      "last": -0.9476357970116036,
+      "finest": 0.0005852481107387338,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "glm_hlld",
+      "method": "GLM HLLD",
+      "order": 1.57793839341394,
+      "last": 0.47204595925949505,
+      "finest": 5.518067421125072e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "glm_ppm",
+      "method": "GLM PPM",
+      "order": 0.5367988857238009,
+      "last": -1.2047543846308033,
+      "finest": 0.00023789155651648698,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "glm_constch",
+      "method": "GLM constant c\u2095",
+      "order": 0.648968336574226,
+      "last": -0.9334839749874947,
+      "finest": 0.0005860393616425446,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "athenak_matched",
+      "method": "AthenaK PLM/HLLE/RK2",
+      "order": 1.9552723122833984,
+      "last": 2.0602346192065943,
+      "finest": 3.1871611155656045e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "athenak_best",
+      "method": "AthenaK PPM/HLLD/RK3",
+      "order": 2.0101038582030455,
+      "last": 2.049963711722856,
+      "finest": 1.257104011145e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "ramses_matched",
+      "method": "RAMSES HLL",
+      "order": 2.0247660993326915,
+      "last": 2.064057280636546,
+      "finest": 1.1714026421517668e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "ramses_best",
+      "method": "RAMSES HLLD",
+      "order": 2.1811062903291054,
+      "last": 2.166553136707889,
+      "finest": 7.716691412261493e-06,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "athenapp_matched",
+      "method": "Athena++ PLM/HLLE/VL2",
+      "order": 2.047572353059742,
+      "last": 2.1409866444851047,
+      "finest": 2.3005019893632847e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along x",
+      "key": "athenapp_best",
+      "method": "Athena++ PPM/HLLD/RK3",
+      "order": 3.6347394005004348,
+      "last": 2.7583892416686147,
+      "finest": 2.0804780777579716e-09,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "ct",
+      "method": "CT prototype",
+      "order": 0.9334522243763651,
+      "last": 0.9779933583443671,
+      "finest": 0.004174474767948246,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "glm",
+      "method": "GLM tiled LLF (original path)",
+      "order": 1.8752642295687936,
+      "last": 1.9863289902670997,
+      "finest": 5.639446048327086e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "glm_hll16",
+      "method": "GLM f16/HLL (production)",
+      "order": 0.5795895994350979,
+      "last": -0.47563313648818695,
+      "finest": 0.0019394409844503187,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "glm_hlld",
+      "method": "GLM HLLD",
+      "order": 1.8629420732229633,
+      "last": 1.9597137982709765,
+      "finest": 5.946785467300752e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "glm_ppm",
+      "method": "GLM PPM",
+      "order": 0.27026588350661157,
+      "last": -0.5779330536174077,
+      "finest": 0.0019096227856484802,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "glm_constch",
+      "method": "GLM constant c\u2095",
+      "order": 0.5556534453830853,
+      "last": -0.5193304854528774,
+      "finest": 0.0020739919795529607,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "athenak_matched",
+      "method": "AthenaK PLM/HLLE/RK2",
+      "order": 1.817879298454351,
+      "last": 2.031588967262481,
+      "finest": 0.00011959325501115723,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "athenak_best",
+      "method": "AthenaK PPM/HLLD/RK3",
+      "order": 1.3273597233787564,
+      "last": -0.43489415240067547,
+      "finest": 0.00031736919356516044,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "ramses_matched",
+      "method": "RAMSES HLL",
+      "order": 2.079406474616916,
+      "last": 2.2998656048449284,
+      "finest": 3.05564810904177e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "ramses_best",
+      "method": "RAMSES HLLD",
+      "order": 2.04199308090758,
+      "last": 2.231843169392009,
+      "finest": 3.5944724151105806e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "athenapp_matched",
+      "method": "Athena++ PLM/HLLE/VL2",
+      "order": 1.924793751824172,
+      "last": 2.1513039727038663,
+      "finest": 8.627923351675375e-05,
+      "n": 512
+     },
+     {
+      "test": "Alfv\u00e9n wave along (1, 2)",
+      "key": "athenapp_best",
+      "method": "Athena++ PPM/HLLD/RK3",
+      "order": 1.3748144575452075,
+      "last": -1.37598606972739,
+      "finest": 0.00011007249871089516,
+      "n": 512
+     }
+    ]
+   }
+  },
+  {
+   "id": "stone05-sheet-gpu",
+   "file": "media/papers/stone05-sheet-gpu.png",
+   "missing": [
+    "GLM HLLD at N = 256: solver stopped at t = 0"
+   ],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 12",
+   "kind": "reproduced",
+   "test": "current_sheet",
+   "title": "Current sheet: field lines in time, 256\u00b2 (GLM kernels and CT prototype)",
+   "caption": "Contours of A_z at the same levels in every panel. Reconnection here is numerical: more islands, later, means less resistivity.",
+   "differs": "The paper's [0, 2]\u00b2 box halved to the unit square, so our t is half the paper's; same 256\u00b2 cells, \u03b2 = 0.2, v\u2080 = 0.1."
+  },
+  {
+   "id": "stone05-sheet-other",
+   "file": "media/papers/stone05-sheet-other.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 12",
+   "kind": "reproduced",
+   "test": "current_sheet",
+   "title": "Current sheet: field lines in time, 256\u00b2 (other codes)",
+   "caption": "Contours of A_z at the same levels in every panel. Reconnection here is numerical: more islands, later, means less resistivity.",
+   "differs": "The paper's [0, 2]\u00b2 box halved to the unit square, so our t is half the paper's; same 256\u00b2 cells, \u03b2 = 0.2, v\u2080 = 0.1."
+  },
+  {
+   "id": "stone05-blast-gpu",
+   "file": "media/papers/stone05-blast-gpu.png",
+   "missing": [
+    "GLM PPM at N = 256: solver stopped at t = 0",
+    "GLM f16/HLL at N = 256: solver stopped at t = 0.001"
+   ],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 13",
+   "kind": "analogue",
+   "test": "blast_2d_b50",
+   "finding": "",
+   "title": "MHD blast wave, 256\u00b2: density, pressure, magnetic energy and field lines at the end (GLM kernels and CT prototype)",
+   "caption": "Linear colour scale, the same range in every panel of a row (given at the left); gas quantities and field quantities each have their own map. The paper's figures are grey.",
+   "differs": "A stronger blast than the paper's: pressure 1000 inside r = 0.1 against 0.1 outside (the paper: 100 against 1, r = 0.125), field along x with B = 50/\u221a4\u03c0, \u03b3 = 7/5, to t = 0.01, periodic box."
+  },
+  {
+   "id": "stone05-blast-other",
+   "file": "media/papers/stone05-blast-other.png",
+   "missing": [],
+   "paper": "stone2005",
+   "paper_fig": "Fig. 13",
+   "kind": "analogue",
+   "test": "blast_2d_b50",
+   "finding": "",
+   "title": "MHD blast wave, 256\u00b2: density, pressure, magnetic energy and field lines at the end (other codes)",
+   "caption": "Linear colour scale, the same range in every panel of a row (given at the left); gas quantities and field quantities each have their own map. The paper's figures are grey.",
+   "differs": "A stronger blast than the paper's: pressure 1000 inside r = 0.1 against 0.1 outside (the paper: 100 against 1, r = 0.125), field along x with B = 50/\u221a4\u03c0, \u03b3 = 7/5, to t = 0.01, periodic box."
+  },
+  {
+   "id": "stone08-loop3d",
+   "file": "media/papers/stone08-loop3d.png",
+   "missing": [],
+   "paper": "stone2008",
+   "paper_fig": "Fig. 1",
+   "kind": "reproduced",
+   "test": "field_loop_3d",
+   "finding": "At 128\u00b3 and t = 1, energy left: CT prototype 0.71; GLM kernels 0.93 to 0.96; AthenaK, RAMSES and Athena++ 0.92 to 0.96; the paper's own scheme 0.96. Mean |B\u2083|/B\u2080: CT prototype 1.1\u00d710\u207b\u00b3; GLM kernels 1.8\u00d710\u207b\u00b3 to 2.6\u00d710\u207b\u00b3; the other codes 7.4\u00d710\u207b\u2074 to 1.8\u00d710\u207b\u00b3.",
+   "title": "3D field loop: magnetic energy and the field along the loop axis against time",
+   "caption": "Top two rows: volume-averaged magnetic energy over its initial value; dotted grey: the paper's fits for its own scheme at N = 32, 64, 128 (\u03c4 = 322, 3.68\u00d710\u00b3, 2.65\u00d710\u2074; \u03b1 = 0.365, 0.328, 0.320). Bottom two: mean |B\u2083|/B\u2080, the component along the loop axis, which should stay zero; the paper reports that this error converges at about first order. One panel per method, one line per grid (light to dark).",
+   "differs": "Loop axis (\u22121, 0, 1)/\u221a2 in the unit cube with v = (1, 1, 2), instead of the paper's 1 \u00d7 1 \u00d7 2 box with the loop along its diagonal. \u27e8|B\u2083|\u27e9 is taken over the z midplane at six outputs; by the loop's symmetry every plane is a shifted copy."
+  },
+  {
+   "id": "stone08-loop3d-images-gpu",
+   "file": "media/papers/stone08-loop3d-images-gpu.png",
+   "missing": [],
+   "paper": "stone2008",
+   "paper_fig": "Fig. 2",
+   "kind": "analogue",
+   "test": "field_loop_3d",
+   "title": "3D field loop at t = 1, 128\u00b3: magnetic energy and its part along the loop axis (GLM kernels and CT prototype)",
+   "caption": "The z midplane, which cuts the inclined loop in an ellipse.",
+   "differs": "The paper shows thresholded 3D renderings; these are plane cuts with a linear colour scale."
+  },
+  {
+   "id": "stone08-loop3d-images-other",
+   "file": "media/papers/stone08-loop3d-images-other.png",
+   "missing": [],
+   "paper": "stone2008",
+   "paper_fig": "Fig. 2",
+   "kind": "analogue",
+   "test": "field_loop_3d",
+   "title": "3D field loop at t = 1, 128\u00b3: magnetic energy and its part along the loop axis (other codes)",
+   "caption": "The z midplane, which cuts the inclined loop in an ellipse.",
+   "differs": "The paper shows thresholded 3D renderings; these are plane cuts with a linear colour scale."
+  },
+  {
+   "id": "stone08-loop-bz",
+   "file": "media/papers/stone08-loop-bz.png",
+   "missing": [],
+   "paper": "stone2008",
+   "paper_fig": "sec. 3 (no figure)",
+   "kind": "extension",
+   "test": "field_loop",
+   "finding": "rms B_z/B\u2080 at t = 2 and N = 128: CT prototype 4.3\u00d710\u207b\u00b3; GLM kernels 3.4\u00d710\u207b\u00b3 to 7.2\u00d710\u207b\u00b3; RAMSES 1.8\u00d710\u207b\u2078 to 1.9\u00d710\u207b\u2078; AthenaK and Athena++ at most 1.0\u00d710\u207b\u00b9\u00b3 (rounding).",
+   "title": "In-plane field loop advected with v_z \u2260 0: growth of the out-of-plane field",
+   "caption": "The paper's thought experiment: a loop in the (x, y) plane carried with v = (2, 1, \u221a5). B_z must stay zero; schemes that do not keep \u2207\u00b7B = 0 generate it. A method that keeps B_z at exactly zero has no curve on this logarithmic axis.",
+   "differs": "The paper describes this test and reports that its scheme keeps B_z = 0; it shows no figure for it."
+  },
+  {
+   "id": "stone08-riemann",
+   "file": "media/papers/stone08-riemann.png",
+   "missing": [],
+   "paper": "stone2008",
+   "paper_fig": "Fig. 7",
+   "kind": "analogue",
+   "test": "brio_wu_rotated",
+   "title": "Riemann problem inclined to the grid: every variable against the normal coordinate, N = 256",
+   "caption": "Means over each diagonal. Top: GLM kernels and CT prototype; bottom: other codes; grey: the 4096\u00b2 reference averaged to 256\u00b2.",
+   "differs": "Brio\u2013Wu states at 45\u00b0 in 2D (\u03b3 = 2) instead of the paper's Ryu\u2013Jones 2a problem inclined in 3D."
+  },
+  {
+   "id": "stone08-blast-gpu",
+   "file": "media/papers/stone08-blast-gpu.png",
+   "missing": [
+    "GLM PPM at N = 256: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 256: solver stopped at t = 0.005",
+    "GLM f16/HLL at N = 256: solver stopped at t = 0"
+   ],
+   "paper": "stone2008",
+   "paper_fig": "Fig. 8",
+   "kind": "analogue",
+   "test": "blast_3d_b50",
+   "finding": "Outside the blast (further than 0.4 from the centre) GLM HLLD has changed the density by more than 5 % in 20 % of the cells; CT and GLM LLF in none.",
+   "title": "3D MHD blast wave, 256\u00b3: density, pressure, magnetic and kinetic energy at the end (GLM kernels and CT prototype)",
+   "caption": "Linear colour scale, the same range in every panel of a row (given at the left); gas quantities and field quantities each have their own map. The paper's figures are grey.",
+   "differs": "A stronger blast than the paper's: pressure 1000 inside r = 0.1 against 0.1 outside (the paper: 100 against 1, r = 0.125), field along x with B = 50/\u221a4\u03c0, \u03b3 = 7/5, to t = 0.01, periodic box. Slice through the centre containing the field."
+  },
+  {
+   "id": "stone08-blast-other",
+   "file": "media/papers/stone08-blast-other.png",
+   "missing": [],
+   "paper": "stone2008",
+   "paper_fig": "Fig. 8",
+   "kind": "analogue",
+   "test": "blast_3d_b50",
+   "finding": "",
+   "title": "3D MHD blast wave, 256\u00b3: density, pressure, magnetic and kinetic energy at the end (other codes)",
+   "caption": "Linear colour scale, the same range in every panel of a row (given at the left); gas quantities and field quantities each have their own map. The paper's figures are grey.",
+   "differs": "A stronger blast than the paper's: pressure 1000 inside r = 0.1 against 0.1 outside (the paper: 100 against 1, r = 0.125), field along x with B = 50/\u221a4\u03c0, \u03b3 = 7/5, to t = 0.01, periodic box. Slice through the centre containing the field."
+  },
+  {
+   "id": "ugalino-5-512",
+   "file": "media/papers/ugalino-5-512.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 512: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 512: not in the plan",
+    "GLM HLLD at N = 512: solver stopped at t = 0.02",
+    "GLM PPM at N = 512: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 512: solver stopped at t = 0",
+    "GLM f16/HLL at N = 512: solver stopped at t = 0",
+    "RAMSES HLL at N = 512: taken out of the sweep"
+   ],
+   "paper": "ugalino",
+   "paper_fig": "Fig. 5",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "finding": "At 512\u00b3 the magnetic-to-kinetic energy ratio grows 258 to 351-fold by the end of the run and ends at 0.29 to 0.39 over the 5 set-ups that finish (largest over smallest: 1.36); by code: GLM 0.29, CT prototype 0.30, AthenaK and Athena++ 0.34, RAMSES 0.39; the divergence measure of the GLM kernels ends at 0.013, the CT prototype's face divergence at 3.2\u00d710\u207b\u2076. The paper's Fig. 5 has, for the disc, about 10\u207b\u00b9\u2076 for RAMSES (CT), 10\u207b\u00b2 for ART (Dedner) and 10\u207b\u00b9 for AREPO and SWIFT, and the two grid codes several orders of magnitude below equipartition where AREPO and SWIFT reach 10\u201320 %.",
+   "title": "Field amplification in the Mach 9 decay at 512\u00b3: energy ratio, divergence error and kinetic energy against time",
+   "caption": "Left: volume-averaged magnetic over kinetic energy. Centre: a dimensionless divergence error, for the codes that carry one: the GLM kernels (centred differences of their cell-centred field) and the CT prototype (the face-centred divergence it preserves, at single-precision rounding). AthenaK, RAMSES and Athena++ keep their face-centred divergence at rounding by construction; it is not in the saved cell-centred states and is not drawn. Right: kinetic energy.",
+   "differs": "The paper's Fig. 5 is for the gas disc of an isolated galaxy (radius 15 kpc, height 0.5 kpc) over 7 Gyr, with self-gravity, cooling and a pressure floor, where shear winds up a 10\u207b\u00b9\u00b2 G seed field; ours is a periodic box of decaying Mach 9 turbulence with a uniform field (\u03b2\u2080 = 22) over 0.2 box sound-crossing times, with no gravity or cooling. The paper compares grid, moving-mesh and particle codes; all of ours are fixed grids, so this shows only the spread among grid codes and where a GLM code falls in it. Their divergence error is the volume mean of |\u2207\u00b7B|\u0394x/|B| in the disc; ours is rms(\u2207\u00b7B)\u0394x over rms(B) in the whole box."
+  },
+  {
+   "id": "ugalino-5-256",
+   "file": "media/papers/ugalino-5-256.png",
+   "missing": [
+    "Athena++ PPM/HLLD at N = 256: state not finite after t = 0.02",
+    "AthenaK PPM/HLLD at N = 256: not in the plan",
+    "GLM HLLD at N = 256: solver stopped at t = 0.02",
+    "GLM PPM at N = 256: solver stopped at t = 0",
+    "GLM const. $c_h$ at N = 256: solver stopped at t = 0",
+    "GLM f16/HLL at N = 256: solver stopped at t = 0",
+    "RAMSES HLL at N = 256: taken out of the sweep"
+   ],
+   "paper": "ugalino",
+   "paper_fig": "Fig. 5",
+   "kind": "analogue",
+   "test": "decay_supersonic",
+   "finding": "At 256\u00b3 the magnetic-to-kinetic energy ratio grows 222 to 270-fold by the end of the run and ends at 0.25 to 0.30 over the 5 set-ups that finish (largest over smallest: 1.22); by code: GLM 0.25, CT prototype 0.26, AthenaK and Athena++ 0.26 to 0.27, RAMSES 0.30; the divergence measure of the GLM kernels ends at 5.5\u00d710\u207b\u00b3, the CT prototype's face divergence at 2.2\u00d710\u207b\u2076. The paper's Fig. 5 has, for the disc, about 10\u207b\u00b9\u2076 for RAMSES (CT), 10\u207b\u00b2 for ART (Dedner) and 10\u207b\u00b9 for AREPO and SWIFT, and the two grid codes several orders of magnitude below equipartition where AREPO and SWIFT reach 10\u201320 %.",
+   "title": "Field amplification in the Mach 9 decay at 256\u00b3: energy ratio, divergence error and kinetic energy against time",
+   "caption": "Left: volume-averaged magnetic over kinetic energy. Centre: a dimensionless divergence error, for the codes that carry one: the GLM kernels (centred differences of their cell-centred field) and the CT prototype (the face-centred divergence it preserves, at single-precision rounding). AthenaK, RAMSES and Athena++ keep their face-centred divergence at rounding by construction; it is not in the saved cell-centred states and is not drawn. Right: kinetic energy.",
+   "differs": "The paper's Fig. 5 is for the gas disc of an isolated galaxy (radius 15 kpc, height 0.5 kpc) over 7 Gyr, with self-gravity, cooling and a pressure floor, where shear winds up a 10\u207b\u00b9\u00b2 G seed field; ours is a periodic box of decaying Mach 9 turbulence with a uniform field (\u03b2\u2080 = 22) over 0.2 box sound-crossing times, with no gravity or cooling. The paper compares grid, moving-mesh and particle codes; all of ours are fixed grids, so this shows only the spread among grid codes and where a GLM code falls in it. Their divergence error is the volume mean of |\u2207\u00b7B|\u0394x/|B| in the disc; ours is rms(\u2207\u00b7B)\u0394x over rms(B) in the whole box."
+  },
+  {
+   "id": "arepo-mesh",
+   "file": "media/papers/arepo-mesh.png",
+   "missing": [],
+   "paper": "arepo",
+   "paper_fig": "Added",
+   "kind": "extension",
+   "test": "field_loop_novz",
+   "title": "AREPO, static against moving mesh: the field loop, the timestep, and the divergence of B",
+   "finding": "On the static mesh the magnetic energy of the advected field loop grows instead of decaying: by a factor of 3.49 at 32\u00b2, 5.3\u00d710\u00b3 at 64\u00b2, 2.6\u00d710\u2075 at 128\u00b2, 2.3\u00d710\u2075 at 256\u00b2, 9.0\u00d710\u00b3 at 512\u00b2 at its largest; on the moving mesh at 256\u00b2 it ends at 0.9994 of its initial value; AREPO ended 7 static-mesh runs itself when its timestep fell to the smallest its time line holds (current sheet 256\u00b2 at t = 1.92; field loop 256\u00b2 at t = 0.839; field loop 512\u00b2 at t = 0.556; field loop novz 256\u00b2 at t = 0.883; field loop novz 512\u00b2 at t = 0.398; orszag tang 256\u00b2 at t = 0.422; orszag tang 512\u00b2 at t = 0.293); AREPO's own divergence measure at the end of the four tests shown is 0.013 to 0.064 on the moving mesh at every grid and 1.8\u00d710\u207b\u00b3 to 0.028 on the static mesh.",
+   "caption": "(a) Magnetic energy of the field loop advected in the plane, over its initial value, on AREPO's static Cartesian mesh at four grids and on its moving mesh; a cross is where AREPO ended the run. (b) The timestep of the static-mesh runs AREPO ended, over its first value, against the part of the run done (from AREPO's own log). (c) AREPO's own measure of the divergence of B at the last output, rms(\u2207\u00b7B) \u00d7 cell size over rms(B) on its own mesh, against the grid.",
+   "differs": "AREPO was run with Powell's eight-wave scheme, the HLLD solver, one global timestep and Courant factor 0.3, on the suite's periodic unit box. A static mesh with Powell's scheme is not how AREPO is normally run; its published MHD results use the moving mesh. Two checks of Orszag\u2013Tang at 256\u00b2 on the static mesh: on one rank it stops at the same step, and with half the Courant factor it stops slightly later (t = 0.454 against 0.422)."
+  },
+  {
+   "id": "arepo-convergence",
+   "file": "media/papers/arepo-convergence.png",
+   "missing": [],
+   "paper": "arepo",
+   "paper_fig": "Added",
+   "kind": "extension",
+   "test": "entropy",
+   "title": "Convergence on the wave tests, with AREPO among the other codes",
+   "finding": "Errors at the end of the run: entropy wave, moving mesh: 8.5\u00d710\u207b\u2077 at 32\u00b2 to 1.9\u00d710\u207b\u2077 at 512\u00b2 (order 0.5); entropy wave, static mesh: 3.8\u00d710\u207b\u00b3 at 32\u00b2 to 1.8\u00d710\u207b\u2075 at 512\u00b2 (order 1.9); oblique Alfv\u00e9n wave, moving mesh: 9.2\u00d710\u207b\u00b3 at 32\u00b2 to 4.8\u00d710\u207b\u2075 at 512\u00b2 (order 1.9); oblique Alfv\u00e9n wave, static mesh: 7.0\u00d710\u207b\u00b3 at 32\u00b2 to 3.9\u00d710\u207b\u2075 at 512\u00b2 (order 1.9). On the moving mesh the entropy wave is carried by the mesh itself, so its error is at the precision of the saved single-precision states at every grid.",
+   "caption": "Error at the end of the run against the grid for the entropy wave and the two Alfv\u00e9n waves. Top: the GLM kernels and the CT prototype. Bottom: AthenaK, RAMSES, Athena++ and AREPO (ochre; solid the moving mesh, dashed the static mesh)."
+  },
+  {
+   "id": "arepo-status",
+   "file": "media/papers/arepo-status.png",
+   "missing": [],
+   "paper": "arepo",
+   "paper_fig": "Added",
+   "kind": "extension",
+   "test": "",
+   "title": "Every test, grid and code, with AREPO: finished, or how far the solver got",
+   "finding": "moving mesh: 82 of 82 runs reached the end; static mesh: 75 of 82 runs reached the end. A run that reached the end is not thereby right: see the field loop above.",
+   "caption": "One mark per run: the five grids of a test from left to right. AREPO (right) ran the planar tests at one seed; the rows it has no marks in are the 3D tests and the further seeds."
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+# FLASH 35.2.7 3D / Gardiner & Stone (2008), adapted to a unit cube: loop axis (-1,0,1)/sqrt(2), v=(1,1,2).
+name = "field_loop_3d"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 1.0
+frames = 11
+snapshot_frames = [0, 5, 10]
+slurm_time = "02:00:00"
+exact_reference = "advected initial state at t=1"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

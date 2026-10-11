@@ -1,0 +1,25 @@
+# Gate: checkpoint/restart with the reduced outputs of large 3D runs. Orszag-Tang 3D at 32^3, every GPU-driver
+# method; spectra, z-midplane slices and 16^3 block averages at every output. jobs/05_resume_check.sbatch stops
+# each method at the first output after a checkpoint, so the resumed run writes that output again; it must not
+# be recorded twice, and every output must match an uninterrupted run.
+name = "gate_resume_3d"
+problem = "orszag_tang_3d"
+grids = [32]
+seeds = [42]
+t_end = 0.1
+frames = 5
+snapshot_frames = [0, 2, 4]
+slice_frames = "all"
+restrict_to = [16]
+spectra_every = 1
+epsilon = 0.2
+repeats = 1
+methods = ["glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "ct"]
+checkpoint_seconds = 1e-6
+external_runs = false
+exact_reference = "none"
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

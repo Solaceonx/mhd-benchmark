@@ -1,0 +1,197 @@
+[lyxia@sh03-ln01 login ~]$ cd /scratch/users/lyxia/mhd-study/sherlock_sweep && module load python/3.12.1 && python3 tools/sweep.py runs
+                       complete      running       failed  not started    total
+GPU driver                  331            0          104            0      435
+AthenaK                     283            2            4            1      290
+RAMSES/Athena++             484           16           15           25      540
+All                        1098           18          123           26     1265
+
+Failed runs by error:
+    80 x GPU driver: Nonphysical/nonfinite state in CFL scan
+         e.g. field_loop_3d-gpu-N512-s42-glm_ppm, current_sheet-gpu-N512-s42-glm_ppm
+    10 x GPU driver: Invalid state at output 2
+         e.g. decay_supersonic-gpu-N256-s43-glm_ppm, decay-gpu-N128-s43-all
+     9 x RAMSES/Athena++: exit code 0; missing output times [...]
+         e.g. brio_wu_rotated-athenapp-matched-run-N32-s42, alfven_oblique-athenapp-matched-run-N32-s42
+     4 x AthenaK: exit code 0; missing output times [...]
+         e.g. decay_supersonic-athenak-best-run-N128-s42, decay_supersonic-athenak-best-run-N128-s43
+     3 x GPU driver: Invalid state at output 4
+         e.g. decay-gpu-N256-s44-glm_ppm, decay-gpu-N256-s42-glm_hll16
+     2 x GPU driver: Invalid state at output 19
+         e.g. field_loop_novz-gpu-N512-s42-glm_ppm, orszag_tang-gpu-N64-s42-all
+     2 x RAMSES/Athena++: exit code 0; missing output times [...] ... wing floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+         e.g. decay_supersonic-ramses-matched-run-N64-s42, decay_supersonic-ramses-matched-run-N128-s43
+     1 x GPU driver: Invalid state at output 9
+         e.g. orszag_tang-gpu-N512-s42-glm_ppm
+     1 x GPU driver: Invalid state at output 14
+         e.g. rotor-gpu-N512-s42-glm_ppm
+     1 x GPU driver: Invalid state at output 10
+         e.g. brio_wu-gpu-N512-s42-glm_ppm
+     1 x GPU driver: Step limit reached (15360)
+         e.g. blast_3d_b50-gpu-N512-s42-glm_hlld
+     1 x GPU driver: Invalid state at output 22
+         e.g. gem-gpu-N512-s42-glm_hll16
+     1 x GPU driver: Step limit reached (17920)
+         e.g. blast_3d_b100-gpu-N512-s42-glm_hlld
+     1 x GPU driver: Invalid state at output 6
+         e.g. rotor-gpu-N64-s42-all
+     1 x GPU driver: Invalid state at output 5
+         e.g. decay-gpu-N64-s44-all
+     1 x GPU driver: Step limit reached (8960)
+         e.g. blast_3d_b100-gpu-N256-s42-glm_hlld
+     1 x RAMSES/Athena++: exit code 143; missing output times [...] ... srun: Force Terminated StepId=46128808.1
+         e.g. decay-ramses-best-run-N128-s42
+     1 x RAMSES/Athena++: exit code 0; missing output times [...] ...     1158.857     100.0    TOTAL
+         e.g. decay_supersonic-ramses-matched-run-N64-s43
+     1 x RAMSES/Athena++: exit code 0; missing output times [...] ...     9808.653     100.0    TOTAL
+         e.g. decay_supersonic-ramses-matched-run-N128-s42
+     1 x RAMSES/Athena++: exit code 1; missing output times [...] ... cycle=0 time=0.0000000000000000e+00 dt=2.6362170853969422e-04
+         e.g. decay-athenapp-best-run-N256-s42
+
+By method and grid (failures: test and how far it got):
+  athenak_best       N=   32  ok  22  failed   0  
+  athenak_best       N=   64  ok  26  failed   2  decay_supersonic(0%) decay_supersonic(10%)
+  athenak_best       N=   96  ok   1  failed   0  
+  athenak_best       N=  128  ok  26  failed   2  decay_supersonic(0%) decay_supersonic(10%)
+  athenak_best       N=  192  ok   1  failed   0  
+  athenak_best       N=  256  ok  26  failed   0  
+  athenak_best       N=  384  ok   1  failed   0  
+  athenak_best       N=  512  ok  26  failed   0  
+  athenak_matched    N=   32  ok  22  failed   0  
+  athenak_matched    N=   64  ok  28  failed   0  
+  athenak_matched    N=   96  ok   1  failed   0  
+  athenak_matched    N=  128  ok  28  failed   0  
+  athenak_matched    N=  192  ok   1  failed   0  
+  athenak_matched    N=  256  ok  28  failed   0  
+  athenak_matched    N=  384  ok   1  failed   0  
+  athenak_matched    N=  512  ok  26  failed   0  
+  athenak_reference  N=  512  ok   9  failed   0  
+  athenak_reference  N= 4096  ok  10  failed   0  
+  athenapp_best      N=   32  ok  21  failed   1  brio_wu_rotated(60%)
+  athenapp_best      N=   64  ok  26  failed   1  brio_wu_rotated(60%)
+  athenapp_best      N=  128  ok  26  failed   1  brio_wu_rotated(60%)
+  athenapp_best      N=  256  ok  27  failed   0  
+  athenapp_best      N=  512  ok  20  failed   0  
+  athenapp_matched   N=   32  ok  20  failed   2  alfven_oblique(20%) brio_wu_rotated(60%)
+  athenapp_matched   N=   64  ok  25  failed   2  alfven_oblique(20%) brio_wu_rotated(60%)
+  athenapp_matched   N=  128  ok  25  failed   2  alfven_oblique(20%) brio_wu_rotated(60%)
+  athenapp_matched   N=  256  ok  27  failed   0  
+  athenapp_matched   N=  512  ok  27  failed   0  
+  athenapp_reference N=  256  ok   9  failed   0  
+  athenapp_reference N= 2048  ok   9  failed   0  
+  ct                 N=   32  ok  22  failed   0  
+  ct                 N=   64  ok  28  failed   0  
+  ct                 N=   96  ok   1  failed   0  
+  ct                 N=  128  ok  29  failed   0  
+  ct                 N=  192  ok   1  failed   0  
+  ct                 N=  256  ok  29  failed   0  
+  ct                 N=  384  ok   1  failed   0  
+  ct                 N=  512  ok  29  failed   0  
+  glm                N=   32  ok  22  failed   0  
+  glm                N=   64  ok  28  failed   0  
+  glm                N=   96  ok   1  failed   0  
+  glm                N=  128  ok  29  failed   0  
+  glm                N=  192  ok   1  failed   0  
+  glm                N=  256  ok  29  failed   0  
+  glm                N=  384  ok   1  failed   0  
+  glm                N=  512  ok  28  failed   1  decay_supersonic(20%)
+  glm_constch        N=   32  ok  20  failed   2  blast_2d_b100(10%) blast_3d_b100(20%)
+  glm_constch        N=   64  ok  25  failed   3  blast_2d_b100(0%) blast_3d_b100(0%) decay_supersonic(10%)
+  glm_constch        N=   96  ok   1  failed   0  
+  glm_constch        N=  128  ok  25  failed   4  blast_2d_b100(0%) blast_3d_b100(0%) decay_supersonic(10%) decay_supersonic(10%)
+  glm_constch        N=  192  ok   1  failed   0  
+  glm_constch        N=  256  ok  24  failed   5  blast_2d_b100(0%) blast_3d_b100(0%) blast_3d_b50(50%) decay_supersonic(0%) decay_supersonic(10%)
+  glm_constch        N=  384  ok   1  failed   0  
+  glm_constch        N=  512  ok  22  failed   7  blast_2d_b100(0%) blast_3d_b0(70%) blast_3d_b100(0%) blast_3d_b50(50%) decay(75%) decay_supersonic(0%) decay_supersonic(0%)
+  glm_hll16          N=   32  ok  17  failed   5  blast_2d_b100(0%) blast_2d_b50(10%) blast_3d_b100(0%) blast_3d_b50(10%) brio_wu_rotated(20%)
+  glm_hll16          N=   64  ok  21  failed   7  blast_2d_b100(0%) blast_2d_b50(10%) blast_3d_b100(0%) blast_3d_b50(10%) brio_wu_rotated(10%) decay_supersonic(10%) decay_supersonic(30%)
+  glm_hll16          N=   96  ok   1  failed   0  
+  glm_hll16          N=  128  ok  23  failed   6  blast_2d_b100(0%) blast_2d_b50(10%) blast_3d_b100(0%) blast_3d_b50(10%) decay_supersonic(10%) decay_supersonic(10%)
+  glm_hll16          N=  192  ok   1  failed   0  
+  glm_hll16          N=  256  ok  22  failed   7  blast_2d_b100(0%) blast_2d_b50(10%) blast_3d_b100(0%) blast_3d_b50(0%) decay(75%) decay_supersonic(0%) decay_supersonic(10%)
+  glm_hll16          N=  384  ok   1  failed   0  
+  glm_hll16          N=  512  ok  20  failed   9  blast_2d_b100(0%) blast_2d_b50(0%) blast_3d_b0(70%) blast_3d_b100(0%) blast_3d_b50(0%) decay(75%) decay_supersonic(0%) decay_supersonic(0%) gem(52%)
+  glm_hlld           N=   32  ok  22  failed   0  
+  glm_hlld           N=   64  ok  26  failed   2  current_sheet(0%) gem(68%)
+  glm_hlld           N=   96  ok   1  failed   0  
+  glm_hlld           N=  128  ok  26  failed   3  current_sheet(0%) decay_supersonic(10%) gem(25%)
+  glm_hlld           N=  192  ok   1  failed   0  
+  glm_hlld           N=  256  ok  23  failed   6  blast_3d_b100(60%) current_sheet(0%) decay_supersonic(10%) decay_supersonic(70%) gem(0%) orszag_tang_3d(90%)
+  glm_hlld           N=  384  ok   1  failed   0  
+  glm_hlld           N=  512  ok  18  failed  11  blast_3d_b100(20%) blast_3d_b50(30%) current_sheet(0%) decay(75%) decay(75%) decay(75%) decay_supersonic(10%) decay_supersonic(20%) gem(0%) orszag_tang_3d(30%) rotor(20%)
+  glm_ppm            N=   32  ok  16  failed   6  blast_2d_b100(0%) blast_2d_b50(10%) blast_3d_b0(30%) blast_3d_b100(0%) blast_3d_b50(10%) brio_wu_rotated(10%)
+  glm_ppm            N=   64  ok  18  failed  10  blast_2d_b100(0%) blast_2d_b50(10%) blast_3d_b0(20%) blast_3d_b100(0%) blast_3d_b50(20%) decay(100%) decay_supersonic(10%) decay_supersonic(30%) orszag_tang(90%) rotor(33%)
+  glm_ppm            N=   96  ok   1  failed   0  
+  glm_ppm            N=  128  ok  20  failed   9  blast_2d_b100(0%) blast_2d_b50(10%) blast_3d_b0(20%) blast_3d_b100(0%) blast_3d_b50(0%) decay(25%) decay_supersonic(10%) decay_supersonic(10%) gem(38%)
+  glm_ppm            N=  192  ok   1  failed   0  
+  glm_ppm            N=  256  ok  21  failed   8  blast_2d_b100(0%) blast_2d_b50(0%) blast_3d_b0(30%) blast_3d_b100(0%) blast_3d_b50(0%) decay(75%) decay_supersonic(0%) decay_supersonic(10%)
+  glm_ppm            N=  384  ok   1  failed   0  
+  glm_ppm            N=  512  ok   8  failed  21  blast_2d_b100(0%) blast_2d_b50(0%) blast_3d_b0(70%) blast_3d_b100(0%) blast_3d_b50(0%) brio_wu(90%) current_sheet(90%) decay(50%) decay(50%) decay(75%) decay_supersonic(0%) decay_supersonic(0%) field_loop(80%) field_loop_3d(70%) field_loop_novz(90%) gem(60%) kh_localized(90%) kh_localized_dtjump(84%) orszag_tang(40%) orszag_tang_3d(60%) rotor(87%)
+  ramses_best        N=   32  ok  22  failed   0  
+  ramses_best        N=   64  ok  27  failed   0  
+  ramses_best        N=  128  ok  25  failed   0  
+  ramses_best        N=  256  ok  26  failed   0  
+  ramses_best        N=  512  ok  19  failed   0  
+  ramses_matched     N=   32  ok  21  failed   0  
+  ramses_matched     N=   64  ok  25  failed   2  decay_supersonic(10%) decay_supersonic(20%)
+  ramses_matched     N=  128  ok  25  failed   2  decay_supersonic(10%) decay_supersonic(10%)
+  ramses_matched     N=  256  ok  21  failed   0  
+  ramses_matched     N=  512  ok  18  failed   0  
+[lyxia@sh03-ln01 login /scratch/users/lyxia/mhd-study/sherlock_sweep]$ cd /scratch/users/lyxia/mhd-study/sherlock_sweep && module load python/3.12.1 && python3 tools/sweep.py status
+Gates: setup=COMPLETED, build-gpu=COMPLETED, build-cpu=COMPLETED, smoke=COMPLETED, resume-check=COMPLETED, pilot:gpu=COMPLETED, pilot:athenak=COMPLETED, pilot:cpu=COMPLETED
+GPU: 109/109 jobs submitted; COMPLETED 72, FAILED 36, PENDING 1; 205 GPU-h used of ~220 estimated
+CPU: 109/118 jobs submitted; COMPLETED 69, FAILED 10, PENDING 23, RUNNING 7; 17212 core-h used of ~67679 estimated
+Queue: 32 jobs (this step submitted 0)
+  FAILED         blast_3d_b0|athenapp:matched|run|N512|s42 task 0
+  FAILED         blast_3d_b0|ramses:best|run|N256|s42 task 0
+  FAILED         blast_3d_b0|ramses:matched|run|N512|s42 task 0
+  FAILED         blast_3d_b100|athenapp:matched|run|N512|s42 task 0
+  FAILED         blast_3d_b100|ramses:matched|run|N256|s42 task 0
+  FAILED         blast_3d_b50|athenapp:matched|run|N512|s42 task 0
+  CANCELLED      blast_3d_b50|ramses:best|run|N256|s42 task 0
+  FAILED         current_sheet|athenak:matched|run|N512|s42 task 0
+  FAILED         current_sheet|gpu|run|N512|s42|glm_ppm task 0
+  FAILED         decay_supersonic|athenapp:reference|reference|N256|s42 task 0
+  FAILED         decay_supersonic|athenapp:reference|reference|N256|s43 task 0
+  FAILED         decay_supersonic|ramses:best|run|N128|s42 task 0
+  CANCELLED      decay_supersonic|ramses:best|run|N128|s43 task 0
+  FAILED         decay_supersonic|ramses:best|run|N128|s43 task 0
+  FAILED         decay_supersonic|ramses:best|run|N256|s43 task 0
+  CANCELLED      decay_supersonic|ramses:matched|run|N128|s42 task 0
+  TIMEOUT        decay_supersonic|ramses:matched|run|N128|s42 task 0
+  CANCELLED      decay_supersonic|ramses:matched|run|N128|s43 task 0
+  FAILED         decay_supersonic|ramses:matched|run|N128|s43 task 0
+  TIMEOUT        decay_supersonic|ramses:matched|run|N128|s43 task 0
+  FAILED         decay|athenapp:best|run|N256|s42 task 0
+  CANCELLED      decay|athenapp:matched|run|N512|s42 task 0
+  CANCELLED      decay|athenapp:matched|run|N512|s43 task 0
+  CANCELLED      decay|athenapp:matched|run|N512|s44 task 0
+  FAILED         decay|ramses:best|run|N128|s42 task 0
+  FAILED         decay|ramses:best|run|N128|s43 task 0
+  FAILED         decay|ramses:best|run|N128|s44 task 0
+  CANCELLED      decay|ramses:matched|run|N128|s42 task 0
+  FAILED         decay|ramses:matched|run|N128|s42 task 0
+  CANCELLED      decay|ramses:matched|run|N128|s43 task 0
+  CANCELLED      decay|ramses:matched|run|N128|s44 task 0
+  FAILED         decay|ramses:matched|run|N128|s44 task 0
+  FAILED         field_loop_3d|gpu|run|N512|s42|glm_ppm task 0
+  CANCELLED      field_loop_3d|ramses:best|run|N128|s42 task 0
+  FAILED         field_loop_3d|ramses:best|run|N128|s42 task 0
+  FAILED         field_loop_novz|gpu|run|N512|s42|glm_ppm task 0
+  FAILED         field_loop|gpu|run|N512|s42|glm_ppm task 0
+  FAILED         gem|gpu|run|N512|s42|glm_ppm task 0
+  FAILED         kh_localized_dtjump|gpu|run|N512|s42|glm_ppm task 0
+  FAILED         kh_localized|gpu|run|N512|s42|glm_ppm task 0
+
+Last coordinator step:
+Sweep status 2026-10-01T16:41:23Z
+Gates: setup=COMPLETED, build-gpu=COMPLETED, build-cpu=COMPLETED, smoke=COMPLETED, resume-check=COMPLETED, pilot:gpu=COMPLETED, pilot:athenak=COMPLETED, pilot:cpu=COMPLETED
+resubmitted kh_uniform|athenak:reference|reference|N4096|s42 (retry) as job 46203698
+resubmitted pack:cpu-2d-16r:001 (retry) as job 46203700
+resubmitted field_loop_3d|ramses:best|run|N128|s42 (retry) as job 46203706
+resubmitted pack:cpu-3d-32r:001 (retry) as job 46203709
+resubmitted decay_supersonic|ramses:matched|run|N128|s42 tasks [0] after TIMEOUT as job 46203710
+GPU: 109/109 jobs submitted; COMPLETED 72, FAILED 36, PENDING 1; 205 GPU-h used of ~220 estimated
+CPU: 109/118 jobs submitted; COMPLETED 69, FAILED 10, PENDING 14, RUNNING 6, UNKNOWN 10; 17197 core-h used of ~67679 estimated
+Queue: 32 jobs (this step submitted 13)
+
+[lyxia@sh03-ln01 login /scratch/users/lyxia/mhd-study/sherlock_sweep]$

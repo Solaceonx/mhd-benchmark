@@ -1,0 +1,20 @@
+# Movie run of orszag_tang_3d (ct): physics identical to configs/orszag_tang_3d.toml in sherlock_mhd; dense outputs for video, not timing.
+# FLASH 35.2.2 3D version; Helzel, Rossmanith & Taetz (2011) z perturbation, epsilon=0.2. Snapshots at t=0,.2,.5,.7,1.
+name = "movie_orszag_tang_3d__ct"
+problem = "orszag_tang_3d"
+t_end = 1.0
+epsilon = 0.2
+cfl = 0.25
+max_steps = 200000
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+seeds = [42]
+methods = ["ct"]
+repeats = 1
+frames = 241
+grids = [256]
+slice_output = true
+max_run_seconds = 3600
+slurm_time = "01:30:00"
+external_runs = false
+exact_reference = "none"

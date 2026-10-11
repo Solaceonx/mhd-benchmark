@@ -1,0 +1,20 @@
+# Movie run of orszag_tang (ct): physics identical to configs/orszag_tang.toml in sherlock_mhd; dense outputs for video, not timing.
+# FLASH 35.2.2 (Athena normalization, same dynamics).
+name = "movie_orszag_tang__ct"
+problem = "orszag_tang"
+t_end = 0.5
+cfl = 0.25
+max_steps = 200000
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+seeds = [42]
+methods = ["ct"]
+repeats = 1
+frames = 241
+grids = [384]
+# 384^2 runs as a z-invariant 384^3 cube: 128G, as throughput_ot3d at 384^3 (16G was OOM-killed)
+slurm_mem = "128G"
+max_run_seconds = 7200
+slurm_time = "03:00:00"
+external_runs = false
+exact_reference = "none"

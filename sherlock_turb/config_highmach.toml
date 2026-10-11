@@ -1,0 +1,37 @@
+# Driven turbulence at Mach 30 and 50 (README.md, "Higher Mach numbers"). As config.toml, with three differences:
+# - gamma - 1 is ten times smaller. The heat a run dissipates grows as Mach^2: with 1e-5 the gas of a Mach 50 run
+#   would warm by 14 % in ten driving times, with 1e-6 by 1.4 %.
+# - RAMSES runs with the projection of its driving corrected only, and the driving strengths are found with it.
+# - Tom's Float16 kernel is not in the list (it cannot run this gas, see README.md), and there are no check runs.
+#   TURB_CONFIG=config_highmach.toml bash -l check.sh
+gamma_minus_one = 1.0e-6
+machs = [30, 50]
+grids = [128, 256]
+t_end_T = 10
+steady_from_T = 2
+frames_per_T = 4
+series_per_T = 40
+slices_every = 4
+comp_frac = 0.0
+spectrum = "parabolic"
+turb_ndt = 100
+
+[gpu]
+methods = ["hydro", "glm"]
+seeds = [1, 2]
+cfl = 0.5
+
+[ramses]
+variants = ["matched", "best"]
+projections = ["fixed"]
+seed = 1
+
+# guess: 1.6 Mach^2, what the corrected projection needed at Mach 3 and 10.
+[calibration]
+n = 64
+projection = "fixed"
+t_end_T = 6
+from_T = 2
+tolerance = 0.05
+max_iterations = 5
+guess = { "30" = 1450.0, "50" = 4000.0 }

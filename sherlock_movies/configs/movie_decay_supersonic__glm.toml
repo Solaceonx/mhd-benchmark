@@ -1,0 +1,28 @@
+# Movie run of decay_supersonic (glm): physics identical to configs/decay_supersonic.toml in sherlock_mhd; dense outputs for video, not timing.
+# Supersonic decaying MHD turbulence inspired by Kritsuk et al. (2011): rms Mach 9, near-isothermal gamma = 1.01, mean field B0 = 0.3 along z (beta0 = 22). Starts from a smooth random field, not their pre-driven saturated state.
+# RAMSES at 256^3 costs ~1,150 core-h here (~11 h wall on 32 ranks, over the 2 h job limit).
+# To include it: add 256 below and submit with --ntasks=128 --time=08:00:00.
+name = "movie_decay_supersonic__glm"
+problem = "decay"
+t_end = 0.2
+gamma = "101/100"
+mach = 9.0
+b0_vector = [0.0, 0.0, 0.3]
+cfl = 0.25
+max_steps = 400000
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+seeds = [42]
+methods = ["glm"]
+# 241 outputs shorten many steps; keep the CFL-step c_h on those (the original c_h ~ 1/dt made GLM fail)
+glm_ch_at_outputs = "cfl"
+repeats = 1
+frames = 241
+grids = [256]
+slice_output = true
+max_run_seconds = 3600
+slurm_time = "01:30:00"
+external_runs = true
+exact_reference = "none"
+movie_truth = "athenak:matched"
+movie_scale = "adaptive"

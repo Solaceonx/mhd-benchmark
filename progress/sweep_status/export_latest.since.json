@@ -1,0 +1,7 @@
+{
+ "base": "2026-10-01T22:20:26Z",
+ "time": "2026-10-01T22:40Z",
+ "skipped": ["decay_supersonic|ramses:matched|run|N256|s42", "decay_supersonic|ramses:matched|run|N256|s43",
+             "decay_supersonic|ramses:matched|run|N512|s42", "decay_supersonic|ramses:matched|run|N512|s43"],
+ "remarks": ["At about 22:40 UTC, after this export, the four RAMSES matched runs of decay_supersonic at 256³ and 512³ were taken out of the sweep (`tools/sweep.py skip`; two were running, two queued). RAMSES matched stalls on this test: at 64³ and 128³ it reaches 10–20% of the run before the step cap, and the larger grids would have cost an estimated 20–50 thousand core-hours to record the same stall."]
+}

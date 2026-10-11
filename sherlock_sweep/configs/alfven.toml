@@ -1,0 +1,20 @@
+# Grid aligned: div(B) is trivially zero.
+# Sweep config written by tools/make_sweep_configs.py from sherlock_mhd/configs/alfven.toml.
+name = "alfven"
+seeds = [42]
+t_end = 1.0
+frames = 21
+exact_reference = "exact circularly polarized Alfven wave along x, one period"
+cfl = 0.25
+max_run_seconds = 172800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+grids = [32, 64, 128, 256, 512]
+methods = ["glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "ct"]
+split_methods = true
+repeats = 5
+repeats_by_grid = { "256" = 3, "384" = 1, "512" = 1 }
+checkpoint_seconds = 900
+max_steps_per_n = 63
+restart_every = 5
+snapshot_frames_by_grid = { "256" = [0, 4, 8, 12, 16, 20], "512" = [0, 7, 13, 20] }

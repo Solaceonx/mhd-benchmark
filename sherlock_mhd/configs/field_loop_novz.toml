@@ -1,0 +1,15 @@
+# Gardiner & Stone (2005) in-plane loop (vz=0).
+name = "field_loop_novz"
+problem = "field_loop"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 2.0
+frames = 21
+vz = 0.0
+exact_reference = "advected initial state at t=1,2"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

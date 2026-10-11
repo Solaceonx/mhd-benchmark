@@ -1,0 +1,18 @@
+
+[mach_3]
+a_rms = 15.0
+mach_target = 3
+mach_measured = 2.9963506422902784
+converged = true
+turb_T = 0.16666666666666666
+calibrated_with = "RAMSES matched, 64^3, mean of mach_vol over 2-6 T, seed 1"
+tries = [{"a_rms" = 15.0, "mach" = 2.9963506422902784, "drift" = 0.024140985662687964}]
+
+[mach_10]
+a_rms = 165.0
+mach_target = 10
+mach_measured = 9.977695867769128
+converged = true
+turb_T = 0.05
+calibrated_with = "RAMSES matched, 64^3, mean of mach_vol over 2-6 T, seed 1"
+tries = [{"a_rms" = 165.0, "mach" = 9.977695867769128, "drift" = 0.0022966247746514235}]

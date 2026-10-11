@@ -1,0 +1,31 @@
+# Supersonic decaying MHD turbulence inspired by Kritsuk et al. (2011): rms Mach 9, near-isothermal gamma = 1.01, mean field B0 = 0.3 along z (beta0 = 22). Starts from a smooth random field, not their pre-driven saturated state.
+# Sweep config written by tools/make_sweep_configs.py from sherlock_mhd/configs/decay_supersonic.toml.
+name = "decay_supersonic"
+problem = "decay"
+seeds = [42, 43]
+t_end = 0.2
+frames = 11
+gamma = "101/100"
+mach = 9.0
+b0_vector = [0.0, 0.0, 0.3]
+exact_reference = "none; compare spectra, energy decay and effective Reynolds numbers"
+cfl = 0.25
+max_run_seconds = 172800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+grids = [64, 128, 256, 512]
+methods = ["glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "ct"]
+split_methods = true
+repeats = 5
+repeats_by_grid = { "256" = 3, "384" = 1, "512" = 1 }
+checkpoint_seconds = 900
+max_steps_per_n = 105
+restart_every = 2
+snapshot_frames = [0, 5, 10]
+slice_frames = [0, 2, 4, 6, 8, 10]
+restrict_to = [64, 128]
+spectra_every = 1
+reference_n = 512
+reference_check_n = 256
+reference_variant = "matched"
+code_grids = { "athenak_best" = [64, 128] }

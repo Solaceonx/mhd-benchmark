@@ -1,0 +1,20 @@
+# Throughput benchmark: 3D Orszag-Tang for a short time at grids divisible by 6, so the GLM
+# production kernel can use its fastest TB=6 tiles. Measures cell-updates per second and memory,
+# not accuracy. RAMSES (octree) needs powers of two and is excluded by the plan.
+name = "throughput_ot3d"
+problem = "orszag_tang_3d"
+grids = [96, 192, 384]
+seeds = [42]
+t_end = 0.05
+frames = 2
+snapshot_frames = []
+slurm_mem = "128G"
+epsilon = 0.2
+slurm_time = "02:00:00"
+exact_reference = "none; throughput benchmark"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

@@ -1,0 +1,16 @@
+# FLASH 35.2.1. Periodic L|R|L, gamma=2. x in [0.25,0.75] at t=0.05 equals the standard tube on [0,1] at t=0.1 with N/2 cells.
+name = "brio_wu"
+grids = [32, 64, 128]
+seeds = [42]
+t_end = 0.05
+frames = 11
+gamma = "2"
+reference_n = 2048
+reference_check_n = 1024
+exact_reference = "none; 1D Brio-Wu reference to be added"
+repeats = 5
+cfl = 0.25
+max_steps = 200000
+max_run_seconds = 1800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18

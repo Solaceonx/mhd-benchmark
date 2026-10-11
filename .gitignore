@@ -1,3 +1,25 @@
 .DS_Store
 *.swp
 *.swo
+.venv-movie/
+__pycache__/
+.claude/
+.openai/
+
+# Other people's code. Tom Abel's solver kernels are public at github.com/yipihey/GLMMHDTurb without a licence, so
+# they are not redistributed here: scripts/fetch_solver.sh puts them back (GLMMHDTurb/ and every */vendor/).
+/GLMMHDTurb/
+/*/vendor/*.jl
+/external/
+
+# Data returned from the clusters, and what is rebuilt from it (docs/data.md says where each lives)
+/*/returns/
+/scripts/out/
+/sweep_results/
+/progress/media/gpu/
+/progress/media/movies/
+
+# Transfer bundles: tarred copies of the directories of the same name
+/*.tar.gz
+/*.tar
+/*.sha256

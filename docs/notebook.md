@@ -22,6 +22,9 @@ page or add a test.
 All builders are in `scripts/`. Page 06 needs the archives in `sherlock_mhd/returns/`, which are not in this
 repository, and its stills and movies are not either ([data](data.md)); the other pages work from a clone.
 
+`progress/notes.html` is a private notes page, one note per code and per test, encrypted in the browser with a
+password; no page links to it.
+
 ## One look
 
 `scripts/plot_style.py` holds the choices every figure and movie uses: STIX text with Computer Modern mathematics,

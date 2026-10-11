@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><meta name="color-scheme" content="light">
+<title>Notes · MHD Field Notes</title><link rel="stylesheet" href="style.css">
+<style>
+[hidden]{display:none!important}
+.notes-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.notes-status{font:10px/1.4 ui-monospace,SFMono-Regular,monospace;letter-spacing:.06em;color:var(--muted);margin-right:6px}
+.nbtn{display:inline-flex;align-items:center;margin:0;border:1px solid #cbd3ca;background:#fafbf7;color:#40534b;padding:6px 11px;border-radius:5px;font:12px var(--font);cursor:pointer}
+.nbtn:hover{background:#eef2ea}.nbtn.primary{background:var(--ink);border-color:var(--ink);color:#fff}.nbtn.quiet{border-color:transparent;background:transparent;color:var(--muted)}
+.notes-gate{max-width:380px;margin:14vh auto;padding:0 5vw}
+.notes-gate h1{font-size:28px}.notes-gate p{color:var(--muted);font-size:14px;line-height:1.5}
+.notes-gate form{display:flex;gap:8px;margin-top:18px}
+.notes-gate input,.notes-dialog input{flex:1;min-width:0;border:1px solid #cbd3ca;border-radius:5px;padding:9px 11px;font:15px var(--font);background:#fff;color:var(--ink)}
+.notes-error{color:#b3401f;font-size:13px;min-height:18px;margin-top:10px}
+.notes-wrap{max-width:1500px;margin:auto;padding:28px 4vw 60px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:36px;align-items:start}
+.notes-wrap main{max-width:none;margin:0;padding:0}
+.notes-toc{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;padding-right:6px}
+.notes-toc h2{font:10px ui-monospace,SFMono-Regular,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:20px 0 6px;font-weight:400}
+.notes-toc h2:first-child{margin-top:0}
+.notes-toc a{display:flex;justify-content:space-between;gap:8px;padding:5px 9px;border-radius:5px;font-size:13px;line-height:1.35;color:var(--ink);text-decoration:none}
+.notes-toc a:hover{background:#ecefe7}.notes-toc a[aria-current]{background:#e1e9dc;font-weight:600}
+.notes-toc .dot{width:6px;height:6px;border-radius:50%;background:var(--glm);align-self:center;flex:none}
+.notes-toc .nbtn{margin:8px 0 0 9px}
+.notes-id{font:12px ui-monospace,SFMono-Regular,monospace;color:var(--muted)}
+.notes-desc{color:var(--muted);font-size:14px;line-height:1.5;max-width:70ch;margin:0 0 18px}
+.notes-text{display:block;width:100%;box-sizing:border-box;min-height:58vh;border:1px solid var(--line);border-radius:8px;padding:18px 20px;font:16px/1.6 var(--font);background:#fff;color:var(--ink);resize:vertical}
+.notes-text:focus{outline:2px solid #b9d3c4;outline-offset:1px}
+.notes-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px;font-size:12px;color:var(--muted)}
+.notes-dialog{border:1px solid var(--line);border-radius:10px;padding:24px;max-width:520px;width:calc(100vw - 48px);color:var(--ink);font-size:14px;line-height:1.5}
+.notes-dialog::backdrop{background:rgba(32,42,42,.35)}
+.notes-dialog h2{margin:0 0 10px;font-size:19px}.notes-dialog ol{padding-left:20px;margin:10px 0}.notes-dialog code{font-size:12px}
+.notes-dialog .row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+@media(max-width:820px){.notes-wrap{grid-template-columns:1fr;gap:18px}.notes-toc{position:static;max-height:210px;border:1px solid var(--line);border-radius:8px;padding:10px;background:#fff}.notes-status{display:none}}
+</style></head>
+<body>
+<header class="masthead"><a class="brand" href="index.html"><span class="brand-mark">∿</span><span>MHD <strong>FIELD NOTES</strong></span></a>
+<div class="notes-bar" id="bar" hidden><span class="notes-status" id="status" role="status"></span><button class="nbtn" id="sync-open">Sync…</button><button class="nbtn" id="backup">Backup</button><button class="nbtn" id="restore">Restore</button><button class="nbtn" id="lock">Lock</button><input type="file" id="restore-file" accept="application/json,.json" hidden></div></header>
+
+<section class="notes-gate" id="gate"><div class="eyebrow">Private</div><h1>Notes</h1><p>Notes on each code and each test. They are encrypted with the password before they are stored anywhere.</p>
+<form id="gate-form"><input type="password" id="password" autocomplete="current-password" aria-label="Password" placeholder="Password" required><button class="nbtn primary" type="submit">Unlock</button></form><div class="notes-error" id="gate-error" role="alert"></div></section>
+
+<div class="notes-wrap" id="app" hidden><nav class="notes-toc" id="toc" aria-label="Note pages"></nav>
+<main><div class="eyebrow" id="group"></div><h1 id="title"></h1><p class="notes-desc" id="desc"></p>
+<textarea class="notes-text" id="text" aria-labelledby="title" placeholder="Write here. It saves as you type." spellcheck="true"></textarea>
+<div class="notes-foot"><span id="edited"></span><button class="nbtn quiet" id="remove" hidden>Delete this page</button></div></main></div>
+
+<dialog class="notes-dialog" id="sync-dialog"><h2>Keep one copy on GitHub</h2>
+<p>Notes are always kept in this browser. To have the same notes on every device, this page can also save the encrypted file to the <code id="where"></code> branch of your website's repository. Reading it needs only the password; writing needs a GitHub token, entered once per device:</p>
+<ol><li>GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token.</li><li>Repository access: only <code id="repo"></code>.</li><li>Permissions: Contents → Read and write.</li></ol>
+<p>The token is stored in this browser, encrypted with your password, and is sent only to api.github.com.</p>
+<input type="password" id="token" autocomplete="off" aria-label="GitHub token" placeholder="github_pat_…" style="width:100%;box-sizing:border-box">
+<div class="notes-error" id="sync-error" role="alert"></div>
+<div class="row"><button class="nbtn primary" id="connect">Connect</button><button class="nbtn" id="sync-now">Sync now</button><button class="nbtn" id="disconnect">Forget token</button><button class="nbtn quiet" id="sync-close">Close</button></div></dialog>
+
+<script>
+(() => {
+  // The password is not in this file: `check` only lets the page tell a right password from a wrong one.
+  const CFG = {salt: 'RUBQMuIx49pSDmzjV4Uthg==', check: '8c09855b4612d260675b74b099f49a3ab988fa2d0c96d061ac7f241386a5e69c', rounds: 600000,
+    gh: {owner: 'Solaceonx', repo: 'solaceonx.github.io', branch: 'notes', path: 'mhd-notes.enc.json'}};
+  const GROUPS = [
+    ['Codes', [
+      ['code/glm', 'GLM kernels', "Tom Abel's Dedner-cleaning kernels on one H100: LLF, production (half precision, HLL), HLLD, PPM, constant c_h."],
+      ['code/ct', 'CT prototype', "Tom Abel's constrained-transport prototype on the GPU."],
+      ['code/hydro', 'Euler kernel', "Tom Abel's hydrodynamic kernel (step_hydro!), used for driven turbulence."],
+      ['code/athenak', 'AthenaK', 'Constrained transport on the H100. Matched: PLM, HLLE, RK2. Best: PPM4, HLLD, RK3. Also the 4096² and 512³ references.'],
+      ['code/ramses', 'RAMSES', 'Constrained transport on CPUs. HLL and HLLD; HLL and HLLC for hydrodynamic turbulence.'],
+      ['code/athenapp', 'Athena++', 'Constrained transport on CPUs. Matched PLM and best PPM/HLLD; also the 1024² Orszag–Tang reference.'],
+      ['code/arepo', 'AREPO', 'Powell cleaning with HLLD on CPUs, on a static Cartesian mesh and on the moving mesh.'],
+      ['code/ramses2', 'RAMSES II', 'CUDA Fortran, constrained transport in double precision. Speed test only so far.'],
+      ['code/mhdale', 'MHD-ALE', 'Moving-mesh finite elements on MFEM, divergence-free by construction.']]],
+    ['Planar tests', [
+      ['test/uniform', 'Uniform state', 'A uniform state stays uniform.'],
+      ['test/entropy', 'Entropy wave', 'Advection of a density wave against the exact answer.'],
+      ['test/alfven', 'Alfvén wave', 'Circularly polarised Alfvén wave along the grid.'],
+      ['test/alfven_oblique', 'Oblique Alfvén wave', 'Circularly polarised Alfvén wave oblique to the grid.'],
+      ['test/brio_wu', 'Brio–Wu', 'The Brio–Wu shock tube along the grid.'],
+      ['test/brio_wu_rotated', 'Brio–Wu at 45°', 'The Brio–Wu shock tube rotated by 45°.'],
+      ['test/orszag_tang', 'Orszag–Tang', 'The Orszag–Tang vortex.'],
+      ['test/rotor', 'Rotor', 'The MHD rotor.'],
+      ['test/field_loop', 'Field loop', 'Advection of a weak field loop, with motion out of the plane.'],
+      ['test/field_loop_novz', 'Field loop, in plane', 'Gardiner & Stone 2005 loop with v_z = 0.'],
+      ['test/blast_2d_b0', 'Blast, no field', 'The FLASH blast wave in the plane, without a magnetic field.'],
+      ['test/blast_2d_b50', 'Blast, Bx = 50/√4π', 'The FLASH blast wave in the plane, with B_x = 50/√(4π).'],
+      ['test/blast_2d_b100', 'Blast, Bx = 100/√4π', 'The FLASH blast wave in the plane, with B_x = 100/√(4π).'],
+      ['test/kh_uniform', 'Kelvin–Helmholtz, uniform field', 'Tomida et al. 2026, section III.1, as a periodic double layer.'],
+      ['test/kh_localized', 'Kelvin–Helmholtz, localized field', 'With a field-free layer: the leakage test.'],
+      ['test/kh_localized_dtjump', 'Kelvin–Helmholtz, timestep jump', "The localized test with the timestep cut to 1/40 at t = 3. Tom's kernels only."],
+      ['test/current_sheet', 'Current sheet', 'Gardiner & Stone 2005, section 5.5: two current sheets with field reversals.'],
+      ['test/gem', 'GEM reconnection', 'The GEM challenge, Birn et al. 2001.']]],
+    ['3D tests', [
+      ['test/orszag_tang_3d', 'Orszag–Tang 3D', 'Orszag–Tang in three dimensions.'],
+      ['test/field_loop_3d', 'Field loop 3D', 'The field loop in three dimensions.'],
+      ['test/blast_3d_b0', 'Blast 3D, no field', 'The FLASH blast wave in three dimensions, without a magnetic field.'],
+      ['test/blast_3d_b50', 'Blast 3D, Bx = 50/√4π', 'The FLASH blast wave in three dimensions, with B_x = 50/√(4π).'],
+      ['test/blast_3d_b100', 'Blast 3D, Bx = 100/√4π', 'The FLASH blast wave in three dimensions, with B_x = 100/√(4π).'],
+      ['test/decay', 'Decay from Mach 2', 'Decaying turbulence, three seeds.'],
+      ['test/decay_supersonic', 'Decay from Mach 9', 'After Kritsuk et al. 2011, with a mean field; two seeds.'],
+      ['test/throughput_ot3d', 'Throughput', 'Timing on 3D Orszag–Tang, 64³ to 512³, GPU codes.']]],
+    ['Driven turbulence', [
+      ['turb/mach-3-10', 'Mach 3 and 10', "Hydrodynamic turbulence on 128³ and 256³: Tom's kernels and RAMSES."],
+      ['turb/mach-30-50', 'Mach 30 and 50', 'The high-Mach runs.']]],
+    ['Other', [['other/general', 'General', 'Anything that does not belong to one code or one test.']]]];
+  const LS = {blob: 'mhd-notes:blob', token: 'mhd-notes:token', last: 'mhd-notes:last'};
+  const $ = s => document.querySelector(s), enc = new TextEncoder(), dec = new TextDecoder();
+  const store = {get(k) { try { return localStorage.getItem(k) } catch (e) { return null } },
+    set(k, v) { try { localStorage.setItem(k, v); return true } catch (e) { return false } },
+    del(k) { try { localStorage.removeItem(k) } catch (e) {} }};
+  const b64 = u => { let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s) };
+  const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const hex = u => [...u].map(x => x.toString(16).padStart(2, '0')).join('');
+  const clock = t => new Date(t || Date.now()).toLocaleString([], {dateStyle: 'medium', timeStyle: 'short'});
+  let key = null, state = {v: 1, notes: {}}, token = null, current = null, saveTimer = null, syncTimer = null, syncing = false, again = false;
+  let localMsg = '', syncMsg = '';
+
+  // ---- encryption: PBKDF2 gives the AES key and, from separate bytes, the check value
+  async function derive(password) {
+    const base = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+    const bits = new Uint8Array(await crypto.subtle.deriveBits({name: 'PBKDF2', hash: 'SHA-256', salt: unb64(CFG.salt), iterations: CFG.rounds}, base, 512));
+    if (hex(new Uint8Array(await crypto.subtle.digest('SHA-256', bits.slice(32)))) !== CFG.check) return null;
+    return crypto.subtle.importKey('raw', bits.slice(0, 32), 'AES-GCM', false, ['encrypt', 'decrypt']);
+  }
+  async function seal(value) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({name: 'AES-GCM', iv}, key, enc.encode(JSON.stringify(value))));
+    return JSON.stringify({v: 1, iv: b64(iv), ct: b64(ct)});
+  }
+  async function unseal(text) {
+    const j = JSON.parse(text);
+    return JSON.parse(dec.decode(await crypto.subtle.decrypt({name: 'AES-GCM', iv: unb64(j.iv)}, key, unb64(j.ct))));
+  }
+
+  // ---- the notes: {id: {text, updated, title?, deleted?}}; when two copies meet, the newer version of each note wins
+  const merge = (a, b) => { const out = {...a}; for (const [id, n] of Object.entries(b)) if (!out[id] || n.updated > out[id].updated) out[id] = n; return out };
+  const stamp = notes => JSON.stringify(Object.keys(notes).sort().map(id => [id, notes[id].updated]));
+  const customPages = () => Object.entries(state.notes).filter(([id, n]) => id.startsWith('other/') && id !== 'other/general' && n.title && !n.deleted)
+    .sort((a, b) => a[1].title.localeCompare(b[1].title)).map(([id, n]) => [id, n.title, '']);
+  const groups = () => GROUPS.map(([name, items]) => [name, name === 'Other' ? [...items, ...customPages()] : items]);
+  function meta(id) { for (const [name, items] of groups()) for (const [pid, title, desc] of items) if (pid === id) return {group: name, title, desc}; return null }
+  function showStatus() { $('#status').textContent = [localMsg, syncMsg].filter(Boolean).join(' · ') }
+  async function saveLocal() {
+    clearTimeout(saveTimer); saveTimer = null;
+    localMsg = store.set(LS.blob, await seal(state)) ? 'Saved in this browser' : 'This browser refused to store the notes: use Backup'; showStatus();
+  }
+  function queueSave() {
+    localMsg = 'Saving…'; showStatus(); clearTimeout(saveTimer); saveTimer = setTimeout(saveLocal, 500);
+    if (token) { clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, 8000) }
+  }
+  function adopt(notes) {             // notes changed from outside (sync or restore): store and redraw
+    state.notes = notes; saveLocal(); drawToc();
+    const mine = state.notes[current];
+    if (!meta(current)) go('other/general'); else if (mine && mine.text !== $('#text').value) show(current);
+  }
+
+  // ---- pages
+  function drawToc() {
+    const toc = $('#toc'); toc.textContent = '';
+    for (const [name, items] of groups()) {
+      const h = document.createElement('h2'); h.textContent = name; toc.append(h);
+      for (const [id, title] of items) {
+        const a = document.createElement('a'); a.href = '#' + id; a.textContent = title; if (id === current) a.setAttribute('aria-current', 'page');
+        const n = state.notes[id]; if (n && n.text && n.text.trim()) { const d = document.createElement('span'); d.className = 'dot'; d.title = 'Has notes'; a.append(d) }
+        toc.append(a);
+      }
+      if (name === 'Other') { const b = document.createElement('button'); b.className = 'nbtn'; b.textContent = '+ New page'; b.onclick = newPage; toc.append(b) }
+    }
+  }
+  function show(id) {
+    const m = meta(id); if (!m) return go('other/general');
+    current = id; store.set(LS.last, id);
+    const n = state.notes[id] || {};
+    $('#group').textContent = m.group; $('#title').textContent = m.title; $('#desc').textContent = m.desc; $('#desc').hidden = !m.desc;
+    if (id.startsWith('test/')) { const s = document.createElement('span'); s.className = 'notes-id'; s.textContent = id.slice(5); $('#group').append(s) }
+    $('#text').value = n.text || ''; $('#edited').textContent = n.updated && n.text ? 'Edited ' + clock(n.updated) : '';
+    $('#remove').hidden = !(id.startsWith('other/') && id !== 'other/general');
+    document.title = m.title + ' · Notes'; drawToc();
+  }
+  function go(id) { if (location.hash === '#' + id) show(id); else location.hash = id }
+  function newPage() {
+    const title = (prompt('Title of the new page') || '').trim(); if (!title) return;
+    const id = 'other/' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + '-' + Date.now().toString(36);
+    state.notes[id] = {title, text: '', updated: Date.now()}; queueSave(); go(id);
+  }
+
+  // ---- the copy on GitHub
+  const G = CFG.gh;
+  async function gh(method, path, body) {
+    const headers = {Accept: 'application/vnd.github+json'}; if (token) headers.Authorization = 'Bearer ' + token;
+    return fetch(`https://api.github.com/repos/${G.owner}/${G.repo}${path}`, {method, headers, body: body ? JSON.stringify(body) : undefined, cache: 'no-store'});
+  }
+  const refuse = (r, what) => new Error(r.status === 401 ? 'GitHub did not accept the token' : r.status === 403 ? `GitHub refused (${what}): the token lacks the permission, or too many requests` : `GitHub answered ${r.status} (${what})`);
+  async function pull() {
+    const r = await gh('GET', `/contents/${G.path}?ref=${G.branch}`);
+    if (r.status === 404) return null; if (!r.ok) throw refuse(r, 'reading');
+    const j = await r.json(); if (j.encoding !== 'base64' || !j.content) throw new Error('the notes file on GitHub is too large to read this way');
+    return {sha: j.sha, text: atob(j.content.replace(/\s/g, ''))};
+  }
+  async function push(text, sha) {       // null when someone else saved in between
+    const r = await gh('PUT', `/contents/${G.path}`, {message: 'Notes', content: btoa(text), branch: G.branch, ...(sha ? {sha} : {})});
+    if (r.status === 409 || r.status === 422) return null; if (!r.ok) throw refuse(r, 'saving');
+    return (await r.json()).content.sha;
+  }
+  async function ensureBranch() {
+    let r = await gh('GET', `/git/ref/heads/${G.branch}`); if (r.ok) return; if (r.status !== 404) throw refuse(r, 'looking for the branch');
+    r = await gh('GET', ''); if (!r.ok) throw refuse(r, 'reading the repository');
+    r = await gh('GET', `/git/ref/heads/${(await r.json()).default_branch}`); if (!r.ok) throw refuse(r, 'reading the main branch');
+    r = await gh('POST', '/git/refs', {ref: 'refs/heads/' + G.branch, sha: (await r.json()).object.sha}); if (!r.ok) throw refuse(r, 'creating the branch');
+  }
+  async function syncNow() {
+    if (syncing) { again = true; return } syncing = true; clearTimeout(syncTimer); syncMsg = 'syncing…'; showStatus();
+    try {
+      for (let attempt = 0; ; attempt++) {
+        const remote = await pull(); let theirs = {};
+        if (remote) try { theirs = (await unseal(remote.text)).notes } catch (e) { throw new Error('the file on GitHub does not open with this password') }
+        const merged = merge(state.notes, theirs);
+        if (stamp(merged) !== stamp(state.notes)) adopt(merged);
+        if (!token) { syncMsg = remote ? 'read from GitHub (no token here: changes stay in this browser)' : ''; break }
+        if (stamp(merged) === stamp(theirs)) { syncMsg = 'synced ' + clock(); break }
+        if (await push(await seal(state), remote && remote.sha)) { syncMsg = 'synced ' + clock(); break }
+        if (attempt === 2) throw new Error('GitHub kept refusing the save');
+      }
+    } catch (e) { syncMsg = 'sync failed: ' + e.message }
+    syncing = false; showStatus(); if (again) { again = false; syncNow() }
+  }
+
+  // ---- controls
+  $('#text').addEventListener('input', () => {
+    state.notes[current] = {...(state.notes[current] || {}), text: $('#text').value, updated: Date.now()};
+    $('#edited').textContent = 'Edited ' + clock(); queueSave();
+  });
+  $('#text').addEventListener('blur', () => { if (saveTimer) saveLocal(); drawToc() });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && key && saveTimer) saveLocal() });
+  addEventListener('hashchange', () => { if (key) show(decodeURIComponent(location.hash.slice(1))) });
+  $('#remove').onclick = () => {
+    if (!confirm('Delete this page and its notes?')) return;
+    state.notes[current] = {title: state.notes[current].title, text: '', deleted: true, updated: Date.now()}; queueSave(); go('other/general');
+  };
+  $('#lock').onclick = async () => { if (saveTimer) await saveLocal(); location.reload() };
+  $('#backup').onclick = async () => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([await seal(state)], {type: 'application/json'}));
+    a.download = 'mhd-notes-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  $('#restore').onclick = () => $('#restore-file').click();
+  $('#restore-file').onchange = async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    try { adopt(merge(state.notes, (await unseal(await f.text())).notes)); if (token) syncNow() } catch (err) { alert('That file does not open with this password.') }
+  };
+  const dialog = $('#sync-dialog');
+  $('#sync-open').onclick = () => { $('#where').textContent = G.branch; $('#repo').textContent = G.owner + '/' + G.repo; $('#sync-error').textContent = token ? 'A token is stored in this browser.' : ''; $('#token').value = ''; dialog.showModal() };
+  $('#sync-close').onclick = () => dialog.close();
+  $('#sync-now').onclick = async () => { await syncNow(); $('#sync-error').textContent = syncMsg || 'Nothing on GitHub yet.' };
+  $('#disconnect').onclick = () => { token = null; store.del(LS.token); syncMsg = ''; showStatus(); $('#sync-error').textContent = 'Token forgotten. Notes stay in this browser.' };
+  $('#connect').onclick = async () => {
+    const candidate = $('#token').value.trim(); if (!candidate) { $('#sync-error').textContent = 'Paste a token first.'; return }
+    const before = token; token = candidate; $('#sync-error').textContent = 'Connecting…';
+    try { await ensureBranch(); store.set(LS.token, await seal({token})); $('#token').value = ''; await syncNow(); $('#sync-error').textContent = syncMsg }
+    catch (e) { token = before; $('#sync-error').textContent = e.message }
+  };
+  $('#gate-form').addEventListener('submit', async e => {
+    e.preventDefault(); const field = $('#password'), error = $('#gate-error');
+    if (!(window.crypto && crypto.subtle)) { error.textContent = 'This browser cannot encrypt here (the page needs https).'; return }
+    error.textContent = 'Checking…'; key = await derive(field.value); field.value = '';
+    if (!key) { error.textContent = 'Wrong password.'; field.focus(); return }
+    const blob = store.get(LS.blob);
+    if (blob) try { state = await unseal(blob) } catch (err) { store.set(LS.blob + ':unreadable', blob); alert('The notes stored in this browser could not be read. They were set aside, and you start empty.') }
+    const kept = store.get(LS.token); if (kept) try { token = (await unseal(kept)).token } catch (err) {}
+    $('#gate').hidden = true; $('#app').hidden = false; $('#bar').hidden = false; localMsg = blob ? 'Saved in this browser' : ''; showStatus();
+    show(decodeURIComponent(location.hash.slice(1)) || store.get(LS.last) || 'other/general'); $('#text').focus(); syncNow();
+  });
+  $('#password').focus();
+})();
+</script>
+</body></html>

@@ -8,7 +8,8 @@ pages are unlisted: nothing on the website links to them and they ask search eng
 links to them in the MHD entry of research.html (lyxia had them removed on 2026-10-04: not for general readers yet).
 
 Files the pages link to in the local repository (../scripts/out/..., method notes) are copied to mhd/files/ and the
-links are pointed there. Local how-to text is taken out. Commit and push are left to the caller.
+links are pointed there. Local how-to text is taken out. notes.html (private notes, encrypted with a password in the
+browser) is copied as it is and no page links to it. Commit and push are left to the caller.
 """
 import glob
 import json
@@ -123,6 +124,7 @@ def main(argv):
     for t in data["tests"]:t["page"] = NAMES[t["page"]];t["number"] = order[t["page"]]
     (out/"data.js").write_text(localise(head + json.dumps(data, ensure_ascii=False) + ";\n", wanted))
     for name in ("style.css", "sync-videos.js"):shutil.copy(SITE/name, out/name)
+    shutil.copy(SITE/"notes.html", out/"notes.html")       # private notes: encrypted in the browser, not in the navigation
     copy_media(out)
     missing = copy_wanted(wanted, out)
     if missing:print("linked from the pages but not found here (those links will be dead):\n  " + "\n  ".join(missing))

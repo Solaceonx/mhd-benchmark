@@ -188,6 +188,12 @@ fields it saves). The full purple has those three lines corrected and is the RAM
 The green diamonds of figure 2 are the reverse test: Tom's Euler kernel driven with RAMSES's released projection. His Float16 Euler kernel is not here: it stops in its first
 steps, because it stores the energy flux in half precision and this gas has an internal energy of 10⁵.</p>
 <p>Density images use the notebook's map for gas quantities (teal, dark where the density is low), as on the other pages.</p></div>''']
+    movie = SITE/"media"/"tests"/"driven_turbulence-density.mp4"
+    if movie.is_file():           # scripts/make_turb_movie.py, from the movie runs (sherlock_turb/movie.sh)
+        out.append(f'<article class="card test-movie"><div class="fig-head"><h3>Movie</h3></div><video controls loop muted playsinline preload="metadata" '
+                   f'src="media/tests/{movie.name}?v={int(movie.stat().st_mtime)}"></video><p>Density in the midplane of Tom\'s Euler kernel on 256³ at each Mach number, '
+                   "20 pictures per driving time, from the start of the driving to 10 driving times. Each panel has its own colour scale, fixed over the run. "
+                   "These are the runs of seed 1 on this page, repeated with the density saved more often.</p></article>")
     out += [figure_html(i + 1, name, title, caption, f.get(key)) for i, (name, title, caption, key) in enumerate(FIGURES) if (SITE/"media"/"turb"/f"{name}.png").is_file()]
     out.append(f'<article class="card paper-fig" id="turb-runs"><div class="fig-head"><span class="fig-no">{len(FIGURES) + 1}</span><h3>Every run</h3></div>'
                f'<p>Averages over time ≥ {tf.FROM:g} T. Power in units of ρ c<sub>s</sub>³/L. Cell updates per second: the whole GPU for Tom\'s kernels (single precision), '

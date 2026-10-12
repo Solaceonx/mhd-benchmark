@@ -12,6 +12,7 @@ shopt -s nullglob
 archives=("$src"/movie_*.tar.gz)
 (( ${#archives[@]} )) || { echo "No movie archives in $src; download them first." >&2; exit 1; }
 bases=$(for f in "${archives[@]}"; do b=$(basename "$f");b=${b#movie_};echo "${b%%__*}";done | sort -u)
+[[ -n "${MOVIE_ONLY:-}" ]] && bases="$MOVIE_ONLY"      # only these tests, e.g. MOVIE_ONLY="rotor orszag_tang"
 tmp=""
 trap '[[ -n "$tmp" ]] && rm -rf "$tmp"' EXIT   # never leave raw frames behind, even on failure
 for base in $bases; do

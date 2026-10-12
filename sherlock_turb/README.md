@@ -238,3 +238,26 @@ plan) and `ramses.sbatch`; `turb_drive.jl` and `gpu.sbatch`; `measure.jl`, `turb
 AthenaK and Athena++ (both can drive; Athena++ needs a rebuild with FFT), RAMSES II (waiting for the performance
 pull request), higher and subsonic Mach numbers, compressive driving, 512^3, magnetic fields. The MHD kernels need
 only a mean field in the initial state and a few more columns in `measure.jl`.
+
+## Movie
+
+The movie of the Turbulence page needs the density more often than the pilot saved it (a slice per driving time).
+`movie.sh` repeats four runs of the pilot (Tom's Euler kernel, 256³, seed 1, Mach 3, 10, 30 and 50) with the midplane
+density written 20 times per driving time (`movie_per_T` in `config_movie.toml` and `config_movie_highmach.toml`),
+into `$SCRATCH/mhd-results-turb-movie`, so the pilot's results are not touched. About four minutes a run on an H100.
+
+On the Mac, to send the bundle and submit:
+
+```bash
+cd ~/Projects/research/abel_mhd && COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf - sherlock_turb | ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-study && mkdir -p turb_update && tar -xzf - -C turb_update && mv -f turb_update/sherlock_turb/* sherlock_turb/ && rm -rf turb_update && bash -l sherlock_turb/movie.sh'
+```
+
+When both jobs have ended, on the Mac (about 210 MB):
+
+```bash
+mkdir -p ~/Projects/research/abel_mhd/turb_movie && ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-results-turb-movie && find . -maxdepth 2 -path "./gpu-hydro-*" \( -name "rho_*.bin" -o -name run.toml \) | tar -cf - -T -' | tar -xf - -C ~/Projects/research/abel_mhd/turb_movie
+```
+
+Then `.venv-movie/bin/python scripts/make_turb_movie.py` draws `progress/media/tests/driven_turbulence-density.mp4`,
+`python3 scripts/build_turbulence.py --page-only` puts it on the page, and `turb_movie/` can be deleted.
+

@@ -30,6 +30,13 @@ TITLES = {"density": "density ρ", "magnetic": "|B|", "vorticity": "vorticity ω
 LABELS = {"glm": "GLM (advisor), tiled LLF", "ct": "CT prototype"}
 GLM_CFL_LABEL = "GLM (advisor), tiled LLF · c_h of the CFL step at outputs"
 SAME_GRID = {"athenak_best": "AthenaK PPM/HLLD/RK3", "athenak_matched": "AthenaK PLM/HLLE/RK2"}
+FAMILY_OF = None      # --family-maps: test -> family, and the maps follow the family (plot_style.FAMILY_MAPS)
+
+
+def movie_cmap(test, field):
+    if FAMILY_OF is None:return suite.FIELD_CMAPS[field]
+    from plot_style import family_map
+    return family_map(FAMILY_OF.get(test, ""), {"vorticity": "signed", "current": "signed"}.get(field, field))
 
 
 def flux_function(u):
@@ -85,7 +92,7 @@ def render(path, test, field, times, planes, labels, n, fps, adaptive, midplane,
     ims, notes = [], []
     for ax, role in zip(np.atleast_1d(axes), roles):
         first = next((p for p in planes[role] if p is not None), np.zeros((n, n)))
-        ims.append(ax.imshow(first, origin="lower", extent=(0, 1, 0, 1), cmap=suite.FIELD_CMAPS[field], norm=norm,
+        ims.append(ax.imshow(first, origin="lower", extent=(0, 1, 0, 1), cmap=movie_cmap(test, field), norm=norm,
                              interpolation="bilinear"))
         ax.set_title(labels[role], fontsize=13);ax.set_xticks([]);ax.set_yticks([])
         notes.append(ax.text(.5, .04, "", transform=ax.transAxes, ha="center", va="bottom", fontsize=12, color="white",
@@ -174,7 +181,11 @@ def main():
     parser.add_argument("--fps", type=int, default=None, help="default: 24 for dense runs, slower for sparse previews")
     parser.add_argument("--min-frames", type=int, default=11, help="skip runs with fewer saved outputs (e.g. 3D snapshots)")
     parser.add_argument("--fields", default="", help="comma-separated fields to render (default: all of build_gpu_suite.FIELD_CMAPS)")
+    parser.add_argument("--family-maps", action="store_true", help="colour maps by family of tests (the test pages) instead of the notebook's one set")
     args = parser.parse_args()
+    if args.family_maps:
+        global FAMILY_OF
+        FAMILY_OF = {name: t["family"] for name, t in json.loads((SITE / "gpu_tests.json").read_text())["tests"].items()}
     results, refs = suite.discover(args.returns.resolve())
     groups = {}   # (base, n, seed) -> {test: slots}; movie_X__glm and movie_X__ct share base X
     for (test, n, seed, smoke), slots in results.items():

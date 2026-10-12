@@ -69,3 +69,18 @@ code{font:11px ui-monospace,SFMono-Regular,monospace;background:#eef1ea;padding:
 .paper-table td,.paper-table th{white-space:nowrap}.paper-state pre.command{white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.6 ui-monospace,SFMono-Regular,monospace;background:#eef1ea;border-radius:6px;padding:12px 14px;margin:10px 0;color:var(--ink)}
 .card p .kind{margin:0 4px 0 10px}.card p .kind:first-child{margin-left:0}
 @media(max-width:650px){.paper-fig details ul{columns:1}.paper-cover td:first-child,.paper-cover td:nth-child(3){white-space:normal}}
+/* test pages (scripts/build_test_pages.py) */
+.test-family h2{font:10px ui-monospace,SFMono-Regular,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:30px 0 10px;font-weight:400}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.test-card{display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:15px 16px;color:var(--ink);text-decoration:none}
+.test-card:hover{border-color:#9fb3a8;box-shadow:0 1px 6px rgba(32,42,42,.07)}.test-card strong{font-size:15px;font-weight:600}
+.test-card code{font:11px ui-monospace,SFMono-Regular,monospace;color:var(--muted)}.test-card span{font-size:13px;line-height:1.45;color:#48544f}
+.test-card em{font-style:normal;font-size:11px;color:var(--muted);margin-top:auto;padding-top:6px}
+.test-movie .fig-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.test-movie video{display:block;width:100%;max-width:1500px;margin:12px 0 4px;border-radius:6px;background:#fff;border:1px solid var(--line)}
+.field-switch{display:inline-flex;border:1px solid #cbd3ca;border-radius:6px;overflow:hidden}
+.field-switch button{margin:0;border:0;border-right:1px solid #cbd3ca;border-radius:0;background:#fafbf7;color:#40534b;padding:6px 12px;font:12px var(--font);cursor:pointer}
+.field-switch button:last-child{border-right:0}.field-switch button[aria-pressed=true]{background:var(--ink);color:#fff}
+.test-results th[scope=row]{text-align:left;font-weight:500;white-space:nowrap}.test-results td{text-align:center;white-space:nowrap}
+.test-results td.done{color:#17765a}.test-results td.stop{color:#a8501c;font-size:11px}.test-results td.none{color:#b9c2bd}
+.test-turn{display:flex;justify-content:space-between;gap:16px;margin-top:22px;font-size:13px}.test-turn a,.eyebrow a{color:var(--muted)}

@@ -7,7 +7,7 @@
 # MOVIE_RENDER_ARGS is passed on to render_suite_movies.py (e.g. --fields density,magnetic,vorticity).
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)";cd "$ROOT"
-CAMPAIGN="alfven alfven_oblique blast_2d_b0 blast_2d_b100 brio_wu brio_wu_rotated entropy field_loop field_loop_novz"   # sherlock_mhd/returns
+CAMPAIGN="${PREVIEW_TESTS:-alfven alfven_oblique blast_2d_b0 blast_2d_b100 brio_wu brio_wu_rotated entropy field_loop field_loop_novz}"   # sherlock_mhd/returns
 RERUN="kh_localized_dtjump"                                                                                           # sherlock_rerun/returns
 tmp="$(mktemp -d "${TMPDIR:-/tmp}/mhd-previews.XXXXXX")";trap 'rm -rf "$tmp"' EXIT
 unpack() {      # archive directory, destination, test names: the archives named <test>-*.tar.gz

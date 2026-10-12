@@ -130,12 +130,16 @@ function run_one(be,config,method,N,mach,a_rms,seed,dir;tend_T=Float64(config["t
     p=params(config,method,N,mach,a_rms,seed);T=Float64(p.turb_T);gamma=Float64(p.gamma)
     sper=Int(config["series_per_T"]);fper=Int(config["frames_per_T"]);sper%fper==0 || error("series_per_T must be a multiple of frames_per_T")
     every=sper÷fper;dts=T/sper;nser=round(Int,tend_T*sper);slices_every=Int(get(config,"slices_every",4))
+    # movie_per_T > 0: the density in the midplane this often, as rho_####.bin (Float32, n x n), for a movie
+    mper=Int(get(config,"movie_per_T",0));(mper==0 || sper%mper==0) || error("series_per_T must be a multiple of movie_per_T")
+    movie=mper==0 || light ? 0 : sper÷mper
     isdir(dir) && rm(dir;recursive=true);mkpath(dir)
     meta=Dict{String,Any}("code"=>"gpu","method"=>method,"solver"=>METHOD_TEXT[method],"N"=>N,"mach_target"=>mach,"a_rms"=>a_rms,
         "turb_T"=>T,"turb_ndt"=>p.turb_Ndt,"gamma"=>gamma,"comp_frac"=>Float64(p.comp_frac),"spectrum"=>config["spectrum"],
         "seed"=>seed,"forcing_projection"=>projection_of(method),"cfl"=>Float64(p.courant),"t_end"=>tend_T*T,"t_end_T"=>tend_T,"device"=>device_name(be),
         "precision"=>"Float32 state","vendor_sha256"=>bytes2hex(open(sha256,VENDOR)),"started_utc"=>string(now(UTC)),
         "status"=>"running","frames"=>Any[])
+    movie>0 && (meta["movie_per_T"]=mper;meta["movie_frames"]=0)
     record(joinpath(dir,"run.toml"),meta)
     u=KA.zeros(be,Float32,N,N,N,9);other=KA.zeros(be,Float32,N,N,N,9)
     step! =stepper(method,be,N);w=M.Writer(dir);t=0.0;steps=0;step_seconds=0.0;started=time()
@@ -158,6 +162,9 @@ function run_one(be,config,method,N,mach,a_rms,seed,dir;tend_T=Float64(config["t
                 if isframe && !light
                     last=j==nser
                     push!(meta["frames"],M.frame!(w,frame,t,u,row.mass;slice=frame%slices_every==0 || last,state=last ? "state_final.bin" : nothing))
+                end
+                if movie>0 && j%movie==0
+                    write(joinpath(dir,@sprintf("rho_%04d.bin",j÷movie)),Array(u[:,:,N÷2+1,1]));meta["movie_frames"]=j÷movie+1
                 end
                 j+=1;j>nser && break
             end

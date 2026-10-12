@@ -18,12 +18,26 @@ page or add a test.
 | 07 | Sweep | Every run of the sweep: finished, stopped by its solver, or missing | `build_sweep_plan.py` |
 | 08 | Papers | 43 figures of the comparison papers redrawn from the sweep | `build_paper_figures.py`, `paper_*.py` |
 | 09 | Turbulence | The driven-turbulence pilot | `build_turbulence.py`, `turb_figures.py` |
+| 10 | Tests | One page a test problem: set-up, a movie, and which code finished it on which grid | `build_test_pages.py` |
 
 All builders are in `scripts/`. Page 06 needs the archives in `sherlock_mhd/returns/`, which are not in this
 repository, and its stills and movies are not either ([data](data.md)); the other pages work from a clone.
 
 `progress/notes.html` is a private notes page, one note per code and per test, encrypted in the browser with a
 password; no page links to it.
+
+## Movies of the test pages
+
+`progress/media/tests/` (not in this repository; on the website). Three sources:
+
+- the movie runs of the first campaign (241 outputs; `MOVIE_RENDER_ARGS="--fields density,magnetic,vorticity --family-maps
+  --out progress/media/tests --manifest progress/test_movies.json" bash scripts/render_movies_from_archives.sh`) and short
+  previews from its ordinary runs (`scripts/render_preview_movies.sh` with the same arguments);
+- the sweep's own frames for a test those did not cover (`scripts/render_sweep_movie.py`, used for GEM);
+- the driven-turbulence movie runs (`sherlock_turb/movie.sh`, then `scripts/make_turb_movie.py`).
+
+On these pages the colour maps change with the family of tests (`plot_style.FAMILY_MAPS`, all from cmasher except
+`mako`); within a page a quantity keeps its map.
 
 ## One look
 

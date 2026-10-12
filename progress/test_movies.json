@@ -1,0 +1,435 @@
+{
+ "blast_2d_b50": {
+  "fields": {
+   "density": "media/tests/blast_2d_b50-density.mp4",
+   "magnetic": "media/tests/blast_2d_b50-magnetic.mp4",
+   "vorticity": "media/tests/blast_2d_b50-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 0.010000000000161435,
+  "grid": 384,
+  "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 1536² → 384²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "mhd-movies.4sHtd6"
+ },
+ "blast_3d_b50": {
+  "fields": {
+   "density": "media/tests/blast_3d_b50-density.mp4",
+   "magnetic": "media/tests/blast_3d_b50-magnetic.mp4",
+   "vorticity": "media/tests/blast_3d_b50-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 0.010000000000073062,
+  "grid": 256,
+  "truth": "AthenaK PPM/HLLD/RK3 256³ (same grid)",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 256³ (same grid)"
+  ],
+  "midplane": true,
+  "adaptive": false,
+  "source": "mhd-movies.e3rzrQ"
+ },
+ "current_sheet": {
+  "fields": {
+   "density": "media/tests/current_sheet-density.mp4",
+   "magnetic": "media/tests/current_sheet-magnetic.mp4",
+   "vorticity": "media/tests/current_sheet-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 2.5000000000014992,
+  "grid": 384,
+  "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "AthenaK PPM/HLLD/RK3 1536² → 384²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "mhd-movies.ci7oxH"
+ },
+ "decay": {
+  "fields": {
+   "density": "media/tests/decay-density.mp4",
+   "magnetic": "media/tests/decay-magnetic.mp4",
+   "vorticity": "media/tests/decay-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 0.4999999999985789,
+  "grid": 256,
+  "truth": "AthenaK PPM/HLLD/RK3 256³ (same grid)",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 256³ (same grid)"
+  ],
+  "midplane": true,
+  "adaptive": true,
+  "source": "mhd-movies.Typ4aY"
+ },
+ "decay_supersonic": {
+  "fields": {
+   "density": "media/tests/decay_supersonic-density.mp4",
+   "magnetic": "media/tests/decay_supersonic-magnetic.mp4",
+   "vorticity": "media/tests/decay_supersonic-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 0.20000000000164597,
+  "grid": 256,
+  "truth": "AthenaK PLM/HLLE/RK2 256³ (same grid)",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PLM/HLLE/RK2 256³ (same grid)"
+  ],
+  "midplane": true,
+  "adaptive": true,
+  "source": "mhd-movies.HPvKhu"
+ },
+ "field_loop_3d": {
+  "fields": {
+   "density": "media/tests/field_loop_3d-density.mp4",
+   "magnetic": "media/tests/field_loop_3d-magnetic.mp4",
+   "vorticity": "media/tests/field_loop_3d-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 1.0,
+  "grid": 256,
+  "truth": "AthenaK PPM/HLLD/RK3 256³ (same grid)",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 256³ (same grid)"
+  ],
+  "midplane": true,
+  "adaptive": false,
+  "source": "mhd-movies.u2P8Po"
+ },
+ "kh_localized": {
+  "fields": {
+   "density": "media/tests/kh_localized-density.mp4",
+   "magnetic": "media/tests/kh_localized-magnetic.mp4",
+   "vorticity": "media/tests/kh_localized-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 3.000000000000046,
+  "grid": 384,
+  "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 1536² → 384²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "mhd-movies.TK9X2X"
+ },
+ "kh_uniform": {
+  "fields": {
+   "density": "media/tests/kh_uniform-density.mp4",
+   "magnetic": "media/tests/kh_uniform-magnetic.mp4",
+   "vorticity": "media/tests/kh_uniform-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 3.0,
+  "grid": 384,
+  "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 1536² → 384²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "mhd-movies.114rRf"
+ },
+ "orszag_tang": {
+  "fields": {
+   "density": "media/tests/orszag_tang-density.mp4",
+   "magnetic": "media/tests/orszag_tang-magnetic.mp4",
+   "vorticity": "media/tests/orszag_tang-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 0.49999999999975486,
+  "grid": 384,
+  "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "AthenaK PPM/HLLD/RK3 1536² → 384²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "mhd-movies.dcb0Ry"
+ },
+ "orszag_tang_3d": {
+  "fields": {
+   "density": "media/tests/orszag_tang_3d-density.mp4",
+   "magnetic": "media/tests/orszag_tang_3d-magnetic.mp4",
+   "vorticity": "media/tests/orszag_tang_3d-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 0.9999999999971578,
+  "grid": 256,
+  "truth": "AthenaK PPM/HLLD/RK3 256³ (same grid)",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 256³ (same grid)"
+  ],
+  "midplane": true,
+  "adaptive": false,
+  "source": "mhd-movies.WzJYtc"
+ },
+ "rotor": {
+  "fields": {
+   "density": "media/tests/rotor-density.mp4",
+   "magnetic": "media/tests/rotor-magnetic.mp4",
+   "vorticity": "media/tests/rotor-vorticity.mp4"
+  },
+  "frames": 241,
+  "tEnd": 0.14999999999983515,
+  "grid": 384,
+  "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
+  "panels": [
+   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 1536² → 384²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "mhd-movies.w0SBQo"
+ },
+ "alfven": {
+  "fields": {
+   "density": "media/tests/alfven-density.mp4",
+   "magnetic": "media/tests/alfven-magnetic.mp4",
+   "vorticity": "media/tests/alfven-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 1.0,
+  "grid": 128,
+  "truth": "exact solution",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "exact solution"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "alfven_oblique": {
+  "fields": {
+   "density": "media/tests/alfven_oblique-density.mp4",
+   "magnetic": "media/tests/alfven_oblique-magnetic.mp4",
+   "vorticity": "media/tests/alfven_oblique-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 0.4472135955002159,
+  "grid": 128,
+  "truth": "exact solution",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "exact solution"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "blast_2d_b0": {
+  "fields": {
+   "density": "media/tests/blast_2d_b0-density.mp4",
+   "magnetic": "media/tests/blast_2d_b0-magnetic.mp4",
+   "vorticity": "media/tests/blast_2d_b0-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.010000000000445652,
+  "grid": 128,
+  "truth": "AthenaK PPM/HLLD/RK3 2048² → 128²",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 2048² → 128²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "blast_2d_b100": {
+  "fields": {
+   "density": "media/tests/blast_2d_b100-density.mp4",
+   "magnetic": "media/tests/blast_2d_b100-magnetic.mp4",
+   "vorticity": "media/tests/blast_2d_b100-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.00999999999992518,
+  "grid": 128,
+  "truth": "AthenaK PPM/HLLD/RK3 2048² → 128²",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 2048² → 128²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "brio_wu": {
+  "fields": {
+   "density": "media/tests/brio_wu-density.mp4",
+   "magnetic": "media/tests/brio_wu-magnetic.mp4",
+   "vorticity": "media/tests/brio_wu-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.05000000000291038,
+  "grid": 128,
+  "truth": "AthenaK PPM/HLLD/RK3 2048² → 128²",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 2048² → 128²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "brio_wu_rotated": {
+  "fields": {
+   "density": "media/tests/brio_wu_rotated-density.mp4",
+   "magnetic": "media/tests/brio_wu_rotated-magnetic.mp4",
+   "vorticity": "media/tests/brio_wu_rotated-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.035355339059606194,
+  "grid": 128,
+  "truth": "AthenaK PPM/HLLD/RK3 2048² → 128²",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 2048² → 128²"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "entropy": {
+  "fields": {
+   "density": "media/tests/entropy-density.mp4",
+   "magnetic": "media/tests/entropy-magnetic.mp4",
+   "vorticity": "media/tests/entropy-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 1.0,
+  "grid": 128,
+  "truth": "exact solution",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "exact solution"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "field_loop": {
+  "fields": {
+   "density": "media/tests/field_loop-density.mp4",
+   "magnetic": "media/tests/field_loop-magnetic.mp4",
+   "vorticity": "media/tests/field_loop-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 2.0,
+  "grid": 128,
+  "truth": "AthenaK PPM/HLLD/RK3 128² (same grid)",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 128² (same grid)"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "field_loop_novz": {
+  "fields": {
+   "density": "media/tests/field_loop_novz-density.mp4",
+   "magnetic": "media/tests/field_loop_novz-magnetic.mp4",
+   "vorticity": "media/tests/field_loop_novz-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 2.0,
+  "grid": 128,
+  "truth": "AthenaK PPM/HLLD/RK3 128² (same grid)",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3 128² (same grid)"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "uniform": {
+  "fields": {
+   "density": "media/tests/uniform-density.mp4",
+   "magnetic": "media/tests/uniform-magnetic.mp4",
+   "vorticity": "media/tests/uniform-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 0.09999999999854481,
+  "grid": 128,
+  "truth": "exact solution",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype",
+   "exact solution"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "campaign"
+ },
+ "kh_localized_dtjump": {
+  "fields": {
+   "density": "media/tests/kh_localized_dtjump-density.mp4",
+   "magnetic": "media/tests/kh_localized_dtjump-magnetic.mp4",
+   "vorticity": "media/tests/kh_localized_dtjump-vorticity.mp4"
+  },
+  "frames": 33,
+  "tEnd": 3.2000000000007276,
+  "grid": 128,
+  "truth": "no reference at every output",
+  "panels": [
+   "GLM (advisor), tiled LLF",
+   "CT prototype"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "rerun"
+ },
+ "gem": {
+  "fields": {
+   "density": "media/tests/gem-density.mp4",
+   "magnetic": "media/tests/gem-magnetic.mp4",
+   "vorticity": "media/tests/gem-vorticity.mp4"
+  },
+  "frames": 41,
+  "tEnd": 1.5625,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "AREPO moving mesh, Powell/HLLD",
+   "AREPO static mesh, Powell/HLLD"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ }
+}

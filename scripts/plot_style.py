@@ -39,6 +39,29 @@ def field_map(kind):
     return FIELD_MAPS[kind]
 
 
+# The movies of the test pages (progress/tests.html): one set of maps per family of tests, so that a page is
+# recognisable at a glance. Within a page a quantity keeps its map. Sequential maps run dark to light; the signed ones
+# are black at zero. Families are those of progress/gpu_tests.json.
+FAMILY_MAPS = {   # family: (density, magnetic, signed)
+    "Exact waves": ("cmr.ocean", "cmr.arctic", "cmr.iceburn"),
+    "Shock tubes": ("cmr.sapphire", "cmr.freeze", "cmr.iceburn"),
+    "Vortices and sheets": ("mako", "cmr.gem", "cmr.redshift"),        # gem keeps colour at its bright end, where most of |B| sits on a log scale
+    "Reconnection": ("cmr.amethyst", "cmr.cosmic", "cmr.seaweed"),
+    "Kelvin–Helmholtz": ("cmr.rainforest", "cmr.emerald", "cmr.watermelon"),
+    "Field loops": ("cmr.gothic", "cmr.ghostlight", "cmr.wildfire"),
+    "Blast waves": ("cmr.ember", "cmr.sunburst", "cmr.redshift"),
+    "Turbulence": ("cmr.torch", "cmr.amber", "cmr.wildfire"),
+}
+
+
+def family_map(family, kind):
+    """Colour map of a kind of quantity ("density", "magnetic", "signed") on the test pages; the notebook's own map for a family not listed."""
+    if not HAVE_MAPS:
+        raise RuntimeError("the colour maps need seaborn and cmasher in this Python: pip install seaborn cmasher")
+    maps = FAMILY_MAPS.get(family)
+    return maps[("density", "magnetic", "signed").index(kind)] if maps else FIELD_MAPS[kind]
+
+
 # ---------------------------------------------------------------- movies and their stills
 # The same look as the figures of the pages: white ground, the notebook's inks, its fonts, its colour maps.
 INK, MUTED, RULE, PANEL = "#202a2a", "#64716f", "#d9dedd", "#f3f5f4"       # as scripts/paper_common.py

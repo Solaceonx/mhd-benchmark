@@ -2,7 +2,8 @@
 
     python3 scripts/publish_site.py SITE_CLONE_DIR [--link]
 
-Writes SITE_CLONE_DIR/mhd/: every page except the GPU suite, whose 38,000 stills and movies are 350 MB. The Papers
+Writes SITE_CLONE_DIR/mhd/: every page except the GPU suite, whose 38,000 stills are 235 MB (its movies are on the
+test pages, test-<name>.html, which are published and reached from tests.html). The Papers
 page stays index.html (the address that was given out first) and the Orszag–Tang page becomes orszag-tang.html. The
 pages are unlisted: nothing on the website links to them and they ask search engines not to index them. --link adds
 links to them in the MHD entry of research.html (lyxia had them removed on 2026-10-04: not for general readers yet).
@@ -24,6 +25,7 @@ PAGES = [   # local name, published name, label in the navigation (in its order)
     ("paper-figures.html", "index.html", "Paper figures"),
     ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
     ("turbulence.html", "turbulence.html", "Turbulence"),
+    ("tests.html", "tests.html", "Tests"),
     ("index.html", "orszag-tang.html", "Orszag–Tang"),
     ("hydro-decay.html", "hydro-decay.html", "Hydro decay"),
     ("isothermal-decay.html", "isothermal-decay.html", "Prepared decay"),
@@ -56,8 +58,8 @@ def rewrite(html, name, wanted):
     if n != 1:sys.exit(f"{name}: no navigation found")
     html = re.sub(r'<a class="brand" href="[^"]*">', '<a class="brand" href="../research.html">', html, count=1)
     html = html.replace("LOCAL RESEARCH NOTEBOOK", "RESEARCH NOTEBOOK")
-    number = next(i for i, (src, _, _) in enumerate(PAGES, 1) if src == name)      # the page's number follows the navigation
-    html = re.sub(r'(class="eyebrow"><span>)\d\d( · )', rf"\g<1>{number:02d}\2", html, count=1)
+    number = next((i for i, (src, _, _) in enumerate(PAGES, 1) if src == name), None)      # the page's number follows the navigation
+    if number:html = re.sub(r'(class="eyebrow"><span>)\d\d( · )', rf"\g<1>{number:02d}\2", html, count=1)
     html = html.replace('<meta name="color-scheme"', '<meta name="robots" content="noindex, nofollow"><meta name="color-scheme"', 1)
     if 'name="robots"' not in html:sys.exit(f"{name}: could not add the no-index line")
     # instructions that only make sense on the Mac (saving a local copy of a paper's figure, fetching, rebuilding)
@@ -99,7 +101,8 @@ def check(out):
     for f in [*out.glob("*.html"), out/"app.js", out/"data.js"]:
         text = f.read_text()
         bad += [f"{f.name}: {x}" for x in set(LOCAL.findall(text))]
-        if f.name != "data.js":bad += [f"{f.name}: {x}" for x in set(re.findall(r'[a-z-]+\.html(?![A-Za-z])', text)) if x not in NAMES.values() and x != "research.html"]
+        pages = {*NAMES.values(), "research.html", *(q.name for q in out.glob("test-*.html"))}
+        if f.name != "data.js":bad += [f"{f.name}: {x}" for x in set(re.findall(r'[a-z0-9-]+\.html(?![A-Za-z])', text)) if x not in pages]
         for rel in set(re.findall(r'(?:files|media)/[A-Za-z0-9_.\-/]+\.[A-Za-z0-9]+', text)):
             if not (out/rel).is_file():bad.append(f"{f.name}: {rel} does not exist")
     if bad:sys.exit("links that would break on the website:\n  " + "\n  ".join(sorted(bad)))
@@ -113,6 +116,7 @@ def main(argv):
     if out.exists():shutil.rmtree(out)
     out.mkdir();wanted = set()
     for src, dst, _ in PAGES:(out/dst).write_text(rewrite((SITE/src).read_text(), src, wanted))
+    for page in sorted(SITE.glob("test-*.html")):(out/page.name).write_text(rewrite(page.read_text(), page.name, wanted))      # one a test, reached from tests.html
     # the script and data of the interactive pages, without the GPU suite
     app = (SITE/"app.js").read_text();gpu_link = "+links([['GPU test suite','gpu-suite.html']])"
     if app.count(gpu_link) != 1:sys.exit("app.js: the link to the GPU suite has changed; adjust publish_site.py")
@@ -141,7 +145,7 @@ def main(argv):
         text = text.replace(anchor, anchor + "\n                " + links, 1)
     research.write_text(text)
     files = [p for p in out.rglob("*") if p.is_file()];size = sum(p.stat().st_size for p in files)
-    print(f"Wrote {out} ({len(PAGES)} pages, {len(files)} files, {size/1e6:.1f} MB) "
+    print(f"Wrote {out} ({len(list(out.glob('*.html')))} pages, {len(files)} files, {size/1e6:.1f} MB) "
           + ("and the links in research.html" if link else "(unlisted: no link added)"))
 
 

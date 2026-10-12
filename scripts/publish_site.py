@@ -99,7 +99,7 @@ def check(out):
     for f in [*out.glob("*.html"), out/"app.js", out/"data.js"]:
         text = f.read_text()
         bad += [f"{f.name}: {x}" for x in set(LOCAL.findall(text))]
-        if f.name != "data.js":bad += [f"{f.name}: {x}" for x in set(re.findall(r'[a-z-]+\.html', text)) if x not in NAMES.values() and x != "research.html"]
+        if f.name != "data.js":bad += [f"{f.name}: {x}" for x in set(re.findall(r'[a-z-]+\.html(?![A-Za-z])', text)) if x not in NAMES.values() and x != "research.html"]
         for rel in set(re.findall(r'(?:files|media)/[A-Za-z0-9_.\-/]+\.[A-Za-z0-9]+', text)):
             if not (out/rel).is_file():bad.append(f"{f.name}: {rel} does not exist")
     if bad:sys.exit("links that would break on the website:\n  " + "\n  ".join(sorted(bad)))

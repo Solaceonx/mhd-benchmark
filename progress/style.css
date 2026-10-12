@@ -84,3 +84,5 @@ code{font:11px ui-monospace,SFMono-Regular,monospace;background:#eef1ea;padding:
 .test-results th[scope=row]{text-align:left;font-weight:500;white-space:nowrap}.test-results td{text-align:center;white-space:nowrap}
 .test-results td.done{color:#17765a}.test-results td.stop{color:#a8501c;font-size:11px}.test-results td.none{color:#b9c2bd}
 .test-turn{display:flex;justify-content:space-between;gap:16px;margin-top:22px;font-size:13px}.test-turn a,.eyebrow a{color:var(--muted)}
+
+.test-setup p{font-size:15px;line-height:2.1;overflow-x:auto;overflow-y:hidden;max-width:none}.test-setup p.small{font-size:12px;line-height:1.5;color:var(--muted)}

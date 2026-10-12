@@ -98,6 +98,13 @@ def movie_card(test, movie):
             "document.querySelectorAll('.field-switch button').forEach(x=>x.setAttribute('aria-pressed',x===b))}))</script>")
 
 
+def setup_html(test):
+    """The set-up as typeset lines (scripts/build_notes_setups.py), or nothing when that has not been run."""
+    path = SITE/"setups.json";rows = json.loads(path.read_text()).get(f"test/{test}", []) if path.is_file() else []
+    return "".join("<p>" + "".join(e(p) if isinstance(p, str) else f'<img src="media/setups/{p[1]}" alt="{e(p[0])}" style="height:{p[2]}pt;vertical-align:{-p[3]}pt">'
+                                   for p in row["parts"]) + "</p>" for row in rows)
+
+
 def test_page(sweep, test, info, movie, order):
     notes, config = config_of(test);table, total, stopped, setups = results_table(sweep, test)
     i = order.index(test);prev, nxt = order[i - 1], order[(i + 1) % len(order)]
@@ -111,7 +118,7 @@ def test_page(sweep, test, info, movie, order):
 <a class="method-link" href="tests.html">All tests <span>↗</span></a></div>
 <div class="chips">{"".join(f'<span class="chip">{e(c)}</span>' for c in chips)}</div>
 {movie_card(test, movie)}
-<article class="card"><h3>Set-up</h3><p>{e(notes)}</p><p class="small">After: {e(info["source"])}. The same initial state goes to every code.</p></article>
+<article class="card test-setup"><h3>Set-up</h3>{setup_html(test)}<p class="small">{e(notes)} After: {e(info["source"])}. The same initial state goes to every code.</p></article>
 <article class="card"><h3>Who finished it</h3><p>Each set-up on each grid of the sweep. ✓ the run reached the end time; otherwise where its own solver stopped it
 (a result, not a failed job); · not run.</p>{table}</article>
 <div class="test-turn"><a href="{page_of(prev)}">← {e(TITLES[prev])}</a><a href="{page_of(nxt)}">{e(TITLES[nxt])} →</a></div>'''

@@ -5,6 +5,8 @@ same diagnostics. The question behind it: can divergence cleaning (Dedner/GLM) o
 transport (CT), and at what cost in accuracy? A rotation project of Luke Xia with Tom Abel (KIPAC, Stanford), with
 Eric Moseley; started July 2026, most runs from September and October 2026 on Stanford's Sherlock cluster.
 
+To continue the work, on another computer or with another assistant, start with [HANDOFF.md](HANDOFF.md).
+
 ## What was run
 
 | Code | Divergence control | Where | Runs |

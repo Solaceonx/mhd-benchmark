@@ -32,7 +32,7 @@ MAX_FRAMES = None  # Preserve every physical output written by the simulation.
 # Hue encodes the code (validated with the dataviz palette checks, all pairs, light surface);
 # line style and marker encode the variant within a code. References are neutral ink.
 FAMILIES = {
-    "glm": dict(label="GLM (advisor)", color="#199e70", device="gpu"),
+    "glm": dict(label="GLM (Abel et al.)", color="#199e70", device="gpu"),
     "ct": dict(label="CT prototype", color="#eb6834", device="gpu"),
     "athenak": dict(label="AthenaK", color="#2a78d6", device="gpu"),
     "ramses": dict(label="RAMSES", color="#4a3aa7", device="cpu"),

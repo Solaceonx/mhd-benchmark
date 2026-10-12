@@ -1,6 +1,6 @@
 # Open items
 
-As of 2026-10-11.
+As of 2026-10-11. What is in flight right now, with the commands, is in [HANDOFF.md](../HANDOFF.md).
 
 ## Waiting on results
 

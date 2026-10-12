@@ -27,8 +27,8 @@ import build_gpu_suite as suite
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "progress"
 TITLES = {"density": "density ρ", "magnetic": "|B|", "vorticity": "vorticity ω_z", "current": "current density J_z"}
-LABELS = {"glm": "GLM (advisor), tiled LLF", "ct": "CT prototype"}
-GLM_CFL_LABEL = "GLM (advisor), tiled LLF · c_h of the CFL step at outputs"
+LABELS = {"glm": "GLM (Abel et al.), tiled LLF", "ct": "CT prototype"}
+GLM_CFL_LABEL = "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs"
 SAME_GRID = {"athenak_best": "AthenaK PPM/HLLD/RK3", "athenak_matched": "AthenaK PLM/HLLE/RK2"}
 FAMILY_OF = None      # --family-maps: test -> family, and the maps follow the family (plot_style.FAMILY_MAPS)
 

@@ -48,6 +48,11 @@ def halves(r):
     return m[h:].mean()/m[:h].mean() - 1
 
 
+def floor_share(r, column="density_floor_cells"):
+    """Largest share of the cells at (or, with the other column, below) the density floor at any saved time of the window."""
+    return float(r.series[column][r.window].max())/r.n**3 if column in r.series else 0.0
+
+
 def findings(runs):
     """The sentences under the figures, from the data."""
     cs = tf.cases(runs);pick = tf.pick;out = {}
@@ -55,16 +60,20 @@ def findings(runs):
                    f"{rng([abs(halves(r)) for r in runs], lambda v: f'{100*v:.1f} %')}, and the Mach number wanders by "
                    f"{rng([float(r.series['mach_vol'][r.window].std()/r.mean('mach_vol')) for r in runs], lambda v: f'{100*v:.1f} %')} about its mean. "
                    "The paler curves (RAMSES as released) run lower from the start.")
-    gap = {k: [] for k in ("rel_m", "rel_p", "fix_m", "fix_p", "glm_m", "glm_p", "seed_p")}
+    gap = {k: [] for k in ("rel_m", "rel_p", "fix_m", "fix_p", "glm_m", "glm_p", "seed_p", "cross_m", "cross_p")}
     for m, n in cs:
         ref = pick(runs, "gpu-hydro", m, n);rm = np.mean([r.mean("mach_vol") for r in ref]);rp = np.mean([r.power() for r in ref])
         if len(ref) > 1:gap["seed_p"].append(abs(ref[0].power()/ref[1].power() - 1))
-        for kind, key in (("ramses-matched", "rel"), ("ramses-best", "rel"), ("ramsesfix-matched", "fix"), ("ramsesfix-best", "fix"), ("gpu-glm", "glm")):
+        for kind, key in (("ramses-matched", "rel"), ("ramses-best", "rel"), ("ramsesfix-matched", "fix"), ("ramsesfix-best", "fix"), ("gpu-glm", "glm"),
+                          ("gpu-hydro_ramsesproj", "cross")):
             for r in pick(runs, kind, m, n):gap[key + "_m"].append(r.mean("mach_vol")/rm - 1);gap[key + "_p"].append(r.power()/rp - 1)
     out["gap"] = (f"RAMSES as released sits {rng(gap['rel_m'], pct)} in Mach number and {rng(gap['rel_p'], lambda v: pct(v, 0))} in power against Tom's Euler kernel. "
                   f"With the projection corrected it is within {rng(gap['fix_m'], pct)} and {rng(gap['fix_p'], lambda v: pct(v, 0))}; "
                   f"two seeds of the Euler kernel differ by {rng(gap['seed_p'], lambda v: f'{100*v:.0f} %')} in power. "
                   f"Tom's MHD kernel with zero field: {rng(gap['glm_m'], pct)} and {rng(gap['glm_p'], lambda v: pct(v, 0))}.")
+    if gap["cross_m"]:
+        out["gap"] += (f" The reverse test (diamonds): Tom's Euler kernel driven with RAMSES's released projection sits {rng(gap['cross_m'], pct)} and "
+                       f"{rng(gap['cross_p'], lambda v: pct(v, 0))}, where released RAMSES sits. So the gap is the projection, not the solver.")
     n = max(r.n for r in runs);parts = []
     for m in sorted({r.mach for r in runs}):
         k, h = tf.mean_spectrum(runs, "gpu-hydro", m, n, "v");_, rh = tf.mean_spectrum(runs, "ramsesfix-matched", m, n, "v")
@@ -77,21 +86,28 @@ def findings(runs):
     for m in sorted({r.mach for r in runs}):
         def share(kind, kk=2):
             k, c = tf.mean_spectrum(runs, kind, m, n, "v_compressive");_, v = tf.mean_spectrum(runs, kind, m, n, "v");return c[int(kk) - 1]/v[int(kk) - 1]
+        if not pick(runs, "ramses-matched", m, n):continue          # released RAMSES ran at the lower Mach numbers only
         parts.append(f"Mach {m}: at k = 2, {share('ramses-matched'):.2f} and {share('ramses-best'):.2f} as released against "
                      f"{share('ramsesfix-matched'):.2f} and {share('ramsesfix-best'):.2f} corrected and {share('gpu-hydro'):.2f} for Tom's Euler kernel")
     out["share"] = ("The released projection shows only where the driving acts: " + "; ".join(parts) +
                     ". Past the driven band the released and corrected curves of each solver join, and what separates the curves is the solver.")
-    parts = []
-    for m in sorted({r.mach for r in runs}):
+    parts = [];floored = {m: max(floor_share(r) for r in runs if r.mach == m) for m in sorted({r.mach for r in runs})}
+    clean = [m for m in floored if floored[m] < 1e-4]
+    for m in clean:
         b = {kind: np.mean([np.sqrt(np.expm1(r.mean("sigma_s")**2))/r.mean("mach_vol") for r in pick(runs, kind, m, n)]) for kind in tf.KINDS if pick(runs, kind, m, n)}
         parts.append(f"Mach {m}: b = " + ", ".join(f"{b[k]:.2f} ({tf.KINDS[k][4]})" for k in b))
     def b_of(kind, m, g):
         return np.mean([np.sqrt(np.expm1(r.mean("sigma_s")**2))/r.mean("mach_vol") for r in pick(runs, kind, m, g)])
     grids = sorted({r.n for r in runs})
     trend = "; ".join(f"Mach {m}: {b_of('gpu-hydro', m, grids[0]):.2f} → {b_of('gpu-hydro', m, grids[-1]):.2f} (Euler kernel), "
-                      f"{b_of('ramsesfix-best', m, grids[0]):.2f} → {b_of('ramsesfix-best', m, grids[-1]):.2f} (RAMSES HLLC)" for m in sorted({r.mach for r in runs}))
+                      f"{b_of('ramsesfix-best', m, grids[0]):.2f} → {b_of('ramsesfix-best', m, grids[-1]):.2f} (RAMSES HLLC)" for m in clean)
     out["pdf"] = (f"The width σ of the distribution of s gives b = √(exp σ² − 1)/Mach, about 1/3 for solenoidal driving in the literature. On {n}³, " + "; ".join(parts) +
                   f". From {grids[0]}³ to {grids[-1]}³: {trend}. Where it still moves with resolution it is not converged.")
+    if len(clean) < len(floored):
+        hit = [m for m in floored if m not in clean];below = max(floor_share(r, "negative_density_cells") for r in runs if r.mach in hit)
+        out["pdf"] += (f" At Mach {' and '.join(str(m) for m in hit)} the distribution runs into the density floor of 10⁻⁶ in every code (the spike at the left): up to "
+                       f"{100*max(floored[m] for m in hit):.1f} % of the cells sit there, and in RAMSES up to {100*below:.2f} % are at or below zero. "
+                       "The width is then set by the floor, so no b is given for these Mach numbers.")
     parts = []
     for m in sorted({r.mach for r in runs}):
         re = {kind: [np.mean([r.re_eff() for r in pick(runs, kind, m, g)]) for g in sorted({r.n for r in runs})] for kind in tf.LIKE}
@@ -106,18 +122,18 @@ FIGURES = (   # file, title, caption, key of the finding
     ("turb-mach-time", "Steady state", "Rms Mach number (volume-weighted, with the sound speed of the gas at that time) against time in driving times T. "
      "Averages on this page are taken from 2 T on; the check is that the second half of that window agrees with the first.", "mach"),
     ("turb-projection-gap", "What RAMSES's projection does", "Time-averaged Mach number and power taken up from the driving (the slope of the total energy), "
-     "each relative to Tom's Euler kernel at the same Mach number and grid (mean of its two seeds). Every run uses the same driving strength.", "gap"),
+     "each relative to Tom's Euler kernel at the same Mach number and grid (mean of its two seeds). Every run of a Mach number uses the same driving strength.", "gap"),
     ("turb-spectra", "Velocity spectra", "Time-averaged velocity power spectra, multiplied by k² (flat for a field of shocks). Runs that share one driving only; "
      "Tom's kernels are the mean of two seeds. The two set-ups that run the same scheme in two codes are dashed with shifted dashes: where they coincide the "
      "line alternates green and purple.", "spectra"),
     ("turb-compressive-share", "Compressive share, scale by scale", "The part of the velocity power at each wavenumber that is compressive (along k). "
      "The driving acts at 1 < k < 3 and is meant to be solenoidal.", "share"),
-    ("turb-density-pdf", "Density distribution", "Time-averaged distribution of s = ln(ρ/⟨ρ⟩) by volume on the finer grid.", "pdf"),
+    ("turb-density-pdf", "Density distribution", "Time-averaged distribution of s = ln(ρ/⟨ρ⟩) by volume on the finer grid. The vertical line is the density floor.", "pdf"),
     ("turb-dissipation", "Numerical dissipation", "Effective Reynolds number v L/ν, with ν the viscosity that would turn the measured power into heat through the "
      "velocity gradients the grid holds: ν = power / (⟨ρ|∇×v|²⟩ + 4/3 ⟨ρ(∇·v)²⟩). It grows with resolution; on one grid a larger value means sharper gradients "
      "for the same dissipation. Short bars: the single seeds.", "re"),
     ("turb-slices", "What it looks like", "Density in the midplane at the end of each run (time 10 T) on the finer grid; light is dense, and each row has its own "
-     "colour scale. The runs of a row have the same statistics of the driving but not the same random pattern (two codes, two random number generators; Tom's two "
+     "colour scale; cells below the density floor are drawn at it. The runs of a row have the same statistics of the driving but not the same random pattern (two codes, two random number generators; Tom's two "
      "kernels share theirs, and so do RAMSES's two solvers), so structures are not expected to match from code to code.", None),
 )
 
@@ -133,13 +149,13 @@ def figure_html(i, name, title, caption, finding):
 
 
 def table_html(runs):
-    cols = ("run", "Mach", "second half vs first", "mass-weighted Mach", "σ of ln ρ", "power", "effective Re", "sound speed at end", "lowest density", "cell updates / s")
+    cols = ("run", "Mach", "second half vs first", "mass-weighted Mach", "σ of ln ρ", "power", "effective Re", "sound speed at end", "lowest density", "cells at the floor", "cell updates / s")
     rows = []
     for r in sorted(runs, key=lambda r: (r.mach, r.n, r.name)):
         speed = r.meta.get("cell_updates_per_second") or r.meta.get("perf", {}).get("cell_updates_per_second_per_rank")
         unit = "" if r.meta.get("code") == "gpu" else " per core"
         cells = (r.name, f"{r.mean('mach_vol'):.2f}", pct(halves(r)), f"{r.mean('mach_mass'):.2f}", f"{r.mean('sigma_s'):.3f}", f"{r.power():.3g}", f"{r.re_eff():.0f}",
-                 f"{r.series['cs'][-1]:.4f}", f"{r.series['rho_min'][r.window].min():.1e}", (f"{speed:.2e}{unit}" if speed else "–"))
+                 f"{r.series['cs'][-1]:.4f}", f"{r.series['rho_min'][r.window].min():.1e}", (f"{100*floor_share(r):.2f} %" if floor_share(r) else "0"), (f"{speed:.2e}{unit}" if speed else "–"))
         rows.append("<tr>" + "".join(f"<td>{e(c)}</td>" for c in cells) + "</tr>")
     return ('<div class="table-scroll"><table class="metrics-table sweep-text paper-table"><thead><tr>' + "".join(f"<th>{e(c)}</th>" for c in cols) +
             f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>')
@@ -151,23 +167,25 @@ def build(runs):
                 '<h1>Driven turbulence: the pilot</h1><p>The result files are not on this machine yet.</p></div></div>'
                 f'<div class="card paper-state"><h3>Fetch them</h3><pre class="command">{e(FETCH)}</pre><p>Then: <code>python3 scripts/build_turbulence.py</code></p></div>'), "Waiting for data"
     f = findings(runs);machs = sorted({r.mach for r in runs});grids = sorted({r.n for r in runs});kinds = [k for k in tf.KINDS if any(r.kind == k for r in runs)]
-    chips = [f"{len(runs)} runs", "Mach " + " and ".join(str(m) for m in machs), " and ".join(f"{n}³" for n in grids), f"{len(kinds)} set-ups in 2 codes", "10 driving times each",
+    chips = [f"{len(runs)} runs", "Mach " + (", ".join(str(m) for m in machs[:-1]) + " and " + str(machs[-1]) if len(machs) > 1 else str(machs[0])), " and ".join(f"{n}³" for n in grids), f"{len(kinds)} set-ups in 2 codes", "10 driving times each",
              "solenoidal driving"]
     out = [f'''
 <div class="page-heading"><div><div class="eyebrow"><span>{PAGE["number"]} · Driven turbulence</span><span class="badge">{len(runs)} runs</span></div>
 <h1>Driven turbulence: the pilot</h1>
 <p>Hydrodynamic turbulence in a periodic box, stirred until it is statistically steady, in Tom Abel's GPU kernels and in RAMSES with one definition of the
-stirring. A first look: two Mach numbers, two grids. It also found a fault in RAMSES's driving, which is why RAMSES appears twice.</p></div>
+stirring. A first look: {len(machs)} Mach numbers, {len(grids)} grids. It also found a fault in RAMSES's driving, which is why RAMSES appears twice at the lower two
+Mach numbers.</p></div>
 <a class="method-link" href="../sherlock_turb/README.md">Set-up and tests <span>↗</span></a></div>
 <div class="chips">{"".join(f'<span class="chip">{e(c)}</span>' for c in chips)}</div>
 <div class="card"><h3>How to read this page</h3>
-<p>Units: box length 1, mean density 1, sound speed 1. The gas is nearly isothermal (γ − 1 = 10⁻⁵, no cooling), so the total energy rises at exactly the rate the
+<p>Units: box length 1, mean density 1, sound speed 1. The gas is nearly isothermal (γ − 1 = 10⁻⁵, and 10⁻⁶ at Mach 30 and 50; no cooling), so the total energy rises at exactly the rate the
 driving puts it in: that slope is the power, and in a steady state the dissipation rate. The driving is a random acceleration on the largest scales (1 &lt; k &lt; 3) with
 memory time T = L/(2 M c<sub>s</sub>), scaled to the same strength at every moment in both codes. The strength was found once for each target Mach number and is used
 unchanged by every run, so a run is named by its target and the Mach number it reaches is a result.</p>
 <p>Colour is the code: green Tom's kernels, purple RAMSES. Line style is the set-up. <strong>The paler purple is RAMSES as released</strong>: its projection of the driving
 takes the direction of a wave vector from the absolute values of its components, so a fifth of the power of its "solenoidal" force is compressive (measured from the force
-fields it saves). The full purple has those three lines corrected and is the RAMSES to compare with Tom's kernels. His Float16 Euler kernel is not here: it stops in its first
+fields it saves). The full purple has those three lines corrected and is the RAMSES to compare with Tom's kernels; at Mach 30 and 50 only the corrected RAMSES ran.
+The green diamonds of figure 2 are the reverse test: Tom's Euler kernel driven with RAMSES's released projection. His Float16 Euler kernel is not here: it stops in its first
 steps, because it stores the energy flux in half precision and this gas has an internal energy of 10⁵.</p>
 <p>Density images use the notebook's map for gas quantities (teal, dark where the density is low), as on the other pages.</p></div>''']
     out += [figure_html(i + 1, name, title, caption, f.get(key)) for i, (name, title, caption, key) in enumerate(FIGURES) if (SITE/"media"/"turb"/f"{name}.png").is_file()]

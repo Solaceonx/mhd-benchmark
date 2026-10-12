@@ -1,0 +1,164 @@
+method = "hydro"
+turb_T = 0.009999999776482582
+steps = 4978
+timing_scope = "step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+finished_utc = "2026-10-11T13:32:50.386"
+code = "gpu"
+precision = "Float32 state"
+spectrum = "parabolic"
+warmup_seconds = 0.13745522499084473
+turb_ndt = 100
+t_end_T = 10.0
+N = 128
+cfl = 0.5
+t_end = 0.09999999776482582
+solver = "step_hydro! tb=4 half=false riemann=:hll: 5-variable Euler kernel, Float32 tile, minmod PLM, Hancock, HLL"
+a_rms = 4000.0
+device = "NVIDIA H100 80GB HBM3"
+started_utc = "2026-10-11T13:32:43.694"
+status = "complete"
+step_seconds = 2.914705401000001
+forcing_projection = "exact"
+wall_seconds = 6.673533201217651
+mach_target = 50
+vendor_sha256 = "36a8431c0bbbb48f6d6a9f7b340d6a270221a439007d05084fdcfe5824b1b35e"
+cell_updates_per_second = 3.5817076581455846e9
+comp_frac = 0.0
+gamma = 1.0000009536743164
+seed = 1
+
+[[frames]]
+time = 0.0
+slice = "slice_000.bin"
+frame = 0
+[[frames]]
+time = 0.002499999943211151
+frame = 1
+[[frames]]
+time = 0.004999999888525508
+frame = 2
+[[frames]]
+time = 0.007499999832376147
+frame = 3
+[[frames]]
+time = 0.009999999776724167
+slice = "slice_004.bin"
+frame = 4
+[[frames]]
+time = 0.012499999720390065
+frame = 5
+[[frames]]
+time = 0.014999999664738084
+frame = 6
+[[frames]]
+time = 0.017499999608631356
+frame = 7
+[[frames]]
+time = 0.019999999552752
+slice = "slice_008.bin"
+frame = 8
+[[frames]]
+time = 0.022499999497213707
+frame = 9
+[[frames]]
+time = 0.02499999944110698
+frame = 10
+[[frames]]
+time = 0.027499999385455
+frame = 11
+[[frames]]
+time = 0.029999999329575644
+slice = "slice_012.bin"
+frame = 12
+[[frames]]
+time = 0.032499999273611024
+frame = 13
+[[frames]]
+time = 0.034999999217504296
+frame = 14
+[[frames]]
+time = 0.03749999916207969
+frame = 15
+[[frames]]
+time = 0.03999999910529084
+slice = "slice_016.bin"
+frame = 16
+[[frames]]
+time = 0.042499999050420456
+frame = 17
+[[frames]]
+time = 0.0449999989945411
+frame = 18
+[[frames]]
+time = 0.04749999893866175
+frame = 19
+[[frames]]
+time = 0.04999999888278239
+slice = "slice_020.bin"
+frame = 20
+[[frames]]
+time = 0.05249999882690304
+frame = 21
+[[frames]]
+time = 0.05499999877011419
+frame = 22
+[[frames]]
+time = 0.05749999871426503
+frame = 23
+[[frames]]
+time = 0.059999998658669895
+slice = "slice_024.bin"
+frame = 24
+[[frames]]
+time = 0.06249999860279054
+frame = 25
+[[frames]]
+time = 0.06499999854691119
+frame = 26
+[[frames]]
+time = 0.0674999984912592
+frame = 27
+[[frames]]
+time = 0.06999999843505122
+slice = "slice_028.bin"
+frame = 28
+[[frames]]
+time = 0.07249999837917187
+frame = 29
+[[frames]]
+time = 0.07499999832329252
+frame = 30
+[[frames]]
+time = 0.07749999826786791
+frame = 31
+[[frames]]
+time = 0.07999999821176118
+slice = "slice_032.bin"
+frame = 32
+[[frames]]
+time = 0.0824999981561092
+frame = 33
+[[frames]]
+time = 0.08499999810022985
+frame = 34
+[[frames]]
+time = 0.08749999804435049
+frame = 35
+[[frames]]
+time = 0.08999999798756164
+slice = "slice_036.bin"
+frame = 36
+[[frames]]
+time = 0.09249999793168229
+frame = 37
+[[frames]]
+time = 0.09499999787580293
+frame = 38
+[[frames]]
+time = 0.09749999781992358
+frame = 39
+[[frames]]
+time = 0.09999999776404422
+slice = "slice_040.bin"
+frame = 40
+state = "state_final.bin"

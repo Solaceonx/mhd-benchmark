@@ -7,7 +7,7 @@ spectra.csv, pdf.csv and the final midplane slice. Time averages are over time/T
 Colours and line styles follow the other pages: hue is the code, line style the set-up within a code. The two
 set-ups that run the same scheme in two codes (Tom's Euler kernel, RAMSES HLL) share one dash pattern at different
 offsets, so that where their curves coincide both colours show. RAMSES as released (faulty projection of the driving)
-is the paler purple.
+is the paler purple. Every figure takes whatever Mach numbers and grids are in turb_results/.
 """
 import csv
 import sys
@@ -43,7 +43,10 @@ KINDS = {   # kind: colour, line style, marker, label, short label
     "ramsesfix-best": (PURPLE, "-", "o", "RAMSES HLLC, MonCen; driving corrected", "RAMSES HLLC"),
     "ramses-matched": (PALE, (4.5, DASH), "s", "RAMSES HLL as released", "RAMSES HLL, released"),
     "ramses-best": (PALE, "-", "o", "RAMSES HLLC as released", "RAMSES HLLC, released"),
+    "gpu-hydro_ramsesproj": (GREEN, (0, (5, 1.5, 1, 1.5)), "D", "Tom's Euler kernel driven with RAMSES's released projection", "Euler kernel, released projection"),
 }
+DRAWN = ("ramses-matched", "ramses-best", "ramsesfix-matched", "ramsesfix-best", "gpu-glm", "gpu-hydro")   # back to front
+FLOOR = 1.0e-6                                                                  # the density floor of every code here
 LIKE = ("gpu-hydro", "gpu-glm", "ramsesfix-matched", "ramsesfix-best")          # the runs that share one driving
 S_LO, S_STEP, S_BINS = -16.0, 0.1, 280                                          # the bins of pdf.csv (measure.jl)
 
@@ -100,6 +103,10 @@ def kw(kind, **more):
     c, ls, _, _, _ = KINDS[kind];out = dict(color=c, linestyle=ls, lw=1.5);out.update(more);return out
 
 
+def present(runs, kinds):
+    return [k for k in KINDS if k in kinds and any(r.kind == k for r in runs)]
+
+
 def legend(fig, kinds, y=1.0, ncol=2, markers=False):
     h = [Line2D([], [], label=KINDS[k][3], marker=KINDS[k][2] if markers else "", ms=4.5, **kw(k)) for k in kinds]
     fig.legend(handles=h, loc="lower center", bbox_to_anchor=(.5, y), ncol=ncol, handlelength=3.6, columnspacing=1.6)
@@ -114,43 +121,52 @@ def cases(runs):
     return [(m, n) for m in sorted({r.mach for r in runs}) for n in sorted({r.n for r in runs})]
 
 
+def tiles(count, height, ncols=2, **more):
+    """A grid of panels for `count` Mach numbers, two across; the panels left over are hidden."""
+    nrows = -(-count//ncols);fig, axes = plt.subplots(nrows, ncols, figsize=(7.6, height*nrows + .3), squeeze=False, **more)
+    for ax in axes.ravel()[count:]:ax.set_visible(False)
+    return fig, axes
+
+
 # ---------------------------------------------------------------- figures
 def mach_time(runs):
     """Rms Mach number against time: every run reaches a steady state within two driving times."""
     machs = sorted({r.mach for r in runs});grids = sorted({r.n for r in runs})
-    fig, axes = plt.subplots(len(machs), len(grids), figsize=(7.6, 5.0), sharex=True, sharey="row", squeeze=False)
+    fig, axes = plt.subplots(len(machs), len(grids), figsize=(7.6, 2.05*len(machs) + .5), sharex=True, sharey="row", squeeze=False)
     for i, m in enumerate(machs):
         for j, n in enumerate(grids):
             ax = axes[i, j];pc.style_axes(ax)
             ax.axvspan(0, FROM, color=pc.PANEL, lw=0)
-            for kind in ("ramses-matched", "ramses-best", "ramsesfix-matched", "ramsesfix-best", "gpu-glm", "gpu-hydro"):
+            for kind in DRAWN:
                 for r in pick(runs, kind, m, n):
                     ax.plot(r.series["time_over_T"], r.series["mach_vol"], **kw(kind, lw=1.2))
             ax.set_xlim(0, 10);ax.set_ylim(0, 1.25*m);ax.set_title(f"target Mach {m}, ${n}^3$")
             if i == 0 and j == 0:ax.text(FROM/2, .07*1.25*m, "not\naveraged", ha="center", va="bottom", color=pc.MUTED, fontsize=7.5)
             if j == 0:ax.set_ylabel("rms Mach number")
             if i == len(machs) - 1:ax.set_xlabel("time / driving time $T$")
-    legend(fig, list(KINDS), y=.98, ncol=2);fig.tight_layout();save(fig, "turb-mach-time")
+    fig.tight_layout();legend(fig, present(runs, DRAWN), y=1.0, ncol=2);save(fig, "turb-mach-time")
 
 
 def projection_gap(runs):
-    """What the correction of RAMSES's projection does, relative to Tom's Euler kernel (mean of its two seeds)."""
-    cs = cases(runs);fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.0))
-    order = ("ramses-matched", "ramses-best", "ramsesfix-matched", "ramsesfix-best", "gpu-glm", "gpu-hydro")
-    for ax, (what, title, lim) in zip(axes, ((lambda r: r.mean("mach_vol"), "rms Mach number", (-6, 3)), (lambda r: r.power(), "power taken up from the driving", (-22, 9)))):
-        pc.style_axes(ax);ax.axhline(0, color=pc.MUTED, lw=.8)
+    """Every set-up relative to Tom's Euler kernel (mean of its two seeds): what RAMSES's projection does."""
+    cs = cases(runs);order = present(runs, DRAWN + ("gpu-hydro_ramsesproj",))
+    fig, axes = plt.subplots(2, 1, figsize=(7.6, 5.4), sharex=True)
+    for ax, (what, title) in zip(axes, ((lambda r: r.mean("mach_vol"), "rms Mach number"), (lambda r: r.power(), "power taken up from the driving"))):
+        pc.style_axes(ax);ax.axhline(0, color=pc.MUTED, lw=.8);seen = [0.0]
         for x, (m, n) in enumerate(cs):
             ref = np.mean([what(r) for r in pick(runs, "gpu-hydro", m, n)])
             for o, kind in enumerate(order):
-                for s, r in enumerate(pick(runs, kind, m, n)):
-                    ax.plot(x + (o - 2.5)*.13 + (s - .5)*.05*(len(pick(runs, kind, m, n)) > 1), 100*(what(r)/ref - 1), ls="", marker=KINDS[kind][2], ms=5.5,
-                            color=KINDS[kind][0], mfc="white" if KINDS[kind][2] != "x" else KINDS[kind][0], mew=1.4)
-        ax.set_xticks(range(len(cs)));ax.set_xticklabels([f"Mach {m}\n${n}^3$" for m, n in cs]);ax.set_xlim(-.6, len(cs) - .4);ax.set_ylim(*lim)
-        ax.set_title(title);ax.grid(axis="x", visible=False)
-        ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:+.0f} %" if v else "0"))
-    axes[0].set_ylabel("relative to Tom's Euler kernel")
-    h = [Line2D([], [], ls="", marker=KINDS[k][2], ms=5.5, color=KINDS[k][0], mfc="white" if KINDS[k][2] != "x" else KINDS[k][0], mew=1.4, label=KINDS[k][3]) for k in order]
-    fig.legend(handles=h, loc="lower center", bbox_to_anchor=(.5, .98), ncol=2, columnspacing=1.6);fig.tight_layout();save(fig, "turb-projection-gap")
+                rs = pick(runs, kind, m, n)
+                for s, r in enumerate(rs):
+                    v = 100*(what(r)/ref - 1);seen.append(v)
+                    ax.plot(x + (o - (len(order) - 1)/2)*.11 + (s - .5)*.045*(len(rs) > 1), v, ls="", marker=KINDS[kind][2], ms=5,
+                            color=KINDS[kind][0], mfc="white" if KINDS[kind][2] != "x" else KINDS[kind][0], mew=1.3)
+        ax.set_xticks(range(len(cs)));ax.set_xticklabels([f"Mach {m}\n${n}^3$" for m, n in cs]);ax.set_xlim(-.6, len(cs) - .4)
+        ax.set_ylim(min(seen)*1.15 - 1, max(seen)*1.15 + 1);ax.set_title(title);ax.grid(axis="x", visible=False)
+        for x in range(1, len(cs)):ax.axvline(x - .5, color=pc.RULE, lw=.6)
+        ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:+.0f} %" if v else "0"));ax.set_ylabel("relative to Tom's Euler kernel")
+    h = [Line2D([], [], ls="", marker=KINDS[k][2], ms=5, color=KINDS[k][0], mfc="white" if KINDS[k][2] != "x" else KINDS[k][0], mew=1.3, label=KINDS[k][3]) for k in order]
+    fig.tight_layout();fig.legend(handles=h, loc="lower center", bbox_to_anchor=(.5, 1.0), ncol=2, columnspacing=1.6);save(fig, "turb-projection-gap")
 
 
 def mean_spectrum(runs, kind, m, n, column):
@@ -161,7 +177,7 @@ def mean_spectrum(runs, kind, m, n, column):
 def spectra(runs):
     """Velocity spectra, compensated by k^2 (flat for a field of shocks), time-averaged."""
     machs = sorted({r.mach for r in runs});grids = sorted({r.n for r in runs})
-    fig, axes = plt.subplots(len(machs), len(grids), figsize=(7.6, 5.0), sharey="row", squeeze=False)
+    fig, axes = plt.subplots(len(machs), len(grids), figsize=(7.6, 2.05*len(machs) + .5), sharey="row", squeeze=False)
     for i, m in enumerate(machs):
         for j, n in enumerate(grids):
             ax = axes[i, j];pc.style_axes(ax)
@@ -172,38 +188,40 @@ def spectra(runs):
             lo, hi = ax.get_ylim();ax.set_ylim(max(lo, hi*2e-4), hi)
             if j == 0:ax.set_ylabel("$k^2 E_v(k)$  [$c_s^2$]")
             if i == len(machs) - 1:ax.set_xlabel("wavenumber $k$ (box = 1)")
-    legend(fig, LIKE, y=.98, ncol=2);fig.tight_layout();save(fig, "turb-spectra")
+    fig.tight_layout();legend(fig, LIKE, y=1.0, ncol=2);save(fig, "turb-spectra")
 
 
 def compressive_share(runs):
     """Share of the velocity power that is compressive, scale by scale: where the released projection shows."""
-    machs = sorted({r.mach for r in runs});n = max(r.n for r in runs)
-    fig, axes = plt.subplots(1, len(machs), figsize=(7.6, 3.0), sharey=True, squeeze=False)
-    for ax, m in zip(axes[0], machs):
+    machs = sorted({r.mach for r in runs});n = max(r.n for r in runs);fig, axes = tiles(len(machs), 2.5, sharey=True)
+    for i, (ax, m) in enumerate(zip(axes.ravel(), machs)):
         pc.style_axes(ax)
         for kind in ("ramses-matched", "ramses-best", "ramsesfix-best", "gpu-glm", "ramsesfix-matched", "gpu-hydro"):
             k, c = mean_spectrum(runs, kind, m, n, "v_compressive");_, e = mean_spectrum(runs, kind, m, n, "v")
             if k is not None:ax.semilogx(k, c/e, **kw(kind))
-        ax.set_xlim(1, n/2);ax.set_ylim(0, 1);ax.set_title(f"target Mach {m}, ${n}^3$");ax.set_xlabel("wavenumber $k$ (box = 1)")
+        ax.set_xlim(1, n/2);ax.set_ylim(0, 1);ax.set_title(f"target Mach {m}, ${n}^3$")
+        if i >= len(machs) - 2:ax.set_xlabel("wavenumber $k$ (box = 1)")
+        if i % 2 == 0:ax.set_ylabel("compressive share of $E_v(k)$")
         ax.axvspan(1, 3, color=pc.PANEL, lw=0);ax.text(1.75, .96, "driven", ha="center", va="top", color=pc.MUTED, fontsize=7.5)
-    axes[0, 0].set_ylabel("compressive share of $E_v(k)$")
-    legend(fig, list(KINDS), y=.98, ncol=2);fig.tight_layout();save(fig, "turb-compressive-share")
+    fig.tight_layout();legend(fig, present(runs, DRAWN), y=1.0, ncol=2);save(fig, "turb-compressive-share")
 
 
 def density_pdf(runs):
     """Distribution of ln(density) by volume, time-averaged, on the finer grid."""
-    machs = sorted({r.mach for r in runs});n = max(r.n for r in runs)
-    fig, axes = plt.subplots(1, len(machs), figsize=(7.6, 3.0), sharey=True, squeeze=False)
-    for ax, m in zip(axes[0], machs):
+    machs = sorted({r.mach for r in runs});n = max(r.n for r in runs);fig, axes = tiles(len(machs), 2.5, sharey=True)
+    for i, (ax, m) in enumerate(zip(axes.ravel(), machs)):
         pc.style_axes(ax);lo, hi = 0.0, 0.0
         for kind in ("ramses-matched", "ramses-best", "ramsesfix-best", "gpu-glm", "ramsesfix-matched", "gpu-hydro"):
             rs = pick(runs, kind, m, n)
             if not rs:continue
             s = rs[0].pdf()[0];p = np.mean([r.pdf()[1] for r in rs], axis=0);ok = p > 0
             ax.semilogy(s[ok], p[ok], **kw(kind));lo = min(lo, s[p > 1e-5].min());hi = max(hi, s[p > 1e-5].max())
-        ax.set_xlim(lo - .3, hi + .3);ax.set_ylim(1e-5, 1);ax.set_title(f"target Mach {m}, ${n}^3$");ax.set_xlabel(r"$s = \ln(\rho/\langle\rho\rangle)$")
-    axes[0, 0].set_ylabel("probability density, by volume")
-    legend(fig, list(KINDS), y=.98, ncol=2);fig.tight_layout();save(fig, "turb-density-pdf")
+        ax.set_xlim(lo - .3, hi + .3);ax.set_ylim(1e-5, 1);ax.set_title(f"target Mach {m}, ${n}^3$")
+        if lo < np.log(FLOOR) + 1:     # the distribution reaches the density floor
+            ax.axvline(np.log(FLOOR), color=pc.MUTED, lw=.8);ax.text(np.log(FLOOR) + .25, .5, "density floor", color=pc.MUTED, fontsize=7.5, va="top")
+        if i >= len(machs) - 2:ax.set_xlabel(r"$s = \ln(\rho/\langle\rho\rangle)$")
+        if i % 2 == 0:ax.set_ylabel("probability density, by volume")
+    fig.tight_layout();legend(fig, present(runs, DRAWN), y=1.0, ncol=2);save(fig, "turb-density-pdf")
 
 
 def dissipation(runs):
@@ -217,11 +235,11 @@ def dissipation(runs):
             ax.loglog(grids, [np.mean(v) for v in re], marker=KINDS[kind][2], ms=5, mfc="white" if KINDS[kind][2] != "x" else c, mew=1.3, **kw(kind))
             for n, v in zip(grids, re):       # the single seeds, where there are two
                 if len(v) > 1:ax.plot([n]*len(v), v, ls="", marker="_", ms=9, mew=1.1, color=c)
-        ax.set_xticks(grids);ax.set_xticklabels([f"${n}^3$" for n in grids]);ax.minorticks_off();ax.set_xlim(grids[0]/1.15, grids[-1]*1.15)
-        ticks = [1000, 1500, 2000, 3000, 4000, 6000];ax.set_yticks(ticks);ax.set_yticklabels([f"{t:,}".replace(",", " ") for t in ticks]);ax.set_ylim(900, 7500)
-        ax.set_title(f"target Mach {m}");ax.set_xlabel("grid")
+        ax.set_xticks(grids);ax.set_xticklabels([f"${n}^3$" for n in grids]);ax.minorticks_off();ax.set_xlim(grids[0]/1.25, grids[-1]*1.25)
+        ticks = [1000, 1500, 2000, 3000, 4000, 6000];ax.set_yticks(ticks);ax.set_yticklabels([f"{t:,}".replace(",", " ") for t in ticks]);ax.set_ylim(900, 8000)
+        ax.set_title(f"Mach {m}");ax.set_xlabel("grid")
     axes[0, 0].set_ylabel("effective Reynolds number")
-    legend(fig, LIKE, y=.98, ncol=2, markers=True);fig.tight_layout();save(fig, "turb-dissipation")
+    fig.tight_layout();legend(fig, LIKE, y=1.0, ncol=2, markers=True);save(fig, "turb-dissipation")
 
 
 def slices(runs):
@@ -230,7 +248,7 @@ def slices(runs):
     fig, axes = plt.subplots(len(machs), len(LIKE), figsize=(7.6, 1.95*len(machs) + .25), squeeze=False)
     for i, m in enumerate(machs):
         chosen = [(pick(runs, kind, m, n) or [None])[0] for kind in LIKE]
-        fields = [None if r is None else np.log10(r.slice().astype(float)) for r in chosen]
+        fields = [None if r is None else np.log10(np.maximum(r.slice().astype(float), FLOOR)) for r in chosen]      # cells below the floor are shown at it
         lo, hi = np.percentile(np.concatenate([f.ravel() for f in fields if f is not None]), [0.5, 99.9]);im = None
         for j, (kind, f) in enumerate(zip(LIKE, fields)):
             ax = axes[i, j];pc.image_axes(ax)

@@ -16,3 +16,25 @@ converged = true
 turb_T = 0.05
 calibrated_with = "RAMSES matched, 64^3, mean of mach_vol over 2-6 T, seed 1"
 tries = [{"a_rms" = 165.0, "mach" = 9.977695867769128, "drift" = 0.0022966247746514235}]
+
+[mach_30]
+a_rms = 1450.0
+mach_target = 30
+mach_measured = 29.298152101815763
+converged = true
+turb_T = 0.016666666666666666
+calibrated_with = "RAMSES matched (fixed projection), 64^3, mean of mach_vol over 2-6 T, seed 1"
+projection = "fixed"
+gamma = 1.0000009536743164
+tries = [{"a_rms" = 1450.0, "mach" = 29.298152101815763, "drift" = 0.019170434545674464}]
+
+[mach_50]
+a_rms = 4000.0
+mach_target = 50
+mach_measured = 48.621420435012396
+converged = true
+turb_T = 0.01
+calibrated_with = "RAMSES matched (fixed projection), 64^3, mean of mach_vol over 2-6 T, seed 1"
+projection = "fixed"
+gamma = 1.0000009536743164
+tries = [{"a_rms" = 4000.0, "mach" = 48.621420435012396, "drift" = 0.021088378390897056}]

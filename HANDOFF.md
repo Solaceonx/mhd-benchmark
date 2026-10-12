@@ -71,18 +71,11 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
    Then: read the table, write the result into `docs/results-sweep.md` and `docs/issues-found.md` (does
    `glm_hll32` converge and survive the blasts and Mach 9? how do errors and stops change at 0.4 and 0.7?).
    The kernels have never run on a GPU in these variants; only compiled.
-2. **"advisor" → "Abel et al." in the test movies.** A re-render of all test movies was started on the Mac at about
-   21:10. It is finished when `grep -c advisor progress/test_movies.json` prints 0. If it was cut short, rerun:
-   ```bash
-   MOVIE_RENDER_ARGS="--fields density,magnetic,vorticity --family-maps --out progress/media/tests --manifest progress/test_movies.json" bash scripts/render_movies_from_archives.sh
-   ```
-   ```bash
-   PREVIEW_TESTS="alfven alfven_oblique blast_2d_b0 blast_2d_b100 brio_wu brio_wu_rotated entropy field_loop field_loop_novz uniform" MOVIE_RENDER_ARGS="--fields density,magnetic,vorticity --family-maps --out progress/media/tests --manifest progress/test_movies.json" bash scripts/render_preview_movies.sh
-   ```
-   Then `python3 scripts/build_test_pages.py` and publish. Until then the site's movies still say "advisor".
-   The local-only GPU-suite page's own movies (`progress/media/movies/`) also still say it; redo them with
-   `MOVIE_RENDER_ARGS="--fields density,magnetic,vorticity"` and the same two scripts if wanted. The old bundles'
-   own documents and code comments (`sherlock_mhd/` and its siblings) say "advisor" and were left as they ran.
+2. **"advisor" → "Abel et al.": done on the site.** The test movies were re-rendered with the new label and
+   published on 2026-10-11. Still saying "advisor": the local-only GPU-suite page's own movies
+   (`progress/media/movies/`; redo them with `MOVIE_RENDER_ARGS="--fields density,magnetic,vorticity"` and
+   `scripts/render_movies_from_archives.sh`, then `scripts/render_preview_movies.sh`, about 35 minutes), and the old
+   bundles' own documents and code comments (`sherlock_mhd/` and its siblings), left as they ran.
 3. **Turbulence movie.** Commands are in `sherlock_turb/README.md`, section "Movie": send the bundle and run
    `movie.sh` (not yet done when this was written), fetch `turb_movie/`, then
    `.venv-movie/bin/python scripts/make_turb_movie.py`, `python3 scripts/build_turbulence.py --page-only`, publish,

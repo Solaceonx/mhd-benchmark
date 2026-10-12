@@ -10,13 +10,13 @@
   "grid": 384,
   "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 1536² → 384²"
   ],
   "midplane": false,
   "adaptive": false,
-  "source": "mhd-movies.4sHtd6"
+  "source": "mhd-movies.zlJXy4"
  },
  "blast_3d_b50": {
   "fields": {
@@ -29,13 +29,13 @@
   "grid": 256,
   "truth": "AthenaK PPM/HLLD/RK3 256³ (same grid)",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 256³ (same grid)"
   ],
   "midplane": true,
   "adaptive": false,
-  "source": "mhd-movies.e3rzrQ"
+  "source": "mhd-movies.EmY5aw"
  },
  "current_sheet": {
   "fields": {
@@ -48,12 +48,12 @@
   "grid": 384,
   "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "AthenaK PPM/HLLD/RK3 1536² → 384²"
   ],
   "midplane": false,
   "adaptive": false,
-  "source": "mhd-movies.ci7oxH"
+  "source": "mhd-movies.AE2N8F"
  },
  "decay": {
   "fields": {
@@ -66,13 +66,13 @@
   "grid": 256,
   "truth": "AthenaK PPM/HLLD/RK3 256³ (same grid)",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 256³ (same grid)"
   ],
   "midplane": true,
   "adaptive": true,
-  "source": "mhd-movies.Typ4aY"
+  "source": "mhd-movies.pcyPnG"
  },
  "decay_supersonic": {
   "fields": {
@@ -85,13 +85,13 @@
   "grid": 256,
   "truth": "AthenaK PLM/HLLE/RK2 256³ (same grid)",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PLM/HLLE/RK2 256³ (same grid)"
   ],
   "midplane": true,
   "adaptive": true,
-  "source": "mhd-movies.HPvKhu"
+  "source": "mhd-movies.mjJXBw"
  },
  "field_loop_3d": {
   "fields": {
@@ -104,13 +104,13 @@
   "grid": 256,
   "truth": "AthenaK PPM/HLLD/RK3 256³ (same grid)",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 256³ (same grid)"
   ],
   "midplane": true,
   "adaptive": false,
-  "source": "mhd-movies.u2P8Po"
+  "source": "mhd-movies.BHzWQB"
  },
  "kh_localized": {
   "fields": {
@@ -123,13 +123,13 @@
   "grid": 384,
   "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 1536² → 384²"
   ],
   "midplane": false,
   "adaptive": false,
-  "source": "mhd-movies.TK9X2X"
+  "source": "mhd-movies.Uu7uJd"
  },
  "kh_uniform": {
   "fields": {
@@ -142,13 +142,13 @@
   "grid": 384,
   "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 1536² → 384²"
   ],
   "midplane": false,
   "adaptive": false,
-  "source": "mhd-movies.114rRf"
+  "source": "mhd-movies.LwATPe"
  },
  "orszag_tang": {
   "fields": {
@@ -161,12 +161,12 @@
   "grid": 384,
   "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "AthenaK PPM/HLLD/RK3 1536² → 384²"
   ],
   "midplane": false,
   "adaptive": false,
-  "source": "mhd-movies.dcb0Ry"
+  "source": "mhd-movies.GpsNY0"
  },
  "orszag_tang_3d": {
   "fields": {
@@ -179,13 +179,13 @@
   "grid": 256,
   "truth": "AthenaK PPM/HLLD/RK3 256³ (same grid)",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 256³ (same grid)"
   ],
   "midplane": true,
   "adaptive": false,
-  "source": "mhd-movies.WzJYtc"
+  "source": "mhd-movies.GhngbP"
  },
  "rotor": {
   "fields": {
@@ -198,13 +198,13 @@
   "grid": 384,
   "truth": "AthenaK PPM/HLLD/RK3 1536² → 384²",
   "panels": [
-   "GLM (advisor), tiled LLF · c_h of the CFL step at outputs",
+   "GLM (Abel et al.), tiled LLF · c_h of the CFL step at outputs",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 1536² → 384²"
   ],
   "midplane": false,
   "adaptive": false,
-  "source": "mhd-movies.w0SBQo"
+  "source": "mhd-movies.QwTiBT"
  },
  "alfven": {
   "fields": {
@@ -217,7 +217,7 @@
   "grid": 128,
   "truth": "exact solution",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "exact solution"
   ],
@@ -236,7 +236,7 @@
   "grid": 128,
   "truth": "exact solution",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "exact solution"
   ],
@@ -255,7 +255,7 @@
   "grid": 128,
   "truth": "AthenaK PPM/HLLD/RK3 2048² → 128²",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 2048² → 128²"
   ],
@@ -274,7 +274,7 @@
   "grid": 128,
   "truth": "AthenaK PPM/HLLD/RK3 2048² → 128²",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 2048² → 128²"
   ],
@@ -293,7 +293,7 @@
   "grid": 128,
   "truth": "AthenaK PPM/HLLD/RK3 2048² → 128²",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 2048² → 128²"
   ],
@@ -312,7 +312,7 @@
   "grid": 128,
   "truth": "AthenaK PPM/HLLD/RK3 2048² → 128²",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 2048² → 128²"
   ],
@@ -331,7 +331,7 @@
   "grid": 128,
   "truth": "exact solution",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "exact solution"
   ],
@@ -350,7 +350,7 @@
   "grid": 128,
   "truth": "AthenaK PPM/HLLD/RK3 128² (same grid)",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 128² (same grid)"
   ],
@@ -369,7 +369,7 @@
   "grid": 128,
   "truth": "AthenaK PPM/HLLD/RK3 128² (same grid)",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "AthenaK PPM/HLLD/RK3 128² (same grid)"
   ],
@@ -388,7 +388,7 @@
   "grid": 128,
   "truth": "exact solution",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype",
    "exact solution"
   ],
@@ -407,7 +407,7 @@
   "grid": 128,
   "truth": "no reference at every output",
   "panels": [
-   "GLM (advisor), tiled LLF",
+   "GLM (Abel et al.), tiled LLF",
    "CT prototype"
   ],
   "midplane": false,

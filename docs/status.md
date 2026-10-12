@@ -4,10 +4,8 @@ As of 2026-10-11.
 
 ## Waiting on results
 
-- **Courant-number and single-precision checks** (`sherlock_checks/`): built and checked without a GPU; to be
-  submitted. They answer the first two items of "Not run" below.
-- **Turbulence data to fetch.** The Mach 30 and 50 runs and the projection cross-check are finished on Sherlock
-  ([results](results-turbulence.md)); the Turbulence page and its figures still show Mach 3 and 10 only.
+- **Courant-number and single-precision checks** (`sherlock_checks/`): built and checked without a GPU; sent to
+  Sherlock on 2026-10-11, result not seen yet. They answer the first two items of "Not run" below.
 - **MHD-ALE.** 45 of 62 runs complete; whether the stops on fine grids come from the grid or the rank count needs
   the two short runs of `rank_check.sh` ([issues found](issues-found.md#mhd-ale)).
 

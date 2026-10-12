@@ -20,7 +20,7 @@ the notebook's Turbulence page (`scripts/turb_figures.py`, `scripts/build_turbul
 
 ## Mach 3 and 10, 128³ and 256³
 
-32 runs, all steady (second half against first half: 0.1 % to 2.6 %).
+32 runs, all steady (second half against first half: 0.1 % to 2.6 %), plus the 4 runs of the reverse test.
 
 - **RAMSES's driving is not what it says.** With the solenoidal setting, one fifth of the force is compressive
   ([issues found](issues-found.md#ramses)). As released, RAMSES sits 2 to 6 % lower in Mach number and 13 to 19 %
@@ -44,12 +44,13 @@ the notebook's Turbulence page (`scripts/turb_figures.py`, `scripts/build_turbul
 ## Mach 30 and 50, 128³ and 256³
 
 `sherlock_turb/config_highmach.toml`: γ − 1 = 10⁻⁶, RAMSES with the corrected projection only. 24 runs, all steady
-(second half against first half within 4.8 %). Numbers from the status table of 2026-10-11; the figures do not show
-these Mach numbers yet.
+(second half against first half within 4.8 %).
 
 - **The codes still agree.** Mach number reached: Euler kernel 29.9 to 30.5 and 49.3 to 49.9, MHD kernel 29.1 to
   29.7 and 48.1 to 49.4, RAMSES 29.4 to 29.9 and 48.8 to 49.3. Power: 2.9 to 3.2 × 10⁴ at Mach 30 and 1.37 to
   1.50 × 10⁵ at Mach 50, RAMSES a few per cent above the kernels at Mach 50.
+- **Spectra:** the two HLL codes differ by at most 5 % at any k ≥ 4, and HLLC still holds 1.8 times the power of
+  HLL at a quarter of the grid's largest wavenumber.
 - **Effective Reynolds number** as at lower Mach numbers: Euler kernel and RAMSES HLL within 5 % of each other
   (Mach 50: 2,074 to 2,133 against 2,033 on 128³, 4,816 to 4,894 against 4,787 on 256³), RAMSES HLLC 1.4 to 1.5
   times higher, the MHD kernel about 20 % lower.

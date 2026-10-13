@@ -7,6 +7,7 @@ computed here from the same files. Fetch command for turb_results/: see the page
 """
 import html
 import json
+import os
 import struct
 import sys
 from datetime import datetime
@@ -14,8 +15,10 @@ from pathlib import Path
 
 import numpy as np
 
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/abel-mhd-matplotlib")
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import turb_figures as tf  # noqa: E402
+import test_diagnostics as diagnostics  # noqa: E402
 
 SITE = tf.ROOT/"progress"
 PAGE = dict(id="turbulence", page="turbulence.html", kind="turbulence", number="09", title="Driven turbulence", nav="Turbulence",
@@ -225,6 +228,7 @@ def main(argv):
     runs = tf.load() if have else []
     if runs and "--page-only" not in argv:tf.main()
     main_html, status = build(runs)
+    main_html += diagnostics.section("sherlock_turb")
     tests = json.loads((SITE/"tests.json").read_text());page = dict(PAGE, status=status)
     if not any(t["id"] == PAGE["id"] for t in tests):tests.append(page)
     tests = [page if t["id"] == PAGE["id"] else t for t in tests]

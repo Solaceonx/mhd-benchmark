@@ -1,0 +1,1105 @@
+method,label,N,seed,status,finite_complete,physical_time,solver_seconds,timing_repeats,timing_scope,resource,precision,cfl,source,error
+glm,Abel GLM LLF,64,42,complete,True,0.2000000000007276,0.21382302899999991,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s42-all/data/glm_r1,
+glm,Abel GLM LLF,64,43,complete,True,0.20000000000408136,0.20848085900000005,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s43-all/data/glm_r1,
+glm,Abel GLM LLF,128,42,complete,True,0.2000000000007276,2.792900328000003,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s42-all/data/glm_r1,
+glm,Abel GLM LLF,128,43,complete,True,0.20000000000118234,2.682623811999998,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s43-all/data/glm_r1,
+glm,Abel GLM LLF,256,42,complete,True,0.1999999999998181,53.45151318599999,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s42-glm/data/glm_r1,
+glm,Abel GLM LLF,256,43,complete,True,0.2000000000007276,52.36563413100011,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s43-glm/data/glm_r1,
+glm,Abel GLM LLF,512,42,complete,True,0.20000000000039364,1916.6377429840068,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s42-glm/data/glm_r1,
+glm,Abel GLM LLF,512,43,failed,False,0.03999999999996362,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s43-glm/data/glm_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hll16,Abel GLM f16/HLL,64,42,failed,False,0.01999999999679858,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s42-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hll16,Abel GLM f16/HLL,64,43,failed,False,0.05999999999994543,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s43-all/data/glm_hll16_r1,"Invalid state at output 4
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:409
+  [3] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [4] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [5] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [6] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [8] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+  [9] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [10] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [11] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [12] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [13] _start()
+    @ Base ./client.jl:550"
+glm_hll16,Abel GLM f16/HLL,128,42,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s42-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hll16,Abel GLM f16/HLL,128,43,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s43-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hll16,Abel GLM f16/HLL,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s42-glm_hll16/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hll16,Abel GLM f16/HLL,256,43,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s43-glm_hll16/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hll16,Abel GLM f16/HLL,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s42-glm_hll16/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hll16,Abel GLM f16/HLL,512,43,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s43-glm_hll16/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hlld,Abel GLM HLLD,64,42,complete,True,0.2000000000007276,0.27766280699999996,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s42-all/data/glm_hlld_r1,
+glm_hlld,Abel GLM HLLD,64,43,complete,True,0.2000000000007276,0.26245302099999984,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s43-all/data/glm_hlld_r1,
+glm_hlld,Abel GLM HLLD,128,42,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s42-all/data/glm_hlld_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hlld,Abel GLM HLLD,128,43,complete,True,0.2000000000007276,3.9249219700000015,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s43-all/data/glm_hlld_r1,
+glm_hlld,Abel GLM HLLD,256,42,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s42-glm_hlld/data/glm_hlld_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hlld,Abel GLM HLLD,256,43,failed,False,0.13999999999987267,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s43-glm_hlld/data/glm_hlld_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hlld,Abel GLM HLLD,512,42,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s42-glm_hlld/data/glm_hlld_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_hlld,Abel GLM HLLD,512,43,failed,False,0.03999999999996362,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s43-glm_hlld/data/glm_hlld_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_ppm,Abel GLM PPM,64,42,failed,False,0.01999999999998181,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s42-all/data/glm_ppm_r1,"Invalid state at output 2
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:409
+  [3] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [4] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [5] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [6] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [8] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+  [9] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [10] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [11] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [12] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [13] _start()
+    @ Base ./client.jl:550"
+glm_ppm,Abel GLM PPM,64,43,failed,False,0.06000000000040018,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s43-all/data/glm_ppm_r1,"Invalid state at output 4
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:409
+  [3] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [4] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [5] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [6] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [8] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+  [9] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [10] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [11] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [12] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [13] _start()
+    @ Base ./client.jl:550"
+glm_ppm,Abel GLM PPM,128,42,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s42-all/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_ppm,Abel GLM PPM,128,43,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s43-all/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_ppm,Abel GLM PPM,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s42-glm_ppm/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_ppm,Abel GLM PPM,256,43,failed,False,0.01999999999998181,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s43-glm_ppm/data/glm_ppm_r1,"Invalid state at output 2
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:409
+  [3] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [4] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [5] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [6] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [8] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+  [9] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [10] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [11] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [12] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [13] _start()
+    @ Base ./client.jl:550"
+glm_ppm,Abel GLM PPM,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s42-glm_ppm/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_ppm,Abel GLM PPM,512,43,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s43-glm_ppm/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_constch,Abel GLM const. $c_h$,64,42,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s42-all/data/glm_constch_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_constch,Abel GLM const. $c_h$,64,43,complete,True,0.19999999999708962,0.3222318569999998,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s43-all/data/glm_constch_r1,
+glm_constch,Abel GLM const. $c_h$,128,42,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s42-all/data/glm_constch_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_constch,Abel GLM const. $c_h$,128,43,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s43-all/data/glm_constch_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_constch,Abel GLM const. $c_h$,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s42-glm_constch/data/glm_constch_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_constch,Abel GLM const. $c_h$,256,43,failed,False,0.020000000000436557,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s43-glm_constch/data/glm_constch_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_constch,Abel GLM const. $c_h$,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s42-glm_constch/data/glm_constch_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+glm_constch,Abel GLM const. $c_h$,512,43,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s43-glm_constch/data/glm_constch_r1,"Nonphysical/nonfinite state in CFL scan
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:44
+  [2] timestep(s::Main.Suite.DeviceState, p::Main.Suite.GLMMHDTurb.Params, pfloor::Float32)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:125
+  [3] (::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}})(io::IOStream)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:337
+  [4] open(::Main.Suite.var""#run_one##23#run_one##24""{Dict{String, Any}, Int64, Symbol, Int64, String, Float64, String, Dict{String, Any}, Float32, String, Main.Suite.GLMMHDTurb.Params, Main.Suite.var""#spectra_due#run_one##2""{Int64, Int64}, Vector{Int64}, Vector{Int64}, UnitRange{Int64}, Bool, Int64, Vector{Int64}, Bool, Float64, String, Float64, String, String, Bool, Nothing, Main.Suite.var""#device_used#run_one##19"", Main.Suite.DeviceState, Main.Suite.var""#errfields#run_one##16""{Bool}, Main.Suite.var""#reference#run_one##15""{Dict{String, Any}, Int64, Int64, Float64, Bool, String, Array{Float32, 4}}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:412
+  [5] open(::Function, ::String, ::String)
+    @ Base ./io.jl:409
+  [6] run_one(config::Dict{String, Any}, n::Int64, seed::Int64, method::Symbol, rep::Int64, path::String)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:331
+  [7] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String}; smoke::Bool)
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:514
+  [8] run_task(config_path::String, out::String, n::Int64, seed::Int64, task_methods::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:472
+  [9] main(args::Vector{String})
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:549
+ [10] main()
+    @ Main.Suite /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:542
+ [11] top-level scope
+    @ /scratch/users/lyxia/mhd-study/sherlock_sweep/src/run_suite.jl:571
+ [12] include(mod::Module, _path::String)
+    @ Base ./Base.jl:306
+ [13] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:317
+ [14] _start()
+    @ Base ./client.jl:550"
+ct,Abel CT prototype,64,42,complete,True,0.19999999999708962,0.36041573400000015,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s42-all/data/ct_r1,
+ct,Abel CT prototype,64,43,complete,True,0.19999999999708962,0.360288276,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N64-s43-all/data/ct_r1,
+ct,Abel CT prototype,128,42,complete,True,0.20000000000527507,4.232980564000003,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s42-all/data/ct_r1,
+ct,Abel CT prototype,128,43,complete,True,0.1999999999989086,4.150940797999997,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N128-s43-all/data/ct_r1,
+ct,Abel CT prototype,256,42,complete,True,0.20000000000118234,69.909749504,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s42-ct/data/ct_r1,
+ct,Abel CT prototype,256,43,complete,True,0.1999999999999318,68.71435577999986,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N256-s43-ct/data/ct_r1,
+ct,Abel CT prototype,512,42,complete,True,0.20000000000004547,1222.0975156849943,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s42-ct/data/ct_r1,
+ct,Abel CT prototype,512,43,complete,True,0.19999999999936335,1221.016808513003,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/decay_supersonic-gpu-N512-s43-ct/data/ct_r1,
+athenak_matched,AthenaK PLM/HLLE,64,42,complete,True,0.2,1.191371,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-matched-run-N64-s42/data/athenak_matched_r1,
+athenak_matched,AthenaK PLM/HLLE,64,43,complete,True,0.2,1.299474,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-matched-run-N64-s43/data/athenak_matched_r1,
+athenak_matched,AthenaK PLM/HLLE,128,42,complete,True,0.2,9.800134,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-matched-run-N128-s42/data/athenak_matched_r1,
+athenak_matched,AthenaK PLM/HLLE,128,43,complete,True,0.2,9.959188,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-matched-run-N128-s43/data/athenak_matched_r1,
+athenak_matched,AthenaK PLM/HLLE,256,42,complete,True,0.2,118.3105,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-matched-run-N256-s42/data/athenak_matched_r1,
+athenak_matched,AthenaK PLM/HLLE,256,43,complete,True,0.2,121.9341,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-matched-run-N256-s43/data/athenak_matched_r1,
+athenak_matched,AthenaK PLM/HLLE,512,42,complete,True,0.2,1893.354,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-matched-run-N512-s42/data/athenak_matched_r1,
+athenak_matched,AthenaK PLM/HLLE,512,43,complete,True,0.2,1929.694,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-matched-run-N512-s43/data/athenak_matched_r1,
+athenak_best,AthenaK PPM/HLLD,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-best-run-N64-s42/data/athenak_best_r1,"exit code 0; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Setup complete, executing task list(s)...
+
+elapsed=1.057769e-01 cycle=0 time=0.000000e+00 dt=2.845393e-04
+
+Terminating on cycle limit
+time=1.880995e-02 cycle=6720
+tlim=2.000000e-01 nlim=6720
+
+MeshBlock-cycles = 6720
+cpu time used  = 2.733593e+01
+zone-cycles/cpu_second = 6.444294e+07
+particle-updates/cpu_second = 0.000000e+00
+"
+athenak_best,AthenaK PPM/HLLD,64,43,failed,False,0.02,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-best-run-N64-s43/data/athenak_best_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Setup complete, executing task list(s)...
+
+elapsed=6.915285e-02 cycle=0 time=0.000000e+00 dt=2.609619e-04
+
+Terminating on cycle limit
+time=2.567998e-02 cycle=6720
+tlim=2.000000e-01 nlim=6720
+
+MeshBlock-cycles = 6720
+cpu time used  = 2.735378e+01
+zone-cycles/cpu_second = 6.440089e+07
+particle-updates/cpu_second = 0.000000e+00
+"
+athenak_best,AthenaK PPM/HLLD,128,42,failed,False,0.02,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-best-run-N128-s42/data/athenak_best_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Setup complete, executing task list(s)...
+
+elapsed=3.604032e-01 cycle=0 time=0.000000e+00 dt=1.421925e-04
+
+Terminating on cycle limit
+time=2.533391e-02 cycle=13440
+tlim=2.000000e-01 nlim=13440
+
+MeshBlock-cycles = 13440
+cpu time used  = 2.211607e+02
+zone-cycles/cpu_second = 1.274445e+08
+particle-updates/cpu_second = 0.000000e+00
+"
+athenak_best,AthenaK PPM/HLLD,128,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenak-best-run-N128-s43/data/athenak_best_r1,"exit code 0; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Setup complete, executing task list(s)...
+
+elapsed=3.154623e-01 cycle=0 time=0.000000e+00 dt=1.304239e-04
+
+Terminating on cycle limit
+time=1.908193e-02 cycle=13440
+tlim=2.000000e-01 nlim=13440
+
+MeshBlock-cycles = 13440
+cpu time used  = 2.207274e+02
+zone-cycles/cpu_second = 1.276947e+08
+particle-updates/cpu_second = 0.000000e+00
+"
+ramses_matched,RAMSES HLL,64,42,failed,False,0.04,,0,incomplete or invalid,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N64-s42/data/ramses_matched_r1,"exit code 0; missing output times [0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+  0,       1,       0,)
+ Level  2 has          8 grids (       1,       1,       1,)
+ Level  3 has         64 grids (       8,       8,       8,)
+ Level  4 has        512 grids (      64,      64,      64,)
+ Level  5 has       4096 grids (     512,     512,     512,)
+ Level  6 has      32768 grids (    4096,    4096,    4096,)
+ Main step=     89 mcons=-2.66E-15 econs= 1.43E-15 epot= 0.00E+00 ekin= 1.40E+02
+ emag= 1.60E-01
+ Fine step=     89 t= 2.00000E-02 dt= 2.111E-04 a= 1.000E+00 mem=26.8% 
+ Mesh structure
+ Level  1 has          1 grids (       0,       1,       0,)
+ Level  2 has          8 grids (       1,       1,       1,)
+ Level  3 has         64 grids (       8,       8,       8,)
+ Level  4 has        512 grids (      64,      64,      64,)
+ Level  5 has       4096 grids (     512,     512,     512,)
+ Level  6 has      32768 grids (    4096,    4096,    4096,)
+ Main step=    488 mcons= 0.00E+00 econs=-1.53E-15 epot= 0.00E+00 ekin= 1.40E+02
+ emag= 4.16E-01
+ Fine step=    488 t= 4.00000E-02 dt= 2.098E-04 a= 1.000E+00 mem=26.8% 
+ Run completed
+ Total elapsed time:   1282.2699311310000     
+ --------------------------------------------------------------------
+
+     minimum       average       maximum  standard dev        std/av       %   rmn   rmx  TIMER
+      11.006        11.012        11.017         0.004         0.000     0.9     7   2    courant                 
+       3.856         4.047         4.284         0.117         0.029     0.3     6   1    hydro - set unew        
+    1132.856      1181.277      1228.817        31.798         0.027    92.1     6   1    hydro - godunov         
+      27.796        75.610       124.247        31.902         0.422     5.9     1   6    hydro - rev ghostzones  
+       2.107         2.191         2.332         0.060         0.028     0.2     6   1    hydro - set uold        
+       7.329         7.466         7.530         0.063         0.008     0.6     1   7    hydro - ghostzones      
+    1282.385     100.0    TOTAL
+"
+ramses_matched,RAMSES HLL,64,43,failed,False,0.02,,0,incomplete or invalid,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N64-s43/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+      1,)
+ Level  3 has         64 grids (       8,       8,       8,)
+ Level  4 has        512 grids (      64,      64,      64,)
+ Level  5 has       4096 grids (     512,     512,     512,)
+ Level  6 has      32768 grids (    4096,    4096,    4096,)
+ Starting time integration
+ Run completed
+ Total elapsed time:   1118.9256251620000     
+ --------------------------------------------------------------------
+
+     minimum       average       maximum  standard dev        std/av       %   rmn   rmx  TIMER
+       8.641         8.646         8.649         0.003         0.000     0.8     4   6    courant                 
+       3.533         3.752         4.159         0.225         0.060     0.3     5   7    hydro - set unew        
+    1001.214      1029.825      1061.820        19.421         0.019    92.0     7   8    hydro - godunov         
+      31.640        63.964        92.054        19.437         0.304     5.7     8   7    hydro - rev ghostzones  
+       1.686         1.902         2.035         0.120         0.063     0.2     7   4    hydro - set uold        
+      10.461        10.611        10.910         0.150         0.014     0.9     4   7    hydro - ghostzones      
+    1118.927     100.0    TOTAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+"
+ramses_matched,RAMSES HLL,128,42,failed,False,0.02,,0,incomplete or invalid,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N128-s42/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ing floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+"
+ramses_matched,RAMSES HLL,128,43,failed,False,0.02,,0,incomplete or invalid,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N128-s43/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ing floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+"
+ramses_best,RAMSES HLLD,64,42,complete,True,0.2,123.281289863,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N64-s42/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,64,43,complete,True,0.2,113.433529935,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N64-s43/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,128,42,complete,True,0.2,814.212050355,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N128-s42/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,128,43,complete,True,0.2,948.995522104,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N128-s43/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,256,42,complete,True,0.2,6003.66965146,2,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N256-s42/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,256,43,complete,True,0.2,5388.301952585,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N256-s43/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,512,42,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N512-s42/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,512,43,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N512-s43/data/ramses_best_r1,
+athenapp_matched,Athena++ PLM/HLLE,64,42,complete,True,0.2,26.77,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N64-s42/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,64,43,complete,True,0.2,20.44,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N64-s43/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,128,42,complete,True,0.2,99.84,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N128-s42/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,128,43,complete,True,0.2,75.54,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N128-s43/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,256,42,complete,True,0.2,1238.8300000000002,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N256-s42/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,256,43,complete,True,0.2,,0,valid timing not recorded,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N256-s43/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,512,42,complete,True,0.2,8719.83,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N512-s42/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,512,43,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N512-s43/data/athenapp_matched_r1,
+athenapp_best,Athena++ PPM/HLLD,64,42,complete,False,0.2,,0,incomplete or invalid,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N64-s42/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,64,43,complete,False,0.2,,0,incomplete or invalid,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N64-s43/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,128,42,complete,False,0.2,,0,incomplete or invalid,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N128-s42/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,128,43,complete,False,0.2,,0,incomplete or invalid,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N128-s43/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,256,42,complete,False,0.2,,0,incomplete or invalid,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N256-s42/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,256,43,complete,False,0.2,,0,incomplete or invalid,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N256-s43/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,512,42,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s42/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,512,43,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s43/data/athenapp_best_r1,

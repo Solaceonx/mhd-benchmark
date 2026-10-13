@@ -1,0 +1,61 @@
+run,kind,N,seed,device,precision,timing_scope
+gpu-glm-M3-N128-s1,gpu-glm,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M3-N128-s2,gpu-glm,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M3-N256-s1,gpu-glm,256,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M3-N256-s2,gpu-glm,256,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M3-N128-s1,gpu-hydro,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M3-N128-s2,gpu-hydro,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M3-N256-s1,gpu-hydro,256,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M3-N256-s2,gpu-hydro,256,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro_ramsesproj-M3-N128-s1,gpu-hydro_ramsesproj,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro_ramsesproj-M3-N128-s2,gpu-hydro_ramsesproj,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+ramses-best-M3-N128-s1,ramses-best,128,1,CPU sh03-01n18.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramses-best-M3-N256-s1,ramses-best,256,1,CPU sh02-01n02.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramses-matched-M3-N128-s1,ramses-matched,128,1,CPU sh02-08n38.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramses-matched-M3-N256-s1,ramses-matched,256,1,CPU sh03-01n18.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-best-M3-N128-s1,ramsesfix-best,128,1,CPU sh03-01n65.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-best-M3-N256-s1,ramsesfix-best,256,1,CPU sh02-01n45.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-matched-M3-N128-s1,ramsesfix-matched,128,1,CPU sh02-10n49.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-matched-M3-N256-s1,ramsesfix-matched,256,1,CPU sh03-11n21.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+gpu-glm-M10-N128-s1,gpu-glm,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M10-N128-s2,gpu-glm,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M10-N256-s1,gpu-glm,256,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M10-N256-s2,gpu-glm,256,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M10-N128-s1,gpu-hydro,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M10-N128-s2,gpu-hydro,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M10-N256-s1,gpu-hydro,256,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M10-N256-s2,gpu-hydro,256,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro_ramsesproj-M10-N128-s1,gpu-hydro_ramsesproj,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro_ramsesproj-M10-N128-s2,gpu-hydro_ramsesproj,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+ramses-best-M10-N128-s1,ramses-best,128,1,CPU sh02-01n16.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramses-best-M10-N256-s1,ramses-best,256,1,CPU sh03-03n59.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramses-matched-M10-N128-s1,ramses-matched,128,1,CPU sh04-11n16.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramses-matched-M10-N256-s1,ramses-matched,256,1,CPU sh02-01n16.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-best-M10-N128-s1,ramsesfix-best,128,1,CPU sh02-10n56.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-best-M10-N256-s1,ramsesfix-best,256,1,CPU sh03-01n55.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-matched-M10-N128-s1,ramsesfix-matched,128,1,CPU sh04-14n27.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-matched-M10-N256-s1,ramsesfix-matched,256,1,CPU sh02-01n20.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+gpu-glm-M30-N128-s1,gpu-glm,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M30-N128-s2,gpu-glm,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M30-N256-s1,gpu-glm,256,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M30-N256-s2,gpu-glm,256,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M30-N128-s1,gpu-hydro,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M30-N128-s2,gpu-hydro,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M30-N256-s1,gpu-hydro,256,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M30-N256-s2,gpu-hydro,256,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+ramsesfix-best-M30-N128-s1,ramsesfix-best,128,1,CPU sh03-01n08.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-best-M30-N256-s1,ramsesfix-best,256,1,CPU sh02-08n40.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-matched-M30-N128-s1,ramsesfix-matched,128,1,CPU sh03-01n56.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-matched-M30-N256-s1,ramsesfix-matched,256,1,CPU sh02-06n06.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+gpu-glm-M50-N128-s1,gpu-glm,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M50-N128-s2,gpu-glm,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M50-N256-s1,gpu-glm,256,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-glm-M50-N256-s2,gpu-glm,256,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M50-N128-s1,gpu-hydro,128,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M50-N128-s2,gpu-hydro,128,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M50-N256-s1,gpu-hydro,256,1,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+gpu-hydro-M50-N256-s2,gpu-hydro,256,2,NVIDIA H100 80GB HBM3,Float32 state,"step_seconds: timestep scan + kernel with the force, synchronised; measurements, output and the forcing's own update excluded"
+ramsesfix-best-M50-N128-s1,ramsesfix-best,128,1,CPU sh02-10n43.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-best-M50-N256-s1,ramsesfix-best,256,1,CPU sh04-01n17.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-matched-M50-N128-s1,ramsesfix-matched,128,1,CPU sh03-01n49.int x 32 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON
+ramsesfix-matched-M50-N256-s1,ramsesfix-matched,256,1,CPU sh02-10n50.int x 64 ranks,double; frames stored as Float32,RAMSES perf fields; see JSON

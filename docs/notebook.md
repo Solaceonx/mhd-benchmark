@@ -18,10 +18,15 @@ page or add a test.
 | 07 | Sweep | Every run of the sweep: finished, stopped by its solver, or missing | `build_sweep_plan.py` |
 | 08 | Papers | 43 figures of the comparison papers redrawn from the sweep | `build_paper_figures.py`, `paper_*.py` |
 | 09 | Turbulence | The driven-turbulence pilot | `build_turbulence.py`, `turb_figures.py` |
-| 10 | Tests | One page a test problem: set-up, a movie, and which code finished it on which grid | `build_test_pages.py` |
+| 10 | Tests | One page a test problem: set-up, movie, completion and eight quantitative diagnostic sections | `test_diagnostics.py`, `build_test_pages.py` |
 
 All builders are in `scripts/`. Page 06 needs the archives in `sherlock_mhd/returns/`, which are not in this
 repository, and its stills and movies are not either ([data](data.md)); the other pages work from a clone.
+
+The shared test diagnostics use fetched sweep records and available state/reference files. They have no
+gridlines, separate code families/variants clearly, and explain unavailable comparisons. The driven pilot has
+the same sections with its reference-dependent metrics explicitly unavailable. See [test analysis](test-analysis.md)
+for rebuilding, metric definitions, data coverage, validation, and the missing-input fetch command.
 
 `progress/notes.html` is a private notes page, one note per code and per test, encrypted in the browser with a
 password; no page links to it.

@@ -9,14 +9,17 @@ page. Driven turbulence has its own page (build_turbulence.py) and a card in the
 """
 import html
 import json
+import os
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/abel-mhd-matplotlib")
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import paper_common as pc  # noqa: E402
 import sweep_data as sd  # noqa: E402
+import test_diagnostics as diagnostics  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT/"progress"
@@ -121,6 +124,7 @@ def test_page(sweep, test, info, movie, order):
 <article class="card test-setup"><h3>Set-up</h3>{setup_html(test)}<p class="small">{e(notes)} After: {e(info["source"])}. The same initial state goes to every code.</p></article>
 <article class="card"><h3>Who finished it</h3><p>Each set-up on each grid of the sweep. ✓ the run reached the end time; otherwise where its own solver stopped it
 (a result, not a failed job); · not run.</p>{table}</article>
+{diagnostics.section(test)}
 <div class="test-turn"><a href="{page_of(prev)}">← {e(TITLES[prev])}</a><a href="{page_of(nxt)}">{e(TITLES[nxt])} →</a></div>'''
 
 
@@ -128,7 +132,7 @@ def index_page(tests, movies, families):
     out = [f'''
 <div class="page-heading"><div><div class="eyebrow"><span>{PAGE["number"]} · Test problems</span><span class="badge">{len(tests)} tests</span></div>
 <h1>Every test problem</h1><p>One page a test: what it is for, a movie of it, and which code finished it on which grid. The colours of the movies
-change from one family of tests to the next.</p></div></div>''']
+change from one family of tests to the next. Every page has eight shared quantitative diagnostic sections; missing comparisons are stated explicitly.</p></div></div>''']
     for family in families:
         mine = [t for t in tests if tests[t]["family"] == family]
         cards = "".join(f'<a class="test-card" href="{page_of(t)}"><strong>{e(TITLES[t])}</strong><code>{e(t)}</code><span>{e(tests[t]["focus"].split(". ")[0].rstrip(".") + ".")}</span>'

@@ -37,7 +37,7 @@ Read this first, then `README.md` and `docs/` (codes, tests, results, issues fou
   say so); the project may use about 100 GB; raw movie frames are deleted after rendering.
 - **Wording:** Tom's kernels are labelled "Abel et al." on pages and movies, not "advisor".
 - **Look:** STIX text, one colour per code family, cmasher or `mako` colour maps (`scripts/plot_style.py`). Fields
-  to type in must look like boxes; lists should be compact.
+  to type in must look like boxes; lists should be compact. Shared analysis plots have no gridlines.
 
 ## 3. What is where
 
@@ -108,6 +108,15 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
    RAMSES, Orszag–Tang (with `docs/figures/orszag_tang_setup.png`), the planar blast with Bx = 50/√4π.
 
 ## 6. How the pieces are rebuilt
+
+**Shared test analysis added 2026-10-13:** all 25 test pages plus the driven-turbulence page have eight quantitative
+diagnostic sections, using real fetched records (400 PNG/SVG figure pairs). Builders:
+`scripts/test_diagnostics.py` and `scripts/driven_test_diagnostics.py`, followed by the page builders below.
+See `docs/test-analysis.md`. Missing reference snapshots are marked explicitly, not filled with synthetic values;
+MHD-ALE records have not been fetched. `bash scripts/fetch_test_analysis.sh` on the Mac downloads existing missing
+inputs (the saved inventory estimates 8.4 GB uncompressed, plus newer MHD-ALE records), without submitting jobs.
+The common accuracy figure is L1/L2/Linf **versus physical time**, not snapshot bars. Error convergence and cost
+use the same endpoint errors. Do not treat an independently forced turbulence realization as a pointwise truth.
 
 | Thing | Command |
 |---|---|

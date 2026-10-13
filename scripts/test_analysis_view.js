@@ -71,4 +71,13 @@
     abel.value = ''; external.value = ''; update();
   });
   controls.hidden = false;
+  const setOffsets = () => {
+    const margin = controls.getBoundingClientRect().height + 16;
+    section.querySelectorAll('.analysis-card').forEach(card => {
+      card.style.scrollMarginTop = `${margin}px`;
+    });
+  };
+  if ('ResizeObserver' in window) new ResizeObserver(setOffsets).observe(controls);
+  else window.addEventListener('resize', setOffsets);
+  setOffsets();
 })();

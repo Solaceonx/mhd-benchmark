@@ -117,8 +117,17 @@
     abel.value = ''; external.value = ''; update();
   });
   controls.hidden = false;
+  const setOffsets = () => {
+    const margin = controls.getBoundingClientRect().height + 16;
+    section.querySelectorAll('.analysis-card').forEach(card => {
+      card.style.scrollMarginTop = `${margin}px`;
+    });
+  };
+  if ('ResizeObserver' in window) new ResizeObserver(setOffsets).observe(controls);
+  else window.addEventListener('resize', setOffsets);
+  setOffsets();
 })();
 </script>
 <div class="test-turn"><a href="test-entropy.html">← Entropy wave</a><a href="test-alfven-oblique.html">Oblique Alfvén wave →</a></div></main>
-<footer><span>Written by scripts/build_test_pages.py from the sweep's configs, status and movie runs.</span><span>Built 2026-10-13 16:21</span></footer>
+<footer><span>Written by scripts/build_test_pages.py from the sweep's configs, status and movie runs.</span><span>Built 2026-10-13 16:26</span></footer>
 </body></html>

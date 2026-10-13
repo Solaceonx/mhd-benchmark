@@ -24,8 +24,11 @@ def style(kind):
     old=tf.KINDS[kind]
     dash={"gpu-hydro":(0,(5,3)),"gpu-glm":(0,(1,1)),"gpu-hydro_ramsesproj":(0,(5,2,1,2)),
           "ramsesfix-matched":(0,(5,3)),"ramsesfix-best":"-","ramses-matched":(0,(2,2)),"ramses-best":(0,(7,2,1,2))}[kind]
-    return dict(color=FAMILY["glm" if kind.startswith("gpu") else "ramses"],linestyle=dash,
-                label=old[3].replace("Tom's","Abel et al."))
+    labels={"gpu-hydro":"Abel Euler HLL","gpu-glm":"Abel GLM LLF (B = 0)",
+            "gpu-hydro_ramsesproj":"Abel Euler, released projection",
+            "ramsesfix-matched":"RAMSES HLL, corrected","ramsesfix-best":"RAMSES HLLC, corrected",
+            "ramses-matched":"RAMSES HLL, released","ramses-best":"RAMSES HLLC, released"}
+    return dict(color=FAMILY["glm" if kind.startswith("gpu") else "ramses"],linestyle=dash,label=labels[kind])
 
 
 def draw(ax,r,x,y):
@@ -86,7 +89,7 @@ class Driven(Figures):
             axs[0].barh(i,min(1,t[-1]/r.meta.get("t_end_T",10)),color=style(r.kind)["color"])
             if "density_floor_cells" in d:draw(axs[1],r,t,100*d["density_floor_cells"]/r.n**3)
             if "negative_density_cells" in d:draw(axs[2],r,t,100*d["negative_density_cells"]/r.n**3)
-        axs[0].set_yticks(range(len(self.shown)),labels=[r.kind+f" s{r.seed}" for r in self.shown],fontsize=8);axs[0].invert_yaxis();axs[0].set_xlabel("Fraction of requested physical duration")
+        axs[0].set_yticks(range(len(self.shown)),labels=[style(r.kind)["label"]+f" s{r.seed}" for r in self.shown],fontsize=8);axs[0].invert_yaxis();axs[0].set_xlabel("Fraction of requested physical duration")
         for ax,label in zip(axs[1:],["Density-floor cells [%]","Nonpositive density cells [%]"]):
             if not ax.lines:blank(ax,"Cell counts were not recorded for these runs. Missing counts are not zero.")
             else:ax.set_xlabel("Physical time / driving time T");ax.set_ylabel(label)
@@ -101,6 +104,7 @@ class Driven(Figures):
             wall=r.meta.get("wall_seconds",perf.get("wall_seconds"))
             if not sec:continue
             rows.append((r,float(sec),wall))
+        rows.sort(key=lambda row:row[1])
         for i,(r,sec,wall) in enumerate(rows):
             axs[0].barh(i,sec,color=style(r.kind)["color"])
             if wall is not None and wall>=sec:axs[0].barh(i,wall-sec,left=sec,color=style(r.kind)["color"],alpha=.3,hatch="///")
@@ -108,7 +112,9 @@ class Driven(Figures):
             draw(axs[1],r,[sec],[r.series["time"][-1]])
             axs[1].scatter([sec],[r.series["time"][-1]],color=style(r.kind)["color"],s=30)
         if rows:
-            axs[0].set_yticks(range(len(rows)),labels=[r.kind+f" s{r.seed}" for r,*_ in rows],fontsize=8);axs[0].invert_yaxis();axs[0].set_xlabel("Execution time [s]")
+            axs[0].set_yticks(range(len(rows)),labels=[style(r.kind)["label"]+f" s{r.seed}" for r,*_ in rows],fontsize=8);axs[0].invert_yaxis();axs[0].set_xlabel("Execution time [s]")
+            axs[0].set_xscale("log");axs[0].set_xlim(min(sec for _,sec,_ in rows)*.6,max(max(sec,float(wall or 0)) for _,sec,wall in rows)*1.4)
+            axs[1].set_xscale("log")
             axs[1].set_xlabel("Recorded execution time [s]");axs[1].set_ylabel("Requested physical endpoint t")
         else:
             for ax in axs:blank(ax,"Timing breakdown unavailable in the fetched metadata.")

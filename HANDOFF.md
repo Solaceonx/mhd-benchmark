@@ -110,7 +110,7 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 ## 6. How the pieces are rebuilt
 
 **Shared test analysis added 2026-10-13:** all 25 test pages plus the driven-turbulence page have eight quantitative
-diagnostic sections, using real fetched records (400 PNG/SVG figure pairs). Builders:
+diagnostic sections, using real fetched records (257 PNG/SVG figure pairs after the comparison-layout update). Builders:
 `scripts/test_diagnostics.py` and `scripts/driven_test_diagnostics.py`, followed by the page builders below.
 See `docs/test-analysis.md`. Missing reference snapshots are marked explicitly, not filled with synthetic values;
 The missing inputs were fetched on the Mac on 2026-10-13: planar 128² histories, other-grid endpoints,
@@ -120,6 +120,12 @@ states of stopped runs are not download failures. Larger 3D error histories stil
 `bash scripts/fetch_test_analysis.sh` downloads existing missing inputs without submitting jobs.
 The common accuracy figure is L1/L2/Linf **versus physical time**, not snapshot bars. Error convergence and cost
 use the same endpoint errors. Do not treat an independently forced turbulence realization as a pointwise truth.
+All science curves now share axes across Abel et al. and external codes, with two legend blocks and page
+selectors that emphasize an Abel kernel and/or external family. Runtime bars combine and sort all codes;
+accuracy/cost keeps GPU/CPU resource units separate with common accuracy scales. Downloads show every curve.
+The selector script is `scripts/test_analysis_view.js`, embedded by the page builder; it loads vector plots
+only when emphasis is requested, retaining PNG fallback. No gridlines. Rebuild both diagnostic builders after
+changing the shared figure layout.
 
 | Thing | Command |
 |---|---|

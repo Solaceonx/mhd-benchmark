@@ -65,9 +65,15 @@ def style(method):
 
 
 def groups(methods):
-    return [(title,[m for m in methods if (m in sd.GPU_METHODS)==ours])
-            for title,ours in (("Abel et al.",True),("External codes",False))
-            if any((m in sd.GPU_METHODS)==ours for m in methods)]
+    return [("All codes on shared axes",list(methods))] if methods else []
+
+
+def identify(artist,method):
+    """Tag vector artists so the page can emphasize selected methods."""
+    fig=artist.figure
+    fig._comparison_id=getattr(fig,"_comparison_id",0)+1
+    artist.set_gid(f"series--{method}--{fig._comparison_id}")
+    return artist
 
 
 def draw(ax,x,y,method,points=False):
@@ -76,7 +82,8 @@ def draw(ax,x,y,method,points=False):
     if not valid.any():return False
     kw=style(method)
     if not points:kw.pop("marker")
-    ax.plot(x[valid],y[valid],**kw,lw=1.7,ms=4)
+    line,=ax.plot(x[valid],y[valid],**kw,lw=1.7,ms=4)
+    identify(line,method)
     ax.grid(False)
     return True
 
@@ -90,7 +97,7 @@ def blank(ax,message):
 def logarithmic(ax):
     values=np.concatenate([np.asarray(l.get_ydata(),float) for l in ax.lines]) if ax.lines else np.array([])
     positive=values[np.isfinite(values)&(values>0)]
-    if len(positive):ax.set_yscale("symlog",linthresh=max(1e-16,float(positive.min())/3))
+    if len(positive):ax.set_yscale("symlog",linthresh=max(1e-16,float(positive.min())/3,float(positive.max())*1e-5))
 
 
 def compute_errors(actual,reference):
@@ -278,21 +285,39 @@ class Figures:
 
     def save(self,fig,category,suffix,group,caption,details=None):
         ident=f"{category}-{suffix}";title=TITLES[category]
-        fig.suptitle(f"{title} · {self.test}",x=.075,ha="left",fontsize=18,y=.995)
-        fig.text(.075,.945,group,fontsize=11,color="#64716f")
-        bars=category=="08-runtime" or (category=="07-validity" and suffix=="matrix")
-        fig.subplots_adjust(left=.22 if bars else .10,right=.975,bottom=.14,top=.78,wspace=.34,hspace=.55)
-        # One compact shared legend; empty panels never get fake curves.
+        width,height=fig.get_size_inches();fig.set_size_inches(width,max(6.8,height))
+        fig.suptitle(f"{title} · {self.test}",x=.075,ha="left",fontsize=18,y=.99)
+        fig.text(.075,.94,group,fontsize=11,color="#64716f")
+        bars=category=="08-runtime" or (category=="07-validity" and fig.axes and fig.axes[0].patches)
+        fig.subplots_adjust(left=.22 if bars else .10,right=.975,bottom=.14,top=.72,wspace=.34,hspace=.55)
+        # Both legend blocks describe curves on the same axes.
         handles={}
         for ax in fig.axes:
             h,l=ax.get_legend_handles_labels()
             handles.update(dict(zip(l,h)))
-        if handles:fig.legend(handles.values(),handles.keys(),loc="upper center",bbox_to_anchor=(.53,.91),ncol=min(4,len(handles)),fontsize=9,frameon=False)
+        known={style(m)["label"]:m for m in METHODS}
+        legends=[[],[]]
+        for label,handle in handles.items():
+            method=known.get(label)
+            ours=method in sd.GPU_METHODS if method else label.startswith("Abel")
+            short=label.replace("Abel et al.","").replace("Abel ","").strip()
+            legends[0 if ours else 1].append((handle,short,method))
+        for j,entries in enumerate(legends):
+            if not entries:continue
+            entries.sort(key=lambda entry:METHODS.index(entry[2]) if entry[2] else len(METHODS))
+            x=.10 if j==0 else .52
+            fig.text(x,.888,"Abel et al." if j==0 else "External codes / reference",fontsize=11,fontweight="bold")
+            legend=fig.legend([h for h,_,_ in entries],[l for _,l,_ in entries],loc="upper left",
+                bbox_to_anchor=(x,.874),ncol=min(3,len(entries)),fontsize=9,frameon=False,
+                borderaxespad=0,columnspacing=1.15,handlelength=2.6,handletextpad=.55)
+            for (handle,_,method),swatch,label in zip(entries,legend.legend_handles,legend.get_texts()):
+                if method:
+                    identify(swatch,method);identify(label,method)
         fig.text(.075,.04,"Measured run records · available outputs only",fontsize=9,color="#64716f")
         for ext in ("png","svg"):fig.savefig(self.root/f"{ident}.{ext}",dpi=160,facecolor="white")
         plt.close(fig)
         self.entries.append(dict(category=category,title=title,group=group,file=f"media/analysis/{self.test}/{ident}.png",
-                                 vector=f"media/analysis/{self.test}/{ident}.svg",caption=caption,details=details or []))
+                                 vector=f"media/analysis/{self.test}/{ident}.svg",aspect=float(fig.get_size_inches()[0]/fig.get_size_inches()[1]),caption=caption,details=details or []))
 
     def selected(self,methods,n=None):return self.data.select(self.test,self.n if n is None else n,methods=methods)
 
@@ -316,7 +341,7 @@ class Figures:
             for m in methods:
                 if not self.data.errors(self.test,m,self.error_n):missing.append(style(m)["label"]+": no paired reference data")
             self.save(fig,"01-errors",str(gi),f"{name} · N={self.error_n}, seed 42",
-                "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog axes preserve zeros. Reference: "+("; ".join(sorted(sources)) or "not available")+".",missing)
+                "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: "+("; ".join(sorted(sources)) or "not available")+".",missing)
 
     def convergence_cost(self):
         for gi,(name,methods) in enumerate(groups(self.methods)):
@@ -349,8 +374,17 @@ class Figures:
                 if not ax.lines:blank(ax,"No completed endpoint errors with comparable recorded resource costs.")
                 else:ax.set_xscale("log");logarithmic(ax);ax.set_xlabel("H100 GPU-hours" if gpu else "CPU core-hours");ax.set_ylabel(field.title()+f" {mode} L1 error {units}")
                 ax.set_title("GPU" if gpu else "CPU")
+            # GPU/CPU resource units differ, but accuracy must use the same scale.
+            axes=axs[j]
+            values=np.concatenate([np.asarray(line.get_ydata(),float) for ax in axes for line in ax.lines]) if any(ax.lines for ax in axes) else np.array([])
+            positive=values[np.isfinite(values)&(values>0)]
+            if len(positive):
+                threshold=max(1e-16,float(positive.min())/3,float(positive.max())*1e-5)
+                for ax in axes:ax.set_yscale("symlog",linthresh=threshold)
+                limits=[ax.get_ylim() for ax in axes if ax.lines]
+                for ax in axes:ax.set_ylim(min(v[0] for v in limits),max(v[1] for v in limits))
         self.save(fig,"03-cost","all","GPU and CPU resource costs separated · seed 42",
-            "The same endpoint L1 errors as convergence. One H100 per GPU run; CPU costs use environment rank counts, or explicitly planned ranks when environment records are missing. Median valid completed repeats are used. GPU stepping+CFL and external evolution-loop timings have different output scopes; see run metadata.")
+                "The same endpoint L1 errors as convergence, with matched accuracy scales across GPU/CPU panels. One H100 per GPU run; CPU costs use environment rank counts, or explicitly planned ranks when environment records are missing. Median valid completed repeats are used. GPU stepping+CFL and external evolution-loop timings have different output scopes; see run metadata.")
 
     def conservation(self):
         for gi,(name,methods) in enumerate(groups(self.methods)):
@@ -454,10 +488,11 @@ class Figures:
                     color="#f4ddd5";reached=run.diag.get("time",np.array([run.meta.get("time_reached",0)]))[max(0,run.finite_count-1)]
                     mark=f"{100*min(1,float(reached)/float(self.config['t_end'])):.0f}%"
                     reasons.append(f"{style(method)['label']} N={n}: "+str(run.meta.get("error",run.meta.get("status","unknown"))).splitlines()[-1][:240])
-                ax.add_patch(plt.Rectangle((i-.46,j-.40),.92,.8,color=color,alpha=.9))
-                ax.text(i,j,mark,ha="center",va="center",fontsize=12,color="white" if run and run.completed else "#202a2a")
+                identify(ax.add_patch(plt.Rectangle((i-.46,j-.40),.92,.8,color=color,alpha=.9)),method)
+                identify(ax.text(i,j,mark,ha="center",va="center",fontsize=12,color="white" if run and run.completed else "#202a2a"),method)
         ax.set_xlim(-.6,len(ns)-.4);ax.set_ylim(len(self.methods)-.5,-.5);ax.set_xticks(range(len(ns)),labels=ns)
         ax.set_yticks(range(len(self.methods)),labels=[style(m)["label"] for m in self.methods],fontsize=10)
+        for method,label in zip(self.methods,ax.get_yticklabels()):identify(label,method)
         ax.set_xlabel("Cells per side, N");ax.spines[["left","bottom"]].set_visible(False)
         # Matrix needs more left margin than line plots.
         self.save(fig,"07-validity","matrix","Seed 42 · all planned grids",
@@ -481,29 +516,33 @@ class Figures:
     def runtime(self):
         for gi,(name,methods) in enumerate(groups(self.methods)):
             selected=[r for r in self.selected(methods) if r.completed]
-            fig,axs=plt.subplots(1,2,figsize=(13,max(5.8,len(selected)*.35+2)))
+            fig,axs=plt.subplots(1,2,figsize=(13,max(6.8,len(selected)*.48+3.2)))
             rows=[]
             for r in selected:
                 sec,scope,reps=timing(self.data,r)
                 if sec:rows.append((r,sec,scope,reps))
+            rows.sort(key=lambda row:row[1])
             for i,(r,sec,scope,reps) in enumerate(rows):
-                axs[0].barh(i,sec,color=style(r.method)["color"],height=.55)
+                for bar in axs[0].barh(i,sec,color=style(r.method)["color"],height=.55):identify(bar,r.method)
                 # Additional time only when a matching record measures total evolution time.
                 wall=r.meta.get("evolution_wall_seconds",r.meta.get("wall_seconds"))
                 if reps==1 and finite(wall) and float(wall)>=sec:
-                    axs[0].barh(i,float(wall)-sec,left=sec,color=style(r.method)["color"],alpha=.3,hatch="///",height=.55)
-                axs[0].text(sec,i,f" {sec:.3g}s",va="center",fontsize=9)
+                    for bar in axs[0].barh(i,float(wall)-sec,left=sec,color=style(r.method)["color"],alpha=.3,hatch="///",height=.55):identify(bar,r.method)
+                identify(axs[0].text(sec,i,f" {sec:.3g}s",va="center",fontsize=9),r.method)
                 # Dense timing histories are not recorded; plot only the actual endpoint.
                 draw(axs[1],[sec],[self.config["t_end"]],r.method,points=True)
             if rows:
                 labels=[style(r.method)["label"]+"\n"+("1 H100" if r.gpu else f"{r.ranks or '?'} CPU ranks ({r.ranks_source})") for r,*_ in rows]
                 axs[0].set_yticks(range(len(rows)),labels=labels,fontsize=9);axs[0].invert_yaxis()
+                for (r,*_),label in zip(rows,axs[0].get_yticklabels()):identify(label,r.method)
+                axs[0].set_xscale("log");axs[0].set_xlim(min(sec for _,sec,*_ in rows)*.6,max(max(sec,float(r.meta.get("evolution_wall_seconds",r.meta.get("wall_seconds",0)) or 0)) for r,sec,*_ in rows)*1.4)
+                axs[1].set_xscale("log")
                 axs[0].set_xlabel("Recorded execution time [s]")
                 axs[1].set_xlabel("Execution time to endpoint [s]");axs[1].set_ylabel("Requested physical endpoint t")
             else:
                 for ax in axs:blank(ax,"No valid completed timing records at the selected grid.")
             self.save(fig,"08-runtime",str(gi),f"{name} · N={self.n}, seed 42",
-                "Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.")
+                "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.")
 
 
 def timing(data,run):
@@ -537,26 +576,43 @@ def table(data,test):
 def section(test):
     manifest=SITE/"test_analysis.json"
     if not manifest.is_file():return ""
-    item=json.loads(manifest.read_text()).get("tests",{}).get(test)
+    registry=json.loads(manifest.read_text());item=registry.get("tests",{}).get(test)
     if not item:return ""
     e=html.escape
-    parts=['<section class="test-analysis" id="analysis"><div class="page-heading"><div><h2>Shared quantitative diagnostics</h2><p>Measured records from the comprehensive sweep. Colours identify code families; line styles identify variants. No synthetic data.</p></div></div>']
+    parts=['<section class="test-analysis" id="analysis"><div class="page-heading"><div><h2>Shared quantitative diagnostics</h2><p>Abel et al. and the external codes share axes for direct comparison. Colours identify code families; line styles identify variants. Measured results only.</p></div></div>']
     parts.append('<p class="small">'+" · ".join(f'<a href="#analysis-{category}">{e(category[:2]+" "+title)}</a>' for category,title in TITLES.items())+'</p>')
+    methods=item.get("methods",[])
+    if methods:
+        options="".join(f'<option value="{e(m)}">{e(style(m)["label"].replace("Abel ","").replace("$c_h$","cₕ"))}</option>' for m in methods if m in sd.GPU_METHODS)
+        families=list(dict.fromkeys(m.split("_")[0] for m in methods if m not in sd.GPU_METHODS))
+        names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",mhdale="MHD-ALE")
+        external="".join(f'<option value="{e(m)}">{e(names[m])}</option>' for m in families)
+        parts.append('<div class="comparison-controls" hidden style="position:sticky;top:0;z-index:4;background:var(--paper);padding:8px 0"><div class="toolbar" style="flex-wrap:wrap;justify-content:flex-start;margin-bottom:6px">'
+            '<label class="control-group">Abel kernel <select class="field-select" name="abel-kernel"><option value="">All kernels</option>'+options+'</select></label>'
+            '<label class="control-group">External code <select class="field-select" name="external-code"><option value="">All external codes</option>'+external+'</select></label>'
+            '<button class="field-select" type="button">Show all</button></div><p class="small comparison-status" aria-live="polite">All codes are shown on shared axes.</p></div>')
     if item.get("warnings"):parts.append('<article class="card"><h3>Data coverage</h3><ul>'+"".join(f"<li>{e(w)}</li>" for w in item["warnings"])+"</ul></article>")
     for category,title in TITLES.items():
         figures=[f for f in item["figures"] if f["category"]==category]
         parts.append(f'<article class="card analysis-card" id="analysis-{category}"><h3>{e(category[:2])} · {e(title)}</h3>')
         for f in figures:
-            parts.append(f'<h4>{e(f["group"])}</h4><a href="{e(f["file"])}"><img loading="lazy" style="width:100%;height:auto" src="{e(f["file"])}" alt="{e(title+": "+f["group"])}"></a><p>{e(f["caption"])}</p><p class="small"><a href="{e(f["vector"])}">Vector SVG</a></p>')
+            version=re.sub(r"\D","",registry.get("built_utc",""))
+            png=e(f["file"]+"?v="+version);svg=e(f["vector"]+"?v="+version)
+            parts.append(f'<h4>{e(f["group"])}</h4><div class="analysis-plot" data-vector="{svg}" data-aspect="{f.get("aspect",13/8)}"><a href="{png}"><img loading="lazy" style="width:100%;height:auto" src="{png}" alt="{e(title+": "+f["group"])}"></a></div><p>{e(f["caption"])}</p><p class="small">Download all codes: <a href="{png}">PNG</a> · <a href="{svg}">Vector SVG</a></p>')
             if f["details"]:parts.append('<details><summary>Coverage and stopped runs</summary><ul>'+"".join(f"<li>{e(v)}</li>" for v in f["details"])+"</ul></details>")
         parts.append("</article>")
     parts.append(f'<article class="card"><h3>Source records and reproduction</h3><p><a href="media/analysis/{e(test)}/data.json">Numerical data and run metadata (JSON)</a> · <a href="media/analysis/{e(test)}/runs.csv">Run table (CSV)</a></p><p class="small">Build: <code>.venv-movie/bin/python scripts/test_diagnostics.py {e(test)}</code>. Runtime comparisons state each measurement scope; RAMSES II has throughput data only and is not a science curve here.</p></article></section>')
+    if methods:parts.append('<script>'+ (ROOT/"scripts/test_analysis_view.js").read_text()+'</script>')
     return "\n".join(parts)
 
 
 def build(data,test):
     f=Figures(data,test)
     for fn in (f.error_histories,f.convergence_cost,f.conservation,f.divergence,f.spectra,f.validity,f.runtime):fn()
+    wanted={Path(entry[key]).name for entry in f.entries for key in ("file","vector")}
+    for pattern in ("0[1-8]-*.png","0[1-8]-*.svg"):
+        for path in f.root.glob(pattern):
+            if path.name not in wanted:path.unlink()
     rows=table(data,test);warnings=[]
     if test in ALE_TESTS and not any(r.method=="mhdale_ale" for r in data.select(test)):warnings.append("MHD-ALE is applicable but its records have not been fetched; grey entries are missing data, not failed runs.")
     if not any(data.errors(test,m,f.error_n) for m in f.methods):

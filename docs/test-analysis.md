@@ -3,7 +3,13 @@
 Each test page has the same eight analysis sections, built from fetched results by
 `scripts/test_diagnostics.py`. They contain real measurements only. Gridlines are
 disabled, code families keep their existing colours, and variants use line styles.
-Abel et al. and external codes are separated when a combined figure would be crowded.
+Abel et al. and external codes share axes, with separate legend blocks in the same
+figure. Page selectors emphasize an Abel kernel and/or an external code family;
+other curves remain faint for context. PNG/SVG downloads contain every plotted
+method. GPU/CPU accuracy-cost panels retain their different resource units but
+share accuracy scales. Runtime bars include all codes, sorted by execution time,
+with logarithmic time axes. The near-zero band of symlog error/divergence axes is
+at least 10⁻⁵ of the panel peak, so roundoff does not stretch the displayed range.
 
 1. Density and magnetic-vector L1, L2 and Linf errors against physical time.
 2. Endpoint L1 errors against resolution.

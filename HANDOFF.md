@@ -113,8 +113,11 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 diagnostic sections, using real fetched records (400 PNG/SVG figure pairs). Builders:
 `scripts/test_diagnostics.py` and `scripts/driven_test_diagnostics.py`, followed by the page builders below.
 See `docs/test-analysis.md`. Missing reference snapshots are marked explicitly, not filled with synthetic values;
-MHD-ALE records have not been fetched. `bash scripts/fetch_test_analysis.sh` on the Mac downloads existing missing
-inputs (the saved inventory estimates 8.4 GB uncompressed, plus newer MHD-ALE records), without submitting jobs.
+The missing inputs were fetched on the Mac on 2026-10-13: planar 128² histories, other-grid endpoints,
+64³ full-volume histories, restricted AthenaK references, environment records, and 61 MHD-ALE run records
+(45 complete and finite, 16 stopped). The current-sheet N512 MHD-ALE record remains absent; missing final
+states of stopped runs are not download failures. Larger 3D error histories still require additional files.
+`bash scripts/fetch_test_analysis.sh` downloads existing missing inputs without submitting jobs.
 The common accuracy figure is L1/L2/Linf **versus physical time**, not snapshot bars. Error convergence and cost
 use the same endpoint errors. Do not treat an independently forced turbulence realization as a pointwise truth.
 

@@ -972,7 +972,7 @@ cpu time used  = 2.207274e+02
 zone-cycles/cpu_second = 1.276947e+08
 particle-updates/cpu_second = 0.000000e+00
 "
-ramses_matched,RAMSES HLL,64,42,failed,False,0.04,,0,incomplete or invalid,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N64-s42/data/ramses_matched_r1,"exit code 0; missing output times [0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ramses_matched,RAMSES HLL,64,42,failed,False,0.04,,0,incomplete or invalid,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N64-s42/data/ramses_matched_r1,"exit code 0; missing output times [0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
   0,       1,       0,)
  Level  2 has          8 grids (       1,       1,       1,)
  Level  3 has         64 grids (       8,       8,       8,)
@@ -1005,7 +1005,7 @@ ramses_matched,RAMSES HLL,64,42,failed,False,0.04,,0,incomplete or invalid,8 CPU
        7.329         7.466         7.530         0.063         0.008     0.6     1   7    hydro - ghostzones      
     1282.385     100.0    TOTAL
 "
-ramses_matched,RAMSES HLL,64,43,failed,False,0.02,,0,incomplete or invalid,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N64-s43/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ramses_matched,RAMSES HLL,64,43,failed,False,0.02,,0,incomplete or invalid,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N64-s43/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
       1,)
  Level  3 has         64 grids (       8,       8,       8,)
  Level  4 has        512 grids (      64,      64,      64,)
@@ -1033,7 +1033,7 @@ Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLA
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 "
-ramses_matched,RAMSES HLL,128,42,failed,False,0.02,,0,incomplete or invalid,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N128-s42/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ramses_matched,RAMSES HLL,128,42,failed,False,0.02,,0,incomplete or invalid,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N128-s42/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
 ing floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
@@ -1056,7 +1056,7 @@ Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLA
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 "
-ramses_matched,RAMSES HLL,128,43,failed,False,0.02,,0,incomplete or invalid,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N128-s43/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ramses_matched,RAMSES HLL,128,43,failed,False,0.02,,0,incomplete or invalid,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/decay_supersonic-ramses-matched-run-N128-s43/data/ramses_matched_r1,"exit code 0; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
 ing floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
@@ -1079,27 +1079,27 @@ Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLA
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 "
-ramses_best,RAMSES HLLD,64,42,complete,True,0.2,123.281289863,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N64-s42/data/ramses_best_r1,
-ramses_best,RAMSES HLLD,64,43,complete,True,0.2,113.433529935,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N64-s43/data/ramses_best_r1,
-ramses_best,RAMSES HLLD,128,42,complete,True,0.2,814.212050355,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N128-s42/data/ramses_best_r1,
-ramses_best,RAMSES HLLD,128,43,complete,True,0.2,948.995522104,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N128-s43/data/ramses_best_r1,
-ramses_best,RAMSES HLLD,256,42,complete,True,0.2,6003.66965146,2,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N256-s42/data/ramses_best_r1,
-ramses_best,RAMSES HLLD,256,43,complete,True,0.2,5388.301952585,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N256-s43/data/ramses_best_r1,
-ramses_best,RAMSES HLLD,512,42,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N512-s42/data/ramses_best_r1,
-ramses_best,RAMSES HLLD,512,43,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N512-s43/data/ramses_best_r1,
-athenapp_matched,Athena++ PLM/HLLE,64,42,complete,True,0.2,26.77,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N64-s42/data/athenapp_matched_r1,
-athenapp_matched,Athena++ PLM/HLLE,64,43,complete,True,0.2,20.44,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N64-s43/data/athenapp_matched_r1,
-athenapp_matched,Athena++ PLM/HLLE,128,42,complete,True,0.2,99.84,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N128-s42/data/athenapp_matched_r1,
-athenapp_matched,Athena++ PLM/HLLE,128,43,complete,True,0.2,75.54,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N128-s43/data/athenapp_matched_r1,
-athenapp_matched,Athena++ PLM/HLLE,256,42,complete,True,0.2,1238.8300000000002,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N256-s42/data/athenapp_matched_r1,
-athenapp_matched,Athena++ PLM/HLLE,256,43,complete,True,0.2,,0,valid timing not recorded,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N256-s43/data/athenapp_matched_r1,
-athenapp_matched,Athena++ PLM/HLLE,512,42,complete,True,0.2,8719.83,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N512-s42/data/athenapp_matched_r1,
-athenapp_matched,Athena++ PLM/HLLE,512,43,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N512-s43/data/athenapp_matched_r1,
-athenapp_best,Athena++ PPM/HLLD,64,42,complete,False,0.2,,0,incomplete or invalid,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N64-s42/data/athenapp_best_r1,
-athenapp_best,Athena++ PPM/HLLD,64,43,complete,False,0.2,,0,incomplete or invalid,8 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N64-s43/data/athenapp_best_r1,
-athenapp_best,Athena++ PPM/HLLD,128,42,complete,False,0.2,,0,incomplete or invalid,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N128-s42/data/athenapp_best_r1,
-athenapp_best,Athena++ PPM/HLLD,128,43,complete,False,0.2,,0,incomplete or invalid,32 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N128-s43/data/athenapp_best_r1,
-athenapp_best,Athena++ PPM/HLLD,256,42,complete,False,0.2,,0,incomplete or invalid,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N256-s42/data/athenapp_best_r1,
-athenapp_best,Athena++ PPM/HLLD,256,43,complete,False,0.2,,0,incomplete or invalid,64 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N256-s43/data/athenapp_best_r1,
-athenapp_best,Athena++ PPM/HLLD,512,42,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s42/data/athenapp_best_r1,
-athenapp_best,Athena++ PPM/HLLD,512,43,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (plan),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s43/data/athenapp_best_r1,
+ramses_best,RAMSES HLLD,64,42,complete,True,0.2,123.281289863,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N64-s42/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,64,43,complete,True,0.2,113.433529935,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N64-s43/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,128,42,complete,True,0.2,814.212050355,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N128-s42/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,128,43,complete,True,0.2,948.995522104,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N128-s43/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,256,42,complete,True,0.2,6003.66965146,2,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N256-s42/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,256,43,complete,True,0.2,5388.301952585,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N256-s43/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,512,42,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N512-s42/data/ramses_best_r1,
+ramses_best,RAMSES HLLD,512,43,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.8,sweep_results/decay_supersonic-ramses-best-run-N512-s43/data/ramses_best_r1,
+athenapp_matched,Athena++ PLM/HLLE,64,42,complete,True,0.2,26.77,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N64-s42/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,64,43,complete,True,0.2,20.44,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N64-s43/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,128,42,complete,True,0.2,99.84,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N128-s42/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,128,43,complete,True,0.2,75.54,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N128-s43/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,256,42,complete,True,0.2,1238.8300000000002,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N256-s42/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,256,43,complete,True,0.2,,0,valid timing not recorded,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N256-s43/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,512,42,complete,True,0.2,8719.83,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N512-s42/data/athenapp_matched_r1,
+athenapp_matched,Athena++ PLM/HLLE,512,43,complete,True,0.2,,0,valid timing not recorded,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-matched-run-N512-s43/data/athenapp_matched_r1,
+athenapp_best,Athena++ PPM/HLLD,64,42,complete,False,0.2,,0,incomplete or invalid,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N64-s42/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,64,43,complete,False,0.2,,0,incomplete or invalid,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N64-s43/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,128,42,complete,False,0.2,,0,incomplete or invalid,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N128-s42/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,128,43,complete,False,0.2,,0,incomplete or invalid,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N128-s43/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,256,42,complete,False,0.2,,0,incomplete or invalid,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N256-s42/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,256,43,complete,False,0.2,,0,incomplete or invalid,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N256-s43/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,512,42,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s42/data/athenapp_best_r1,
+athenapp_best,Athena++ PPM/HLLD,512,43,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s43/data/athenapp_best_r1,

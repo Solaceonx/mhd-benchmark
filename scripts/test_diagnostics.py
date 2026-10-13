@@ -559,7 +559,10 @@ def build(data,test):
     for fn in (f.error_histories,f.convergence_cost,f.conservation,f.divergence,f.spectra,f.validity,f.runtime):fn()
     rows=table(data,test);warnings=[]
     if test in ALE_TESTS and not any(r.method=="mhdale_ale" for r in data.select(test)):warnings.append("MHD-ALE is applicable but its records have not been fetched; grey entries are missing data, not failed runs.")
-    if not any(data.errors(test,m,f.error_n) for m in f.methods):warnings.append("No paired spatial reference data available locally for this test. Error histories and accuracy comparisons are unavailable until state/reference snapshots are fetched.")
+    if not any(data.errors(test,m,f.error_n) for m in f.methods):
+        warnings.append("This timestep-jump experiment has no independent spatial truth reference. Its comparison against the no-jump control belongs in the test-specific analysis; spatial error and accuracy/cost panels are unavailable."
+                        if test=="kh_localized_dtjump" else
+                        "No paired spatial reference data available locally for this test. Error histories and accuracy comparisons require a valid independent reference and matched state snapshots.")
     elif not any(len(data.errors(test,m,f.error_n))>2 for m in f.methods):warnings.append("Only a few paired snapshots are local. Error points are sparse; a continuous history requires more matched reference snapshots.")
     warnings.append(f"History diagnostics use N={f.n}; reference-error histories use N={f.error_n}. Seed 42 is plotted consistently; the run table includes all fetched seeds.")
     runs=data.select(test,seed=None)
@@ -584,7 +587,12 @@ def main():
         print(f"{test}: {len(manifest['tests'][test]['figures'])} figures, {manifest['tests'][test]['records']} records",flush=True)
         data.load_array.cache_clear()
     OUT.mkdir(parents=True,exist_ok=True)
-    (OUT/"missing_snapshots.txt").write_text("\n".join(sorted(data.missing))+"\n")
+    missing_file=OUT/"missing_snapshots.txt"
+    if args.tests and missing_file.is_file():
+        # A subset rebuild must retain other tests' still-missing inputs.
+        data.missing.update(p for p in missing_file.read_text().splitlines()
+                            if p and not (data.sw.results/Path(p)).is_file())
+    missing_file.write_text("\n".join(sorted(data.missing))+"\n")
 
 
 if __name__=="__main__":main()

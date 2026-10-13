@@ -82,7 +82,10 @@ comparisons remain on the turbulence page.
 
 MHD-ALE is read automatically from the sweep results directory (or additional
 directories in `MHD_ANALYSIS_EXTRA_RESULTS`) once its standard-format records are
-fetched. Applicable tests show missing data until then. RAMSES II has throughput
+fetched. The 2026-10-13 fetch supplied 61 MHD-ALE records: 45 complete and finite,
+16 stopped. Its current-sheet N512 record was absent on scratch. Missing endpoint
+states of stopped runs are expected; those runs do not enter endpoint accuracy
+or cost comparisons. RAMSES II has throughput
 measurements only and is not a science curve on these pages. Unrun Float32 checks
 are not presented as measured results.
 

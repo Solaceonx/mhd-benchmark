@@ -194,7 +194,7 @@ def main():
     data={'tests':tests,'ot':ot,'gpu':gpu,'built':datetime.now().astimezone().isoformat(timespec='minutes')}
     (SITE/'data.js').write_text('window.RESEARCH_DATA = '+json.dumps(data,ensure_ascii=False,allow_nan=False)+';\n')
     for test in tests:
-        if test['kind'] in ('sweep','papers','turbulence','tests'):continue      # static pages: scripts/build_sweep_plan.py, build_paper_figures.py, build_turbulence.py (run below)
+        if test['kind'] in ('sweep','papers','turbulence','tests','ours'):continue      # static pages: scripts/build_sweep_plan.py, build_paper_figures.py, build_turbulence.py (run below)
         nav=''.join(f'<a href="{html.escape(t["page"])}"'+(' aria-current="page"' if t['id']==test['id'] else '')+f'><span>{t["number"]}</span>{html.escape(t["nav"])}</a>' for t in tests)
         page=f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -218,6 +218,8 @@ def main():
         import build_turbulence;build_turbulence.main(['--page-only'])
     if any(t['kind']=='tests' for t in tests):
         import build_test_pages;build_test_pages.main()
+    if any(t['kind']=='ours' for t in tests):
+        import build_our_figures;build_our_figures.main(['--page-only'])
     print('Progress site:',SITE/'index.html')
 
 

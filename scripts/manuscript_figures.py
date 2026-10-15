@@ -12,6 +12,7 @@ Figures:
   cost_vs_error   error against GPU time on one H100: two smooth waves and the field loop (run.toml errors and timings)
   speed           cell-updates per second against grid size (throughput_ot3d) and time to solution of 3D Orszag-Tang
   robustness      every test, grid and code: finished, or how far the solver got
+  accuracy        error at the end of 14 planar tests, each set-up over the same-order CT codes, at 256^2 and 512^2
   convergence     L1 error against resolution on the three smooth waves
   leakage         Kelvin-Helmholtz with a confined field: maps, the field in the field-free vortex, the timestep change
   divergence      rotated shock tube (field along the normal) and field loop with v_z (out-of-plane field)
@@ -399,17 +400,71 @@ def leakage(sw):
     ax.set_xlabel("$N$");ax.set_ylabel("field in the field-free vortex / reference", labelpad=2);ticks(ax);panel_letter(ax, "(b)")
     # (c) the cleaning variable through a sudden timestep change
     jt = "kh_localized_dtjump";nj = 256;zoom = (2.995, 3.06);cx = fig.add_axes([.475, .1, .25, .4]);t0 = float(sw.configs[jt]["dt_jump"][0])
-    cx.axvline(t0, color=MUTED, lw=.6, ls=(0, (4, 3)))
+    cx.axvline(t0, color=MUTED, lw=.6, ls=(0, (4, 3)));last = zoom[0]
     for m in pt.GLM:
         sr = pt.with_dense(F, jt, m, nj, "psi_max")
         if sr is None:continue
         t, v = sr;keep = (v > 0) & (t >= zoom[0]) & (t <= zoom[1])
-        if keep.any():curve(cx, t[keep], v[keep], m, markers=False)
-    cx.set_yscale("log");cx.set_xlim(*zoom);cx.set_xlabel("$t$");cx.set_ylabel(r"largest $|\psi|$, $%d^2$" % nj, labelpad=2);ticks(cx);panel_letter(cx, "(c)")
-    cx.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(.02))
+        if keep.any():curve(cx, t[keep], v[keep], m, markers=False);last = max(last, float(t[keep].max()))
+    cx.set_yscale("log");cx.set_xlim(zoom[0], min(zoom[1], last + .1*(last - zoom[0])));     # the dense outputs end soon after the jumpcx.set_xlabel("$t$");cx.set_ylabel(r"largest $|\psi|$, $%d^2$" % nj, labelpad=2);ticks(cx);panel_letter(cx, "(c)")
+    cx.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(.01))
     cx.annotate(r"$\Delta t \to \Delta t/40$", (t0, .93), xycoords=("data", "axes fraction"), xytext=(4, 0), textcoords="offset points", fontsize=7, color=MUTED, va="top")
     ref_h = Line2D([], [], color=pc.REFERENCE_INK, lw=1.8, alpha=.5, label="reference")
     fig.legend(handles=line_handles(pc.ALL, extra=[ref_h]), loc="center left", bbox_to_anchor=(.745, .3), handlelength=2.6, fontsize=7)
+    return fig
+
+
+# ---------------------------------------------------------------- accuracy on every planar test
+# (test, label, error): the density error, except where the density does not change (waves, loop) or the field is the
+# point (GEM). The errors are those of scripts/test_diagnostics.py: against the exact answer where there is one,
+# otherwise against a time-matched AthenaK reference block-averaged to the run's grid.
+ACCURACY = (("entropy", "Entropy wave", "density"), ("alfven", "Alfvén wave", "magnetic"), ("alfven_oblique", "Alfvén wave, oblique", "magnetic"),
+            ("field_loop_novz", "Field loop", "magnetic"), ("brio_wu", "Brio–Wu", "density"), ("brio_wu_rotated", "Brio–Wu at 45°", "density"),
+            ("orszag_tang", "Orszag–Tang", "density"), ("rotor", "Rotor", "density"), ("blast_2d_b0", "Blast, $B = 0$", "density"),
+            ("blast_2d_b50", "Blast, $B = 50$", "density"), ("blast_2d_b100", "Blast, $B = 100$", "density"),
+            ("kh_uniform", "Kelvin–Helmholtz", "density"), ("current_sheet", "Current sheet", "density"), ("gem", "GEM", "magnetic"))
+MATCHED = ("athenak_matched", "ramses_matched", "athenapp_matched")     # the same-order CT set-ups: the yardstick
+ABEL = ("glm", "glm_hlld", "glm_hll16", "glm_ppm", "glm_constch", "ct")
+CONTEXT = ("athenak_best", "ramses_best", "athenapp_best", "arepo_moving")
+
+
+def endpoint_errors(test, n, kind):
+    """{method: relative L1 error at the end time} at grid n, seed 42, from the test's diagnostics (data.json)."""
+    import json
+    path = sweep_data.ROOT/"progress"/"media"/"analysis"/test/"data.json"
+    if not path.is_file():return {}
+    d = json.loads(path.read_text());tend = float(d["config"]["t_end"]);key = f"{kind}_relative_L1";out = {}
+    for e in d.get("diagnostics", []):
+        if e.get("N") != n or e.get("seed", 42) != 42:continue
+        errs = [x for x in (e.get("errors") or []) if x.get("values", {}).get(key) is not None]
+        if errs and abs(errs[-1]["time"] - tend) <= 1e-3*max(1.0, tend) and np.isfinite(errs[-1]["values"][key]) and errs[-1]["values"][key] > 0:
+            out[e["method"]] = float(errs[-1]["values"][key])
+    return out
+
+
+def accuracy(sw):
+    fig, axes = plt.subplots(1, 2, figsize=(FULL, 4.3), sharey=True)
+    rows = list(range(len(ACCURACY)))[::-1];kept = {};top = [40.0]
+    for ax, n in zip(axes, (256, 512)):
+        ax.axvspan(1/1.25, 1.25, color=pc.PANEL, lw=0);ax.axvline(1, color=MUTED, lw=.7)
+        for y, (test, label, kind) in zip(rows, ACCURACY):
+            err = endpoint_errors(test, n, kind);base = [err[m] for m in MATCHED if m in err]
+            if len(base) < 2:continue
+            ref = statistics.median(base);kept.setdefault(n, []).append(test)
+            for k, m in enumerate(CONTEXT + ABEL):
+                if m not in err:continue
+                off = (k - (len(CONTEXT) + len(ABEL) - 1)/2)*.055
+                top.append(err[m]/ref)
+                ax.plot(err[m]/ref, y + off, ls="", color=pc.color(m), alpha=.45 if m in CONTEXT else 1, ms=3.8 if m in ABEL else 3.2, **marker_kw(m))
+        ax.set_xscale("log");ax.set_title(f"${n}^2$", pad=4);ax.grid(False)
+        ax.set_xlabel("error / median of the same-order CT codes");ticks(ax)
+    for ax in axes:ax.set_xlim(.08, 1.6*max(top))
+    axes[0].set_yticks(rows);axes[0].set_yticklabels([label for _, label, _ in ACCURACY]);axes[0].set_ylim(-.7, len(ACCURACY) - .3)
+    for ax in axes:ax.tick_params(axis="y", length=0)
+    hs = line_handles(ABEL, markers=True) + [Line2D([], [], ls="", color=pc.color(m), alpha=.45, label=name(m), **marker_kw(m)) for m in CONTEXT]
+    for h in hs:h.set_linestyle("")
+    fig.legend(handles=hs, loc="lower center", ncol=5, bbox_to_anchor=(.5, -.01), fontsize=7, handletextpad=.3, columnspacing=1.2)
+    fig.tight_layout(rect=(0, .11, 1, 1))
     return fig
 
 
@@ -550,7 +605,7 @@ def arepo(sw):
     return fig
 
 
-FIGURES = dict(cost_vs_error=cost_vs_error, speed=speed, robustness=robustness, convergence=convergence, leakage=leakage,
+FIGURES = dict(cost_vs_error=cost_vs_error, speed=speed, accuracy=accuracy, robustness=robustness, convergence=convergence, leakage=leakage,
                divergence=divergence, field_loop=field_loop, turbulence=turbulence, arepo=arepo)
 
 

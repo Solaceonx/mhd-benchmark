@@ -13,6 +13,7 @@ links are pointed there. Local how-to text is taken out. notes.html (private not
 browser) is copied as it is and no page links to it. Commit and push are left to the caller.
 """
 import glob
+import hashlib
 import json
 import re
 import shutil
@@ -26,6 +27,7 @@ PAGES = [   # local name, published name, label in the navigation (in its order)
     ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
     ("turbulence.html", "turbulence.html", "Turbulence"),
     ("tests.html", "tests.html", "Tests"),
+    ("our-figures.html", "our-figures.html", "Our figures"),
     ("problems.html", "problems.html", "Test definitions"),
     ("solver.html", "solver.html", "Inside the solver"),
     ("index.html", "orszag-tang.html", "Orszag–Tang"),
@@ -60,6 +62,9 @@ def rewrite(html, name, wanted):
     if n != 1:sys.exit(f"{name}: no navigation found")
     html = re.sub(r'<a class="brand" href="[^"]*">', '<a class="brand" href="../research.html">', html, count=1)
     html = html.replace("LOCAL RESEARCH NOTEBOOK", "RESEARCH NOTEBOOK")
+    # Refresh the shared navigation layout even when a browser cached its CSS.
+    style_version = hashlib.sha256((SITE/"style.css").read_bytes()).hexdigest()[:12]
+    html = re.sub(r'href="style\.css(?:\?[^"\s]*)?"', f'href="style.css?v={style_version}"', html)
     number = next((i for i, (src, _, _) in enumerate(PAGES, 1) if src == name), None)      # the page's number follows the navigation
     if number:html = re.sub(r'(class="eyebrow"><span>)\d\d( · )', rf"\g<1>{number:02d}\2", html, count=1)
     if 'name="robots"' not in html:
@@ -104,6 +109,12 @@ def check(out):
     for f in [*out.glob("*.html"), out/"app.js", out/"data.js"]:
         if f.name == 'notes.html':continue  # Copy the private notebook without reading its contents.
         text = f.read_text()
+        if f.suffix == '.html':
+            nav = re.search(r'<nav class="test-nav".*?</nav>', text, re.S)
+            expected = [dst for _, dst, _ in PAGES]
+            actual = re.findall(r'href="([^"]+)"', nav.group()) if nav else []
+            if actual != ['../research.html', *expected]:
+                bad.append(f'{f.name}: main navigation differs from the shared page list')
         text = re.sub(r'''https?://[^\s"'<>]+''', '', text)  # External pages are not local assets.
         bad += [f"{f.name}: {x}" for x in set(LOCAL.findall(text))]
         pages = {*NAMES.values(), "research.html", *(q.name for q in out.glob("test-*.html"))}

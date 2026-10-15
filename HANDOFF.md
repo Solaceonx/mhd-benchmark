@@ -65,6 +65,22 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**"Our figures" tab, 2026-10-15:** `scripts/build_our_figures.py` redraws every figure of `scripts/manuscript_figures.py`
+(PDFs into `paper_figures/`, PNG + PDF copies into `progress/media/ours/`) and writes `progress/our-figures.html`
+(nav 11 locally, "Our figures" after "Tests" on the site): one card per figure saying which tests it rests on, and a
+table of claims → figure → tests with numbers computed from the records. New figure `accuracy`: relative L1 error at
+the end of 14 planar tests over the median of the same-order CT set-ups (AthenaK PLM/HLLE, RAMSES HLL, Athena++
+PLM/HLLE), at 256² and 512², read from `progress/media/analysis/<test>/data.json` (`test_diagnostics.py`). At 512² the
+LLF kernel is 0.95–1.3 of the CT codes on the shock/nonlinear tests; the half-precision kernel is up to 110 times on
+the smooth waves. Leakage panel (c) now ends where its dense outputs end. Published (site 8286caf).
+**Stale until lyxia fetches:** the eight RAMSES 512³ reruns finished on Sherlock (export 2026-10-15) but the Mac holds
+their old "failed" records, so speed panel (b) shows "no result" for RAMSES and the robustness figure may hatch them.
+Fetch command (Mac): `find` the eight run directories (decay ramses best s42–44, matched s42–43, orszag_tang_3d best and
+matched, field_loop_3d matched, all N512) for `*.toml *.csv *.json` under `/scratch/users/lyxia/mhd-results-sweep`,
+`tar` over ssh into `sweep_results/`; then `python3 scripts/build_our_figures.py` and publish.
+`progress/media/showcase/` (another session's untracked work) was deliberately left off the website.
+
+
 **Sweep page campaign coverage added 2026-10-14:** `build_sweep_plan.py` now derives a separate driven-hydro
 summary from `turb_results/*/run.toml`: 48 primary records (12 each at Mach 3, 10, 30, 50), plus 12 forcing checks.
 It links high-Mach results, spectra and existing dense Euler movies. The "Which runs exist" matrix now includes

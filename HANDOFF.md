@@ -79,17 +79,22 @@ but its accounting file contains a header and `sacct: error: Too wide of a date 
 returned success. Never publish this as zero usage. The fetch now queries seven-day windows, bisecting refused
 windows; both it and the parser reject malformed records even with exit zero. Eleven local checks pass, including
 actual execution of the remote shell body against wrapper exits, range refusals and false-success diagnostics.
-The sweep page accepts the fresh status while explicitly rejecting the invalid accounting. lyxia has been asked
-to rerun the fixed fetch; valid allocation accounting is still pending.
+The final retry succeeded on October 14 Pacific (query timestamp 2026-10-15 05:00 UTC): 1,407 positive-duration
+allocation attempts, 99,597.86 allocated CPU core-hours and 272.12 GPU-hours. CPU-only jobs: 98,505.43 core-hours;
+GPU host CPUs: 1,092.43. Standard sweep CPU lane: 93,857.50; GPU lane: 210.94 GPU-hours plus 843.75 host core-hours.
+The query covers jobs overlapping September 1 onward, with whole allocation durations, not lifetime or busy-CPU time.
+Three pilot ledger job IDs are absent from the query. Date-window duplicates are removed before totaling.
+`sweep_accounting.write` publishes aggregate scopes and CPU/GPU allocation-size bins only (summary.json and
+allocation_sizes.csv). Raw exports, job names/IDs and user metadata remain local: automatic review rejected a
+raw-export commit. Do not stage `progress/sweep_status/export_latest.json` or the raw accounting directory.
 
 **2026-10-14 accounting / movie-comparison follow-up:** `scripts/fetch_sweep_accounting.sh` is ready for lyxia to
 run on the Mac (read-only Slurm queries, no submission). It fetches fresh sweep status, allocation accounting since
 September 1, the sweep ledger, and fairshare configuration into `progress/sweep_status/`.
-The fresh sweep export still reports 93,857 CPU-lane core-hours (211 GPU-hours); it is not account-wide usage.
-Valid allocation accounting is pending the date-window fix above. Never convert `sshare RawUsage` directly into lifetime core-hours.
-Once the fetch finishes, run `.venv-movie/bin/python scripts/sweep_accounting.py`, then
+The accounting download is now valid; aggregate numbers and scope are above. Never convert `sshare RawUsage`
+directly into lifetime core-hours. After future fetches, run `.venv-movie/bin/python scripts/sweep_accounting.py`, then
 `.venv-movie/bin/python scripts/build_sweep_plan.py` and publish from the Mac. The new page distinguishes actual
-allocation accounting, GPU host CPUs, and plan estimates; CSV/JSON downloads appear when accounting exists.
+allocation accounting, GPU host CPUs, and plan estimates; aggregate CSV/JSON downloads appear when accounting exists.
 
 `scripts/submit_turb_compare_movies.sh` is ready for the user to run on the Mac: it uploads an isolated bundle and
 submits two GLM/LLF GPU runs plus four corrected RAMSES hydro runs (HLL/HLLC, Mach 30/50, 256³, seed 1, 201 frames).

@@ -208,17 +208,22 @@ def accounting_html(report, jobs, error=None):
         actual_rows = "".join(f'<tr><td>{label}</td><td class="num">{scopes[key]["allocation_attempts"]:,}</td>'
                               f'<td class="num">{scopes[key]["core_hours"]:,.2f}</td><td class="num">{scopes[key]["gpu_hours"]:,.2f}</td></tr>'
             for key, label in (("sweep_cpu_lane", "Sweep CPU jobs"), ("sweep_gpu_lane", "Sweep GPU jobs (including host CPUs)"),
-                               ("outside_sweep_ledger", "Other jobs by this user"), ("all_user_jobs", "All user jobs (total)")))
-        largest = sorted(report["allocations"], key=lambda row: row["core_hours"], reverse=True)[:12]
-        job_rows = "".join(f'<tr><td><code>{e(row["job_id"])}</code></td><td>{e(row["name"])}</td><td class="num">{row["cpus"]}</td>'
-            f'<td class="num">{row["elapsed_seconds"]/3600:.2f}</td><td class="num">{row["core_hours"]:,.2f}</td></tr>' for row in largest)
+                               ("outside_sweep_ledger", "Other jobs by this user"),
+                               ("cpu_only_jobs", "All CPU-only jobs"), ("gpu_jobs_host_cpus", "All GPU jobs (host CPUs included)"),
+                               ("all_user_jobs", "All user jobs (total)")))
+        sizes = sweep_accounting.public_summary(report)['allocation_sizes']
+        size_rows = "".join(f'<tr><td class="num">{row["cpus"]}</td><td class="num">{row["gpus"]}</td>'
+            f'<td class="num">{row["allocation_attempts"]:,}</td><td class="num">{row["core_hours"]:,.2f}</td>'
+            f'<td class="num">{row["gpu_hours"]:,.2f}</td></tr>' for row in sizes)
         missing = f'<p>{len(report["missing_ledger_jobs"])} sweep ledger job IDs are absent from this accounting query; totals may omit older or unavailable records.</p>' if report["missing_ledger_jobs"] else ''
         measured = f'''<p>Slurm allocation records fetched {e(q['fetched_at'])}; query starts {e(q['since'])}.
 These totals include the full recorded duration of jobs overlapping the query window, including failed jobs and distinct requeue attempts.
 They are not lifetime totals or measured busy CPU time. Job steps are excluded to avoid counting the same allocation twice.</p>
 <div class="table-scroll"><table class="metrics-table sweep-text"><thead><tr><th>Scope</th><th>Attempts</th><th>Allocated core-hours</th><th>GPU-hours</th></tr></thead><tbody>{actual_rows}</tbody></table></div>{missing}
-<p><a href="media/accounting/allocations.csv">Every allocation and CPU count (CSV)</a> · <a href="media/accounting/summary.json">Accounting details (JSON)</a></p>
-<h3>Largest CPU allocations by core-hours</h3><div class="table-scroll"><table class="metrics-table sweep-text"><thead><tr><th>Job</th><th>Name</th><th>CPUs</th><th>Elapsed hours</th><th>Core-hours</th></tr></thead><tbody>{job_rows}</tbody></table></div>'''
+<p>The first three rows partition the total by campaign; the CPU-only and GPU rows partition that same total by device.
+Adding both sets would count the usage twice.</p>
+<p><a href="media/accounting/allocation_sizes.csv">CPU allocation sizes (CSV)</a> · <a href="media/accounting/summary.json">Usage summary (JSON)</a></p>
+<h3>Actual CPU allocation sizes</h3><div class="table-scroll"><table class="metrics-table sweep-text"><thead><tr><th>CPUs per job</th><th>GPUs per job</th><th>Attempts</th><th>Core-hours</th><th>GPU-hours</th></tr></thead><tbody>{size_rows}</tbody></table></div>'''
     else:
         measured = (f'<p>Allocation accounting is unavailable: <code>{e(error)}</code>. The sweep status below was updated independently; '
                     'its totals are not current account-wide usage.</p>' if error else
@@ -228,7 +233,7 @@ They are not lifetime totals or measured busy CPU time. Job steps are excluded t
 GPU jobs also reserve host CPUs; those CPU-hours are separate from their GPU-hours. Fairshare RawUsage is a weighted, potentially decayed scheduling quantity and must not be treated as lifetime CPU-hours.</p>
 {measured}<h3>CPUs requested per sweep job</h3><table class="metrics-table sweep-text"><thead><tr><th>Code</th><th>CPU cores per job</th><th>Compute device</th></tr></thead><tbody>{request_rows}</tbody></table>
 <p>These requests come from the submission plan. CPU ranks each request one core. Runs packed into one job execute sequentially using that job's allocation;
-the per-allocation CSV gives the actual Slurm CPU count. A 512³ CPU run generally uses 128 cores, while a 256³ CPU run uses 64.</p>
+the measured allocation-size table above gives actual Slurm CPU counts when accounting is available. A 512³ CPU run generally uses 128 cores, while a 256³ CPU run uses 64.</p>
 <p>Sherlock has no per-core-hour usage charge or cumulative shared-compute quota; queue priority and resource limits still apply.
 See <a href="https://www.sherlock.stanford.edu/docs/#how-much-does-it-cost">Sherlock's cost policy</a> and
 <a href="https://slurm.schedmd.com/sacct.html">Slurm accounting definitions</a>. The estimates below describe computing effort, not a dollar bill.</p></article>'''
@@ -425,7 +430,7 @@ def build():
                 status=dict(time=status["time"], source=status["source"], file=status["file"], by_method=sv["tally"], total=sv["total"],
                             ambiguous=status["ambiguous"], lanes=status["lanes"]) if status else None,
                 longest_unit=longest_unit, stages=stages, project_bytes=size,
-                accounting=dict(query=accounting['query'],scopes=accounting['scopes'],missing_ledger_jobs=accounting['missing_ledger_jobs']) if accounting else None,
+                accounting=sweep_accounting.public_summary(accounting) if accounting else None,
                 accounting_error=accounting_error,
                 driven_turbulence=driven,
                 jobs=[dict(key=j["key"], family=j["family"], runs=[r["key"] for r in j["runs"]], sbatch=j["sbatch"],

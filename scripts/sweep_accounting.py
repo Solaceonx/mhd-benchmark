@@ -92,12 +92,32 @@ def summarize(source=SOURCE):
 
 
 def write(report, output=OUTPUT):
+    """Publish aggregate usage only; raw job identities remain in SOURCE."""
     output.mkdir(parents=True, exist_ok=True)
-    (output / "summary.json").write_text(json.dumps(report, indent=2)+"\n")
-    rows = report["allocations"]
-    with (output / "allocations.csv").open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]) if rows else ["job_id"])
+    public = public_summary(report)
+    (output / "summary.json").write_text(json.dumps(public, indent=2)+"\n")
+    rows = public['allocation_sizes']
+    with (output / "allocation_sizes.csv").open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=['cpus', 'gpus', 'allocation_attempts', 'core_hours', 'gpu_hours'])
         writer.writeheader(); writer.writerows(rows)
+    # Remove the old generated export, which contained individual job metadata.
+    (output / 'allocations.csv').unlink(missing_ok=True)
+
+
+def public_summary(report):
+    sizes = {}
+    for row in report['allocations']:
+        if row['elapsed_seconds'] <= 0 or row['cpus'] <= 0:continue
+        size = sizes.setdefault((row['cpus'], row['gpus']),
+            dict(cpus=row['cpus'], gpus=row['gpus'], allocation_attempts=0, core_hours=0., gpu_hours=0.))
+        size['allocation_attempts'] += 1
+        size['core_hours'] += row['core_hours']
+        size['gpu_hours'] += row['gpu_hours']
+    return dict(query={key: value for key, value in report['query'].items() if key != 'user'},
+                scopes=report['scopes'], missing_ledger_job_count=len(report['missing_ledger_jobs']),
+                accounting_basis=report['accounting_basis'], duplicate_basis=report['duplicate_basis'],
+                fairshare_is_not_lifetime_cpu_hours=True,
+                allocation_sizes=[sizes[key] for key in sorted(sizes)])
 
 
 if __name__ == "__main__":

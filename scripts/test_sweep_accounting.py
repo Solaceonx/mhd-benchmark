@@ -12,7 +12,7 @@ class AccountingTest(unittest.TestCase):
     def test_allocation_scopes_and_requeues(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            (root/'query.json').write_text(json.dumps(dict(since='2026-09-01',fetched_at='2026-10-14T00:00:00Z')))
+            (root/'query.json').write_text(json.dumps(dict(since='2026-09-01',fetched_at='2026-10-14T00:00:00Z', user='private-user')))
             ledger = [dict(job='123',key='cpu-unit',options=['--ntasks=128']),
                       dict(job='456',key='gpu-unit',options=['--gpus=1'])]
             (root/'ledger.jsonl').write_text('\n'.join(json.dumps(row) for row in ledger))
@@ -34,6 +34,21 @@ class AccountingTest(unittest.TestCase):
             self.assertEqual(result['scopes']['all_user_jobs']['core_hours'],778)
             self.assertEqual(result['scopes']['outside_sweep_ledger']['core_hours'],2)
             self.assertEqual(result['missing_ledger_jobs'],[])
+            public=accounting.public_summary(result)
+            self.assertEqual(sum(row['core_hours'] for row in public['allocation_sizes']),778)
+            self.assertEqual(sum(row['allocation_attempts'] for row in public['allocation_sizes']),4)
+            self.assertNotIn('allocations',public)
+            self.assertNotIn('missing_ledger_jobs',public)
+            self.assertNotIn('user',public['query'])
+            output=root/'public';output.mkdir()
+            (output/'allocations.csv').write_text('old individual-job export')
+            accounting.write(result,output)
+            self.assertFalse((output/'allocations.csv').exists())
+            self.assertEqual(json.loads((output/'summary.json').read_text()),public)
+            with (output/'allocation_sizes.csv').open() as stream:
+                sizes=list(csv.DictReader(stream))
+            self.assertEqual(sum(float(row['core_hours']) for row in sizes),778)
+            self.assertNotIn('job_id',sizes[0])
 
     def test_typed_gpu_count_does_not_double_count(self):
         self.assertEqual(accounting.gpu_count('cpu=4,gres/gpu=2,gres/gpu:h100=2'),2)

@@ -1,0 +1,174 @@
+{
+  "query": {
+    "fetched_at": "2026-10-15T05:00:21.885815+00:00",
+    "since": "2026-09-01",
+    "until": "query time",
+    "scope": "User job allocations; no job steps; expanded arrays; includes requeue records",
+    "window_days": 7,
+    "subdivide_on_range_limit": true,
+    "elapsed_scope": "Whole recorded allocation duration for jobs overlapping the query window"
+  },
+  "scopes": {
+    "all_user_jobs": {
+      "allocation_attempts": 1407,
+      "core_hours": 99597.85805555555,
+      "gpu_hours": 272.1172222222222,
+      "cpu_counts": [
+        1,
+        2,
+        4,
+        6,
+        8,
+        16,
+        32,
+        64,
+        128
+      ]
+    },
+    "cpu_only_jobs": {
+      "allocation_attempts": 858,
+      "core_hours": 98505.43194444444,
+      "gpu_hours": 0.0,
+      "cpu_counts": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128
+      ]
+    },
+    "gpu_jobs_host_cpus": {
+      "allocation_attempts": 549,
+      "core_hours": 1092.4261111111111,
+      "gpu_hours": 272.1172222222222,
+      "cpu_counts": [
+        4,
+        6,
+        8
+      ]
+    },
+    "sweep_cpu_lane": {
+      "allocation_attempts": 671,
+      "core_hours": 93857.4961111111,
+      "gpu_hours": 0.0,
+      "cpu_counts": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128
+      ]
+    },
+    "sweep_gpu_lane": {
+      "allocation_attempts": 170,
+      "core_hours": 843.7522222222223,
+      "gpu_hours": 210.93805555555556,
+      "cpu_counts": [
+        4
+      ]
+    },
+    "outside_sweep_ledger": {
+      "allocation_attempts": 566,
+      "core_hours": 4896.609722222222,
+      "gpu_hours": 61.17916666666667,
+      "cpu_counts": [
+        1,
+        4,
+        6,
+        8,
+        16,
+        32,
+        64
+      ]
+    }
+  },
+  "missing_ledger_job_count": 3,
+  "accounting_basis": "Allocated CPUs \u00d7 elapsed seconds / 3600; CPUTimeRAW cross-checked; no job steps",
+  "duplicate_basis": "One record per JobIDRaw, Submit, Start; distinct requeue incarnations retained",
+  "fairshare_is_not_lifetime_cpu_hours": true,
+  "allocation_sizes": [
+    {
+      "cpus": 1,
+      "gpus": 0,
+      "allocation_attempts": 14,
+      "core_hours": 117.07472222222222,
+      "gpu_hours": 0.0
+    },
+    {
+      "cpus": 2,
+      "gpus": 0,
+      "allocation_attempts": 3,
+      "core_hours": 3.191666666666667,
+      "gpu_hours": 0.0
+    },
+    {
+      "cpus": 4,
+      "gpus": 0,
+      "allocation_attempts": 22,
+      "core_hours": 22.66111111111111,
+      "gpu_hours": 0.0
+    },
+    {
+      "cpus": 4,
+      "gpus": 1,
+      "allocation_attempts": 538,
+      "core_hours": 1084.0899999999995,
+      "gpu_hours": 271.02249999999987
+    },
+    {
+      "cpus": 6,
+      "gpus": 1,
+      "allocation_attempts": 3,
+      "core_hours": 1.2650000000000001,
+      "gpu_hours": 0.21083333333333332
+    },
+    {
+      "cpus": 8,
+      "gpus": 0,
+      "allocation_attempts": 17,
+      "core_hours": 113.45111111111112,
+      "gpu_hours": 0.0
+    },
+    {
+      "cpus": 8,
+      "gpus": 1,
+      "allocation_attempts": 8,
+      "core_hours": 7.07111111111111,
+      "gpu_hours": 0.8838888888888887
+    },
+    {
+      "cpus": 16,
+      "gpus": 0,
+      "allocation_attempts": 75,
+      "core_hours": 2745.328888888889,
+      "gpu_hours": 0.0
+    },
+    {
+      "cpus": 32,
+      "gpus": 0,
+      "allocation_attempts": 144,
+      "core_hours": 2089.751111111111,
+      "gpu_hours": 0.0
+    },
+    {
+      "cpus": 64,
+      "gpus": 0,
+      "allocation_attempts": 183,
+      "core_hours": 12623.14666666666,
+      "gpu_hours": 0.0
+    },
+    {
+      "cpus": 128,
+      "gpus": 0,
+      "allocation_attempts": 400,
+      "core_hours": 80790.82666666672,
+      "gpu_hours": 0.0
+    }
+  ]
+}

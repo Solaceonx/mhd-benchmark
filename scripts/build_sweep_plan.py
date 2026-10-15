@@ -299,7 +299,7 @@ def driven_grid_rows(campaign, methods):
               'ramses_best': ('ramsesfix-best', 'RAMSES hydro / HLLC, corrected forcing')}
     records = campaign['records']
     if not records:return ''
-    rows = [f'<tr class="family-row"><th colspan="{len(methods)+2}">Driven turbulence · B = 0</th></tr>']
+    rows = []
     for mach in sorted({r['mach'] for r in records}):
         group = [r for r in records if r['mach'] == mach]
         grids = sorted({r['n'] for r in group})
@@ -339,11 +339,13 @@ def status_html(status, configs, families, family_of, driven=None):
         methods.insert(0, ('euler_hll', 'Euler / HLL', 'Abel et al. Euler kernel; driven nonmagnetic turbulence'))
         methods = [(m, label, description + ('; HLLC for the driven hydro rows' if m == 'ramses_best' else ''))
                    for m, label, description in methods]
-    rows = [driven_grid_rows(driven, methods)] if driven else []
+    rows = []
+    driven_added = False
     for family in families:
         tests = sorted({t for t, _ in by if family_of.get(t) == family})
         if not tests:continue
-        rows.append(f'<tr class="family-row"><th colspan="{len(methods) + 2}">{e(family)}</th></tr>')
+        anchor = ' id="turbulence-run-status"' if family == 'Turbulence' else ''
+        rows.append(f'<tr class="family-row"{anchor}><th colspan="{len(methods) + 2}">{e(family)}</th></tr>')
         for t in tests:
             c = configs[t];p2 = plan.planar(c);tds = [];fin = tot = 0
             for label, _, _ in methods:
@@ -371,6 +373,12 @@ def status_html(status, configs, families, family_of, driven=None):
             unsure = any(x["state"] == "unknown" for (tt, _), cell in by.items() if tt == t for xs in cell.values() for x in xs)
             rows.append(f'<tr><td><code>{e(t)}</code> <span class="divb-flag">{"2D" if p2 else "3D"}</span></td>{"".join(tds)}'
                         f'<td class="num">{"≥ " if unsure else ""}{fin}/{tot}</td></tr>')
+        if family == 'Turbulence' and driven:
+            rows.append(driven_grid_rows(driven, methods))
+            driven_added = True
+    if driven and driven['records'] and not driven_added:
+        rows.append(f'<tr class="family-row" id="turbulence-run-status"><th colspan="{len(methods)+2}">Turbulence</th></tr>')
+        rows.append(driven_grid_rows(driven, methods))
     head = "".join(f'<th title="{e(d)}">{e(l)}</th>' for _, l, d in methods)
     grid = (f'<div class="matrix-scroll"><table class="suite-matrix sweep-matrix sweep-status"><thead><tr><th>Test</th>{head}'
             f'<th class="num" title="finished of planned MHD runs or fetched driven runs, over all methods, grids and seeds">Finished</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>')

@@ -26,6 +26,7 @@ PAGES = [   # local name, published name, label in the navigation (in its order)
     ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
     ("turbulence.html", "turbulence.html", "Turbulence"),
     ("tests.html", "tests.html", "Tests"),
+    ("problems.html", "problems.html", "Test definitions"),
     ("solver.html", "solver.html", "Inside the solver"),
     ("index.html", "orszag-tang.html", "Orszag–Tang"),
     ("hydro-decay.html", "hydro-decay.html", "Hydro decay"),
@@ -131,7 +132,7 @@ def main(argv):
     order = {dst: f"{i:02d}" for i, (_, dst, _) in enumerate(PAGES, 1)}
     for t in data["tests"]:t["page"] = NAMES[t["page"]];t["number"] = order[t["page"]]
     (out/"data.js").write_text(localise(head + json.dumps(data, ensure_ascii=False) + ";\n", wanted))
-    for name in ("style.css", "sync-videos.js", "solver-walkthrough.css", "solver-walkthrough.js"):shutil.copy(SITE/name, out/name)
+    for name in ("style.css", "sync-videos.js", "solver-walkthrough.css", "solver-walkthrough.js", "problem-definitions.css"):shutil.copy(SITE/name, out/name)
     shutil.copy(SITE/"notes.html", out/"notes.html")       # private notes: encrypted in the browser, not in the navigation
     copy_media(out)
     missing = copy_wanted(wanted, out)

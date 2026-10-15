@@ -9,14 +9,14 @@
 <h1>Driven turbulence · Mach 50</h1><p>Zero-field hydrodynamic turbulence, driven for 10 stirring times on 128³ and 256³.
 Abel et al. Euler and zero-field MHD kernels, compared with RAMSES HLL and HLLC using the corrected solenoidal force.</p></div><a class="method-link" href="test-driven-mach-30.html">Mach 30 →</a></div>
 <div class="chips"><span class="chip">γ − 1 = 10⁻⁶</span><span class="chip">B = 0</span><span class="chip">128³ and 256³</span><span class="chip">Average: 2T–10T</span><span class="chip">Float32 GPU states</span></div>
-<p class="small"><a href="#turb-movie">Movie</a> · <a href="#turb-mach-time">Mach histories</a> · <a href="#turb-spectra">Spectra</a> · <a href="#turb-dissipation">Dissipation</a> · <a href="#turb-slices">Density images</a> · <a href="#analysis">Shared diagnostics</a></p><article class="card test-movie" id="turb-movie"><h3>Density evolution</h3>
+<p class="small"><a href="#turb-movie">Movie</a> · <a href="#turb-mach-time">Mach histories</a> · <a href="#turb-spectra">Spectra</a> · <a href="#turb-dissipation">Dissipation</a> · <a href="#turb-slices">Density images</a> · <a href="#analysis">Shared diagnostics</a> · <a href="problems.html#driven">Setup source</a></p><article class="card test-movie" id="turb-movie"><h3>Density evolution</h3>
 <video controls loop muted playsinline preload="metadata" poster="media/tests/driven_M50-density.png?v=1792033760" style="width:100%;height:auto;max-height:75vh;object-fit:contain"
 aria-label="Driven turbulence density evolution at Mach 50"><source src="media/tests/driven_M50-density.mp4?v=1792033760" type="video/mp4">
 <a href="media/tests/driven_M50-density.mp4">Download the movie</a></video>
 <p>Abel et al. Euler / HLL, 256³, seed 1: density in the box midplane from startup to 10T.
 201 saved snapshots (20 per driving time), played at 20 fps;
 the first and last frames pause briefly. No time interpolation. The colour scale stays fixed over time.
-The displayed times are nominal output times; a snapshot may be less than one solver step late.</p>
+The displayed times are nominal output times; a snapshot may be less than one solver step late. </p>
 <p><a href="media/tests/driven_M50-density.mp4?v=1792033760" download>Download MP4 · 1440 × 1600</a> ·
 <a href="media/tests/driven_M50-density.json?v=1792033760">Movie provenance</a></p></article>
 <article class="card"><h3>What the records show</h3><p>All 12 runs reached 10T. The first and second halves of the averaging window differ in mean Mach by at most 4.79%.
@@ -57,5 +57,5 @@ Adding it requires matching the forcing spectrum, correlation time, solenoidal p
 <h4>Mach 50 · 128³</h4><div class="analysis-plot" data-vector="media/analysis/driven_M50/08-runtime-all.svg?v=202610132320249823420000" data-aspect="1.911764705882353"><a href="media/analysis/driven_M50/08-runtime-all.png?v=202610132320249823420000"><img loading="lazy" style="width:100%;height:auto" src="media/analysis/driven_M50/08-runtime-all.png?v=202610132320249823420000" alt="Runtime and time to solution: Mach 50 · 128³"></a></div><p>GPU step time includes the timestep scan and kernel, excluding forcing update and measurement. RAMSES code-loop time has a different scope. Hatched: measured additional wall time. GPU cards and CPU ranks differ; exact scopes/devices are in the JSON records.</p><p class="small">Download all codes: <a href="media/analysis/driven_M50/08-runtime-all.png?v=202610132320249823420000">PNG</a> · <a href="media/analysis/driven_M50/08-runtime-all.svg?v=202610132320249823420000">Vector SVG</a></p>
 </article>
 <article class="card"><h3>Source records and reproduction</h3><p><a href="media/analysis/driven_M50/data.json">Numerical data and run metadata (JSON)</a> · <a href="media/analysis/driven_M50/runs.csv">Run table (CSV)</a></p><p class="small">Build: <code>.venv-movie/bin/python scripts/driven_test_diagnostics.py</code>. Runtime comparisons state each measurement scope.</p></article></section></main>
-<footer><span>Drawn by scripts/turb_figures.py from turb_results/ (copied from Sherlock; sherlock_turb/README.md).</span><span>Built 2026-10-14 20:10</span></footer>
+<footer><span>Drawn by scripts/turb_figures.py from turb_results/ (copied from Sherlock; sherlock_turb/README.md).</span><span>Built 2026-10-15 00:03</span></footer>
 </body></html>

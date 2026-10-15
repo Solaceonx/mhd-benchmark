@@ -126,7 +126,8 @@ def test_page(sweep, test, info, movie, order):
 <a class="method-link" href="tests.html">All tests <span>↗</span></a></div>
 <div class="chips">{"".join(f'<span class="chip">{e(c)}</span>' for c in chips)}</div>
 {movie_card(test, movie)}
-<article class="card test-setup"><h3>Set-up</h3>{setup_html(test)}<p class="small">{e(notes)} After: {e(info["source"])}. The same initial state goes to every code.</p></article>
+<article class="card test-setup"><h3>Set-up</h3>{setup_html(test)}<p class="small">{e(notes)} After: {e(info["source"])}. The same initial state goes to every code.</p>
+<p><a href="problems.html#config-{test}">Read the setup source and configuration ↗</a></p></article>
 <article class="card"><h3>Who finished it</h3><p>Each set-up on each grid of the sweep. ✓ the run reached the end time; saved nonfinite outputs are flagged where available.
 Otherwise the recorded stop or last finite saved time; · not run. Completion alone does not establish accuracy.</p>{table}</article>
 {mach9_audit.section(sweep) if test == "decay_supersonic" else ""}
@@ -138,7 +139,8 @@ def index_page(tests, movies, families):
     out = [f'''
 <div class="page-heading"><div><div class="eyebrow"><span>{PAGE["number"]} · Test problems</span><span class="badge">{len(tests)} tests</span></div>
 <h1>Every test problem</h1><p>One page a test: what it is for, a movie of it, and which code finished it on which grid. The colours of the movies
-change from one family of tests to the next. Every page has eight shared quantitative diagnostic sections; missing comparisons are stated explicitly.</p></div></div>''']
+change from one family of tests to the next. Every page has eight shared quantitative diagnostic sections; missing comparisons are stated explicitly.</p>
+<p><a href="problems.html">Read the test definitions: problems.jl, setup notes and configurations ↗</a></p></div></div>''']
     for family in families:
         mine = [t for t in tests if tests[t]["family"] == family]
         cards = "".join(f'<a class="test-card" href="{page_of(t)}"><strong>{e(TITLES[t])}</strong><code>{e(t)}</code><span>{e(tests[t]["focus"].split(". ")[0].rstrip(".") + ".")}</span>'
@@ -190,7 +192,7 @@ def main():
     link = f'<a href="{PAGE["page"]}"><span>{PAGE["number"]}</span>{PAGE["nav"]}</a>'
     for t in registry:                       # the navigation of the pages already built
         path = SITE/t["page"]
-        if t["id"] == PAGE["id"] or not path.is_file():continue
+        if t["id"] == PAGE["id"] or path.name == 'notes.html' or not path.is_file():continue
         text = path.read_text()
         if f'href="{PAGE["page"]}"' not in text and "</nav>" in text:path.write_text(text.replace("</nav>", link + "</nav>", 1))
     print(f"Test pages: {len(order)} tests, {len(movies)} with a movie ({', '.join(t for t in order if t not in movies) or 'none'} without); {SITE/PAGE['page']}")

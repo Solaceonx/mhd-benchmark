@@ -97,7 +97,7 @@ def build(mach, runs):
 <h1>Driven turbulence · Mach {mach}</h1><p>Zero-field hydrodynamic turbulence, driven for 10 stirring times on 128³ and 256³.
 Abel et al. Euler and zero-field MHD kernels, compared with RAMSES HLL and HLLC using the corrected solenoidal force.</p></div><a class="method-link" href="test-driven-mach-{other}.html">Mach {other} →</a></div>
 <div class="chips"><span class="chip">γ − 1 = 10⁻⁶</span><span class="chip">B = 0</span><span class="chip">128³ and 256³</span><span class="chip">Average: 2T–10T</span><span class="chip">Float32 GPU states</span></div>
-<p class="small">{movie_link}<a href="#turb-mach-time">Mach histories</a> · <a href="#turb-spectra">Spectra</a> · <a href="#turb-dissipation">Dissipation</a> · <a href="#turb-slices">Density images</a> · <a href="#analysis">Shared diagnostics</a></p>{movie}
+<p class="small">{movie_link}<a href="#turb-mach-time">Mach histories</a> · <a href="#turb-spectra">Spectra</a> · <a href="#turb-dissipation">Dissipation</a> · <a href="#turb-slices">Density images</a> · <a href="#analysis">Shared diagnostics</a> · <a href="problems.html#driven">Setup source</a></p>{movie}
 <article class="card"><h3>What the records show</h3><p>All {len(runs)} runs reached 10T. The first and second halves of the averaging window differ in mean Mach by at most {100*drift:.2f}%.
 Each table entry averages one run over 2T–10T; ranges show the two GPU seeds. RAMSES has one seed per set-up and grid.</p>{summary_table(runs)}
 <p>Floor share and nonpositive-cell counts are the largest saved observations during the averaging window. Power is the slope of total energy versus time in code units; it is not wall-clock power.</p></article>

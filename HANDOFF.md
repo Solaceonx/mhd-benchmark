@@ -159,6 +159,16 @@ pass; the new RAMSES density-only movie runner has not yet run on Sherlock.
 
 ## 6. How the pieces are rebuilt
 
+**Test-definition source page:** `scripts/build_problem_definitions.py` builds `progress/problems.html` from the
+complete tracked `sherlock_sweep/src/problems.jl`, with line numbers, 25 reading notes, existing setup equations,
+a searchable glossary, and all 26 expandable sweep TOMLs. It also shows the timestep-jump driver excerpt and the
+separate driven-hydro initialization/forcing excerpts. Source markers and a SHA-256 identify the displayed file;
+raw downloads include the Julia definitions, C++ initializer, configs and our drivers, never vendored solver code.
+The publisher includes it as "Test definitions" and copies `problem-definitions.css`; test pages link each setup
+to its config anchor, and the high-Mach pages link to the driven setup. Build after setup equations are available,
+then rebuild test pages and high-Mach pages (`--page-only`) when source links change. The shared reading UI uses
+`solver-walkthrough.js` / `.css`. `build_test_pages.py` now skips the private notes page in its navigation pass.
+
 **GPU launch-tuning pilot added 2026-10-14:** `sherlock_kernel_tuning/` compares thread counts and supported tile
 sizes in the unmodified `integrator_tiled!` and `integrator_plm!`. Each solver/precision setup has its own control;
 changed outputs are rejected before timing. Local configuration/source checks pass; no GPU run has been submitted
@@ -197,6 +207,7 @@ changing the shared figure layout.
 |---|---|
 | Turbulence page and figures | `python3 scripts/build_turbulence.py` (`--page-only` skips the figures) |
 | Test pages | `python3 scripts/build_test_pages.py` |
+| Complete problem definitions, configurations and setup annotations | `.venv-movie/bin/python scripts/build_problem_definitions.py` |
 | Annotated solver page, equations and side glossary | `.venv-movie/bin/python scripts/build_solver_walkthrough.py` (pinned source required; checksum checked) |
 | Set-up equations (notes page and test pages) | `python3 scripts/build_notes_setups.py` (edit `SETUPS` in it; mathtext only: words stay outside the dollar signs) |
 | Sweep and Papers pages | `python3 scripts/build_sweep_plan.py`, `python3 scripts/build_paper_figures.py` |

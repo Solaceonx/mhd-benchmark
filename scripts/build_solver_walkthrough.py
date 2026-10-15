@@ -174,11 +174,13 @@ def main():
         ("GLM constant ch", "step_plm!", "MonCen PLM", "HLL", "Float16", "Held constant by driver"),
     ]
     rows = "".join("<tr>"+"".join(f'<{"th scope=\"row\"" if i==0 else "td"}>{e(v)}</{"th" if i==0 else "td"}>' for i,v in enumerate(row))+"</tr>" for row in variants)
+    css_version = hashlib.sha256((ROOT / "progress/solver-walkthrough.css").read_bytes()).hexdigest()[:12]
+    js_version = hashlib.sha256((ROOT / "progress/solver-walkthrough.js").read_bytes()).hexdigest()[:12]
     page = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow"><meta name="color-scheme" content="light">
 <meta name="description" content="Read the central pieces of the Abel et al. GLM-MHD solver with line annotations and a glossary.">
-<title>Inside the solver · MHD Field Notes</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="solver-walkthrough.css"></head>
+<title>Inside the solver · MHD Field Notes</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="solver-walkthrough.css?v={css_version}"></head>
 <body class="solver-page"><a class="skip-link" href="#main">Skip to the content</a>
 <header class="masthead"><a class="brand" href="index.html"><span class="brand-mark">∿</span><span>MHD <strong>FIELD NOTES</strong></span></a><div class="masthead-meta">ABEL ET AL. · CODE WALKTHROUGH</div></header>
 <nav class="test-nav" aria-label="Pages"><a href="tests.html">Tests</a><a href="solver.html" aria-current="page">Inside the solver</a></nav>
@@ -194,7 +196,7 @@ def main():
 <div class="active-note" id="reading-note" aria-live="polite" aria-atomic="true"><div class="sidebar-kicker">Reading notes <span id="note-location"></span></div><h2 id="note-title"></h2><div id="note-equations"></div><p id="note-body"></p><div id="related-terms" aria-label="Related glossary terms"></div><a id="note-code" href="#state">Go to these lines ↑</a></div>
 <div class="glossary"><h2>Glossary <span>{len(TERMS)} terms</span></h2><label for="glossary-search">Find a term or symbol</label><input id="glossary-search" type="search" placeholder="Try ψ, HLL, pressure…" autocomplete="off"><p id="glossary-empty" hidden>No matching terms.</p><div class="glossary-terms">{glossary}</div></div></div></aside></div>
 </main><footer><span>Source: Abel et al. · commentary: MHD Field Notes</span><a href="{UPSTREAM}">Read the full pinned source ↗</a></footer>
-<script type="application/json" id="walkthrough-notes">{json.dumps(note_data, ensure_ascii=False).replace('<', chr(92)+'u003c')}</script><script src="solver-walkthrough.js"></script></body></html>'''
+<script type="application/json" id="walkthrough-notes">{json.dumps(note_data, ensure_ascii=False).replace('<', chr(92)+'u003c')}</script><script src="solver-walkthrough.js?v={js_version}"></script></body></html>'''
     path = ROOT / "progress/solver.html"; path.write_text(page)
     print(f"Wrote {path.name}: {len(SECTIONS)} code sections, {len(note_data)} annotations, {len(TERMS)} glossary terms.")
 

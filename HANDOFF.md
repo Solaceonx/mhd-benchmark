@@ -131,6 +131,7 @@ changing the shared figure layout.
 |---|---|
 | Turbulence page and figures | `python3 scripts/build_turbulence.py` (`--page-only` skips the figures) |
 | Test pages | `python3 scripts/build_test_pages.py` |
+| Annotated solver page and side glossary | `python3 scripts/build_solver_walkthrough.py` (pinned source required; checksum checked) |
 | Set-up equations (notes page and test pages) | `python3 scripts/build_notes_setups.py` (edit `SETUPS` in it; mathtext only: words stay outside the dollar signs) |
 | Sweep and Papers pages | `python3 scripts/build_sweep_plan.py`, `python3 scripts/build_paper_figures.py` |
 | Check GPU code without a GPU | `julia --project=sherlock_sweep/env sherlock_checks/test_gpu_compile.jl` (and the one in `sherlock_turb/`) |

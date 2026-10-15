@@ -28,6 +28,12 @@ The hydro pages explicitly distinguish hydro-only implementations from GLM/CT
 magnetic evolution. The reference column distinguishes numerical references,
 analytical approximations, controls and missing data.
 
+`solver.html` is an annotated reading of the Abel et al. GLM-MHD source, with
+clickable line explanations, a searchable side glossary, and the five benchmark
+configurations. Rebuild with `python3 scripts/build_solver_walkthrough.py` after
+restoring the pinned source using `scripts/fetch_solver.sh`. The builder verifies
+the source checksum and extracts the excerpts without editing the solver.
+
 ## Open locally
 
 The site uses plain HTML, CSS and JavaScript, with no dependencies or external

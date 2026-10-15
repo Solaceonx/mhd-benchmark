@@ -26,6 +26,7 @@ PAGES = [   # local name, published name, label in the navigation (in its order)
     ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
     ("turbulence.html", "turbulence.html", "Turbulence"),
     ("tests.html", "tests.html", "Tests"),
+    ("solver.html", "solver.html", "Inside the solver"),
     ("index.html", "orszag-tang.html", "Orszag–Tang"),
     ("hydro-decay.html", "hydro-decay.html", "Hydro decay"),
     ("isothermal-decay.html", "isothermal-decay.html", "Prepared decay"),
@@ -60,7 +61,8 @@ def rewrite(html, name, wanted):
     html = html.replace("LOCAL RESEARCH NOTEBOOK", "RESEARCH NOTEBOOK")
     number = next((i for i, (src, _, _) in enumerate(PAGES, 1) if src == name), None)      # the page's number follows the navigation
     if number:html = re.sub(r'(class="eyebrow"><span>)\d\d( · )', rf"\g<1>{number:02d}\2", html, count=1)
-    html = html.replace('<meta name="color-scheme"', '<meta name="robots" content="noindex, nofollow"><meta name="color-scheme"', 1)
+    if 'name="robots"' not in html:
+        html = html.replace('<meta name="color-scheme"', '<meta name="robots" content="noindex, nofollow"><meta name="color-scheme"', 1)
     if 'name="robots"' not in html:sys.exit(f"{name}: could not add the no-index line")
     # instructions that only make sense on the Mac (saving a local copy of a paper's figure, fetching, rebuilding)
     html = re.sub(r" To see it here next to ours, save your own copy of it as <code>.*?</code> and rebuild with <code>--page-only</code>\.", "", html)
@@ -127,7 +129,7 @@ def main(argv):
     order = {dst: f"{i:02d}" for i, (_, dst, _) in enumerate(PAGES, 1)}
     for t in data["tests"]:t["page"] = NAMES[t["page"]];t["number"] = order[t["page"]]
     (out/"data.js").write_text(localise(head + json.dumps(data, ensure_ascii=False) + ";\n", wanted))
-    for name in ("style.css", "sync-videos.js"):shutil.copy(SITE/name, out/name)
+    for name in ("style.css", "sync-videos.js", "solver-walkthrough.css", "solver-walkthrough.js"):shutil.copy(SITE/name, out/name)
     shutil.copy(SITE/"notes.html", out/"notes.html")       # private notes: encrypted in the browser, not in the navigation
     copy_media(out)
     missing = copy_wanted(wanted, out)

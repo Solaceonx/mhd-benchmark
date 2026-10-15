@@ -73,6 +73,10 @@ The first accounting fetch ended after printing a fresh remote export, without t
 The fetch script now reports query stages and returns a successful sweep export even if a later query fails;
 incomplete accounting never replaces an older report. Local fixture checks cover complete and partial transfers.
 lyxia has been asked to rerun it and paste the final output; fresh accounting has still not arrived locally.
+The retry failed at `sacct` and the EXIT fallback wrote into the redirected accounting file instead of SSH.
+The archive now uses a dedicated stdout descriptor; query wrappers run in an isolated subshell, with both stdout
+and stderr diagnostics printed on failure. Seven local checks pass, including execution of the remote shell body
+against a wrapper that calls `exit`. The actual reason for Sherlock's sacct refusal remains unknown pending a retry.
 
 **2026-10-14 accounting / movie-comparison follow-up:** `scripts/fetch_sweep_accounting.sh` is ready for lyxia to
 run on the Mac (read-only Slurm queries, no submission). It fetches fresh sweep status, allocation accounting since

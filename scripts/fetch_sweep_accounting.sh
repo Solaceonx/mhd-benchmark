@@ -8,6 +8,7 @@ printf 'Fetching sweep status and allocation accounting from Sherlock…\n'
 fetch_status=0
 ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'bash -l -s' > "$download/report.tar" <<'REMOTE' || fetch_status=$?
 set -euo pipefail
+exec 3>&1
 cd /scratch/users/lyxia/mhd-study/sherlock_sweep
 module load python/3.12.1
 report="$(mktemp -d "${TMPDIR:-/tmp}/mhd-accounting.XXXXXX")"
@@ -18,27 +19,47 @@ finish_report() {
     if [ "$status" -ne 0 ]; then
         printf 'Accounting fetch failed during %s (exit %s). Returning available files.\n' "$stage" "$status" >&2
     fi
-    tar -cf - -C "$report" . || status=$?
+    tar -cf - -C "$report" . >&3 || status=$?
     rm -rf "$report"
     exit "$status"
 }
 trap finish_report EXIT
+capture_query() {
+    local output=$1 status
+    shift
+    # A login-shell wrapper may call exit, or print its diagnostic on stdout.
+    # Isolate it and keep the archive on its own descriptor in either case.
+    if (trap - EXIT; "$@" </dev/null) > "$output" 2> "$output.stderr"; then
+        cat "$output.stderr" >&2
+    else
+        status=$?
+        printf '%s failed (exit %s). Query diagnostics:\n' "$1" "$status" >&2
+        sed -n '1,25p' "$output.stderr" >&2
+        sed -n '1,25p' "$output" >&2
+        return "$status"
+    fi
+}
 printf '[1/5] Exporting sweep status…\n' >&2
-python3 tools/sweep.py runs --json "$report/export_latest.json" >&2
+python3 tools/sweep.py runs --json "$report/export_latest.json" </dev/null >&2
 stage='sacct allocation query'
 printf '[2/5] Querying sacct allocations since September 1…\n' >&2
-sacct -X --duplicates --array -u "$USER" -S 2026-09-01 -E now -P \
-  --format=JobIDRaw%64,JobID%64,JobName%120,Account%40,Partition%80,State%40,AllocCPUS,ElapsedRaw,CPUTimeRAW,Submit,Start,End,AllocTRES%300 \
-  > "$report/accounting.psv"
+printf 'sacct command type: %s\n' "$(type -t sacct)" >&2
+capture_query "$report/accounting.psv" sacct -X --duplicates --array -u "$USER" -S 2026-09-01 -E now -P \
+  --format=JobIDRaw%64,JobID%64,JobName%120,Account%40,Partition%80,State%40,AllocCPUS,ElapsedRaw,CPUTimeRAW,Submit,Start,End,AllocTRES%300
 stage='sweep ledger copy'
 printf '[3/5] Copying sweep ledger…\n' >&2
 cp sweep_state/ledger.jsonl "$report/ledger.jsonl"
 stage='fairshare query'
 printf '[4/5] Querying fairshare…\n' >&2
-sshare -l -u "$USER" > "$report/fairshare.txt"
+capture_query "$report/fairshare.txt" sshare -l -u "$USER" || printf 'Fairshare unavailable; allocation accounting is unaffected.\n' >&2
 stage='priority configuration query'
 printf '[5/5] Querying priority configuration…\n' >&2
-scontrol show config | awk '/PriorityDecayHalfLife|PriorityFlags|PriorityWeight/ {print}' > "$report/priority_config.txt"
+if capture_query "$report/priority_config.raw" scontrol show config; then
+    awk '/PriorityDecayHalfLife|PriorityFlags|PriorityWeight/ {print}' "$report/priority_config.raw" > "$report/priority_config.txt"
+else
+    printf 'Priority configuration unavailable; allocation accounting is unaffected.\n' >&2
+    : > "$report/priority_config.txt"
+fi
 stage='query metadata'
 python3 - "$report" <<'PY'
 import datetime, json, os, pathlib, sys

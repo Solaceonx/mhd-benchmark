@@ -133,6 +133,8 @@ def from_export(data, runs, caps):
                 if row["state"] in ("stopped", "redo"):
                     t_end = p.get("t_end") or 0;row["frac"] = min(1.0, (p.get("reached") or 0)/t_end) if t_end else None
                     row["note"] = (p.get("error") or "").splitlines()[0][:120] if p.get("error") else ""
+                    row["detail"] = dict(reached=p.get("reached"), t_end=p.get("t_end"), steps=p.get("steps"), frames=p.get("frames"),
+                                         error=(p.get("error") or "").splitlines()[0][:300] if p.get("error") else "")
                 later = [q for name, q in parts.items() if name.startswith(label + "_r") and name != f"{label}_r1"]
                 if row["state"] == "done" and any(q.get("status") == "failed" for q in later):
                     timing.append(f'{r["dir"]}: a timing repeat of {label} failed')

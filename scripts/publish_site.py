@@ -37,7 +37,8 @@ PAGES = [   # local name, published name, label in the navigation (in its order)
     ("entropy-wave.html", "entropy-wave.html", "Entropy wave"),
 ]
 NAMES = {src: dst for src, dst, _ in PAGES}
-NOT_PUBLISHED = ("gpu", "movies")           # directories of progress/media that belong to the GPU-suite page
+NOT_PUBLISHED = ("gpu", "movies",           # directories of progress/media that belong to the GPU-suite page
+                 "showcase")                # work in progress of another session (untracked); take it off this list to publish it
 LOCAL = re.compile(r"\.\./(?!research\.html)[A-Za-z0-9_.\-/${}]+")
 MARK = "<!-- mhd-sweep-links -->"
 LARGEST = 30e6                              # bytes; a larger file is a mistake in the list, not a page asset

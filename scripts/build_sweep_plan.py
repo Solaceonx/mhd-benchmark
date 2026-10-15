@@ -328,6 +328,53 @@ def driven_grid_rows(campaign, methods):
     return ''.join(rows)
 
 
+# Why a run ended early, from the first line of the error its record carries (scripts/sweep_status.py: row["detail"]).
+WHY = (("Nonphysical/nonfinite state in CFL scan", "A cell's pressure or density went non-positive, or a value stopped being finite; the timestep scan caught it and stopped the run."),
+       ("Invalid state at output", "The state written at an output was not physical."),
+       ("Step limit reached", "It used up its step budget: the timestep had shrunk until the run could not reach the end."),
+       ("Invalid timestep", "The timestep became zero or not finite."),
+       ("exit code 0;", "The code ended normally but stopped writing outputs: it ran into its step cap because its timestep collapsed (a stall)."),
+       ("exit code 1", "The code stopped itself with an error."))
+
+
+HALF = ("glm_hll16", "glm_ppm", "glm_constch")
+CAUSES = (   # (applies to label and test, what we know of the cause), from docs/issues-found.md
+    (lambda l, t: l in HALF and (t.startswith("blast") or t == "decay_supersonic"),
+     "Likely cause, traced in a CPU emulation of the kernel: numbers stored in half precision overflow at 65,504 (docs/issues-found.md, Abel et al.'s kernels, item 3)."),
+    (lambda l, t: l == "glm_hlld" and t in ("current_sheet", "gem"),
+     "Likely cause, traced in a CPU emulation: HLLD's degenerate-state guard never fires in single precision (docs/issues-found.md, item 4)."),
+    (lambda l, t: l == "athenak_best" and t == "decay_supersonic",
+     "Known: PPM4/HLLD/RK3 has no first-order fallback here, and at Mach 9 its timestep collapses about a million-fold."),
+    (lambda l, t: l == "ramses_matched" and t == "decay_supersonic",
+     "Known: RAMSES with HLL stalls at Mach 9; its timestep collapses."),
+)
+
+
+def why_of(rows, n, geo):
+    """The popup of one mark: what happened to each seed that did not finish, as JSON for data-why, or None."""
+    bad = [r for r in rows if r["state"] in ("stopped", "redo") and r.get("detail")]
+    if not bad:return None
+    lines, raw = [], ""
+    for r in bad:
+        d = r["detail"];who = f"Seed {r['seed']}: " if len(rows) > 1 else ""
+        how = "stopped by its own solver" if r["state"] == "stopped" else "failed for a reason outside the solver (to be rerun)"
+        when = ""
+        if d.get("steps") == 0:when = " before its first step"
+        elif d.get("reached") is not None and d.get("t_end"):
+            when = (" near the start" if not d["reached"] else f" at t = {d['reached']:.3g}") + f" of {d['t_end']:.3g} ({min(1.0, d['reached']/d['t_end']):.0%} of the run)"
+        extra = ", ".join(x for x in ((f"after {d['steps']:,} steps" if d.get("steps") else ""),
+                                      (f"{d['frames']} output{'s' if d['frames'] != 1 else ''} written" if d.get("frames") else "")) if x)
+        lines.append(f"{who}{how}{when}" + (f", {extra}" if extra else "") + ".")
+        err = d.get("error") or "";reason = next((text for start, text in WHY if err.startswith(start)), "")
+        if reason:lines.append(reason)
+        raw = raw or err
+    cause = next((text for match, text in CAUSES if match(bad[0]["label"], bad[0]["test"])), "")
+    if cause:lines.append(cause)
+    done = sum(r["state"] == "done" for r in rows)
+    if len(rows) > 1:lines.append(f"{done} of {len(rows)} seeds finished.")
+    return json.dumps(dict(h=f"{n}{geo}: did not finish", l=lines, m=raw), ensure_ascii=False)
+
+
 def status_html(status, configs, families, family_of, driven=None):
     """The status tiles, grid and tables."""
     by = {}                                              # (test, label) -> n -> rows
@@ -354,7 +401,7 @@ def status_html(status, configs, families, family_of, driven=None):
                     tds.append('<td class="not-configured">—</td>');continue
                 cube = p2 and not label.startswith(("ramses", "athenapp")) and not label.endswith("reference")
                 geo = "²" if p2 and not cube else "³"
-                marks, tips = [], []
+                marks, tips = [], [];has_why = False
                 grids = sorted(cell) if label.endswith("reference") else [n for n in ladder if n in c["grids"] or n in cell]
                 for n in grids:
                     if n not in cell:
@@ -363,13 +410,16 @@ def status_html(status, configs, families, family_of, driven=None):
                     if state == "unknown":
                         a = amb[(label, n)];tip += f" ({a['complete']} of {a['complete'] + a['unfinished']} such runs are finished)"
                     tot += sum(x["state"] != "skipped" for x in cell[n]);fin += sum(x["state"] == "done" for x in cell[n])
-                    full = f"{n}{geo}: {tip}"
-                    marks.append(f'<i class="g s-{state}"' + (f' style="--f:{frac:.2f}"' if state == "stopped" else "") + f' title="{e(full)}"></i>')
+                    full = f"{n}{geo}: {tip}";why = why_of(cell[n], n, geo)
+                    look = f' data-why="{e(why)}" tabindex="0" aria-label="{e(full)}"' if why else f' title="{e(full)}"'
+                    marks.append(f'<i class="g s-{state}"' + (f' style="--f:{frac:.2f}"' if state == "stopped" else "") + look + '></i>')
                     tips.append(full)
+                    if why:has_why = True
+                span_title = "" if has_why else f' title="{e(" · ".join(tips))}"'          # a popup replaces the plain tooltip
                 if label.endswith("reference"):
-                    tds.append(f'<td><span class="ladder" title="{e(" · ".join(tips))}"><span class="grid-tag">{grids[0]}{geo}</span>{"".join(marks)}</span></td>')
+                    tds.append(f'<td><span class="ladder"{span_title}><span class="grid-tag">{grids[0]}{geo}</span>{"".join(marks)}</span></td>')
                 else:
-                    tds.append(f'<td><span class="ladder" title="{e(" · ".join(tips))}">{"".join(marks)}</span></td>')
+                    tds.append(f'<td><span class="ladder"{span_title}>{"".join(marks)}</span></td>')
             unsure = any(x["state"] == "unknown" for (tt, _), cell in by.items() if tt == t for xs in cell.values() for x in xs)
             rows.append(f'<tr><td><code>{e(t)}</code> <span class="divb-flag">{"2D" if p2 else "3D"}</span></td>{"".join(tds)}'
                         f'<td class="num">{"≥ " if unsure else ""}{fin}/{tot}</td></tr>')
@@ -730,6 +780,26 @@ def render(main_html, tests):
 <nav class="test-nav" aria-label="Physics tests">{nav_html(tests, "sweep-plan")}</nav>
 <main id="main">{main_html}</main>
 <footer><span>The plan is computed from sherlock_sweep/codes (plan.py, estimate.py); which runs exist, from progress/sweep_status/ (scripts/sweep_status.py).</span><span>Built {datetime.now().astimezone().strftime("%Y-%m-%d %H:%M")}</span></footer>
+<script>
+(() => {{   // the popup of a run that did not finish: hover, focus or tap a mark with details
+  const tip = document.createElement('div'); tip.className = 'why-tip'; tip.hidden = true; document.body.append(tip); let pinned = null;
+  function show(el) {{
+    const d = JSON.parse(el.dataset.why); tip.textContent = '';
+    const h = document.createElement('strong'); h.textContent = d.h; tip.append(h);
+    for (const line of d.l) {{ const p = document.createElement('p'); p.textContent = line; tip.append(p) }}
+    if (d.m) {{ const c = document.createElement('code'); c.textContent = d.m; tip.append(c) }}
+    tip.hidden = false; const r = el.getBoundingClientRect(), w = tip.offsetWidth, ht = tip.offsetHeight;
+    let x = r.left + r.width / 2 - w / 2, y = r.top - ht - 8; if (y < 8) y = r.bottom + 8;
+    x = Math.max(8, Math.min(x, innerWidth - w - 8)); tip.style.left = (x + scrollX) + 'px'; tip.style.top = (y + scrollY) + 'px';
+  }}
+  const hide = () => {{ if (!pinned) tip.hidden = true }};
+  document.addEventListener('mouseover', ev => {{ const el = ev.target.closest('[data-why]'); if (el) show(el); else hide() }});
+  document.addEventListener('focusin', ev => {{ const el = ev.target.closest('[data-why]'); if (el) show(el) }});
+  document.addEventListener('focusout', hide);
+  document.addEventListener('click', ev => {{ const el = ev.target.closest('[data-why]'); if (el) {{ pinned = pinned === el ? null : el; show(el) }} else {{ pinned = null; tip.hidden = true }} }});
+  document.addEventListener('keydown', ev => {{ if (ev.key === 'Escape') {{ pinned = null; tip.hidden = true }} }});
+}})();
+</script>
 </body></html>'''
 
 

@@ -14,6 +14,21 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "progress/sweep_status/accounting"
 OUTPUT = ROOT / "progress/media/accounting"
+FIELDS = {'JobIDRaw', 'JobID', 'JobName', 'Account', 'Partition', 'State', 'AllocCPUS',
+          'ElapsedRaw', 'CPUTimeRAW', 'Submit', 'Start', 'End', 'AllocTRES'}
+
+
+def allocation_rows(path):
+    """Reject errors printed on stdout, even if a site wrapper returned success."""
+    with Path(path).open(newline='') as stream:
+        reader = csv.DictReader(stream, delimiter='|')
+        if reader.fieldnames is None or set(reader.fieldnames) != FIELDS:
+            raise ValueError('Invalid sacct column header; accounting is unavailable')
+        for raw in reader:
+            if None in raw or any(value is None for value in raw.values()):
+                detail = next(iter(raw.values()), '')
+                raise ValueError(f'Invalid sacct record: {detail}')
+            yield {key.strip(): value.strip() for key, value in raw.items()}
 
 
 def number(value):
@@ -34,30 +49,28 @@ def summarize(source=SOURCE):
     ledger = [json.loads(line) for line in (source / "ledger.jsonl").read_text().splitlines() if line.strip()]
     sweep_jobs = {str(entry["job"]): entry for entry in ledger}
     unique = {}
-    with (source / "accounting.psv").open(newline="") as stream:
-        for raw in csv.DictReader(stream, delimiter="|"):
-            row = {key.strip(): (value or "").strip() for key, value in raw.items() if key}
-            job = row["JobID"]
-            if not re.fullmatch(r"\d+(?:_\d+)?", job):
-                continue  # Steps and unexpanded array ranges are never allocations to sum.
-            cpus = number(row["AllocCPUS"])
-            elapsed = number(row["ElapsedRaw"])
-            seconds = number(row["CPUTimeRAW"])
-            if seconds != cpus*elapsed:
-                raise ValueError(f"{job}: CPUTimeRAW {seconds} differs from AllocCPUS × ElapsedRaw {cpus*elapsed}")
-            entry = sweep_jobs.get(job.split("_")[0])
-            gpus = gpu_count(row["AllocTRES"])
-            sweep_gpu = bool(entry) and any(opt.startswith("--gpus") for opt in entry.get("options", []))
-            result = dict(job_id=job, raw_id=row["JobIDRaw"], name=row["JobName"], account=row["Account"],
-                          partition=row["Partition"], state=row["State"], cpus=cpus, gpus=gpus,
-                          elapsed_seconds=elapsed, allocated_cpu_seconds=seconds, core_hours=seconds/3600,
-                          gpu_hours=gpus*elapsed/3600, submit=row["Submit"], start=row["Start"], end=row["End"],
-                          sweep=entry is not None, sweep_lane=("gpu" if sweep_gpu else "cpu") if entry else "outside sweep ledger",
-                          unit=entry["key"] if entry else "")
-            # Repeated exports of one incarnation count once; different starts/submissions preserve requeues.
-            key = (result["raw_id"], result["submit"], result["start"])
-            if key not in unique or seconds > unique[key]["allocated_cpu_seconds"]:
-                unique[key] = result
+    for row in allocation_rows(source / 'accounting.psv'):
+        job = row["JobID"]
+        if not re.fullmatch(r"\d+(?:_\d+)?", job):
+            continue  # Steps and unexpanded array ranges are never allocations to sum.
+        cpus = number(row["AllocCPUS"])
+        elapsed = number(row["ElapsedRaw"])
+        seconds = number(row["CPUTimeRAW"])
+        if seconds != cpus*elapsed:
+            raise ValueError(f"{job}: CPUTimeRAW {seconds} differs from AllocCPUS × ElapsedRaw {cpus*elapsed}")
+        entry = sweep_jobs.get(job.split("_")[0])
+        gpus = gpu_count(row["AllocTRES"])
+        sweep_gpu = bool(entry) and any(opt.startswith("--gpus") for opt in entry.get("options", []))
+        result = dict(job_id=job, raw_id=row["JobIDRaw"], name=row["JobName"], account=row["Account"],
+                      partition=row["Partition"], state=row["State"], cpus=cpus, gpus=gpus,
+                      elapsed_seconds=elapsed, allocated_cpu_seconds=seconds, core_hours=seconds/3600,
+                      gpu_hours=gpus*elapsed/3600, submit=row["Submit"], start=row["Start"], end=row["End"],
+                      sweep=entry is not None, sweep_lane=("gpu" if sweep_gpu else "cpu") if entry else "outside sweep ledger",
+                      unit=entry["key"] if entry else "")
+        # Repeated exports of one incarnation count once; different starts/submissions preserve requeues.
+        key = (result["raw_id"], result["submit"], result["start"])
+        if key not in unique or seconds > unique[key]["allocated_cpu_seconds"]:
+            unique[key] = result
     allocations = sorted(unique.values(), key=lambda row: (row["start"], row["job_id"]))
     active = [row for row in allocations if row["elapsed_seconds"] > 0 and row["cpus"] > 0]
     scopes = {}

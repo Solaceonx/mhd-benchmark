@@ -1,5 +1,5 @@
 {
- "built": "2026-10-14T21:24-07:00",
+ "built": "2026-10-14T21:40-07:00",
  "totals": {
   "gpu": {
    "central": 220.4776733757628,
@@ -24,7 +24,7 @@
   "cpu": 33.32324180022658
  },
  "status": {
-  "time": "2026-10-06T05:22:33Z",
+  "time": "2026-10-15T04:37:39Z",
   "source": "export",
   "file": "export_latest.json",
   "by_method": {
@@ -194,8 +194,9 @@
    "cpu": 0.0
   }
  },
- "project_bytes": 75857055744,
+ "project_bytes": 75857424384,
  "accounting": null,
+ "accounting_error": "Invalid sacct record: sacct: error: Too wide of a date range in query",
  "driven_turbulence": {
   "source": "turb_results/*/run.toml",
   "methods": [

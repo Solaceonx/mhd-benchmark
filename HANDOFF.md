@@ -72,17 +72,21 @@ matrix or planned magnetized-driving stage. Counts describe reported completion,
 The first accounting fetch ended after printing a fresh remote export, without transferring it to the Mac.
 The fetch script now reports query stages and returns a successful sweep export even if a later query fails;
 incomplete accounting never replaces an older report. Local fixture checks cover complete and partial transfers.
-lyxia has been asked to rerun it and paste the final output; fresh accounting has still not arrived locally.
 The retry failed at `sacct` and the EXIT fallback wrote into the redirected accounting file instead of SSH.
 The archive now uses a dedicated stdout descriptor; query wrappers run in an isolated subshell, with both stdout
-and stderr diagnostics printed on failure. Seven local checks pass, including execution of the remote shell body
-against a wrapper that calls `exit`. The actual reason for Sherlock's sacct refusal remains unknown pending a retry.
+and stderr diagnostics printed on failure. The next download saved the fresh sweep export (2026-10-15 04:37 UTC),
+but its accounting file contains a header and `sacct: error: Too wide of a date range in query`. The site wrapper
+returned success. Never publish this as zero usage. The fetch now queries seven-day windows, bisecting refused
+windows; both it and the parser reject malformed records even with exit zero. Eleven local checks pass, including
+actual execution of the remote shell body against wrapper exits, range refusals and false-success diagnostics.
+The sweep page accepts the fresh status while explicitly rejecting the invalid accounting. lyxia has been asked
+to rerun the fixed fetch; valid allocation accounting is still pending.
 
 **2026-10-14 accounting / movie-comparison follow-up:** `scripts/fetch_sweep_accounting.sh` is ready for lyxia to
 run on the Mac (read-only Slurm queries, no submission). It fetches fresh sweep status, allocation accounting since
 September 1, the sweep ledger, and fairshare configuration into `progress/sweep_status/`.
-As of preparing this update the new report has not arrived; the last saved CPU-lane total is 93,857 core-hours
-from 2026-10-06, not current account-wide usage. Never convert `sshare RawUsage` directly into lifetime core-hours.
+The fresh sweep export still reports 93,857 CPU-lane core-hours (211 GPU-hours); it is not account-wide usage.
+Valid allocation accounting is pending the date-window fix above. Never convert `sshare RawUsage` directly into lifetime core-hours.
 Once the fetch finishes, run `.venv-movie/bin/python scripts/sweep_accounting.py`, then
 `.venv-movie/bin/python scripts/build_sweep_plan.py` and publish from the Mac. The new page distinguishes actual
 allocation accounting, GPU host CPUs, and plan estimates; CSV/JSON downloads appear when accounting exists.

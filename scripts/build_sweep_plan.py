@@ -193,7 +193,7 @@ High-Mach results include density-floor effects and nonpositive RAMSES densities
 AthenaK has no validated driven run in this campaign. These runs are separate from the planned magnetized driving stage below.</p></article>'''
 
 
-def accounting_html(report, jobs):
+def accounting_html(report, jobs, error=None):
     allocation_groups = {}
     for job in jobs:
         opts = job["sbatch"]
@@ -220,7 +220,9 @@ They are not lifetime totals or measured busy CPU time. Job steps are excluded t
 <p><a href="media/accounting/allocations.csv">Every allocation and CPU count (CSV)</a> · <a href="media/accounting/summary.json">Accounting details (JSON)</a></p>
 <h3>Largest CPU allocations by core-hours</h3><div class="table-scroll"><table class="metrics-table sweep-text"><thead><tr><th>Job</th><th>Name</th><th>CPUs</th><th>Elapsed hours</th><th>Core-hours</th></tr></thead><tbody>{job_rows}</tbody></table></div>'''
     else:
-        measured = '<p>A fresh allocation accounting report has not been fetched. The status tiles retain the dated sweep export; their totals are not current account-wide usage.</p>'
+        measured = (f'<p>Allocation accounting is unavailable: <code>{e(error)}</code>. The sweep status below was updated independently; '
+                    'its totals are not current account-wide usage.</p>' if error else
+                    '<p>A fresh allocation accounting report has not been fetched. The status tiles retain the dated sweep export; their totals are not current account-wide usage.</p>')
     return f'''<article class="card" id="resource-accounting"><h2>CPU allocation and usage</h2>
 <p><strong>Core-hours = allocated CPU cores × elapsed hours.</strong> A job using 128 cores for 5 hours consumes 640 core-hours.
 GPU jobs also reserve host CPUs; those CPU-hours are separate from their GPU-hours. Fairshare RawUsage is a weighted, potentially decayed scheduling quantity and must not be treated as lifetime CPU-hours.</p>
@@ -410,7 +412,13 @@ def build():
         bad = sweep_data.Sweep().nonfinite_parts()
         sweep_status.mark_nonfinite(status, bad, {name: float(c["t_end"]) for name, c in configs.items()})
     sv = status_html(status, configs, families, family_of) if status else None
-    accounting = sweep_accounting.summarize()
+    accounting_error = None
+    try:
+        accounting = sweep_accounting.summarize()
+    except ValueError as exc:
+        accounting = None
+        accounting_error = str(exc)
+        print(f'Accounting report rejected: {accounting_error}', file=sys.stderr)
     if accounting:sweep_accounting.write(accounting)
     driven = driven_campaign()
     data = dict(built=datetime.now().astimezone().isoformat(timespec="minutes"), totals=tot, longest=longest,
@@ -418,6 +426,7 @@ def build():
                             ambiguous=status["ambiguous"], lanes=status["lanes"]) if status else None,
                 longest_unit=longest_unit, stages=stages, project_bytes=size,
                 accounting=dict(query=accounting['query'],scopes=accounting['scopes'],missing_ledger_jobs=accounting['missing_ledger_jobs']) if accounting else None,
+                accounting_error=accounting_error,
                 driven_turbulence=driven,
                 jobs=[dict(key=j["key"], family=j["family"], runs=[r["key"] for r in j["runs"]], sbatch=j["sbatch"],
                            wall_central=j["wall_central"], resource=j["resource"]) for j in jobs],
@@ -557,7 +566,7 @@ the GEM challenge and Gardiner &amp; Stone (2005, 2008), then extends each to al
 <span class="chip">checkpoint / resume in every code</span></div>
 <p><a href="#driven-turbulence">Driven turbulence · Mach 3 / 10 / 30 / 50</a> · <a href="#resource-accounting">CPU allocation and usage</a></p>
 {driven_html(driven)}
-{accounting_html(accounting, jobs)}
+{accounting_html(accounting, jobs, accounting_error)}
 {status_block}
 <section class="sweep-tiles">
 <div class="tile"><span class="control-label">GPU · stage 1</span><strong>{fmt(tot["gpu"]["central"])}</strong><span>GPU-hours</span>

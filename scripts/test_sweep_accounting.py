@@ -39,5 +39,18 @@ class AccountingTest(unittest.TestCase):
         self.assertEqual(accounting.gpu_count('cpu=4,gres/gpu=2,gres/gpu:h100=2'),2)
         self.assertEqual(accounting.gpu_count('cpu=4,gres/gpu:h100=2'),2)
 
+    def test_error_on_stdout_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/'accounting.psv'
+            path.write_text('|'.join(sorted(accounting.FIELDS))+'\nsacct: error: Too wide of a date range in query\n')
+            with self.assertRaisesRegex(ValueError, 'Too wide'):
+                list(accounting.allocation_rows(path))
+
+    def test_header_only_is_a_valid_empty_query(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/'accounting.psv'
+            path.write_text('|'.join(sorted(accounting.FIELDS))+'\n')
+            self.assertEqual(list(accounting.allocation_rows(path)), [])
+
 
 if __name__=='__main__':unittest.main()

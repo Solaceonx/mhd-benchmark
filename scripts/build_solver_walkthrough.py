@@ -9,6 +9,8 @@ import json
 import re
 from pathlib import Path
 
+from solver_equations import EQUATIONS, render_equations
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "sherlock_sweep/vendor/glmmhd_turb.jl"
 COMMIT = "15ce37d47782afc9b4304b5cccaf847a4f7a4ae0"
@@ -141,12 +143,13 @@ def main():
     if hashlib.sha256(raw).hexdigest() != expected:
         raise SystemExit("Solver checksum changed: review all excerpts and annotations before rebuilding.")
     lines = raw.decode().splitlines(); sections = []; note_data = {}
+    equations = render_equations(ROOT)
     known = {t[0] for t in TERMS}
     for index, s in enumerate(SECTIONS, 1):
         links = []; blocks = []
         for j, n in enumerate(s["notes"]):
             assert set(n["terms"]) <= known
-            key = f'{s["id"]}-{j}'; note_data[key] = n | {"section": s["id"]}
+            key = f'{s["id"]}-{j}'; note_data[key] = n | {"section": s["id"], "equations": equations[key]}
             links.append(f'<button type="button" class="annotation" data-note="{key}" aria-pressed="false"><span>{j+1}</span>{e(n["title"])}</button>')
         for lo, hi in s["ranges"]:
             rendered = []
@@ -155,11 +158,12 @@ def main():
                 attr = f' data-note="{s["id"]}-{matches[0]}" tabindex="0" role="button" aria-label="Line {num}: {e(s["notes"][matches[0]]["title"])}"' if matches else ""
                 rendered.append(f'<span class="source-line" data-line="{num}"{attr}><span class="line-no" aria-hidden="true">{num}</span><span>{syntax(lines[num-1]) or " "}</span></span>')
             blocks.append(f'<pre class="source"><code>{"".join(rendered)}</code></pre>')
-        fallback = "".join(f'<details class="inline-note"><summary>{e(n["title"])}</summary><p>{e(n["text"])}</p></details>' for n in s["notes"])
+        fallback = "".join(f'<details class="inline-note"><summary>{e(n["title"])}</summary>{equations[s["id"]+"-"+str(j)]}<p>{e(n["text"])}</p></details>' for j, n in enumerate(s["notes"]))
         sections.append(f'''<section class="code-section" id="{s['id']}" data-default-note="{s['id']}-0">
 <div class="section-heading"><span class="step-number">{index:02d}</span><h2>{e(s['title'])}</h2><a class="source-link" href="{UPSTREAM}#L{s['ranges'][0][0]}-L{s['ranges'][-1][1]}" target="_blank" rel="noopener">Source ↗</a></div>
 <p class="section-intro">{e(s['intro'])}</p><div class="code-card">{('<div class="excerpt-gap">… intervening source omitted …</div>').join(blocks)}</div>
 <div class="annotation-list" aria-label="Annotations for {e(s['title'])}">{''.join(links)}</div><div class="fallback-notes">{fallback}</div></section>''')
+    assert set(note_data) == set(EQUATIONS), "Each annotation must have matching equations."
     glossary = "".join(f'<details class="term" id="term-{slug}" data-search="{e((title+" "+text).lower())}"><summary>{e(title)}</summary><p>{e(text)}</p><a class="term-source" href="#{section}">See it in the code ↑</a></details>' for slug, title, text, section in TERMS)
     toc = "".join(f'<a href="#{s["id"]}"><span>{i:02d}</span>{e(s["title"])}</a>' for i, s in enumerate(SECTIONS, 1))
     variants = [
@@ -179,7 +183,7 @@ def main():
 <header class="masthead"><a class="brand" href="index.html"><span class="brand-mark">∿</span><span>MHD <strong>FIELD NOTES</strong></span></a><div class="masthead-meta">ABEL ET AL. · CODE WALKTHROUGH</div></header>
 <nav class="test-nav" aria-label="Pages"><a href="tests.html">Tests</a><a href="solver.html" aria-current="page">Inside the solver</a></nav>
 <main id="main"><div class="page-heading"><div><div class="eyebrow"><span>11 · Inside the solver</span><span class="badge">Julia · GLM-MHD</span></div>
-<h1>From cell averages to the next timestep.</h1><p>Read the central pieces of Tom Abel’s Eulerian MHD code. Choose an annotation below a code block, or click a highlighted line, for an explanation beside it. The glossary stays on the right as you read.</p></div></div>
+<h1>From cell averages to the next timestep.</h1><p>Read the central pieces of Tom Abel’s Eulerian MHD code. Choose an annotation below a code block, or click a highlighted line, for matching equations and an explanation beside it. The glossary stays on the right as you read.</p></div></div>
 <p class="provenance">Verbatim excerpts from <a href="{UPSTREAM}">Abel et al., GLMMHDTurb ↗</a> · benchmark snapshot <code>{COMMIT[:12]}</code>. Source order is rearranged for teaching; gaps are marked. Annotations are ours.</p>
 <details class="reading-map" open><summary>Follow one timestep</summary><nav aria-label="Walkthrough sections">{toc}</nav></details>
 <section class="variant-card" aria-labelledby="variants-title"><h2 id="variants-title">Which version am I reading?</h2><p>The core physics helpers are shared. The main update excerpt follows the original tiled LLF path; the other sections show the alternative solvers and production storage.</p>
@@ -187,7 +191,7 @@ def main():
 <div class="reading-layout"><div class="code-column">{''.join(sections)}
 <section class="driver-note"><h2>Where the timestep comes from</h2><p>The benchmark driver takes the maximum over cells of Σ<sub>d=x,y,z</sub>(|v<sub>d</sub>| + c<sub>f,d</sub>), then uses Δt = C Δx / that maximum. The main sweep used C = 0.25 and a unit box. Its constant-ch variant holds the initial cleaning speed fixed and adds a cleaning timestep cap.</p><p>This is driver behavior in <code>sherlock_sweep/src/run_suite.jl</code> (signals scan and <code>timestep</code>), separate from the unmodified solver excerpts above.</p></section></div>
 <aside class="reading-sidebar" aria-label="Annotations and glossary"><div class="sidebar-inner">
-<div class="active-note" id="reading-note" aria-live="polite" aria-atomic="true"><div class="sidebar-kicker">Reading notes <span id="note-location"></span></div><h2 id="note-title"></h2><p id="note-body"></p><div id="related-terms" aria-label="Related glossary terms"></div><a id="note-code" href="#state">Go to these lines ↑</a></div>
+<div class="active-note" id="reading-note" aria-live="polite" aria-atomic="true"><div class="sidebar-kicker">Reading notes <span id="note-location"></span></div><h2 id="note-title"></h2><div id="note-equations"></div><p id="note-body"></p><div id="related-terms" aria-label="Related glossary terms"></div><a id="note-code" href="#state">Go to these lines ↑</a></div>
 <div class="glossary"><h2>Glossary <span>{len(TERMS)} terms</span></h2><label for="glossary-search">Find a term or symbol</label><input id="glossary-search" type="search" placeholder="Try ψ, HLL, pressure…" autocomplete="off"><p id="glossary-empty" hidden>No matching terms.</p><div class="glossary-terms">{glossary}</div></div></div></aside></div>
 </main><footer><span>Source: Abel et al. · commentary: MHD Field Notes</span><a href="{UPSTREAM}">Read the full pinned source ↗</a></footer>
 <script type="application/json" id="walkthrough-notes">{json.dumps(note_data, ensure_ascii=False).replace('<', chr(92)+'u003c')}</script><script src="solver-walkthrough.js"></script></body></html>'''

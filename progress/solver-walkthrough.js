@@ -5,6 +5,7 @@
   const search = document.getElementById('glossary-search');
   const title = document.getElementById('note-title');
   const body = document.getElementById('note-body');
+  const equations = document.getElementById('note-equations');
   const location = document.getElementById('note-location');
   const related = document.getElementById('related-terms');
   const codeLink = document.getElementById('note-code');
@@ -34,6 +35,7 @@
     current = key;
     title.textContent = note.title;
     body.textContent = note.text;
+    equations.innerHTML = note.equations;
     location.textContent = `L${note.lo}${note.hi !== note.lo ? `–${note.hi}` : ''}`;
     codeLink.href = `#${note.section}`;
     related.replaceChildren(...note.terms.map(id => {

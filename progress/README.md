@@ -30,7 +30,9 @@ analytical approximations, controls and missing data.
 
 `solver.html` is an annotated reading of the Abel et al. GLM-MHD source, with
 clickable line explanations, a searchable side glossary, and the five benchmark
-configurations. Rebuild with `python3 scripts/build_solver_walkthrough.py` after
+configurations. Each annotation has typeset equations and its LaTeX source,
+rendered locally as SVG by `scripts/solver_equations.py` for offline use.
+Rebuild with `.venv-movie/bin/python scripts/build_solver_walkthrough.py` after
 restoring the pinned source using `scripts/fetch_solver.sh`. The builder verifies
 the source checksum and extracts the excerpts without editing the solver.
 

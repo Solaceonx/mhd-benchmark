@@ -258,6 +258,14 @@ When both jobs have ended, on the Mac (about 210 MB):
 mkdir -p ~/Projects/research/abel_mhd/turb_movie && ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-results-turb-movie && find . -maxdepth 2 -path "./gpu-hydro-*" \( -name "rho_*.bin" -o -name run.toml \) | tar -cf - -T -' | tar -xf - -C ~/Projects/research/abel_mhd/turb_movie
 ```
 
-Then `.venv-movie/bin/python scripts/make_turb_movie.py` draws `progress/media/tests/driven_turbulence-density.mp4`,
-`python3 scripts/build_turbulence.py --page-only` puts it on the page, and `turb_movie/` can be deleted.
+Then `.venv-movie/bin/python scripts/make_turb_movie.py` draws a synchronized compilation,
+`progress/media/tests/driven_turbulence-density.mp4`, and individual `driven_M3-density.mp4`,
+`driven_M10-density.mp4`, `driven_M30-density.mp4` and `driven_M50-density.mp4` movies beside it.
+Each individual movie is 1440 × 1600, at 20 fps, with 201 real snapshots and brief endpoint holds.
+Rendering checks completion, consecutive frame numbers, file sizes and finite positive density first.
+Colour limits stay fixed over time; no temporal interpolation is applied. PNG posters and JSON provenance accompany each MP4.
+Use `--mach 30 50` to render only those Mach numbers.
+Run `.venv-movie/bin/python scripts/build_turbulence.py --page-only` and
+`.venv-movie/bin/python scripts/build_highmach_results.py --page-only` to add the players.
+After rendering and checking the published movies, `turb_movie/` can be deleted.
 

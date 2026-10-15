@@ -66,3 +66,17 @@ the notebook's Turbulence page (`scripts/turb_figures.py`, `scripts/build_turbul
 
 Subsonic driving, compressive driving fractions, 512³, MHD turbulence with a mean field, AthenaK and Athena++
 drivers, RAMSES II.
+
+AthenaK was outside the initial two-code pilot: the existing Ornstein–Uhlenbeck forcing in Abel et al. and RAMSES
+was matched first. AthenaK has not yet been adapted and validated against this pilot's forcing spectrum, correlation
+time, projection, normalization and nearly isothermal gas model. Its absence is not a failed run.
+
+## Movies
+
+The four Euler/HLL movie runs (Mach 3, 10, 30, 50; 256³, seed 1) finished on the H100 on 2026-10-12.
+Their 201 midplane density snapshots per run were fetched and rendered on 2026-10-14: 20 snapshots per driving
+time through 10T, played at 20 fps with brief endpoint holds. Individual clips are 1440 × 1600; the synchronized
+compilation is 3072 × 896. These are repeated pilot runs with denser output, rather than movies of the RAMSES or
+zero-field MHD variants. Colour limits stay fixed over time and may differ between Mach numbers. No temporal
+interpolation is used. Every clip was fully decoded and checked to contain 239 encoded frames (11.95 seconds).
+The two high-Mach pages embed individual clips and the main turbulence page embeds the compilation.

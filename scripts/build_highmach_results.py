@@ -77,6 +77,8 @@ def build(mach, runs):
     bad = max(nonpositive_count(r) for r in runs if nonpositive_count(r) is not None)
     drift = max(abs(bt.halves(r)) for r in runs)
     other = 50 if mach == 30 else 30
+    movie = bt.movie_card(mach)
+    movie_link = '<a href="#turb-movie">Movie</a> · ' if movie else ''
     panels = []
     for _, name, title, caption in PLOTS:
         base = f"media/turb/mach-{mach}/{name}"
@@ -95,7 +97,7 @@ def build(mach, runs):
 <h1>Driven turbulence · Mach {mach}</h1><p>Zero-field hydrodynamic turbulence, driven for 10 stirring times on 128³ and 256³.
 Abel et al. Euler and zero-field MHD kernels, compared with RAMSES HLL and HLLC using the corrected solenoidal force.</p></div><a class="method-link" href="test-driven-mach-{other}.html">Mach {other} →</a></div>
 <div class="chips"><span class="chip">γ − 1 = 10⁻⁶</span><span class="chip">B = 0</span><span class="chip">128³ and 256³</span><span class="chip">Average: 2T–10T</span><span class="chip">Float32 GPU states</span></div>
-<p class="small"><a href="#turb-mach-time">Mach histories</a> · <a href="#turb-spectra">Spectra</a> · <a href="#turb-dissipation">Dissipation</a> · <a href="#turb-slices">Density images</a> · <a href="#analysis">Shared diagnostics</a></p>
+<p class="small">{movie_link}<a href="#turb-mach-time">Mach histories</a> · <a href="#turb-spectra">Spectra</a> · <a href="#turb-dissipation">Dissipation</a> · <a href="#turb-slices">Density images</a> · <a href="#analysis">Shared diagnostics</a></p>{movie}
 <article class="card"><h3>What the records show</h3><p>All {len(runs)} runs reached 10T. The first and second halves of the averaging window differ in mean Mach by at most {100*drift:.2f}%.
 Each table entry averages one run over 2T–10T; ranges show the two GPU seeds. RAMSES has one seed per set-up and grid.</p>{summary_table(runs)}
 <p>Floor share and nonpositive-cell counts are the largest saved observations during the averaging window. Power is the slope of total energy versus time in code units; it is not wall-clock power.</p></article>
@@ -103,7 +105,10 @@ Each table entry averages one run over 2T–10T; ranges show the two GPU seeds. 
 The density distribution is affected by numerical floors, so its width is not a reliable physical measurement here. Completion alone does not establish physical validity.</p></article>
 <article class="card"><h3>How this differs from Mach 9 decay</h3><p>The <a href="test-decay-supersonic.html#failure-audit">Mach 9 problem</a> is decaying MHD with a mean magnetic field and γ = 1.01.
 These Mach {mach} runs are driven hydro with B = 0 and γ − 1 = 10⁻⁶. Abel et al.'s runs here use Float32 shared storage; the failing half-precision production kernels from the Mach 9 sweep are not these configurations.
-The two experiments test different numerical regimes.</p></article>{''.join(panels)}'''
+The two experiments test different numerical regimes.</p></article>
+<article class="card"><h3>Why AthenaK is absent</h3><p>This pilot first matched the existing Ornstein–Uhlenbeck driving in Abel et al. and RAMSES.
+AthenaK supports driven turbulence, but its driving has not yet been matched and validated for this experiment, so there are no AthenaK runs in this comparison.
+Adding it requires matching the forcing spectrum, correlation time, solenoidal projection and normalization, along with the gas model and measurements.</p></article>{''.join(panels)}'''
     main += diagnostics.section("sherlock_turb",figure_prefix=f"media/analysis/driven_M{mach}/",data_test=f"driven_M{mach}")
     registry=json.loads((SITE/"tests.json").read_text())
     page=bt.render(main,registry).replace('<title>Turbulence ·',f'<title>Mach {mach} turbulence ·')

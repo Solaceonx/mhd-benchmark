@@ -37,6 +37,27 @@ def png_width(path):
     return struct.unpack(">I", head[16:20])[0] if head[:8] == b"\x89PNG\r\n\x1a\n" else 0
 
 
+def movie_card(mach=None):
+    name = f"driven_M{mach}-density" if mach is not None else "driven_turbulence-density"
+    base = SITE / "media/tests" / name
+    if not all(base.with_suffix(ext).is_file() for ext in (".mp4", ".png", ".json")):
+        return ""
+    info = json.loads(base.with_suffix(".json").read_text())
+    version = int(base.with_suffix(".mp4").stat().st_mtime)
+    src = f"media/tests/{name}"
+    scales = "Each panel has its own colour scale, fixed over time." if mach is None else "The colour scale stays fixed over time."
+    return f'''<article class="card test-movie" id="turb-movie"><h3>Density evolution</h3>
+<video controls loop muted playsinline preload="metadata" poster="{src}.png?v={version}" style="width:100%;height:auto;max-height:75vh;object-fit:contain"
+aria-label="Driven turbulence density evolution{f' at Mach {mach}' if mach is not None else ''}"><source src="{src}.mp4?v={version}" type="video/mp4">
+<a href="{src}.mp4">Download the movie</a></video>
+<p>Abel et al. Euler / HLL, 256³, seed 1: density in the box midplane from startup to {info['nominal_end_T']:g}T.
+{info['snapshots']} saved snapshots ({info['snapshots_per_T']} per driving time), played at {info['fps']} fps;
+the first and last frames pause briefly. No time interpolation. {scales}
+The displayed times are nominal output times; a snapshot may be less than one solver step late.</p>
+<p><a href="{src}.mp4?v={version}" download>Download MP4 · {info['width']} × {info['height']}</a> ·
+<a href="{src}.json?v={version}">Movie provenance</a></p></article>'''
+
+
 def pct(x, digits=1):
     return f"{100*x:+.{digits}f} %".replace("-", "−")
 
@@ -195,12 +216,7 @@ fields it saves). The full purple has those three lines corrected and is the RAM
 The green diamonds of figure 2 are the reverse test: Tom's Euler kernel driven with RAMSES's released projection. His Float16 Euler kernel is not here: it stops in its first
 steps, because it stores the energy flux in half precision and this gas has an internal energy of 10⁵.</p>
 <p>Density images use the notebook's map for gas quantities (teal, dark where the density is low), as on the other pages.</p></div>''']
-    movie = SITE/"media"/"tests"/"driven_turbulence-density.mp4"
-    if movie.is_file():           # scripts/make_turb_movie.py, from the movie runs (sherlock_turb/movie.sh)
-        out.append(f'<article class="card test-movie"><div class="fig-head"><h3>Movie</h3></div><video controls loop muted playsinline preload="metadata" '
-                   f'src="media/tests/{movie.name}?v={int(movie.stat().st_mtime)}"></video><p>Density in the midplane of Tom\'s Euler kernel on 256³ at each Mach number, '
-                   "20 pictures per driving time, from the start of the driving to 10 driving times. Each panel has its own colour scale, fixed over the run. "
-                   "These are the runs of seed 1 on this page, repeated with the density saved more often.</p></article>")
+    out.append(movie_card())
     out += [figure_html(i + 1, name, title, caption, f.get(key)) for i, (name, title, caption, key) in enumerate(FIGURES) if (SITE/"media"/"turb"/f"{name}.png").is_file()]
     out.append(f'<article class="card paper-fig" id="turb-runs"><div class="fig-head"><span class="fig-no">{len(FIGURES) + 1}</span><h3>Every run</h3></div>'
                f'<p>Averages over time ≥ {tf.FROM:g} T. Power in units of ρ c<sub>s</sub>³/L. Cell updates per second: the whole GPU for Tom\'s kernels (single precision), '

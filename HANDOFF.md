@@ -76,10 +76,13 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
    (`progress/media/movies/`; redo them with `MOVIE_RENDER_ARGS="--fields density,magnetic,vorticity"` and
    `scripts/render_movies_from_archives.sh`, then `scripts/render_preview_movies.sh`, about 35 minutes), and the old
    bundles' own documents and code comments (`sherlock_mhd/` and its siblings), left as they ran.
-3. **Turbulence movie.** Commands are in `sherlock_turb/README.md`, section "Movie": send the bundle and run
-   `movie.sh` (not yet done when this was written), fetch `turb_movie/`, then
-   `.venv-movie/bin/python scripts/make_turb_movie.py`, `python3 scripts/build_turbulence.py --page-only`, publish,
-   delete `turb_movie/`. The driver's movie option ran on the CPU and compiles for the GPU; not yet run on a GPU.
+3. **Turbulence movies completed 2026-10-14.** The four dense H100 runs (Mach 3, 10, 30, 50; Euler/HLL;
+   256³, seed 1) completed on 2026-10-12; lyxia fetched their 804 density slices. `scripts/make_turb_movie.py`
+   checks the inputs and renders individual 1440 × 1600 clips plus a 3072 × 896 synchronized compilation,
+   all at 20 fps with 201 saved snapshots over 10T and endpoint holds. PNG posters and JSON provenance accompany
+   the MP4s in `progress/media/tests/`; these assets are local-only here and tracked in the website repository.
+   `build_highmach_results.py --page-only` embeds individual clips; `build_turbulence.py --page-only` embeds the
+   compilation. Commands to fetch and regenerate are in `sherlock_turb/README.md`, section "Movie".
 4. **GEM movie with four codes.** Fetch (Mac):
    ```bash
    ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-results-sweep && find gem-gpu-N128-s42-all/data/glm_r1 gem-athenak-best-run-N128-s42/data gem-ramses-best-run-N128-s42/data -name "state_*.bin" | tar -cf - -T -' | tar -xf - -C ~/Projects/research/abel_mhd/sweep_results

@@ -67,8 +67,11 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 **Sweep page campaign coverage added 2026-10-14:** `build_sweep_plan.py` now derives a separate driven-hydro
 summary from `turb_results/*/run.toml`: 48 primary records (12 each at Mach 3, 10, 30, 50), plus 12 forcing checks.
-It links high-Mach results, spectra and existing dense Euler movies without folding them into the standard MHD
-matrix or planned magnetized-driving stage. Counts describe reported completion, not physical validity.
+It links high-Mach results, spectra and existing dense Euler movies. The "Which runs exist" matrix now includes
+all four Mach targets as its first four rows: an Euler/HLL column, GLM/LLF with B=0, and corrected RAMSES HLL/HLLC
+in the RAMSES matched/best columns (hover labels distinguish HLLC from the MHD HLLD setup). Each row is 12/12.
+Summary tiles and method totals remain explicitly scoped to the standard MHD sweep; the 48 driven runs are
+additional fetched records. The planned magnetized-driving stage is separate. Counts describe completion, not physical validity.
 The first accounting fetch ended after printing a fresh remote export, without transferring it to the Mac.
 The fetch script now reports query stages and returns a successful sweep export even if a later query fails;
 incomplete accounting never replaces an older report. Local fixture checks cover complete and partial transfers.

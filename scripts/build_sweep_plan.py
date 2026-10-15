@@ -291,20 +291,62 @@ def arepo_card():
             'A static-mesh run that reached the end is not thereby right: the field loop is unstable there at every grid.</p></div>')
 
 
-def status_html(status, configs, families, family_of):
+def driven_grid_rows(campaign, methods):
+    """Use the common method columns, with hydro-specific solver descriptions."""
+    labels = {'euler_hll': ('gpu-hydro', 'Abel et al. Euler / HLL'),
+              'glm': ('gpu-glm', 'Abel et al. GLM / LLF, B = 0'),
+              'ramses_matched': ('ramsesfix-matched', 'RAMSES hydro / HLL, corrected forcing'),
+              'ramses_best': ('ramsesfix-best', 'RAMSES hydro / HLLC, corrected forcing')}
+    records = campaign['records']
+    if not records:return ''
+    rows = [f'<tr class="family-row"><th colspan="{len(methods)+2}">Driven turbulence · B = 0</th></tr>']
+    for mach in sorted({r['mach'] for r in records}):
+        group = [r for r in records if r['mach'] == mach]
+        grids = sorted({r['n'] for r in group})
+        cells = []
+        for label, _, _ in methods:
+            kind, description = labels.get(label, (None, ''))
+            runs = [r for r in group if r['method'] == kind]
+            if not runs:
+                cells.append('<td class="not-configured">—</td>');continue
+            marks = []
+            for n in grids:
+                mine = [r for r in runs if r['n'] == n]
+                if not mine:
+                    marks.append('<i class="g none"></i>');continue
+                mapped = [dict(state={'complete':'done', 'stopped':'stopped', 'failed':'redo'}.get(r['status'], 'open'),
+                               frac=None) for r in mine]
+                state, frac, tip = combine(mapped)
+                seeds = ', '.join(f"seed {r['seed']}: {r['status']}" for r in mine)
+                title = f'{n}³: {description}; {tip}; {seeds}'
+                marks.append(f'<i class="g s-{state}" title="{e(title)}"></i>')
+            cells.append(f'<td data-method="{label}"><span class="ladder">{"".join(marks)}</span></td>')
+        page = f'test-driven-mach-{mach}.html' if mach >= 30 else 'turbulence.html'
+        done = sum(r['status'] == 'complete' for r in group)
+        rows.append(f'<tr data-campaign="driven" data-test="driven_M{mach}"><td><a href="{page}">Mach {mach} driven</a> '
+                    f'<span class="divb-flag">3D</span></td>{"".join(cells)}<td class="num">{done}/{len(group)}</td></tr>')
+    return ''.join(rows)
+
+
+def status_html(status, configs, families, family_of, driven=None):
     """The status tiles, grid and tables."""
     by = {}                                              # (test, label) -> n -> rows
     for r in status["rows"]:by.setdefault((r["test"], r["label"]), {}).setdefault(r["n"], []).append(r)
     amb = {(a["label"], a["n"]): a for a in status["ambiguous"]}
     ladder = [32, 64, 96, 128, 192, 256, 384, 512]
-    rows = []
+    methods = list(METHODS)
+    if driven and driven['records']:
+        methods.insert(0, ('euler_hll', 'Euler / HLL', 'Abel et al. Euler kernel; driven nonmagnetic turbulence'))
+        methods = [(m, label, description + ('; HLLC for the driven hydro rows' if m == 'ramses_best' else ''))
+                   for m, label, description in methods]
+    rows = [driven_grid_rows(driven, methods)] if driven else []
     for family in families:
         tests = sorted({t for t, _ in by if family_of.get(t) == family})
         if not tests:continue
-        rows.append(f'<tr class="family-row"><th colspan="{len(METHODS) + 2}">{e(family)}</th></tr>')
+        rows.append(f'<tr class="family-row"><th colspan="{len(methods) + 2}">{e(family)}</th></tr>')
         for t in tests:
             c = configs[t];p2 = plan.planar(c);tds = [];fin = tot = 0
-            for label, _, _ in METHODS:
+            for label, _, _ in methods:
                 cell = by.get((t, label))
                 if not cell:
                     tds.append('<td class="not-configured">—</td>');continue
@@ -329,9 +371,9 @@ def status_html(status, configs, families, family_of):
             unsure = any(x["state"] == "unknown" for (tt, _), cell in by.items() if tt == t for xs in cell.values() for x in xs)
             rows.append(f'<tr><td><code>{e(t)}</code> <span class="divb-flag">{"2D" if p2 else "3D"}</span></td>{"".join(tds)}'
                         f'<td class="num">{"≥ " if unsure else ""}{fin}/{tot}</td></tr>')
-    head = "".join(f'<th title="{e(d)}">{e(l)}</th>' for _, l, d in METHODS)
+    head = "".join(f'<th title="{e(d)}">{e(l)}</th>' for _, l, d in methods)
     grid = (f'<div class="matrix-scroll"><table class="suite-matrix sweep-matrix sweep-status"><thead><tr><th>Test</th>{head}'
-            f'<th class="num" title="finished of planned, over all methods and grids">Finished</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>')
+            f'<th class="num" title="finished of planned MHD runs or fetched driven runs, over all methods, grids and seeds">Finished</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>')
 
     # ---- counts by method, with a part-to-whole bar (the numbers beside it are the table view)
     t = tally(status);tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}
@@ -416,7 +458,8 @@ def build():
         import sweep_data
         bad = sweep_data.Sweep().nonfinite_parts()
         sweep_status.mark_nonfinite(status, bad, {name: float(c["t_end"]) for name, c in configs.items()})
-    sv = status_html(status, configs, families, family_of) if status else None
+    driven = driven_campaign()
+    sv = status_html(status, configs, families, family_of, driven) if status else None
     accounting_error = None
     try:
         accounting = sweep_accounting.summarize()
@@ -425,7 +468,6 @@ def build():
         accounting_error = str(exc)
         print(f'Accounting report rejected: {accounting_error}', file=sys.stderr)
     if accounting:sweep_accounting.write(accounting)
-    driven = driven_campaign()
     data = dict(built=datetime.now().astimezone().isoformat(timespec="minutes"), totals=tot, longest=longest,
                 status=dict(time=status["time"], source=status["source"], file=status["file"], by_method=sv["tally"], total=sv["total"],
                             ambiguous=status["ambiguous"], lanes=status["lanes"]) if status else None,
@@ -524,7 +566,7 @@ def build():
         hidden = sum(a["unfinished"] for a in status["ambiguous"])
         status_block = f'''
 <section class="sweep-tiles">
-<div class="tile"><span class="control-label">Finished</span><strong>{tt["finished"]:,}</strong><span>of {tt["planned"]:,} method runs</span>
+<div class="tile"><span class="control-label">MHD sweep · finished</span><strong>{tt["finished"]:,}</strong><span>of {tt["planned"]:,} method runs</span>
 <small>{pct:.0%}{f" of the {tt['planned'] - tt['skipped']:,} still planned · {tt['skipped']} taken out" if tt["skipped"] else " · one method on one test, grid and seed"}</small></div>
 <div class="tile"><span class="control-label">Stopped by the solver</span><strong>{tt["stopped"]}</strong><span>results, not errors</span>
 <small>a nonphysical state, or a stall into the step cap</small></div>
@@ -535,10 +577,14 @@ def build():
 {hours}
 </section>
 
-<details class="suite-status" open><summary><span class="control-label">Which runs exist · {when(status["time"])}</span><span class="legend">
+<details class="suite-status" id="which-runs-exist" open><summary><span class="control-label">Which runs exist · {when(status["time"])}</span><span class="legend">
 <i class="g s-done"></i> finished <i class="g s-stopped" style="--f:.5"></i> stopped by the solver, filled to how far it got
 <i class="g s-redo"></i> failed, to rerun <i class="g s-open"></i> not finished{' <i class="g s-unknown"></i> finished or not: only the count is known' if status["ambiguous"] else ""}
 {' <i class="g s-skipped"></i> taken out' if tt["skipped"] else ""} <i class="g none"></i> not planned</span></summary>
+<p class="sweep-note">The driven rows include Mach 3, 10, 30 and 50 at 128³ and 256³, from fetched run records.
+Euler / HLL and GLM / LLF use seeds 1 and 2; RAMSES HLL and HLLC use seed 1 with corrected forcing.
+These {len(driven['records'])} additional runs are shown in this grid; the summary tiles and method totals describe the standard MHD sweep.
+Completion records do not establish physical validity; each test's results page includes that analysis.</p>
 {sv["grid"]}
 <p class="sweep-note">One mark per grid (32, 64, 128, 256, 512 a side; the throughput test also 96, 192, 384), one column per method; hover a mark for the detail.
 Tests with several seeds show one mark per grid: it is a stop mark if any seed stopped. Status as of {when(status["time"])}, from {source}
@@ -569,7 +615,7 @@ the GEM challenge and Gardiner &amp; Stone (2005, 2008), then extends each to al
 <div class="chips"><span class="chip">{tot["runs"]:,} runs in {tot["jobs"]} Slurm jobs</span><span class="chip">6 GPU-driver methods</span>
 <span class="chip">3 external codes × 2 setups</span><span class="chip">32–512 per side</span><span class="chip">Sherlock owners · H100 SXM5</span>
 <span class="chip">checkpoint / resume in every code</span></div>
-<p><a href="#driven-turbulence">Driven turbulence · Mach 3 / 10 / 30 / 50</a> · <a href="#resource-accounting">CPU allocation and usage</a></p>
+<p><a href="#which-runs-exist">Which runs exist</a> · <a href="#driven-turbulence">Driven turbulence · Mach 3 / 10 / 30 / 50</a> · <a href="#resource-accounting">CPU allocation and usage</a></p>
 {driven_html(driven)}
 {accounting_html(accounting, jobs, accounting_error)}
 {status_block}

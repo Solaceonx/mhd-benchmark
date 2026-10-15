@@ -109,6 +109,12 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 6. How the pieces are rebuilt
 
+**GPU launch-tuning pilot added 2026-10-14:** `sherlock_kernel_tuning/` compares thread counts and supported tile
+sizes in the unmodified `integrator_tiled!` and `integrator_plm!`. Each solver/precision setup has its own control;
+changed outputs are rejected before timing. Local configuration/source checks pass; no GPU run has been submitted
+and no speedup is established. The submitter requests an H100 and the job gates larger grids on a 48³ smoke trial.
+See its README. This pilot times integrators only; it is not a replacement for the accuracy/robustness suite.
+
 **Shared test analysis added 2026-10-13:** all 25 test pages plus the driven-turbulence page have eight quantitative
 diagnostic sections, using real fetched records (257 PNG/SVG figure pairs after the comparison-layout update). Builders:
 `scripts/test_diagnostics.py` and `scripts/driven_test_diagnostics.py`, followed by the page builders below.

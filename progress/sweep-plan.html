@@ -16,6 +16,20 @@ the GEM challenge and Gardiner &amp; Stone (2005, 2008), then extends each to al
 <div class="chips"><span class="chip">1,265 runs in 227 Slurm jobs</span><span class="chip">6 GPU-driver methods</span>
 <span class="chip">3 external codes × 2 setups</span><span class="chip">32–512 per side</span><span class="chip">Sherlock owners · H100 SXM5</span>
 <span class="chip">checkpoint / resume in every code</span></div>
+<p><a href="#driven-turbulence">Driven turbulence · Mach 3 / 10 / 30 / 50</a> · <a href="#resource-accounting">CPU allocation and usage</a></p>
+<article class="card" id="driven-turbulence"><h2>Driven turbulence · Mach 3, 10, 30 and 50</h2>
+<p><strong><a href="test-driven-mach-30.html">Mach 30 results</a> · <a href="test-driven-mach-50.html">Mach 50 results</a></strong></p>
+<p>48/48 fetched production runs report completion. This is a separate, nonmagnetic driven campaign;
+its runs are listed here alongside the standard MHD sweep. Each table entry is completed / fetched runs.</p>
+<div class="table-scroll"><table class="metrics-table sweep-text paper-table"><thead><tr><th>Target</th><th>Grids</th>
+<th>Abel et al. Euler / HLL</th><th>Abel et al. GLM / LLF</th><th>RAMSES HLL</th><th>RAMSES HLLC</th><th>View</th></tr></thead>
+<tbody><tr><th>Mach 3</th><td>128³, 256³</td><td class="num">4/4</td><td class="num">4/4</td><td class="num">2/2</td><td class="num">2/2</td><td><a href="turbulence.html">Results</a> · <a href="turbulence.html#turb-spectra">Spectra</a> · <a href="turbulence.html#turb-movie">Movie</a> · <a href="media/tests/driven_M3-density.mp4">MP4</a></td></tr><tr><th>Mach 10</th><td>128³, 256³</td><td class="num">4/4</td><td class="num">4/4</td><td class="num">2/2</td><td class="num">2/2</td><td><a href="turbulence.html">Results</a> · <a href="turbulence.html#turb-spectra">Spectra</a> · <a href="turbulence.html#turb-movie">Movie</a> · <a href="media/tests/driven_M10-density.mp4">MP4</a></td></tr><tr><th>Mach 30</th><td>128³, 256³</td><td class="num">4/4</td><td class="num">4/4</td><td class="num">2/2</td><td class="num">2/2</td><td><a href="test-driven-mach-30.html">Results</a> · <a href="test-driven-mach-30.html#turb-spectra">Spectra</a> · <a href="test-driven-mach-30.html#turb-movie">Movie</a> · <a href="media/tests/driven_M30-density.mp4">MP4</a></td></tr><tr><th>Mach 50</th><td>128³, 256³</td><td class="num">4/4</td><td class="num">4/4</td><td class="num">2/2</td><td class="num">2/2</td><td><a href="test-driven-mach-50.html">Results</a> · <a href="test-driven-mach-50.html#turb-spectra">Spectra</a> · <a href="test-driven-mach-50.html#turb-movie">Movie</a> · <a href="media/tests/driven_M50-density.mp4">MP4</a></td></tr></tbody></table></div>
+<p class="small">GPU runs use seeds 1 and 2; RAMSES uses seed 1. All target 10 driving times.
+RAMSES rows use the corrected forcing projection. 12 additional fetched records check the original projection and its GPU counterpart.
+Counts come from local run metadata, independently of the dated Slurm export below.</p>
+<p class="small">The available movies show the Euler/HLL run at 256³, seed 1, with 201 saved snapshots each.
+High-Mach results include density-floor effects and nonpositive RAMSES densities; the result pages quantify these.
+AthenaK has no validated driven run in this campaign. These runs are separate from the planned magnetized driving stage below.</p></article>
 <article class="card" id="resource-accounting"><h2>CPU allocation and usage</h2>
 <p><strong>Core-hours = allocated CPU cores × elapsed hours.</strong> A job using 128 cores for 5 hours consumes 640 core-hours.
 GPU jobs also reserve host CPUs; those CPU-hours are separate from their GPU-hours. Fairshare RawUsage is a weighted, potentially decayed scheduling quantity and must not be treated as lifetime CPU-hours.</p>
@@ -146,5 +160,5 @@ runs would cost far more than planned to record the same stall.</li>
 <li>Returned data counts files up to 50 MB (larger 3D states stay on scratch, listed per run); each run also has a small summary archive.</li>
 </ul></div>
 </main>
-<footer><span>The plan is computed from sherlock_sweep/codes (plan.py, estimate.py); which runs exist, from progress/sweep_status/ (scripts/sweep_status.py).</span><span>Built 2026-10-14 20:38</span></footer>
+<footer><span>The plan is computed from sherlock_sweep/codes (plan.py, estimate.py); which runs exist, from progress/sweep_status/ (scripts/sweep_status.py).</span><span>Built 2026-10-14 21:24</span></footer>
 </body></html>

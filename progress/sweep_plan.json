@@ -1,5 +1,5 @@
 {
- "built": "2026-10-14T20:38-07:00",
+ "built": "2026-10-14T21:24-07:00",
  "totals": {
   "gpu": {
    "central": 220.4776733757628,
@@ -194,8 +194,561 @@
    "cpu": 0.0
   }
  },
- "project_bytes": 75856744448,
+ "project_bytes": 75857055744,
  "accounting": null,
+ "driven_turbulence": {
+  "source": "turb_results/*/run.toml",
+  "methods": [
+   "gpu-hydro",
+   "gpu-glm",
+   "ramsesfix-matched",
+   "ramsesfix-best"
+  ],
+  "records": [
+   {
+    "run": "gpu-glm-M10-N128-s1",
+    "method": "gpu-glm",
+    "mach": 10,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M10-N128-s2",
+    "method": "gpu-glm",
+    "mach": 10,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M10-N256-s1",
+    "method": "gpu-glm",
+    "mach": 10,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M10-N256-s2",
+    "method": "gpu-glm",
+    "mach": 10,
+    "n": 256,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M3-N128-s1",
+    "method": "gpu-glm",
+    "mach": 3,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M3-N128-s2",
+    "method": "gpu-glm",
+    "mach": 3,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M3-N256-s1",
+    "method": "gpu-glm",
+    "mach": 3,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M3-N256-s2",
+    "method": "gpu-glm",
+    "mach": 3,
+    "n": 256,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M30-N128-s1",
+    "method": "gpu-glm",
+    "mach": 30,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M30-N128-s2",
+    "method": "gpu-glm",
+    "mach": 30,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M30-N256-s1",
+    "method": "gpu-glm",
+    "mach": 30,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M30-N256-s2",
+    "method": "gpu-glm",
+    "mach": 30,
+    "n": 256,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M50-N128-s1",
+    "method": "gpu-glm",
+    "mach": 50,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M50-N128-s2",
+    "method": "gpu-glm",
+    "mach": 50,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M50-N256-s1",
+    "method": "gpu-glm",
+    "mach": 50,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-glm-M50-N256-s2",
+    "method": "gpu-glm",
+    "mach": 50,
+    "n": 256,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M10-N128-s1",
+    "method": "gpu-hydro",
+    "mach": 10,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M10-N128-s2",
+    "method": "gpu-hydro",
+    "mach": 10,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M10-N256-s1",
+    "method": "gpu-hydro",
+    "mach": 10,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M10-N256-s2",
+    "method": "gpu-hydro",
+    "mach": 10,
+    "n": 256,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M3-N128-s1",
+    "method": "gpu-hydro",
+    "mach": 3,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M3-N128-s2",
+    "method": "gpu-hydro",
+    "mach": 3,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M3-N256-s1",
+    "method": "gpu-hydro",
+    "mach": 3,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M3-N256-s2",
+    "method": "gpu-hydro",
+    "mach": 3,
+    "n": 256,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M30-N128-s1",
+    "method": "gpu-hydro",
+    "mach": 30,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M30-N128-s2",
+    "method": "gpu-hydro",
+    "mach": 30,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M30-N256-s1",
+    "method": "gpu-hydro",
+    "mach": 30,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M30-N256-s2",
+    "method": "gpu-hydro",
+    "mach": 30,
+    "n": 256,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M50-N128-s1",
+    "method": "gpu-hydro",
+    "mach": 50,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M50-N128-s2",
+    "method": "gpu-hydro",
+    "mach": 50,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M50-N256-s1",
+    "method": "gpu-hydro",
+    "mach": 50,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro-M50-N256-s2",
+    "method": "gpu-hydro",
+    "mach": 50,
+    "n": 256,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-best-M10-N128-s1",
+    "method": "ramsesfix-best",
+    "mach": 10,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-best-M10-N256-s1",
+    "method": "ramsesfix-best",
+    "mach": 10,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-best-M3-N128-s1",
+    "method": "ramsesfix-best",
+    "mach": 3,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-best-M3-N256-s1",
+    "method": "ramsesfix-best",
+    "mach": 3,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-best-M30-N128-s1",
+    "method": "ramsesfix-best",
+    "mach": 30,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-best-M30-N256-s1",
+    "method": "ramsesfix-best",
+    "mach": 30,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-best-M50-N128-s1",
+    "method": "ramsesfix-best",
+    "mach": 50,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-best-M50-N256-s1",
+    "method": "ramsesfix-best",
+    "mach": 50,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-matched-M10-N128-s1",
+    "method": "ramsesfix-matched",
+    "mach": 10,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-matched-M10-N256-s1",
+    "method": "ramsesfix-matched",
+    "mach": 10,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-matched-M3-N128-s1",
+    "method": "ramsesfix-matched",
+    "mach": 3,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-matched-M3-N256-s1",
+    "method": "ramsesfix-matched",
+    "mach": 3,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-matched-M30-N128-s1",
+    "method": "ramsesfix-matched",
+    "mach": 30,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-matched-M30-N256-s1",
+    "method": "ramsesfix-matched",
+    "mach": 30,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-matched-M50-N128-s1",
+    "method": "ramsesfix-matched",
+    "mach": 50,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramsesfix-matched-M50-N256-s1",
+    "method": "ramsesfix-matched",
+    "mach": 50,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   }
+  ],
+  "checks": [
+   {
+    "run": "gpu-hydro_ramsesproj-M10-N128-s1",
+    "method": "gpu-hydro_ramsesproj",
+    "mach": 10,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro_ramsesproj-M10-N128-s2",
+    "method": "gpu-hydro_ramsesproj",
+    "mach": 10,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro_ramsesproj-M3-N128-s1",
+    "method": "gpu-hydro_ramsesproj",
+    "mach": 3,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "gpu-hydro_ramsesproj-M3-N128-s2",
+    "method": "gpu-hydro_ramsesproj",
+    "mach": 3,
+    "n": 128,
+    "seed": 2,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramses-best-M10-N128-s1",
+    "method": "ramses-best",
+    "mach": 10,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramses-best-M10-N256-s1",
+    "method": "ramses-best",
+    "mach": 10,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramses-best-M3-N128-s1",
+    "method": "ramses-best",
+    "mach": 3,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramses-best-M3-N256-s1",
+    "method": "ramses-best",
+    "mach": 3,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramses-matched-M10-N128-s1",
+    "method": "ramses-matched",
+    "mach": 10,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramses-matched-M10-N256-s1",
+    "method": "ramses-matched",
+    "mach": 10,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramses-matched-M3-N128-s1",
+    "method": "ramses-matched",
+    "mach": 3,
+    "n": 128,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   },
+   {
+    "run": "ramses-matched-M3-N256-s1",
+    "method": "ramses-matched",
+    "mach": 3,
+    "n": 256,
+    "seed": 1,
+    "status": "complete",
+    "end_T": 10.0
+   }
+  ]
+ },
  "jobs": [
   {
    "key": "pilot:gpu",

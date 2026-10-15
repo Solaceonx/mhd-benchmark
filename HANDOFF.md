@@ -65,6 +65,15 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**Sweep page campaign coverage added 2026-10-14:** `build_sweep_plan.py` now derives a separate driven-hydro
+summary from `turb_results/*/run.toml`: 48 primary records (12 each at Mach 3, 10, 30, 50), plus 12 forcing checks.
+It links high-Mach results, spectra and existing dense Euler movies without folding them into the standard MHD
+matrix or planned magnetized-driving stage. Counts describe reported completion, not physical validity.
+The first accounting fetch ended after printing a fresh remote export, without transferring it to the Mac.
+The fetch script now reports query stages and returns a successful sweep export even if a later query fails;
+incomplete accounting never replaces an older report. Local fixture checks cover complete and partial transfers.
+lyxia has been asked to rerun it and paste the final output; fresh accounting has still not arrived locally.
+
 **2026-10-14 accounting / movie-comparison follow-up:** `scripts/fetch_sweep_accounting.sh` is ready for lyxia to
 run on the Mac (read-only Slurm queries, no submission). It fetches fresh sweep status, allocation accounting since
 September 1, the sweep ledger, and fairshare configuration into `progress/sweep_status/`.

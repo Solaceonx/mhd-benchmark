@@ -14,6 +14,7 @@ import json
 import re
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -141,6 +142,55 @@ def bars(rows, unit, tone):
 def when(stamp):
     """2026-10-01T16:45Z -> 2026-10-01 16:45 UTC."""
     return stamp.replace("T", " ").replace("Z", " UTC") if stamp else "unknown time"
+
+
+def driven_campaign():
+    """Fetched driven-hydro records; independent of the standard MHD sweep ledger."""
+    methods = ("gpu-hydro", "gpu-glm", "ramsesfix-matched", "ramsesfix-best")
+    records, checks = [], []
+    for path in sorted((ROOT/"turb_results").glob("*/run.toml")):
+        match = re.fullmatch(r"(.+)-M(3|10|30|50)-N(\d+)-s(\d+)", path.parent.name)
+        if not match:continue
+        kind, mach, n, seed = match.groups()
+        meta = tomllib.loads(path.read_text())
+        row = dict(run=path.parent.name, method=kind, mach=int(mach), n=int(n), seed=int(seed),
+                   status=meta.get("status", "unknown"), end_T=meta.get("t_end_T"))
+        (records if kind in methods else checks).append(row)
+    return dict(source="turb_results/*/run.toml", methods=list(methods), records=records, checks=checks)
+
+
+def driven_html(campaign):
+    records = campaign["records"]
+    if not records:return ''
+    rows = []
+    for mach in (3, 10, 30, 50):
+        group = [r for r in records if r["mach"] == mach]
+        if not group:continue
+        page = f"test-driven-mach-{mach}.html" if mach >= 30 else "turbulence.html"
+        counts = []
+        for method in campaign["methods"]:
+            runs = [r for r in group if r["method"] == method]
+            done = sum(r["status"] == "complete" for r in runs)
+            counts.append(f'<td class="num">{done}/{len(runs)}</td>' if runs else '<td>—</td>')
+        grids = ", ".join(f'{n}³' for n in sorted({r["n"] for r in group}))
+        movie = f'media/tests/driven_M{mach}-density.mp4'
+        links = f'<a href="{page}">Results</a> · <a href="{page}#turb-spectra">Spectra</a>'
+        if (SITE/movie).is_file():links += f' · <a href="{page}#turb-movie">Movie</a> · <a href="{movie}">MP4</a>'
+        rows.append(f'<tr><th>Mach {mach}</th><td>{grids}</td>{"".join(counts)}<td>{links}</td></tr>')
+    done = sum(r["status"] == "complete" for r in records)
+    return f'''<article class="card" id="driven-turbulence"><h2>Driven turbulence · Mach 3, 10, 30 and 50</h2>
+<p><strong><a href="test-driven-mach-30.html">Mach 30 results</a> · <a href="test-driven-mach-50.html">Mach 50 results</a></strong></p>
+<p>{done}/{len(records)} fetched production runs report completion. This is a separate, nonmagnetic driven campaign;
+its runs are listed here alongside the standard MHD sweep. Each table entry is completed / fetched runs.</p>
+<div class="table-scroll"><table class="metrics-table sweep-text paper-table"><thead><tr><th>Target</th><th>Grids</th>
+<th>Abel et al. Euler / HLL</th><th>Abel et al. GLM / LLF</th><th>RAMSES HLL</th><th>RAMSES HLLC</th><th>View</th></tr></thead>
+<tbody>{"".join(rows)}</tbody></table></div>
+<p class="small">GPU runs use seeds 1 and 2; RAMSES uses seed 1. All target 10 driving times.
+RAMSES rows use the corrected forcing projection. {len(campaign["checks"])} additional fetched records check the original projection and its GPU counterpart.
+Counts come from local run metadata, independently of the dated Slurm export below.</p>
+<p class="small">The available movies show the Euler/HLL run at 256³, seed 1, with 201 saved snapshots each.
+High-Mach results include density-floor effects and nonpositive RAMSES densities; the result pages quantify these.
+AthenaK has no validated driven run in this campaign. These runs are separate from the planned magnetized driving stage below.</p></article>'''
 
 
 def accounting_html(report, jobs):
@@ -362,11 +412,13 @@ def build():
     sv = status_html(status, configs, families, family_of) if status else None
     accounting = sweep_accounting.summarize()
     if accounting:sweep_accounting.write(accounting)
+    driven = driven_campaign()
     data = dict(built=datetime.now().astimezone().isoformat(timespec="minutes"), totals=tot, longest=longest,
                 status=dict(time=status["time"], source=status["source"], file=status["file"], by_method=sv["tally"], total=sv["total"],
                             ambiguous=status["ambiguous"], lanes=status["lanes"]) if status else None,
                 longest_unit=longest_unit, stages=stages, project_bytes=size,
                 accounting=dict(query=accounting['query'],scopes=accounting['scopes'],missing_ledger_jobs=accounting['missing_ledger_jobs']) if accounting else None,
+                driven_turbulence=driven,
                 jobs=[dict(key=j["key"], family=j["family"], runs=[r["key"] for r in j["runs"]], sbatch=j["sbatch"],
                            wall_central=j["wall_central"], resource=j["resource"]) for j in jobs],
                 runs=[{k: u[k] for k in ("key", "dir", "test", "code", "variant", "mode", "n", "seed", "geometry", "extra",
@@ -503,6 +555,8 @@ the GEM challenge and Gardiner &amp; Stone (2005, 2008), then extends each to al
 <div class="chips"><span class="chip">{tot["runs"]:,} runs in {tot["jobs"]} Slurm jobs</span><span class="chip">6 GPU-driver methods</span>
 <span class="chip">3 external codes × 2 setups</span><span class="chip">32–512 per side</span><span class="chip">Sherlock owners · H100 SXM5</span>
 <span class="chip">checkpoint / resume in every code</span></div>
+<p><a href="#driven-turbulence">Driven turbulence · Mach 3 / 10 / 30 / 50</a> · <a href="#resource-accounting">CPU allocation and usage</a></p>
+{driven_html(driven)}
 {accounting_html(accounting, jobs)}
 {status_block}
 <section class="sweep-tiles">

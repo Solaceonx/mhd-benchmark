@@ -65,6 +65,11 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
+plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,
+`why_of`; data from `sweep_status.py` `row["detail"]`). Published. The publisher now skips `progress/media/showcase/`
+(another session's untracked work): take it off `NOT_PUBLISHED` in `publish_site.py` when it should go up.
+
 **"Our figures" tab, 2026-10-15:** `scripts/build_our_figures.py` redraws every figure of `scripts/manuscript_figures.py`
 (PDFs into `paper_figures/`, PNG + PDF copies into `progress/media/ours/`) and writes `progress/our-figures.html`
 (nav 11 locally, "Our figures" after "Tests" on the site): one card per figure saying which tests it rests on, and a

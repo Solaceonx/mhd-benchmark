@@ -114,6 +114,16 @@ sizes in the unmodified `integrator_tiled!` and `integrator_plm!`. Each solver/p
 changed outputs are rejected before timing. Local configuration/source checks pass; no GPU run has been submitted
 and no speedup is established. The submitter requests an H100 and the job gates larger grids on a 48³ smoke trial.
 See its README. This pilot times integrators only; it is not a replacement for the accuracy/robustness suite.
+The user deferred this optimization work; do not pursue or submit it unless they return to it.
+
+**Focused Mach 30/50 pages and Mach 9 audit added 2026-10-14:**
+`.venv-movie/bin/python scripts/build_highmach_results.py` builds `test-driven-mach-30.html` and
+`test-driven-mach-50.html`, with four focused plot pairs, numeric summaries, and their own shared diagnostics and
+downloads. Run it after `scripts/driven_test_diagnostics.py`; `--page-only` reuses focused plots. Both are linked
+from Tests and Turbulence and published as test pages. `scripts/build_test_pages.py` preserves these extra pages.
+The Mach 9 page now includes `scripts/mach9_audit.py`'s saved-output audit: 43 finite complete, 37 stopped,
+8 complete-but-nonfinite, 4 skipped (first repeat per method/grid/seed). The result tables flag nonfinite saved
+histories even if the code reports completion. See `docs/results-sweep.md`; 3D root causes are not all isolated.
 
 **Shared test analysis added 2026-10-13:** all 25 test pages plus the driven-turbulence page have eight quantitative
 diagnostic sections, using real fetched records (257 PNG/SVG figure pairs after the comparison-layout update). Builders:

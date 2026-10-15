@@ -180,6 +180,10 @@ stirring. A first look: {len(machs)} Mach numbers, {len(grids)} grids. It also f
 Mach numbers.</p></div>
 <a class="method-link" href="../sherlock_turb/README.md">Set-up and tests <span>↗</span></a></div>
 <div class="chips">{"".join(f'<span class="chip">{e(c)}</span>' for c in chips)}</div>
+<section class="test-family"><h2>Focused high-Mach results</h2><div class="test-grid">
+<a class="test-card" href="test-driven-mach-30.html"><strong>Mach 30</strong><span>12 completed runs on 128³ and 256³: spectra, density, dissipation and validity.</span><em>Open results →</em></a>
+<a class="test-card" href="test-driven-mach-50.html"><strong>Mach 50</strong><span>12 completed runs on 128³ and 256³: spectra, density, dissipation and validity.</span><em>Open results →</em></a>
+</div></section>
 <div class="card"><h3>How to read this page</h3>
 <p>Units: box length 1, mean density 1, sound speed 1. The gas is nearly isothermal (γ − 1 = 10⁻⁵, and 10⁻⁶ at Mach 30 and 50; no cooling), so the total energy rises at exactly the rate the
 driving puts it in: that slope is the power, and in a steady state the dissipation rate. The driving is a random acceleration on the largest scales (1 &lt; k &lt; 3) with

@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import paper_common as pc  # noqa: E402
 import sweep_data as sd  # noqa: E402
 import test_diagnostics as diagnostics  # noqa: E402
+import mach9_audit  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT/"progress"
@@ -63,6 +64,7 @@ def results_table(sweep, test):
         for n in grids:
             states = [(s, sweep.state_of(test, label, n, s)) for s in seeds]
             states = [(s, st) for s, st in states if st is not None]
+            states = [(s, "invalid" if st == "done" and sweep.went_bad(test, label, n, s) is not None else st) for s, st in states]
             if not states:cells.append('<td class="none">·</td>');continue
             total += len(states);bad = [(s, st) for s, st in states if st != "done"]
             if not bad:cells.append(f'<td class="done">✓{"" if len(states) == 1 else f" ×{len(states)}"}</td>');continue
@@ -71,6 +73,9 @@ def results_table(sweep, test):
                 if st == "stopped":
                     stopped += 1;rec = sweep.recorded(test, label, n, s) or {};t = rec.get("reached")
                     parts.append("stopped" + (f" at t = {t:.3g}" if isinstance(t, (int, float)) else ""))
+                elif st == "invalid":
+                    stopped += 1;t = sweep.went_bad(test, label, n, s)
+                    parts.append(f"nonfinite after saved t = {t:.3g}")
                 else:parts.append(STATE.get(st, st))
             text = parts[0] if len(set(parts)) == 1 and len(parts) == len(states) else f"{len(states) - len(bad)} of {len(states)} ✓; " + ", ".join(sorted(set(parts)))
             cells.append(f'<td class="stop">{e(text)}</td>')
@@ -113,7 +118,7 @@ def test_page(sweep, test, info, movie, order):
     i = order.index(test);prev, nxt = order[i - 1], order[(i + 1) % len(order)]
     grids = config["grids"];three = test.startswith(("decay", "blast_3d", "orszag_tang_3d", "field_loop_3d"));dim = "³" if three else "²"
     chips = [info["family"], f'{grids[0]}{dim} to {grids[-1]}{dim}', f'to t = {config["t_end"]:g}', f"{setups} set-ups", f"{total} runs",
-             "all finished" if not stopped else f"{stopped} stopped by {'its' if stopped == 1 else 'their'} solver"]
+             "all finished" if not stopped else f"{stopped} stopped or invalid"]
     if len(config.get("seeds", [42])) > 1:chips.insert(3, f'{len(config["seeds"])} seeds')
     return f'''
 <div class="page-heading"><div><div class="eyebrow"><a href="tests.html">Tests</a><span>{e(info["family"])}</span><span class="badge">{e(test)}</span></div>
@@ -122,8 +127,9 @@ def test_page(sweep, test, info, movie, order):
 <div class="chips">{"".join(f'<span class="chip">{e(c)}</span>' for c in chips)}</div>
 {movie_card(test, movie)}
 <article class="card test-setup"><h3>Set-up</h3>{setup_html(test)}<p class="small">{e(notes)} After: {e(info["source"])}. The same initial state goes to every code.</p></article>
-<article class="card"><h3>Who finished it</h3><p>Each set-up on each grid of the sweep. ✓ the run reached the end time; otherwise where its own solver stopped it
-(a result, not a failed job); · not run.</p>{table}</article>
+<article class="card"><h3>Who finished it</h3><p>Each set-up on each grid of the sweep. ✓ the run reached the end time; saved nonfinite outputs are flagged where available.
+Otherwise the recorded stop or last finite saved time; · not run. Completion alone does not establish accuracy.</p>{table}</article>
+{mach9_audit.section(sweep) if test == "decay_supersonic" else ""}
 {diagnostics.section(test)}
 <div class="test-turn"><a href="{page_of(prev)}">← {e(TITLES[prev])}</a><a href="{page_of(nxt)}">{e(TITLES[nxt])} →</a></div>'''
 
@@ -140,6 +146,9 @@ change from one family of tests to the next. Every page has eight shared quantit
         if family == "Turbulence":
             cards += ('<a class="test-card" href="turbulence.html"><strong>Driven turbulence</strong><code>sherlock_turb</code>'
                       '<span>Stirred to a steady state at Mach 3, 10, 30 and 50.</span><em>its own page</em></a>')
+            for mach in (30, 50):
+                cards += (f'<a class="test-card" href="test-driven-mach-{mach}.html"><strong>Driven turbulence, Mach {mach}</strong>'
+                          f'<code>driven_M{mach}</code><span>Zero-field hydro: 128³ and 256³, spectra, density, dissipation and validity.</span><em>12 completed runs</em></a>')
         out.append(f'<section class="test-family"><h2>{e(family)}</h2><div class="test-grid">{cards}</div></section>')
     return "".join(out)
 
@@ -173,7 +182,8 @@ def main():
     registry = json.loads((SITE/"tests.json").read_text());page = dict(PAGE, status=f"{len(tests)} tests")
     registry = [page if t["id"] == PAGE["id"] else t for t in registry] if any(t["id"] == PAGE["id"] for t in registry) else registry + [page]
     (SITE/"tests.json").write_text(json.dumps(registry, ensure_ascii=False, indent=2) + "\n")
-    for old in SITE.glob("test-*.html"):old.unlink()
+    for test in TITLES:
+        (SITE/page_of(test)).unlink(missing_ok=True)
     (SITE/PAGE["page"]).write_text(render(index_page(tests, movies, families), registry, "Tests"))
     for test in order:
         (SITE/page_of(test)).write_text(render(test_page(sweep, test, tests[test], movies.get(test), order), registry, TITLES[test]))

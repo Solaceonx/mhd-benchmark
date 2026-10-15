@@ -64,6 +64,31 @@ Of the 132 stops, 62 are in the six blast tests, which already ran with a pressu
 finishes 7 of 8 runs, where AthenaK PPM/HLLD and RAMSES HLL stall and Athena++ PPM/HLLD ends in NaN. AREPO: 82 of 82
 on the moving mesh, 75 of 82 on the static one.
 
+### Mach 9 audit (first repeat, both seeds)
+
+`scripts/mach9_audit.py` checks saved histories as well as completion flags. Of
+88 attempted method/grid/seed configurations, 43 have finite completed saved
+histories, 37 stop early, and eight report completion with nonfinite output
+(Athena++ PPM/HLLD, last finite output t = 0.02 in all eight). Four RAMSES HLL
+fine-grid configurations were skipped and are excluded from those 88 attempts.
+These counts are configurations, rather than all repeated timing runs.
+
+Abel LLF passes 7/8, HLLD 3/8, constant-cleaning-speed Float16 HLL 1/8, Float16
+HLL 0/8, and Float16 PPM/HLL 0/8. CT, AthenaK matched, RAMSES HLLD, and Athena++
+matched each have finite completed histories for 8/8. AthenaK's sharper setup
+hits its cycle cap in all four planned coarse-grid runs. RAMSES HLL lacks the
+requested endpoint in its four attempted runs; the project's earlier diagnosis
+is timestep collapse, while the fetched metadata tails alone do not expose the
+first failing cell or numerical operation.
+
+The half-precision range/rounding and output-step cleaning-speed mechanisms are
+supported by CPU reproductions. HLLD's degeneracy guard is also implicated by
+planar CPU checks. Individual 3D stops generally carry a downstream
+nonphysical-state message; do not claim every 3D failure has been traced to one
+of those mechanisms. Higher-Mach driven hydro (zero field, different gamma and
+Float32 shared storage) is a different test, not evidence that this MHD problem
+should survive.
+
 ## Divergence
 
 The normalised divergence |∇·B| Δx / |B| of the GLM kernels is 10⁻³ to 10⁻². It is the measure Ugalino et al. 2026

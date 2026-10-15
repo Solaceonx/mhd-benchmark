@@ -573,11 +573,14 @@ def table(data,test):
     return rows
 
 
-def section(test):
+def section(test, figure_prefix=None, data_test=None):
     manifest=SITE/"test_analysis.json"
     if not manifest.is_file():return ""
     registry=json.loads(manifest.read_text());item=registry.get("tests",{}).get(test)
     if not item:return ""
+    if figure_prefix:
+        item=dict(item,figures=[f for f in item["figures"] if f["file"].startswith(figure_prefix)])
+    data_test=data_test or test
     e=html.escape
     parts=['<section class="test-analysis" id="analysis"><div class="page-heading"><div><h2>Shared quantitative diagnostics</h2><p>Abel et al. and the external codes share axes for direct comparison. Colours identify code families; line styles identify variants. Measured results only.</p></div></div>']
     parts.append('<p class="small">'+" · ".join(f'<a href="#analysis-{category}">{e(category[:2]+" "+title)}</a>' for category,title in TITLES.items())+'</p>')
@@ -601,7 +604,8 @@ def section(test):
             parts.append(f'<h4>{e(f["group"])}</h4><div class="analysis-plot" data-vector="{svg}" data-aspect="{f.get("aspect",13/8)}"><a href="{png}"><img loading="lazy" style="width:100%;height:auto" src="{png}" alt="{e(title+": "+f["group"])}"></a></div><p>{e(f["caption"])}</p><p class="small">Download all codes: <a href="{png}">PNG</a> · <a href="{svg}">Vector SVG</a></p>')
             if f["details"]:parts.append('<details><summary>Coverage and stopped runs</summary><ul>'+"".join(f"<li>{e(v)}</li>" for v in f["details"])+"</ul></details>")
         parts.append("</article>")
-    parts.append(f'<article class="card"><h3>Source records and reproduction</h3><p><a href="media/analysis/{e(test)}/data.json">Numerical data and run metadata (JSON)</a> · <a href="media/analysis/{e(test)}/runs.csv">Run table (CSV)</a></p><p class="small">Build: <code>.venv-movie/bin/python scripts/test_diagnostics.py {e(test)}</code>. Runtime comparisons state each measurement scope; RAMSES II has throughput data only and is not a science curve here.</p></article></section>')
+    build_command=".venv-movie/bin/python scripts/driven_test_diagnostics.py" if test=="sherlock_turb" else f".venv-movie/bin/python scripts/test_diagnostics.py {e(test)}"
+    parts.append(f'<article class="card"><h3>Source records and reproduction</h3><p><a href="media/analysis/{e(data_test)}/data.json">Numerical data and run metadata (JSON)</a> · <a href="media/analysis/{e(data_test)}/runs.csv">Run table (CSV)</a></p><p class="small">Build: <code>{build_command}</code>. Runtime comparisons state each measurement scope.</p></article></section>')
     if methods:parts.append('<script>'+ (ROOT/"scripts/test_analysis_view.js").read_text()+'</script>')
     return "\n".join(parts)
 

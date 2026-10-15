@@ -39,21 +39,27 @@ def png_width(path):
 
 def movie_card(mach=None):
     name = f"driven_M{mach}-density" if mach is not None else "driven_turbulence-density"
+    if mach is not None and (SITE/f'media/tests/driven_M{mach}-comparison.json').is_file():
+        name = f'driven_M{mach}-comparison'
     base = SITE / "media/tests" / name
     if not all(base.with_suffix(ext).is_file() for ext in (".mp4", ".png", ".json")):
         return ""
     info = json.loads(base.with_suffix(".json").read_text())
     version = int(base.with_suffix(".mp4").stat().st_mtime)
     src = f"media/tests/{name}"
-    scales = "Each panel has its own colour scale, fixed over time." if mach is None else "The colour scale stays fixed over time."
+    comparison = info.get('comparison',False)
+    scales = "Every code shares one colour scale, fixed over time." if comparison else "Each panel has its own colour scale, fixed over time." if mach is None else "The colour scale stays fixed over time."
+    codes = 'Abel et al. Euler / HLL and zero-field MHD / LLF, RAMSES / HLL and HLLC' if comparison else 'Abel et al. Euler / HLL'
+    caveat = ('The forcing realizations differ across codes, so individual structures should not coincide. '
+              'Densities at or below 10⁻⁶, including nonpositive values, are clipped to that floor for display; see provenance counts.') if comparison else ''
     return f'''<article class="card test-movie" id="turb-movie"><h3>Density evolution</h3>
 <video controls loop muted playsinline preload="metadata" poster="{src}.png?v={version}" style="width:100%;height:auto;max-height:75vh;object-fit:contain"
 aria-label="Driven turbulence density evolution{f' at Mach {mach}' if mach is not None else ''}"><source src="{src}.mp4?v={version}" type="video/mp4">
 <a href="{src}.mp4">Download the movie</a></video>
-<p>Abel et al. Euler / HLL, 256³, seed 1: density in the box midplane from startup to {info['nominal_end_T']:g}T.
+<p>{codes}, 256³, seed 1: density in the box midplane from startup to {info['nominal_end_T']:g}T.
 {info['snapshots']} saved snapshots ({info['snapshots_per_T']} per driving time), played at {info['fps']} fps;
 the first and last frames pause briefly. No time interpolation. {scales}
-The displayed times are nominal output times; a snapshot may be less than one solver step late.</p>
+The displayed times are nominal output times; a snapshot may be less than one solver step late. {caveat}</p>
 <p><a href="{src}.mp4?v={version}" download>Download MP4 · {info['width']} × {info['height']}</a> ·
 <a href="{src}.json?v={version}">Movie provenance</a></p></article>'''
 

@@ -101,7 +101,9 @@ def check(out):
     """Every address a published page names must exist; nothing may point at the local repository or a page left out."""
     bad = []
     for f in [*out.glob("*.html"), out/"app.js", out/"data.js"]:
+        if f.name == 'notes.html':continue  # Copy the private notebook without reading its contents.
         text = f.read_text()
+        text = re.sub(r'''https?://[^\s"'<>]+''', '', text)  # External pages are not local assets.
         bad += [f"{f.name}: {x}" for x in set(LOCAL.findall(text))]
         pages = {*NAMES.values(), "research.html", *(q.name for q in out.glob("test-*.html"))}
         if f.name != "data.js":bad += [f"{f.name}: {x}" for x in set(re.findall(r'[a-z0-9-]+\.html(?![A-Za-z])', text)) if x not in pages]

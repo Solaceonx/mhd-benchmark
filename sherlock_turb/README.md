@@ -269,3 +269,55 @@ Run `.venv-movie/bin/python scripts/build_turbulence.py --page-only` and
 `.venv-movie/bin/python scripts/build_highmach_results.py --page-only` to add the players.
 After rendering and checking the published movies, `turb_movie/` can be deleted.
 
+## More movies: matched comparisons
+
+`compare_movies.sh` / `compare_movies.py` add the three missing configurations at Mach 30 and 50:
+Abel et al. zero-field MHD / LLF, corrected RAMSES / HLL, corrected RAMSES / HLLC.
+The existing Euler/HLL movies are reused. Each new run is 256³, seed 1, 10T, with 201 density midplanes.
+No AthenaK driven-forcing adapter is supplied by this batch.
+
+On the Mac, send an isolated bundle and submit:
+
+```bash
+bash /Users/lyxia/Projects/research/abel_mhd/scripts/submit_turb_compare_movies.sh
+```
+
+This extracts into a fresh `mhd-study/turb-movie-compare.XXXXXX/sherlock_turb/` directory;
+it does not replace a potentially running script in the original bundle. Results go to
+`/scratch/users/lyxia/mhd-results-turb-compare-movie/`, separate from pilot and original movie results.
+The existing calibration and corrected RAMSES executable must already exist. Original solver source is unchanged.
+
+To inspect the plan before submitting, on Sherlock run `bash -l PATH/compare_movies.sh` without `--submit`.
+`--mach 3 10 30 50` also requests the lower-Mach comparisons with their appropriate gas model.
+There is one H100 job (four host CPU cores) for the two default GLM runs, plus a four-task CPU array.
+Only one RAMSES task runs at a time, using 64 CPU cores. Existing queued job names and completed movie outputs
+are kept. RAMSES resumes from native outputs after interruption; the GPU driver restarts interrupted runs.
+
+The four Mach 30/50 RAMSES pilot evolutions used about 320 core-hours in total, excluding conversion and denser I/O.
+The movie batch is not timed as a performance comparison: frequent output can change wall time and timestep cuts.
+Allow roughly 250 GB of temporary scratch for the active RAMSES run. Native outputs are retained until its density
+frames have all been converted, then removed. Final density output is only about 53 MB per run.
+`ramses_movie.py` reads the density midplane directly rather than allocating a full nine-variable volume or repeating
+FFTs at every movie frame. It preserves nonpositive density values in the raw slices; rendering clips them at 10⁻⁶
+and records their counts. These are the same floor-sensitive high-Mach experiments as the analysis pages.
+
+After jobs end, fetch on the Mac:
+
+```bash
+bash /Users/lyxia/Projects/research/abel_mhd/scripts/fetch_turb_compare_movies.sh
+```
+
+Render the two synchronized 2 × 2 comparisons (2048 × 2304, a common colour scale across codes and over time):
+
+```bash
+cd /Users/lyxia/Projects/research/abel_mhd && .venv-movie/bin/python scripts/make_turb_movie.py --compare --mach 30 50
+```
+
+Rebuild `.venv-movie/bin/python scripts/build_highmach_results.py --page-only` and publish from the Mac.
+The individual high-Mach pages automatically prefer their four-panel comparison when it exists.
+The code-family forcing realizations differ; the movies compare statistical morphology, not identical structures.
+
+Local checks: `.venv-movie/bin/python -m unittest discover -s sherlock_turb -p test_movies.py`.
+The compact density reader is checked against the pilot's full-volume reader using a two-rank native-format fixture,
+including negative density and rejection of the MHD variable layout. These checks do not replace an actual Sherlock run.
+

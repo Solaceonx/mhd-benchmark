@@ -65,6 +65,27 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**2026-10-14 accounting / movie-comparison follow-up:** `scripts/fetch_sweep_accounting.sh` is ready for lyxia to
+run on the Mac (read-only Slurm queries, no submission). It fetches fresh sweep status, allocation accounting since
+September 1, the sweep ledger, and fairshare configuration into `progress/sweep_status/`.
+As of preparing this update the new report has not arrived; the last saved CPU-lane total is 93,857 core-hours
+from 2026-10-06, not current account-wide usage. Never convert `sshare RawUsage` directly into lifetime core-hours.
+Once the fetch finishes, run `.venv-movie/bin/python scripts/sweep_accounting.py`, then
+`.venv-movie/bin/python scripts/build_sweep_plan.py` and publish from the Mac. The new page distinguishes actual
+allocation accounting, GPU host CPUs, and plan estimates; CSV/JSON downloads appear when accounting exists.
+
+`scripts/submit_turb_compare_movies.sh` is ready for the user to run on the Mac: it uploads an isolated bundle and
+submits two GLM/LLF GPU runs plus four corrected RAMSES hydro runs (HLL/HLLC, Mach 30/50, 256³, seed 1, 201 frames).
+The CPU array uses 64 cores, concurrency one; no such jobs have been submitted by the assistant.
+Results: `$SCRATCH/mhd-results-turb-compare-movie`. RAMSES needs ~250 GB temporary scratch for the active run;
+the old four RAMSES evolutions used ~320 core-hours total, before denser output/conversion overhead.
+Fetch with `scripts/fetch_turb_compare_movies.sh`; render with
+`.venv-movie/bin/python scripts/make_turb_movie.py --compare --mach 30 50`; rebuild the high-Mach pages.
+The renderer reuses existing Euler movie inputs and creates a synchronized 2 × 2 comparison with one common colour
+scale. Nonpositive RAMSES densities are kept raw, floored only for display and counted in provenance.
+See `sherlock_turb/README.md`, "More movies: matched comparisons". Local accounting and native-format reader checks
+pass; the new RAMSES density-only movie runner has not yet run on Sherlock.
+
 1. **Courant-number and single-precision checks** (`sherlock_checks/`): job `mhd-checks` 47440155 was still waiting
    for an H100. On Sherlock: `bash -l /scratch/users/lyxia/mhd-study/sherlock_checks/status.sh` prints the trial's
    verdict ("control passes" must appear for both grids) and a table beside the sweep's Courant 0.25 runs.

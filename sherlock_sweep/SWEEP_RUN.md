@@ -109,6 +109,21 @@ packs the unpacked ones.
 
 Status for the site (the Sweep page shows which runs exist; this makes it exact). On Sherlock:
 
+For a combined status and allocation-accounting refresh, on the Mac use:
+
+```bash
+bash /Users/lyxia/Projects/research/abel_mhd/scripts/fetch_sweep_accounting.sh
+```
+
+It submits no jobs. It fetches current records and a `sacct -X --duplicates --array` report of lyxia's job
+allocations overlapping September 1 onward. `scripts/sweep_accounting.py` checks `CPUTimeRAW` against
+allocated CPUs × elapsed seconds, excludes job steps, deduplicates identical allocation incarnations, and keeps
+separate requeue attempts. The sweep ledger separates sweep CPU jobs, GPU jobs and other jobs.
+This is allocated core-time, not measured CPU busy time or the weighted/decayed `sshare RawUsage`.
+Rebuild with `.venv-movie/bin/python scripts/build_sweep_plan.py`; the page links per-job CSV and JSON downloads.
+
+For status only, on Sherlock:
+
 ```
 cd /scratch/users/lyxia/mhd-study/sherlock_sweep && module load python/3.12.1 && python3 tools/sweep.py runs --json sweep_state/runs.json
 ```

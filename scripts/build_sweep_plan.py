@@ -24,6 +24,7 @@ sys.path.insert(0, str(ROOT/"scripts"))
 import estimate  # noqa: E402
 import plan  # noqa: E402
 import sweep_status  # noqa: E402
+import sweep_accounting  # noqa: E402
 
 PAGE = dict(id="sweep-plan", page="sweep-plan.html", kind="sweep", number="07", title="Comprehensive sweep",
             nav="Sweep", status="Running", document="../sherlock_sweep/SWEEP_RUN.md",
@@ -140,6 +141,45 @@ def bars(rows, unit, tone):
 def when(stamp):
     """2026-10-01T16:45Z -> 2026-10-01 16:45 UTC."""
     return stamp.replace("T", " ").replace("Z", " UTC") if stamp else "unknown time"
+
+
+def accounting_html(report, jobs):
+    allocation_groups = {}
+    for job in jobs:
+        opts = job["sbatch"]
+        ntasks = next((int(opt.split("=")[1]) for opt in opts if opt.startswith("--ntasks=")), 1)
+        threads = next((int(opt.split("=")[1]) for opt in opts if opt.startswith("--cpus-per-task=")), 1)
+        allocation_groups.setdefault(job["family"], set()).add(ntasks*threads)
+    request_rows = "".join(f'<tr><td>{name}</td><td>{", ".join(map(str, sorted(allocation_groups.get(family, []))))}</td><td>{devices}</td></tr>'
+        for family, name, devices in (("gpu", "Abel et al. GLM / CT", "1 GPU"), ("athenak", "AthenaK", "1 GPU"),
+                                      ("cpu", "RAMSES / Athena++", "CPU-only MPI")))
+    if report:
+        q = report["query"]; scopes = report["scopes"]
+        actual_rows = "".join(f'<tr><td>{label}</td><td class="num">{scopes[key]["allocation_attempts"]:,}</td>'
+                              f'<td class="num">{scopes[key]["core_hours"]:,.2f}</td><td class="num">{scopes[key]["gpu_hours"]:,.2f}</td></tr>'
+            for key, label in (("sweep_cpu_lane", "Sweep CPU jobs"), ("sweep_gpu_lane", "Sweep GPU jobs (including host CPUs)"),
+                               ("outside_sweep_ledger", "Other jobs by this user"), ("all_user_jobs", "All user jobs (total)")))
+        largest = sorted(report["allocations"], key=lambda row: row["core_hours"], reverse=True)[:12]
+        job_rows = "".join(f'<tr><td><code>{e(row["job_id"])}</code></td><td>{e(row["name"])}</td><td class="num">{row["cpus"]}</td>'
+            f'<td class="num">{row["elapsed_seconds"]/3600:.2f}</td><td class="num">{row["core_hours"]:,.2f}</td></tr>' for row in largest)
+        missing = f'<p>{len(report["missing_ledger_jobs"])} sweep ledger job IDs are absent from this accounting query; totals may omit older or unavailable records.</p>' if report["missing_ledger_jobs"] else ''
+        measured = f'''<p>Slurm allocation records fetched {e(q['fetched_at'])}; query starts {e(q['since'])}.
+These totals include the full recorded duration of jobs overlapping the query window, including failed jobs and distinct requeue attempts.
+They are not lifetime totals or measured busy CPU time. Job steps are excluded to avoid counting the same allocation twice.</p>
+<div class="table-scroll"><table class="metrics-table sweep-text"><thead><tr><th>Scope</th><th>Attempts</th><th>Allocated core-hours</th><th>GPU-hours</th></tr></thead><tbody>{actual_rows}</tbody></table></div>{missing}
+<p><a href="media/accounting/allocations.csv">Every allocation and CPU count (CSV)</a> · <a href="media/accounting/summary.json">Accounting details (JSON)</a></p>
+<h3>Largest CPU allocations by core-hours</h3><div class="table-scroll"><table class="metrics-table sweep-text"><thead><tr><th>Job</th><th>Name</th><th>CPUs</th><th>Elapsed hours</th><th>Core-hours</th></tr></thead><tbody>{job_rows}</tbody></table></div>'''
+    else:
+        measured = '<p>A fresh allocation accounting report has not been fetched. The status tiles retain the dated sweep export; their totals are not current account-wide usage.</p>'
+    return f'''<article class="card" id="resource-accounting"><h2>CPU allocation and usage</h2>
+<p><strong>Core-hours = allocated CPU cores × elapsed hours.</strong> A job using 128 cores for 5 hours consumes 640 core-hours.
+GPU jobs also reserve host CPUs; those CPU-hours are separate from their GPU-hours. Fairshare RawUsage is a weighted, potentially decayed scheduling quantity and must not be treated as lifetime CPU-hours.</p>
+{measured}<h3>CPUs requested per sweep job</h3><table class="metrics-table sweep-text"><thead><tr><th>Code</th><th>CPU cores per job</th><th>Compute device</th></tr></thead><tbody>{request_rows}</tbody></table>
+<p>These requests come from the submission plan. CPU ranks each request one core. Runs packed into one job execute sequentially using that job's allocation;
+the per-allocation CSV gives the actual Slurm CPU count. A 512³ CPU run generally uses 128 cores, while a 256³ CPU run uses 64.</p>
+<p>Sherlock has no per-core-hour usage charge or cumulative shared-compute quota; queue priority and resource limits still apply.
+See <a href="https://www.sherlock.stanford.edu/docs/#how-much-does-it-cost">Sherlock's cost policy</a> and
+<a href="https://slurm.schedmd.com/sacct.html">Slurm accounting definitions</a>. The estimates below describe computing effort, not a dollar bill.</p></article>'''
 
 
 def combine(rows):
@@ -320,10 +360,13 @@ def build():
         bad = sweep_data.Sweep().nonfinite_parts()
         sweep_status.mark_nonfinite(status, bad, {name: float(c["t_end"]) for name, c in configs.items()})
     sv = status_html(status, configs, families, family_of) if status else None
+    accounting = sweep_accounting.summarize()
+    if accounting:sweep_accounting.write(accounting)
     data = dict(built=datetime.now().astimezone().isoformat(timespec="minutes"), totals=tot, longest=longest,
                 status=dict(time=status["time"], source=status["source"], file=status["file"], by_method=sv["tally"], total=sv["total"],
                             ambiguous=status["ambiguous"], lanes=status["lanes"]) if status else None,
                 longest_unit=longest_unit, stages=stages, project_bytes=size,
+                accounting=dict(query=accounting['query'],scopes=accounting['scopes'],missing_ledger_jobs=accounting['missing_ledger_jobs']) if accounting else None,
                 jobs=[dict(key=j["key"], family=j["family"], runs=[r["key"] for r in j["runs"]], sbatch=j["sbatch"],
                            wall_central=j["wall_central"], resource=j["resource"]) for j in jobs],
                 runs=[{k: u[k] for k in ("key", "dir", "test", "code", "variant", "mode", "n", "seed", "geometry", "extra",
@@ -403,8 +446,13 @@ def build():
         stage1 = "Complete" if left == 0 else f"Running: {tt['finished']:,} of {tt['planned']:,} finished"
         plan_open = ""
         lanes = status["lanes"];g, c = lanes.get("gpu"), lanes.get("cpu")
-        hours = (f'<div class="tile"><span class="control-label">Used so far</span><strong>{g["used"]:,}</strong><span>GPU-hours · {c["used"]/1000:.1f}k core-hours</span>'
+        hours = (f'<div class="tile"><span class="control-label">Sweep usage at status export</span><strong>{g["used"]:,}</strong><span>GPU-hours · {c["used"]/1000:.1f}k core-hours</span>'
                  f'<small>of ~{g["estimate"]:,} and ~{c["estimate"]/1000:.0f}k estimated · jobs submitted: {g["submitted"]}/{g["total"]} GPU, {c["submitted"]}/{c["total"]} CPU</small></div>') if g and c else ""
+        if accounting:
+            scopes = accounting['scopes']
+            hours = (f'<div class="tile"><span class="control-label">Verified sweep allocations</span><strong>{scopes["sweep_gpu_lane"]["gpu_hours"]:,.1f}</strong>'
+                     f'<span>GPU-hours · {scopes["sweep_cpu_lane"]["core_hours"]:,.0f} CPU-lane core-hours</span>'
+                     '<small><a href="#resource-accounting">Accounting date, all-user totals and CPU counts ↓</a></small></div>')
         exact = status["source"] == "export"
         source = ("an export of every run's records from Sherlock" if exact else "the run summary printed on Sherlock (<code>tools/sweep.py runs</code>)")
         hidden = sum(a["unfinished"] for a in status["ambiguous"])
@@ -455,6 +503,7 @@ the GEM challenge and Gardiner &amp; Stone (2005, 2008), then extends each to al
 <div class="chips"><span class="chip">{tot["runs"]:,} runs in {tot["jobs"]} Slurm jobs</span><span class="chip">6 GPU-driver methods</span>
 <span class="chip">3 external codes × 2 setups</span><span class="chip">32–512 per side</span><span class="chip">Sherlock owners · H100 SXM5</span>
 <span class="chip">checkpoint / resume in every code</span></div>
+{accounting_html(accounting, jobs)}
 {status_block}
 <section class="sweep-tiles">
 <div class="tile"><span class="control-label">GPU · stage 1</span><strong>{fmt(tot["gpu"]["central"])}</strong><span>GPU-hours</span>
@@ -552,7 +601,7 @@ def nav_html(tests, current):
 def render(main_html, tests):
     return f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light"><meta name="description" content="The comprehensive GLM/CT/AthenaK/RAMSES/Athena++ sweep: grid, cost and schedule.">
+<meta name="robots" content="noindex, nofollow"><meta name="color-scheme" content="light"><meta name="description" content="The comprehensive GLM/CT/AthenaK/RAMSES/Athena++ sweep: grid, cost and schedule.">
 <title>Sweep · MHD Field Notes</title><link rel="stylesheet" href="style.css"></head>
 <body data-test="sweep-plan"><a class="skip-link" href="#main">Skip to the sweep</a>
 <header class="masthead"><a class="brand" href="index.html"><span class="brand-mark">∿</span><span>MHD <strong>FIELD NOTES</strong></span></a><div class="masthead-meta"><span class="live-dot"></span>LOCAL RESEARCH NOTEBOOK <span class="separator">/</span> SWEEP · SHERLOCK</div></header>
@@ -575,7 +624,7 @@ def main():
     link = f'<a href="{PAGE["page"]}"><span>{PAGE["number"]}</span>{PAGE["nav"]}</a>'
     for t in tests:
         path = SITE/t["page"]
-        if t["id"] == PAGE["id"] or not path.is_file():continue
+        if t["id"] == PAGE["id"] or path.name == "notes.html" or not path.is_file():continue
         text = path.read_text()
         if PAGE["page"] not in text and '</nav>' in text:text = text.replace("</nav>", link + "</nav>", 1)
         # the link's label follows PAGE["nav"]

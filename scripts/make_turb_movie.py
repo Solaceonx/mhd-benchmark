@@ -28,14 +28,15 @@ FLOOR = 1.0e-6
 
 def density(path, n):
     values = np.fromfile(path, dtype="<f4")
-    if values.size != n*n or not np.isfinite(values).all() or np.any(values <= 0):
-        raise ValueError(f"{path}: expected {n*n} finite, positive density values")
+    if values.size != n*n or not np.isfinite(values).all():
+        raise ValueError(f"{path}: expected {n*n} finite density values")
     return np.log10(np.maximum(values.reshape((n, n), order="F").T, FLOOR))
 
 
-def load_runs(data, machs):
+def load_runs(data, machs, compare=False):
     runs = []
-    for directory in sorted(data.glob("gpu-hydro-M*-N256-s1")):
+    directories = list(data.glob("gpu-*-M*-N256-s1")) + list(data.glob("ramsesfix-*-M*-N256-s1")) if compare else list(data.glob("gpu-hydro-M*-N256-s1"))
+    for directory in sorted(directories):
         meta_path = directory / "run.toml"
         if not meta_path.is_file():
             continue
@@ -53,16 +54,18 @@ def load_runs(data, machs):
         expected = [directory / f"rho_{i:04d}.bin" for i in range(count)]
         if files != expected or meta.get("movie_frames") != count:
             raise ValueError(f"{directory}: need {count} consecutive frames and matching metadata; found {len(files)}")
+        nonpositive = 0
         for path in files:
             density(path, int(meta["N"]))
+            nonpositive += int(np.count_nonzero(np.fromfile(path, dtype="<f4") <= 0))
         sample = np.concatenate([density(path, int(meta["N"])).ravel()
                                  for path in files[count//5::max(1, count//12)]])
-        runs.append(dict(mach=mach, meta=meta, files=files,
+        runs.append(dict(mach=mach, meta=meta, files=files, nonpositive=nonpositive,
                          limits=np.percentile(sample, [0.3, 99.95])))
     runs.sort(key=lambda run: run["mach"])
     if not runs:
         raise ValueError(f"No dense movie runs in {data}; fetch them first (sherlock_turb/README.md, Movie)")
-    if machs and set(machs) != {run["mach"] for run in runs}:
+    if not compare and machs and set(machs) != {run["mach"] for run in runs}:
         missing = sorted(set(machs)-{run["mach"] for run in runs})
         raise ValueError(f"Missing requested Mach numbers: {missing}")
     cadence = {(len(run["files"]), run["meta"]["movie_per_T"]) for run in runs}
@@ -71,31 +74,42 @@ def load_runs(data, machs):
     return runs
 
 
-def render(runs, out, fps):
+def render(runs, out, fps, compare=False):
     import imageio_ffmpeg
     single = len(runs) == 1
-    width, height = (1440, 1600) if single else (768*len(runs), 896)
-    apply_movie_style(22 if single else 13)
+    width, height = (2048, 2304) if compare else (1440, 1600) if single else (768*len(runs), 896)
+    apply_movie_style(18 if compare else 22 if single else 13)
     fig = plt.figure(figsize=(width/100, height/100), dpi=100)
     images, clocks = [], []
     for index, run in enumerate(runs):
-        left = (index + .045)/len(runs)
-        panel_width = .91/len(runs)
+        columns = 2 if compare else len(runs)
+        left = ((index % 2 if compare else index) + .045)/columns
+        panel_width = .91/columns
         panel_height = panel_width*width/height
-        ax = fig.add_axes([left, .13, panel_width, panel_height])
-        lo, hi = run["limits"]
+        bottom = (.55 if index < 2 else .08) if compare else .13
+        ax = fig.add_axes([left, bottom, panel_width, panel_height])
+        lo, hi = (min(r['limits'][0] for r in runs), max(r['limits'][1] for r in runs)) if compare else run["limits"]
         images.append(ax.imshow(density(run["files"][0], run["meta"]["N"]),
                                 origin="lower", cmap=family_map("Turbulence", "density"),
                                 vmin=lo, vmax=hi, interpolation="bilinear"))
-        ax.set_title(f"Mach {run['mach']} Turbulence", pad=16 if single else 10)
+        names = {'gpu-hydro':'Abel et al. Euler / HLL','gpu-glm':'Abel et al. MHD / LLF',
+                 'ramsesfix-matched':'RAMSES / HLL','ramsesfix-best':'RAMSES / HLLC'}
+        prefix = run['files'][0].parent.name.split('-M')[0]
+        ax.set_title(names[prefix] if compare else f"Mach {run['mach']} Turbulence", pad=16 if single else 10)
         ax.set_xticks([]); ax.set_yticks([]); ax.grid(False)
         label_style = dict(color="white", transform=ax.transAxes, va="top",
                            bbox=dict(facecolor="#10222a", alpha=.72, edgecolor="none", pad=5))
         ax.text(.025, .975, r"Density $\rho$", **label_style)
         clocks.append(ax.text(.975, .975, "", ha="right", **label_style))
-        cax = fig.add_axes([left+.12*panel_width, .065, .76*panel_width, .015])
-        bar = fig.colorbar(images[-1], cax=cax, orientation="horizontal")
-        bar.set_label(r"$\log_{10}(\rho/\rho_0)$", labelpad=5)
+        if not compare:
+            cax = fig.add_axes([left+.12*panel_width, .065, .76*panel_width, .015])
+            bar = fig.colorbar(images[-1], cax=cax, orientation="horizontal")
+            bar.set_label(r"$\log_{10}(\rho/\rho_0)$", labelpad=5)
+    if compare:
+        fig.suptitle(f"Mach {runs[0]['mach']} Turbulence", y=.995)
+        cax = fig.add_axes([.2,.035,.6,.008])
+        bar = fig.colorbar(images[-1],cax=cax,orientation="horizontal")
+        bar.set_label(r"$\log_{10}(\rho/\rho_0)$",labelpad=5)
     out.parent.mkdir(parents=True, exist_ok=True)
     temp = out.with_name(out.stem+".partial.mp4")
     writer = imageio_ffmpeg.write_frames(str(temp), (width, height), fps=fps,
@@ -126,11 +140,15 @@ def render(runs, out, fps):
     description = dict(width=width, height=height, fps=fps, snapshots=count,
         encoded_frames=count+2*(fps-1), snapshots_per_T=per,
         nominal_end_T=(count-1)/per, time_label="nominal; output may be less than one solver step late",
-        density_floor=FLOOR, temporal_interpolation=False,
+        density_floor=FLOOR, temporal_interpolation=False, comparison=compare,
+        common_colour_scale=compare,
         runs=[dict(source=run["files"][0].parent.name, mach=run["mach"], N=run["meta"]["N"],
                    seed=run["meta"]["seed"], solver=run["meta"]["solver"],
                    vendor_sha256=run["meta"].get("vendor_sha256"),
-                   log10_density_limits=run["limits"].tolist()) for run in runs])
+                   executable_sha256=run['meta'].get('executable_sha256'),
+                   forcing_sha256=run['meta'].get('forcing_sha256'), gamma=run['meta']['gamma'],
+                   nonpositive_values_in_saved_midplanes=run['nonpositive'],
+                   log10_density_limits=([min(r['limits'][0] for r in runs),max(r['limits'][1] for r in runs)] if compare else run["limits"].tolist())) for run in runs])
     out.with_suffix(".json").write_text(json.dumps(description, indent=2)+"\n")
     print(f"Wrote {out}: {count} snapshots, {width} × {height}, {fps} fps", flush=True)
 
@@ -141,13 +159,31 @@ def main(argv=None):
     parser.add_argument("out", nargs="?", type=Path, default=OUT)
     parser.add_argument("--mach", nargs="+", type=int)
     parser.add_argument("--fps", type=int, default=20)
+    parser.add_argument("--compare", action="store_true", help="Render a 2 × 2 code comparison per Mach number")
+    parser.add_argument("--extra-data", type=Path, default=ROOT/'turb_compare_movie')
     args = parser.parse_args(argv)
     if args.fps < 1:
         parser.error("--fps must be positive")
     try:
-        runs = load_runs(args.data, args.mach)
+        runs = load_runs(args.data, args.mach, compare=args.compare)
+        if args.compare:
+            runs += load_runs(args.extra_data, args.mach, compare=True)
     except ValueError as error:
         parser.exit(1, f"{error}\n")
+    if args.compare:
+        prefixes = ['gpu-hydro','gpu-glm','ramsesfix-matched','ramsesfix-best']
+        for mach in args.mach or sorted({run['mach'] for run in runs}):
+            selected = [run for run in runs if run['mach'] == mach]
+            by_name = {run['files'][0].parent.name.split('-M')[0]:run for run in selected}
+            if set(by_name) != set(prefixes) or len(selected) != 4:
+                parser.exit(1, f'Mach {mach}: need exactly one movie for each of {prefixes}; found {list(by_name)}\n')
+            selected = [by_name[key] for key in prefixes]
+            signatures = {(len(run['files']),run['meta']['movie_per_T'],run['meta']['N'],run['meta']['seed']) for run in selected}
+            gamma = [float(run['meta']['gamma']) for run in selected]
+            if len(signatures) != 1 or max(gamma)-min(gamma) > 1e-10:
+                parser.exit(1, f'Mach {mach}: inconsistent movie cadence, grid, seed or gas model\n')
+            render(selected,args.out.parent/f'driven_M{mach}-comparison.mp4',args.fps,compare=True)
+        return
     for run in runs:
         render([run], args.out.parent/f"driven_M{run['mach']}-density.mp4", args.fps)
     if len(runs) > 1:

@@ -166,6 +166,25 @@ the field updated with central differences of it) keeps everything else of the k
 The cost is in the kernel layout: the update needs the fluxes one face further out, so a tile needs one more layer
 of halo. That was not measured.
 
+## The fix branch (`fix_branch.jl`, `kernel_cpu.jl`)
+
+Tom asked for these fixes on a branch (`sweep-fixes` of `GLMMHDTurb/`, see `sherlock_fixes/README.md`). `kernel_cpu.jl`
+runs a solver file's GPU kernels on the CPU **as written**: it loads the file with `using CUDA` replaced by a stand-in
+whose `@cuda` loops over the blocks and runs a tiled kernel with one thread per block (each stage is a strided loop,
+so that thread does every work item and `sync_threads` has nothing to wait for). `fix_branch.jl` (3 min,
+`julia -t 4 --project=../../sherlock_sweep/env fix_branch.jl`) then checks:
+
+- with its fixes off, the branch is the original bit for bit (every kernel the sweep used; HLLD with the old guard put
+  back, since the new guard already moves a smooth 3D state by 2e-7);
+- each fix, in 3D on z-invariant data, agrees with this folder's planar emulation of it step by step (1e-7; with
+  Float16 storage, less than the Float16 rounding itself), so the tables above hold for the branch;
+- mass is conserved across tile edges with anchored storage; cell-centred CT keeps the corner divergence of B at
+  3e-7 of |B| on a 3D state (GLM: 1.8e-3); the B = 100/√4π blast (32³) runs to the end with anchored storage and the
+  CFL-step c_h, and stops after 17 steps without (with or without the c_h fix).
+
+The branch stores fluxes as dt/dx·F split into a Float16 head and tail (22 bits), not as differences from an anchor
+flux as the emulation's `:a16` does; `fst = :f32` is the emulation of that.
+
 ## Not examined
 
 - Why the PPM kernel stops on more runs than PLM at 512 (field loops, Kelvin–Helmholtz, Orszag–Tang).

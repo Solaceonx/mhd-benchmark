@@ -44,7 +44,27 @@ const CT_BY_GAMMA=Dict(CTMHD.GAMMA=>CTMHD,CTMHD_gamma7_5.GAMMA=>CTMHD_gamma7_5,C
 #   glm_hll32    the production kernel with a Float32 tile: HLL, TB=6 when N%6==0, else TB=4
 #   glm_ppm32    the PPM kernel with a Float32 tile
 #   glm_hlld_x   glm_hlld's own triple called through plm_unlisted!: must reproduce glm_hlld bit for bit
-const METHODS=("glm","glm_hll16","glm_hlld","glm_ppm","glm_constch","ct","glm_hll32","glm_ppm32","glm_hlld_x")
+# The sweep-fixes branch of the kernels (sherlock_fixes/; vendor/ must hold that branch, FIXES below). Each passes the
+# CFL step for c_h (dt_cfl), so a step shortened to land on an output keeps its CFL step's c_h:
+#   glm_fix        glm (step_tiled!, LLF)
+#   glm_fix_hll16  glm_hll16 with anchored Float16 storage
+#   glm_fix_hlld   glm_hlld with the HLLD degenerate-state guard relative to the star pressure
+#   glm_fix_ppm    glm_ppm with anchored Float16 storage
+#   glm_fct16      glm_fix_hll16 with cell-centred constrained transport in place of GLM cleaning (no psi, no c_h)
+#   glm_fct32      the production kernel with a Float32 tile and cell-centred constrained transport
+#   ct_fix         the CT prototype with the full limited slope and the predictor in all three directions
+# With the branch as vendor/, glm_hll16, glm_ppm and glm_constch pass anchored=false and are the original kernels bit
+# for bit; glm_hlld, glm_hlld_x and ct are not available (the branch changed what they run).
+const METHODS=("glm","glm_hll16","glm_hlld","glm_ppm","glm_constch","ct","glm_hll32","glm_ppm32","glm_hlld_x",
+               "glm_fix","glm_fix_hll16","glm_fix_hlld","glm_fix_ppm","glm_fct16","glm_fct32","ct_fix")
+const FIX_METHODS=(:glm_fix,:glm_fix_hll16,:glm_fix_hlld,:glm_fix_ppm,:glm_fct16,:glm_fct32,:ct_fix)
+const FIXES=isdefined(G,:fct_scratch)       # vendor/ is the sweep-fixes branch
+"Keywords that keep step_plm! the original kernel on the sweep-fixes branch (none with the original vendor/)."
+const ORIGINAL_STORAGE=FIXES ? (;anchored=false) : (;)
+function check_vendor(m::Symbol)
+    m in FIX_METHODS && !FIXES && error("$m needs the sweep-fixes branch of the kernels in vendor/")
+    m in (:glm_hlld,:glm_hlld_x,:ct) && FIXES && error("$m is the original kernel, which the sweep-fixes branch in vendor/ changed")
+end
 # Core study: the original tiled GLM path versus the CT prototype. Additional
 # GLM kernels remain available through an explicit `methods` list.
 const DEFAULT_METHODS=["glm","ct"]
@@ -58,7 +78,14 @@ const SOLVER_TEXT=Dict(
     :ct=>"original CTMHD.step!, 7 kernels, transverse-free Hancock, HLL, arithmetic edge EMF",
     :glm_hll32=>"original integrator_plm! with a Float32 shared tile (a triple step_plm! does not list), MonCen PLM, Hancock, HLL, c_h proportional to 1/dt",
     :glm_ppm32=>"original integrator_plm_ppm! with a Float32 shared tile (a triple step_plm! does not list), lean parabolic PPM, HLL, c_h proportional to 1/dt",
-    :glm_hlld_x=>"original integrator_plm!, Float32 tile TB=4, HLLD, launched by the driver as glm_hll32 is (control for that launch)")
+    :glm_hlld_x=>"original integrator_plm!, Float32 tile TB=4, HLLD, launched by the driver as glm_hll32 is (control for that launch)",
+    :glm_fix=>"sweep-fixes step_tiled!, Float32 tile TB=4, LLF, c_h from the CFL step",
+    :glm_fix_hll16=>"sweep-fixes step_plm!: anchored f16 tile (differences from tile anchors, fluxes dt/dx*F as head+tail), HLL, c_h from the CFL step",
+    :glm_fix_hlld=>"sweep-fixes step_plm!: Float32 tile TB=4, HLLD with the guard |denK| < 1e-4 p_tot*, c_h from the CFL step",
+    :glm_fix_ppm=>"sweep-fixes step_plm! recon=:ppm: lean PPM, anchored f16 tile, HLL, c_h from the CFL step",
+    :glm_fct16=>"sweep-fixes step_plm!: anchored f16 tile, HLL, cell-centred constrained transport (flux-CT, Toth 2000) in place of GLM",
+    :glm_fct32=>"sweep-fixes step_plm!: Float32 tile, HLL, cell-centred constrained transport (flux-CT, Toth 2000) in place of GLM",
+    :ct_fix=>"sweep-fixes CTMHD.step!: full MonCen slope, MUSCL-Hancock predictor in all directions, HLL, arithmetic edge EMF")
 function ct_module(gamma)
     haskey(CT_BY_GAMMA,Float32(gamma)) || error("CT adapter supports gamma in $(sort(collect(keys(CT_BY_GAMMA)))); got $gamma")
     CT_BY_GAMMA[Float32(gamma)]
@@ -83,9 +110,10 @@ end
 
 function allocate(method,h,b,gamma)
     n=size(h,1);empty3=CUDA.zeros(Float32,1,1,1);empty4=CUDA.zeros(Float32,1,1,1,1);C=ct_module(gamma)
+    check_vendor(method)
     if is_glm(method)
         u=CuArray(h)
-        DeviceState(method,C,0f0,u,similar(u),(empty3,empty3,empty3),(),
+        DeviceState(method,C,0f0,u,similar(u),(empty3,empty3,empty3),method in (:glm_fct16,:glm_fct32) ? (G.fct_scratch(n),) : (),
             CUDA.zeros(Float32,n,n,n),empty4)
     else
         DeviceState(method,C,0f0,CuArray(h[:,:,:,1:5]),empty4,Tuple(CuArray.(b)),C.scratch(n),
@@ -101,7 +129,7 @@ function reset!(s,h,b)
     CUDA.synchronize()
 end
 function centers!(s,n)
-    s.method===:ct && @cuda(threads=256,blocks=cld(n^3,256), s.ct.bcc_kernel!(s.scratch[1:3]...,s.faces...,n))
+    is_glm(s.method) || @cuda(threads=256,blocks=cld(n^3,256), s.ct.bcc_kernel!(s.scratch[1:3]...,s.faces...,n))
 end
 
 # Unfloored state validity and a common physical signal-speed rule. This adapter
@@ -128,8 +156,8 @@ function signals_kernel!(out,u,bx,by,bz,isct,n,gamma,pfloor)
 end
 function timestep(s,p,pfloor)
     n=p.N;centers!(s,n)
-    b=s.method===:ct ? s.scratch[1:3] : (s.signals,s.signals,s.signals)
-    @cuda threads=256 blocks=cld(n^3,256) signals_kernel!(s.signals,s.u,b...,s.method===:ct,n,p.gamma,pfloor)
+    b=is_glm(s.method) ? (s.signals,s.signals,s.signals) : s.scratch[1:3]
+    @cuda threads=256 blocks=cld(n^3,256) signals_kernel!(s.signals,s.u,b...,!is_glm(s.method),n,p.gamma,pfloor)
     vmax=maximum(s.signals);CUDA.synchronize()
     isfinite(vmax) && vmax>0 || error("Nonphysical/nonfinite state in CFL scan")
     # glm_constch: fix c_h at the variable scheme's t=0 value vmax/3, then cap dt at the same
@@ -153,20 +181,32 @@ function plm_unlisted!(uold,unew,afield,p,dt::Float32,t::Float32,tv::Val{TB},hv:
     (ppm ? G._plm_ppm_launch : G._plm_launch)(tv,hv,rv,192,nb,unew,uold,afield,p,pfl,dt,dx,ch,glm_fac,ramp,false)
     nothing
 end
-function advance!(s,p,dt,t)
+function advance!(s,p,dt,t;dt_cfl::Float32=dt)
     m=s.method
     if m===:glm
         G.step_tiled!(s.u,s.other,s.force,p,dt,Float32(t);use_hlld=false,do_turb=false,lean=false)
     elseif m===:glm_hll16
-        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=true,riemann=:hll)
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=true,riemann=:hll,ORIGINAL_STORAGE...)
     elseif m===:glm_hlld
         G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);tb=4,half=false,riemann=:hlld)
     elseif m===:glm_ppm
-        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=true,riemann=:hll,recon=:ppm)
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=true,riemann=:hll,recon=:ppm,ORIGINAL_STORAGE...)
     elseif m===:glm_constch
         # step_plm! sets c_h = courant*dx/(3dt)*scale; this scale makes c_h == ch0.
         pc=with_ch_scale(p,3f0*s.ch0*dt*p.N/p.courant)
-        G.step_plm!(s.u,s.other,s.force,pc,dt,Float32(t);half=true,riemann=:hll)
+        G.step_plm!(s.u,s.other,s.force,pc,dt,Float32(t);half=true,riemann=:hll,ORIGINAL_STORAGE...)
+    elseif m===:glm_fix
+        G.step_tiled!(s.u,s.other,s.force,p,dt,Float32(t);use_hlld=false,do_turb=false,lean=false,dt_cfl)
+    elseif m===:glm_fix_hll16
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=true,riemann=:hll,anchored=true,dt_cfl)
+    elseif m===:glm_fix_hlld
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);tb=4,half=false,riemann=:hlld,dt_cfl)
+    elseif m===:glm_fix_ppm
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=true,riemann=:hll,recon=:ppm,anchored=true,dt_cfl)
+    elseif m===:glm_fct16
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=true,riemann=:hll,anchored=true,fct=true,fs=s.scratch[1])
+    elseif m===:glm_fct32
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=false,riemann=:hll,anchored=false,fct=true,fs=s.scratch[1])
     elseif m===:glm_hll32 || m===:glm_ppm32
         tile=p.N%6==0 ? Val(6) : Val(4)      # as step_plm! chooses
         plm_unlisted!(s.u,s.other,s.force,p,dt,Float32(t),tile,Val(false),Val(:hll);ppm=m===:glm_ppm32)
@@ -314,7 +354,7 @@ function run_one(config,n,seed,method,rep,path)
         reference(t)=Problems.reference(problem,n,t,hplane;seed,mach,par=config,plane=planar)
         errfields(q)=planar ? map(x->x===nothing ? nothing : view(x,:,:,1:1),q) : q
         s=allocate(method,h,b,gamma);CUDA.synchronize()
-        arrs=is_glm(method) ? (s.u,s.other,s.signals,s.force) : (s.u,s.faces...,s.scratch...,s.signals)
+        arrs=is_glm(method) ? (s.u,s.other,s.signals,s.force,s.scratch...) : (s.u,s.faces...,s.scratch...,s.signals)
         meta["allocated_array_bytes"]=sum(sizeof,arrs)
         meta["memory_scope"]="allocated_array_bytes: explicit solver + adapter arrays. device_memory_*: device-wide used bytes (total - free, includes the CUDA context and pool) from CUDA.MemoryInfo, after warmup and peak over outputs"
         warm=time();dt=timestep(s,p,pfloor)
@@ -367,8 +407,8 @@ function run_one(config,n,seed,method,rep,path)
                     end
                     dt_step=dt;dt=Float32(min(dt,target-t));cfl_seconds+=(time_ns()-started)*1e-9
                     isfinite(dt) && dt>0 || error("Invalid timestep")
-                    pe=(ch_cfl && dt<dt_step && is_glm(s.method) && s.method!==:glm_constch) ? with_ch_scale(p,p.glm_ch_scale*dt/dt_step) : p
-                    started=time_ns();advance!(s,pe,dt,t);step_seconds+=(time_ns()-started)*1e-9
+                    pe=(ch_cfl && dt<dt_step && is_glm(s.method) && s.method!==:glm_constch && !(s.method in FIX_METHODS)) ? with_ch_scale(p,p.glm_ch_scale*dt/dt_step) : p
+                    started=time_ns();advance!(s,pe,dt,t;dt_cfl=dt_step);step_seconds+=(time_ns()-started)*1e-9
                     t+=Float64(dt);steps+=1
                     if rep==1 && jump!==nothing && jumped>0 && dense_after<300
                         jumped>=jump[3] && (dense_after+=1)

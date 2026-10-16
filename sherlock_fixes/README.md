@@ -1,0 +1,83 @@
+# The sweep-fixes branch of Tom Abel's kernels, on Sherlock
+
+Tom asked for the problems the sweep found in his kernels to be fixed on a branch and tested. The branch is
+`sweep-fixes` of his repository (github.com/yipihey/GLMMHDTurb), made in the clone `GLMMHDTurb/` (not committed here:
+`prepare.sh` copies it into `vendor/`, git-ignored). Four commits on top of `15ce37d`:
+
+| Commit | Fix | Evidence before the GPU |
+|---|---|---|
+| HLLD guard | `abs(denK) < 1f-12` never triggers in Float32; now `abs(denK) < 1f-4*pts` (star total pressure) | CPU emulation: current sheet 32–128 and GEM 128 run to the end (they stopped after 6–17 steps and at t = 0.09) |
+| c_h from the CFL step | every `step_*` takes `dt_cfl`; a step shortened to land on an output keeps its CFL step's c_h | emulation: the inflated c_h killed runs right after an output |
+| CT prototype | full limited slope (`pslope` returned half), predictor with the fluxes of all three directions (`hanc3d`) | emulation: second order, ~90× less error at 128² |
+| Float16 tile, cell-centred CT | `anchored`: Float16 differences from tile anchors, fluxes as dt/dx·F in head + tail; `fct`: flux-CT (Tóth 2000) in place of GLM | emulation: entropy wave second order again (256²: 6.0e-5 against 2.4e-3); leak into the field-free vortex 3.2× the reference against 111× |
+
+The Courant number needs no code change (`sherlock_checks/` measures 0.4 and 0.7).
+
+## Tested before sending (on the Mac)
+
+- `scripts/solver_checks/fix_branch.jl` runs the branch's kernels on the CPU, as written, through
+  `scripts/solver_checks/kernel_cpu.jl` (a stand-in for CUDA's thread intrinsics):
+  - with every fix off, the branch reproduces the original kernels bit for bit (PLM f16 with both tiles, PPM, HLLD with
+    the old guard put back, `step_tiled!`, and the driver's own launch of a Float32 tile);
+  - each fix in 3D on z-invariant data agrees with the planar emulation the README of `scripts/solver_checks/` reports
+    (to 1e-7, or below the Float16 rounding itself where a value is stored in Float16), so those tables are the branch's;
+  - anchored storage conserves mass across tile edges; cell-centred CT keeps the corner divergence of B at 3e-7 of |B|
+    on a 3D state (GLM, same kernel: 1.8e-3); the B = 100/√4π blast at 32³ runs to the end with anchored storage and
+    stops after 17 steps with the original.
+- `julia --project=../sherlock_sweep/env test_gpu_compile.jl` compiles every new kernel for the NVIDIA target and checks
+  the configurations and the run list against the driver.
+- **Not tested:** anything on a GPU, and the speed. That is what this job is for.
+
+## What runs
+
+`python3 fixes.py plan ../progress/sweep_status/export_latest.json` lists it with the GPU time each run should take
+from the sweep's rates: 38 run directories, 189 runs, about 5 GPU hours. Every setting is the sweep's (Courant 0.25,
+one repeat), so each result sits beside the sweep's record of the original kernel. The driver's methods
+(`sherlock_sweep/src/run_suite.jl`):
+
+| Method | Kernel | Set beside |
+|---|---|---|
+| `glm_fix` | `step_tiled!` LLF, c_h from the CFL step | `glm` |
+| `glm_fix_hll16` | production kernel, anchored Float16 | `glm_hll16` |
+| `glm_fix_hlld` | Float32 tile, HLLD with the new guard | `glm_hlld` |
+| `glm_fix_ppm` | PPM, anchored Float16 | `glm_ppm` |
+| `glm_fct16` | production kernel, anchored Float16, cell-centred CT | `glm_hll16` |
+| `glm_fct32` | Float32 tile, HLL, cell-centred CT | `glm_hlld` |
+| `ct_fix` | CT prototype, full slope, predictor in all directions | `ct` |
+
+`glm`, `glm_hll16` and `glm_ppm` also run in the speed test in the same job: on the branch they are the original
+kernels bit for bit. With the branch in `vendor/`, `glm_hlld`, `glm_hlld_x` and `ct` refuse to run (the branch
+changed what they run).
+
+| Tests | Grids | For |
+|---|---|---|
+| `entropy`, `alfven` | 32–256 (entropy 512 for the two Float16 kernels) | convergence of the Float16 kernels and the CT prototype |
+| `blast_2d_b50`, `blast_2d_b100`, `blast_3d_b100` | 64–256 (3D: 64, 128) | Float16 range, c_h on shortened steps, HLLD |
+| `current_sheet`, `gem` | 64–256, 128–256 | the HLLD guard |
+| `decay_supersonic` | 64³–256³ | Mach 9 |
+| `kh_localized`, `field_loop` | 128–256, 64–256 | leakage; cell-centred CT |
+| `orszag_tang`, `orszag_tang_3d` | 128, 256 | nothing may get worse |
+| `throughput_ot3d` | 128³–512³ | speed, originals in the same job |
+
+## Run it
+
+On the Mac, in the project directory: put the branch into `vendor/`, compile-check, send (the driver source travels as
+`sherlock_fixes/src`, so the sweep's bundle on Sherlock is not touched):
+
+```bash
+bash sherlock_fixes/prepare.sh && (cd sherlock_fixes && julia --project=../sherlock_sweep/env test_gpu_compile.jl)
+```
+
+```bash
+COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf - -s ',^sherlock_sweep/src,sherlock_fixes/src,' sherlock_fixes sherlock_sweep/src | ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-study && tar -xzf - && bash -l sherlock_fixes/fix.sh'
+```
+
+On Sherlock, any time:
+
+```bash
+bash -l /scratch/users/lyxia/mhd-study/sherlock_fixes/status.sh
+```
+
+Results: `$SCRATCH/mhd-results-fixes/<test>-N<n>-s<seed>/data/<kernel>_r1/`, the sweep's format, and `summary.txt`
+(each fixed kernel beside the original). The job first runs a trial (Orszag–Tang to t = 0.05 on 32³ and 48³ with
+every new kernel); a kernel that fails it is left out and reported. Requeued, it keeps what is finished.

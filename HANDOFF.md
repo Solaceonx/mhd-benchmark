@@ -16,9 +16,10 @@ Read this first, then `README.md` and `docs/` (codes, tests, results, issues fou
 
 ## 2. Rules that must hold
 
-- **Tom Abel's solver source is never edited and is not in this repository** (public, no licence).
-  `bash scripts/fetch_solver.sh` restores it. To run his kernels differently, call them from our driver
-  (`sherlock_sweep/src/run_suite.jl`), as `plm_unlisted!` does.
+- **Tom Abel's solver source is not in this repository** (public, no licence). `bash scripts/fetch_solver.sh`
+  restores it. It is edited only on the branch `sweep-fixes` of the clone `GLMMHDTurb/`, which Tom asked for on
+  2026-10-15 (item "Fix branch" in section 4); `main` there and every `vendor/` copy of the original stay untouched,
+  and the branch reaches Sherlock only through `sherlock_fixes/prepare.sh` (into a git-ignored `vendor/`).
 - **The website pages are unlisted.** They live in the `mhd/` folder of the website repository
   (`Solaceonx/solaceonx.github.io`). Nothing on the home page or research page may link to them; every page carries
   `noindex`. Do not write their address into this repository's documents.
@@ -64,6 +65,16 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 `.venv-movie/bin/python` (`scripts/requirements-movie.txt`); Julia 1.12 with `--project=sherlock_sweep/env`.
 
 ## 4. In flight (as of this note)
+
+**Fix branch, 2026-10-15:** Tom asked lyxia and me to fix the seven problems on a branch and test it. Branch
+`sweep-fixes` in `GLMMHDTurb/` (4 commits on `15ce37d`: HLLD guard relative to the star pressure; `dt_cfl` so c_h
+comes from the CFL step; CT prototype full slope + predictor in all directions; `integrator_plm!`/`_ppm!` options
+`anchored` Float16 storage and `fct` cell-centred CT). Not pushed anywhere yet: ask lyxia where (Tom's repository or a
+fork). The clone's `Manifest.toml`/`Project.toml` changes are not ours: never commit them. CPU checks pass
+(`scripts/solver_checks/fix_branch.jl`, which runs the real kernels through `kernel_cpu.jl`); every new kernel
+compiles for the GPU (`sherlock_fixes/test_gpu_compile.jl`). The Sherlock job is `sherlock_fixes/` (README there:
+38 run directories, ~5 GPU h, methods `glm_fix*`, `glm_fct16/32`, `ct_fix` added to `run_suite.jl`); the send command
+was given to lyxia, not known if run. Results land in `$SCRATCH/mhd-results-fixes/summary.txt`.
 
 **Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
 plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,

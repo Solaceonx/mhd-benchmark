@@ -74,7 +74,13 @@ fork). The clone's `Manifest.toml`/`Project.toml` changes are not ours: never co
 (`scripts/solver_checks/fix_branch.jl`, which runs the real kernels through `kernel_cpu.jl`); every new kernel
 compiles for the GPU (`sherlock_fixes/test_gpu_compile.jl`). The Sherlock job is `sherlock_fixes/` (README there:
 38 run directories, ~5 GPU h, methods `glm_fix*`, `glm_fct16/32`, `ct_fix` added to `run_suite.jl`); the send command
-was given to lyxia, not known if run. Results land in `$SCRATCH/mhd-results-fixes/summary.txt`.
+ran as job 48083052 (2026-10-16). Confirmed on the GPU: anchored f16 = Float32 accuracy (entropy 2.37e-4 at 128²),
+blasts finish, CT prototype second order (97x), HLLD finishes current sheet 64/128 and GEM 128. Not fixed: Mach 9
+with any f16 kernel; current sheet 256 with HLLD (t = 1.125). Anchored f16 costs ~28% at 128³ (4-cell tile).
+A follow-up job (after 48083052 ends) runs glm_fct32 on the 4-cell tile and `throughput_f32` (Float32 tile beside
+the f16 kernels on one node). `sherlock_checks` finished: the Float32 4-cell tile is as accurate as anchored f16
+and faster than any f16 4-cell tile; Float32 6-cell tiles cannot launch; Courant 0.4 stops 3D runs at 256-512.
+Results land in `$SCRATCH/mhd-results-fixes/summary.txt`.
 
 **Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
 plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,

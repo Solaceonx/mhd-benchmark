@@ -56,7 +56,12 @@ MATRIX = [
     ("orszag_tang_3d", grid([128, 256]), FIX),
     # speed, with the originals in the same job
     ("throughput_ot3d", grid([128, 256, 384, 512]), SAME_JOB + FIX),
+    # the Float32 tile (sherlock_checks: as accurate as anchored Float16 and faster than any Float16 4-cell tile) beside
+    # the Float16 kernels on one node; at 384 the Float16 kernels use their 6-cell tile, which a Float32 tile cannot
+    ("throughput_f32", grid([128, 256, 512]), ["glm_hll32", "glm_hll16", "glm_fix_hll16", "glm_fct16"]),
+    ("throughput_f32", grid([384]), ["glm_hll16", "glm_fix_hll16", "glm_fct16"]),
 ]
+ALIAS = {"throughput_f32": "throughput_ot3d"}   # a second run directory set from the same sweep config
 
 
 def runs():
@@ -93,7 +98,7 @@ def write_configs():
         mine = [(cells, k) for t, cells, k in MATRIX if t == test]
         ns = sorted({n for cells, _ in mine for n, _ in cells});seeds = sorted({s for cells, _ in mine for _, s in cells})
         kernels = list(dict.fromkeys(k for _, ks in mine for k in ks))
-        text = (SOURCE/f"{test}.toml").read_text()
+        text = (SOURCE/f"{ALIAS.get(test, test)}.toml").read_text()
         text = setting(text, "grids", ns);text = setting(text, "seeds", seeds);text = setting(text, "methods", quoted(kernels))
         text = setting(text, "repeats", 1)
         if re.search(r"^repeats_by_grid *=", text, flags=re.M):text = setting(text, "repeats_by_grid", None)

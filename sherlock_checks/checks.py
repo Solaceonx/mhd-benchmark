@@ -142,13 +142,19 @@ def cmd_verdict(argv):
         print("   the Float32 production kernel did not run on a power-of-two grid: nothing to check");sys.exit(1)
 
 
-def measure(r):
+# The density where the wave is in the density; the field where the density is uniform (its error is rounding).
+METRIC = {"entropy": "density_relative_L1", "alfven": "magnetic_relative_L1"}
+
+
+def measure(r, test=""):
     """What the table shows of one run record."""
     if r is None:return None
     done = r.get("status") == "complete";err = None
     frames = r.get("frames") or []
     if frames and isinstance(frames[-1].get("errors"), dict):
-        e = frames[-1]["errors"];err = e.get("density_relative_L1") or e.get("magnetic_relative_L1") or None
+        e = frames[-1]["errors"]
+        for key in ([METRIC[test]] if test in METRIC else ["magnetic_relative_L1", "density_relative_L1"]):
+            if e.get(key) is not None:err = e[key];break
     return {"done": done, "t": r.get("time_reached"), "steps": r.get("steps"), "seconds": r.get("solve_seconds"),
             "rate": r.get("million_cell_steps_per_second"), "err": err}
 
@@ -156,7 +162,7 @@ def measure(r):
 def cell(m):
     if m is None:return f"{'':>30}"
     if not m["done"]:return f"{'stopped at t = %.4g' % (m['t'] or 0):>30}"
-    err = f"{m['err']:.2e}" if m["err"] else "       -"
+    err = f"{m['err']:.2e}" if m["err"] is not None else "       -"
     return f"{err:>9} {m['steps'] or 0:>7d} {m['seconds'] or 0:>8.1f}s {(m['rate'] or 0) / 1e3:>4.2f}"
 
 
@@ -165,13 +171,14 @@ def cmd_summary(argv):
     found = {}      # (test, n, seed, kernel, tag) -> measure
     for config, rundir, n, seed, kernels in runs():
         test, tag = Path(config).stem.rsplit("_", 1)
-        for k in kernels:found[(test, n, seed, k, tag)] = measure(record(results/rundir/"data"/f"{k}_r1"/"run.toml"))
+        for k in kernels:found[(test, n, seed, k, tag)] = measure(record(results/rundir/"data"/f"{k}_r1"/"run.toml"), test)
         if sweep:
             for k in BASELINE:
-                found.setdefault((test, n, seed, k, "c025"), measure(record(sweep/f"{test}-gpu-N{n}-s{seed}-all"/"data"/f"{k}_r1"/"run.toml")))
+                d = next((d for d in (f"{test}-gpu-N{n}-s{seed}-all", f"{test}-gpu-N{n}-s{seed}-{k}") if (sweep/d/"data"/f"{k}_r1"/"run.toml").is_file()), None)
+                found.setdefault((test, n, seed, k, "c025"), measure(record(sweep/d/"data"/f"{k}_r1"/"run.toml"), test) if d else None)
     have = sum(v is not None for key, v in found.items() if key[3] in NEW or key[4] != "c025")
     want = sum(len(k) for *_, k in runs())
-    print(f"{have} of {want} runs recorded. Columns per Courant number: error at the end (density, else magnetic, relative L1), steps,")
+    print(f"{have} of {want} runs recorded. Columns per Courant number: error at the end (relative L1: density for entropy, B for alfven), steps,")
     print("seconds in the solver, 10^9 cell updates per second. Courant 0.25 for glm, glm_hll16, glm_hlld, glm_ppm is the sweep's run.")
     for test in dict.fromkeys(t for t, *_ in MATRIX):
         print(f"\n{test}\n{'kernel':<11}{'N':>5}{'seed':>5} " + " ".join(f"{'Courant %.2f' % COURANT[c]:>34}" for c in COURANT))

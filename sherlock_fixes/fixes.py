@@ -8,8 +8,11 @@
     python3 fixes.py verdict RESULTS             judge the trial; writes RESULTS/trial_ok.txt; exit 1 if nothing ran
     python3 fixes.py summary RESULTS [SWEEP_RESULTS]         table of the runs, beside the sweep's original kernels
 """
+import array
 import csv
 import json
+import math
+import statistics
 import re
 import sys
 import tomllib
@@ -129,7 +132,7 @@ def cmd_runs(argv):
     ok = None
     if "--ok" in argv:ok = set(Path(argv[argv.index("--ok") + 1]).read_text().split())
     for config, rundir, n, seed, kernels in (trial_runs() if trial else runs()):
-        if ok is not None:kernels = [k for k in kernels if k in ok]
+        if ok is not None:kernels = [k for k in kernels if k not in TRIAL or k in ok]     # the trial judges only its own
         if kernels:print(config, results/rundir/"data", n, seed, ",".join(kernels))
 
 
@@ -157,41 +160,75 @@ def cmd_verdict(argv):
     if not [k for k in ok if k in FIX]:sys.exit(1)
 
 
-def measure(r):
+# What the error column shows: the density where the wave is in the density, the field where it is in the field (their
+# density is uniform and its error is rounding), and for kh_localized the field left in the field-free vortex.
+METRIC = {"entropy": "density_relative_L1", "alfven": "magnetic_relative_L1", "field_loop": "magnetic_relative_L1"}
+CORE = (0.0, 0.75, 0.06)        # centre and radius of the disc inside the upper vortex of kh_localized (paper_tomida.py)
+
+
+def core_median(path, n):
+    """Median |B| in the disc CORE of a planar state file (Float32, n x n x 1 x 9, column-major)."""
+    try:
+        a = array.array("f");a.frombytes(path.read_bytes())
+    except OSError:
+        return None
+    if len(a) != 9*n*n:return None
+    out = []
+    for j in range(n):
+        y = (j + .5)/n
+        for i in range(n):
+            x = (i + .5)/n;dx = min(abs(x - CORE[0]), 1 - abs(x - CORE[0]))
+            if dx*dx + (y - CORE[1])**2 < CORE[2]**2:
+                k = i + n*j;out.append(math.sqrt(a[k + 5*n*n]**2 + a[k + 6*n*n]**2 + a[k + 7*n*n]**2))
+    return statistics.median(out) if out else None
+
+
+def measure(r, test="", path=None, n=0):
     if r is None:return None
     done = r.get("status") == "complete";err = None
     frames = r.get("frames") or []
-    if frames and isinstance(frames[-1].get("errors"), dict):
-        e = frames[-1]["errors"];err = e.get("density_relative_L1") or e.get("magnetic_relative_L1") or None
+    if test == "kh_localized" and done and path is not None:
+        last = sorted(path.glob("state_*.bin"));err = core_median(last[-1], n) if last else None
+    elif frames and isinstance(frames[-1].get("errors"), dict):
+        e = frames[-1]["errors"]
+        for key in ([METRIC[test]] if test in METRIC else ["magnetic_relative_L1", "density_relative_L1"]):
+            if e.get(key) is not None:err = e[key];break
+    why = str(r.get("error") or "").strip().splitlines()
     return {"done": done, "t": r.get("time_reached"), "steps": r.get("steps"), "seconds": r.get("solve_seconds"),
-            "rate": r.get("million_cell_steps_per_second"), "err": err}
+            "rate": r.get("million_cell_steps_per_second"), "err": err, "why": why[0][:110] if why else ""}
 
 
 def cell(m):
     if m is None:return f"{'':>30}"
     if not m["done"]:return f"{'stopped at t = %.4g' % (m['t'] or 0):>30}"
-    err = f"{m['err']:.2e}" if m["err"] else "       -"
+    err = f"{m['err']:.2e}" if m["err"] is not None else "       -"
     return f"{err:>9} {m['steps'] or 0:>7d} {m['seconds'] or 0:>8.1f}s {(m['rate'] or 0) / 1e3:>4.2f}"
 
 
 def cmd_summary(argv):
     results = Path(argv[0]);sweep = Path(argv[1]) if len(argv) > 1 else None
     want = sum(len(k) for *_, k in runs());have = 0
-    print("Each fixed kernel beside the original it changes. Columns: error at the end (density, else magnetic, relative")
-    print("L1), steps, seconds in the solver, 10^9 cell updates per second. 'sweep' = the sweep's record of the original.")
+    print("Each fixed kernel beside the original it changes. Columns: error at the end (relative L1 of the density for")
+    print("entropy, of B for alfven and field_loop, else of B if recorded; kh_localized: median |B| in the field-free")
+    print("vortex, reference 4.1e-07), steps, seconds in the solver, 10^9 cell updates per second. 'sweep' = the sweep's")
+    print("record of the original. Under a stopped run: its error line.")
     for test in dict.fromkeys(t for t, *_ in MATRIX):
         print(f"\n{test}\n{'kernel':<14}{'N':>5}  {'fixed':>30}   {'original':<9}{'':>21}")
         for config, rundir, n, seed, kernels in runs():
             if Path(config).stem != test:continue
             for k in kernels:
-                m = measure(record(results/rundir/"data"/f"{k}_r1"/"run.toml"));have += m is not None
+                d = results/rundir/"data"/f"{k}_r1";m = measure(record(d/"run.toml"), test, d, n);have += m is not None
                 o = ORIGINAL.get(k);om = None;src = ""
-                if o and o in kernels:om = measure(record(results/rundir/"data"/f"{o}_r1"/"run.toml"));src = "same job"
+                if o and o in kernels:
+                    od = results/rundir/"data"/f"{o}_r1";om = measure(record(od/"run.toml"), test, od, n);src = "same job"
                 elif o and sweep:
                     found = [d for d in (f"{test}-gpu-N{n}-s{seed}-all", f"{test}-gpu-N{n}-s{seed}-{o}") if (sweep/d/"data"/f"{o}_r1"/"run.toml").is_file()]
-                    om = measure(record(sweep/found[0]/"data"/f"{o}_r1"/"run.toml")) if found else None;src = "sweep"
+                    od = sweep/found[0]/"data"/f"{o}_r1" if found else None
+                    om = measure(record(od/"run.toml"), test, od, n) if found else None;src = "sweep"
                 if m is None and om is None:continue
                 print(f"{k:<14}{n:>5}  {cell(m):>30}   {(o or '') + ' (' + src + ')' if o else '':<22} {cell(om) if o else ''}")
+                for who, x in (("fixed", m), ("original", om)):
+                    if x and not x["done"] and x["why"]:print(f"{'':<21}{who}: {x['why']}")
     print(f"\n{have} of {want} runs recorded.")
 
 

@@ -51,7 +51,7 @@ const CT_BY_GAMMA=Dict(CTMHD.GAMMA=>CTMHD,CTMHD_gamma7_5.GAMMA=>CTMHD_gamma7_5,C
 #   glm_fix_hlld   glm_hlld with the HLLD degenerate-state guard relative to the star pressure
 #   glm_fix_ppm    glm_ppm with anchored Float16 storage
 #   glm_fct16      glm_fix_hll16 with cell-centred constrained transport in place of GLM cleaning (no psi, no c_h)
-#   glm_fct32      the production kernel with a Float32 tile and cell-centred constrained transport
+#   glm_fct32      the production kernel with a Float32 4-cell tile and cell-centred constrained transport
 #   ct_fix         the CT prototype with the full limited slope and the predictor in all three directions
 # With the branch as vendor/, glm_hll16, glm_ppm and glm_constch pass anchored=false and are the original kernels bit
 # for bit; glm_hlld, glm_hlld_x and ct are not available (the branch changed what they run).
@@ -206,7 +206,8 @@ function advance!(s,p,dt,t;dt_cfl::Float32=dt)
     elseif m===:glm_fct16
         G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=true,riemann=:hll,anchored=true,fct=true,fs=s.scratch[1])
     elseif m===:glm_fct32
-        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);half=false,riemann=:hll,anchored=false,fct=true,fs=s.scratch[1])
+        # tile 4 always: a Float32 tile of 6 needs 90 KB of shared memory (the limit is 48 KB)
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);tb=4,half=false,riemann=:hll,anchored=false,fct=true,fs=s.scratch[1])
     elseif m===:glm_hll32 || m===:glm_ppm32
         tile=p.N%6==0 ? Val(6) : Val(4)      # as step_plm! chooses
         plm_unlisted!(s.u,s.other,s.force,p,dt,Float32(t),tile,Val(false),Val(:hll);ppm=m===:glm_ppm32)

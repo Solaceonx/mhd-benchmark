@@ -283,14 +283,15 @@
     if(videos.length>1){videos.forEach(v=>v.muted=true);transport=new SynchronizedVideos(videos);}
   }
 
-  // Notes belong to this browser; they never overwrite simulation records.
+  // These boxes kept notes in this browser only. Notes now live on the private notes page (saved to GitHub), which copies
+  // in whatever a box holds when it is next unlocked in this browser; a box that holds text stays visible, read-only.
   function initNotes(scope){
-    document.querySelectorAll('[data-note]').forEach(el=>{
-      const key=`mhd-notes:${scope}:${el.dataset.note}`,state=document.querySelector(`#note-state-${el.dataset.note}`);
-      el.dataset.key=key;
-      try{el.value=localStorage.getItem(key)||'';}catch{state.textContent='Browser storage unavailable; copy notes before closing.';}
-      if(el.dataset.bound)return;el.dataset.bound='1';
-      el.addEventListener('input',()=>{try{localStorage.setItem(el.dataset.key,el.value);state.textContent='Saved in this browser · not part of the measured results';}catch{state.textContent='Could not save notes; copy them before closing.';}});
+    document.querySelectorAll('textarea[data-note]').forEach(el=>{
+      const key=`mhd-notes:${scope}:${el.dataset.note}`,state=document.querySelector(`#note-state-${el.dataset.note}`),card=el.closest('.notes-card');
+      let text='';try{text=localStorage.getItem(key)||'';}catch{}
+      if(!text.trim()){if(card)card.remove();return;}
+      el.value=text;el.readOnly=true;
+      if(state)state.textContent='Kept in this browser only. Copied into your notes page the next time you unlock it there; new notes go there.';
     });
   }
   if(test.kind!=='gpu')initNotes(test.id);

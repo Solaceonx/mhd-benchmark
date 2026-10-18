@@ -66,6 +66,11 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**Notes storage, 2026-10-18:** the private notes page now saves its encrypted file to the private repository
+`Solaceonx/mhd-notes` (lyxia creates it and a token scoped to it; the page never needs a website token). It merges in
+the old copy from the public website repo's `notes` branch and the comparison pages' old note boxes on unlock. Live.
+Still for lyxia: create the repo + token and connect each browser; then delete the old public `notes` branch.
+
 **Fix branch, 2026-10-15:** Tom asked lyxia and me to fix the seven problems on a branch and test it. Branch
 `sweep-fixes` in `GLMMHDTurb/` (4 commits on `15ce37d`: HLLD guard relative to the star pressure; `dt_cfl` so c_h
 comes from the CFL step; CT prototype full slope + predictor in all directions; `integrator_plm!`/`_ppm!` options

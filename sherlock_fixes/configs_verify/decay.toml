@@ -1,0 +1,27 @@
+# sherlock_fixes: decay with the sweep-fixes kernels (fixes.py configs). Everything else as in the sweep's
+# config, which follows.
+# Not a FLASH problem; supersonic decay in the spirit of Kritsuk et al. (2011).
+# Sweep config written by tools/make_sweep_configs.py from sherlock_mhd/configs/decay.toml.
+name = "decay"
+seeds = [42, 43, 44]
+t_end = 0.5
+frames = 5
+mach = 2.0
+exact_reference = "none; 3D unforced MHD Mach 2"
+cfl = 0.25
+max_run_seconds = 172800
+glm_ch_scale = 1.0
+glm_cp_coef = 0.18
+grids = [64, 128, 256]
+methods = ["glm_fix", "glm_fix_hll16", "glm_fix_hlld", "glm_fix_ppm", "glm_fct16"]
+split_methods = true
+repeats = 1
+checkpoint_seconds = 900
+max_steps_per_n = 92
+restart_every = 1
+snapshot_frames = [0, 2, 4]
+slice_frames = [0, 1, 2, 3, 4]
+restrict_to = [64, 128]
+spectra_every = 1
+reference_n = 512
+reference_check_n = 256

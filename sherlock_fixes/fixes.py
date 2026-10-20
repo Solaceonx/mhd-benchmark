@@ -7,6 +7,10 @@
     python3 fixes.py runs RESULTS [--trial] [--ok FILE]      the driver's run list (CONFIG OUTDIR N SEED METHODS)
     python3 fixes.py verdict RESULTS             judge the trial; writes RESULTS/trial_ok.txt; exit 1 if nothing ran
     python3 fixes.py summary RESULTS [SWEEP_RESULTS]         table of the runs, beside the sweep's original kernels
+    python3 fixes.py --plan verify control RESULTS SWEEP_RESULTS   originals on the branch against the sweep, digit by digit
+
+--plan verify (default: fixes) selects the second set of runs, which checks the fixes rather than measuring them:
+configs in configs_verify/, job mhd-verify (verify.sh), results $SCRATCH/mhd-results-verify.
 """
 import array
 import csv
@@ -62,6 +66,37 @@ MATRIX = [
     ("throughput_f32", grid([384]), ["glm_hll16", "glm_fix_hll16", "glm_fct16"]),
 ]
 ALIAS = {"throughput_f32": "throughput_ot3d"}   # a second run directory set from the same sweep config
+CONFIG_DIR = "configs"
+
+# The checks of the fixes (job mhd-verify). Every setting is the sweep's; one repeat.
+SHOCK = FIX                                      # every fixed kernel on the shock tests
+VERIFY = [
+    # 1. with the fixes switched off the branch is Tom's code: diagnostics.csv equal to the sweep's, digit by digit
+    ("entropy", grid([128]), ["glm", "glm_hll16", "glm_ppm"]),
+    ("orszag_tang", grid([128]), ["glm", "glm_hll16", "glm_ppm"]),
+    # 2. the 6-cell tile (grids divisible by 6, the production default there): every convergence run so far was 4-cell
+    ("entropy", grid([48, 96, 192, 384]), ["glm_hll16", "glm_fix_hll16", "glm_fix_ppm", "glm_fct16"]),
+    ("alfven_oblique", grid([48, 96, 192, 384]), ["glm_hll16", "glm_fix_hll16", "glm_fix_ppm", "glm_fct16"]),
+    # 3. the CT predictor and cell-centred CT in 2D: a wave oblique to the grid, and the in-plane field loop
+    ("alfven_oblique", grid([32, 64, 128, 256]), ["ct_fix", "glm_fct16", "glm_fct32", "glm_fix_hll16", "glm_fix_ppm"]),
+    ("field_loop_novz", grid([64, 128, 256]), ["ct_fix", "glm_fct16", "glm_fct32", "glm_fix_hll16"]),
+    # 4. shocks: scored on the Mac against the AthenaK 4096^2 references (scripts/fix_accuracy.py)
+    ("brio_wu", grid([128, 256]), SHOCK),
+    ("brio_wu_rotated", grid([128, 256]), SHOCK),
+    ("rotor", grid([128, 256]), SHOCK),
+    # 5. robustness in 3D
+    ("blast_3d_b50", grid([64, 128]), F16 + ["glm_fix_hlld"]),
+    ("decay", grid([64, 128], seeds=(42, 43, 44)), ["glm_fix", "glm_fix_hll16", "glm_fix_hlld", "glm_fix_ppm", "glm_fct16"]),
+    ("decay", grid([256]), ["glm_fix", "glm_fix_hll16", "glm_fix_hlld", "glm_fix_ppm", "glm_fct16"]),
+]
+CONTROL = [(t, n, k) for t, cells, ks in VERIFY[:2] for n, _ in cells for k in ks]
+VTRIAL = FIX + ["glm", "glm_hll16", "glm_ppm"]
+
+
+def use_plan(name):
+    global MATRIX, TRIAL, CONFIG_DIR
+    if name == "verify":MATRIX, TRIAL, CONFIG_DIR = VERIFY, VTRIAL, "configs_verify"
+    elif name != "fixes":sys.exit(f"unknown plan {name}")
 
 
 def runs():
@@ -71,12 +106,12 @@ def runs():
         for n, seed in cells:
             key = (n, test, seed)
             if key in out:sys.exit(f"MATRIX names {test} N={n} seed {seed} twice")
-            out[key] = (f"configs/{test}.toml", f"{test}-N{n}-s{seed}", n, seed, list(kernels))
+            out[key] = (f"{CONFIG_DIR}/{test}.toml", f"{test}-N{n}-s{seed}", n, seed, list(kernels))
     return [out[k] for k in sorted(out)]
 
 
 def trial_runs():
-    return [("configs/trial.toml", f"trial-N{n}", n, 42, list(TRIAL)) for n in TRIAL_GRIDS]
+    return [(f"{CONFIG_DIR}/trial.toml", f"trial-N{n}", n, 42, list(TRIAL)) for n in TRIAL_GRIDS]
 
 
 def setting(text, key, value):
@@ -91,8 +126,8 @@ def quoted(ks):
 
 
 def write_configs():
-    (HERE/"configs").mkdir(exist_ok=True)
-    for old in (HERE/"configs").glob("*.toml"):old.unlink()
+    out = HERE/CONFIG_DIR;out.mkdir(exist_ok=True)
+    for old in out.glob("*.toml"):old.unlink()
     made = []
     for test in dict.fromkeys(t for t, _, _ in MATRIX):
         mine = [(cells, k) for t, cells, k in MATRIX if t == test]
@@ -103,13 +138,13 @@ def write_configs():
         text = setting(text, "repeats", 1)
         if re.search(r"^repeats_by_grid *=", text, flags=re.M):text = setting(text, "repeats_by_grid", None)
         text = f"# sherlock_fixes: {test} with the sweep-fixes kernels (fixes.py configs). Everything else as in the sweep's\n# config, which follows.\n" + text
-        (HERE/"configs"/f"{test}.toml").write_text(text);tomllib.loads(text);made.append(test)
+        (out/f"{test}.toml").write_text(text);tomllib.loads(text);made.append(test)
     text = (SOURCE/"orszag_tang.toml").read_text()
     for key, value in (("t_end", 0.05), ("frames", 3), ("grids", TRIAL_GRIDS), ("repeats", 1), ("repeats_by_grid", None),
                        ("snapshot_frames_by_grid", None), ("methods", quoted(TRIAL))):
         text = setting(text, key, value)
     text = "# sherlock_fixes: the trial (fixes.py configs). Orszag-Tang to t = 0.05 with every new kernel.\n" + text
-    (HERE/"configs"/"trial.toml").write_text(text);tomllib.loads(text)
+    (out/"trial.toml").write_text(text);tomllib.loads(text)
     print(f"wrote {len(made) + 1} configs: trial, " + ", ".join(made))
 
 
@@ -237,7 +272,32 @@ def cmd_summary(argv):
     print(f"\n{have} of {want} runs recorded.")
 
 
+def table_rows(path):
+    try:
+        with open(path, newline="") as f:return list(csv.reader(f))
+    except OSError:
+        return None
+
+
+def cmd_control(argv):
+    """Each original kernel run on the branch beside the sweep's run of it: every diagnostics.csv cell must agree."""
+    results, sweep = Path(argv[0]), Path(argv[1]);bad = 0
+    for test, n, k in CONTROL:
+        mine = results/f"{test}-N{n}-s42"/"data"/f"{k}_r1"/"diagnostics.csv"
+        theirs = next((p for p in (sweep/f"{test}-gpu-N{n}-s42-{x}"/"data"/f"{k}_r1"/"diagnostics.csv" for x in ("all", k)) if p.is_file()), None)
+        a, b = (table_rows(mine) if mine.is_file() else None), (table_rows(theirs) if theirs else None)
+        if not a or not b:print(f"  {test:<12} N={n:<4} {k:<10} not comparable yet ({'no run here' if not a else 'no sweep record'})");bad += 1;continue
+        cols = [c for c in a[0] if c in b[0]];ia = [a[0].index(c) for c in cols];ib = [b[0].index(c) for c in cols]
+        diff = [(i, c) for i, (ra, rb) in enumerate(zip(a[1:], b[1:]), 1) for c, x, y in zip(cols, [ra[j] for j in ia], [rb[j] for j in ib]) if x != y]
+        if len(a) != len(b):diff.append((min(len(a), len(b)), "number of rows"))
+        print(f"  {test:<12} N={n:<4} {k:<10} " + (f"IDENTICAL: {len(a) - 1} outputs x {len(cols)} columns" if not diff else
+              f"DIFFERS in {len(diff)} cells, first at output {diff[0][0]}, column {diff[0][1]}"));bad += bool(diff)
+    return bad
+
+
 def main(argv):
+    if "--plan" in argv:
+        i = argv.index("--plan");use_plan(argv[i + 1]);argv = argv[:i] + argv[i + 2:]
     if not argv:sys.exit(__doc__)
     command, rest = argv[0], argv[1:]
     if command == "configs":write_configs()
@@ -251,6 +311,7 @@ def main(argv):
     elif command == "runs" and rest:cmd_runs(rest)
     elif command == "verdict" and rest:cmd_verdict(rest)
     elif command == "summary" and rest:cmd_summary(rest)
+    elif command == "control" and len(rest) == 2:sys.exit(1 if cmd_control(rest) else 0)
     else:sys.exit(__doc__)
 
 

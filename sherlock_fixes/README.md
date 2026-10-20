@@ -81,3 +81,32 @@ bash -l /scratch/users/lyxia/mhd-study/sherlock_fixes/status.sh
 Results: `$SCRATCH/mhd-results-fixes/<test>-N<n>-s<seed>/data/<kernel>_r1/`, the sweep's format, and `summary.txt`
 (each fixed kernel beside the original). The job first runs a trial (Orszag–Tang to t = 0.05 on 32³ and 48³ with
 every new kernel); a kernel that fails it is left out and reported. Requeued, it keeps what is finished.
+
+## Checking the fixes (job `mhd-verify`, 2026-10-19)
+
+The runs above measure the fixes; these check that they are right. `python3 fixes.py --plan verify plan`: 32 run
+directories, 155 runs, about 3–4 GPU hours, results in `$SCRATCH/mhd-results-verify`.
+
+| Runs | Checks |
+|---|---|
+| `glm`, `glm_hll16`, `glm_ppm` on the branch: entropy and Orszag–Tang at 128 | with the fixes off the branch is Tom's code: `control.txt` compares every cell of `diagnostics.csv` with the sweep's run |
+| entropy, oblique Alfvén at 48, 96, 192, 384 | the 6-cell tile (grids divisible by 6); every convergence run before used the 4-cell tile |
+| oblique Alfvén 32–256, field loop without v_z 64–256: `ct_fix`, `glm_fct16/32` | the CT predictor and cell-centred CT on a wave oblique to the grid |
+| Brio–Wu, Brio–Wu at 45°, rotor at 128, 256: every fixed kernel | shocks are no worse: `scripts/fix_accuracy.py` scores them on the Mac against the AthenaK 4096² reference |
+| 3D blast with B = 50/√4π, decay from Mach 2 (3 seeds; 256³ one) | robustness in 3D |
+
+Driven turbulence is not rerun: the pilot uses `step_hydro!`, which the branch does not change.
+
+On the Mac, in the project directory (sends the plan; leaves `src/` and `vendor/` alone while a `mhd-fixes` job runs):
+
+```bash
+COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf - -s ',^sherlock_sweep/src,sherlock_fixes/src,' sherlock_fixes sherlock_sweep/src | ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-study && if squeue -h -u lyxia -n mhd-fixes | grep -q .; then tar -xzf - --exclude=sherlock_fixes/src --exclude=sherlock_fixes/vendor; else tar -xzf -; fi && bash -l sherlock_fixes/verify.sh'
+```
+
+On Sherlock: `bash -l /scratch/users/lyxia/mhd-study/sherlock_fixes/status.sh verify`.
+
+Fetch both result sets to the Mac (tables, records, last states of the planar shock, leak and field-loop runs), then score:
+
+```bash
+mkdir -p fix_results && ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'bash /scratch/users/lyxia/mhd-study/sherlock_fixes/tools/pack_for_mac.sh' | tar -xzf - -C fix_results && python3 scripts/fix_accuracy.py
+```

@@ -29,8 +29,10 @@ end
 failures=String[]
 report(name,why)=(println(isempty(why) ? "ok    " : "WRONG ",name,isempty(why) ? "" : "\n        "*why);isempty(why) || push!(failures,name))
 U4=CuDeviceArray{Float32,4,1};U3=CuDeviceArray{Float32,3,1};f32=Float32
+skip_ptx=get(ENV,"SKIP_PTX","")!=""          # SKIP_PTX=1: only the configurations and run lists (kernels unchanged)
+skip_ptx && println("skipping the PTX compilation (SKIP_PTX)")
 args(tb,half,riem,anc,fct)=Tuple{Val{tb},Val{half},Val{riem},U4,U4,U4,f32,f32,f32,f32,f32,f32,f32,f32,f32,f32,Int,f32,f32,f32,Bool,Val{anc},Val{fct},U4}
-for (f,tb,half,riem,anc,fct,used) in (
+skip_ptx || for (f,tb,half,riem,anc,fct,used) in (
         (G.integrator_plm!,6,true,:hll,false,false,"glm_hll16 (original storage)"),
         (G.integrator_plm!,4,true,:hll,false,false,"glm_hll16 on grids not divisible by 6"),
         (G.integrator_plm!,6,true,:hll,true,false,"glm_fix_hll16"),
@@ -45,17 +47,20 @@ for (f,tb,half,riem,anc,fct,used) in (
         (G.integrator_plm_ppm!,4,true,:hll,true,false,"glm_fix_ppm, 4-cell tile"))
     report("$(nameof(f)) tile $tb, $(half ? "Float16" : "Float32"), $riem, anchored=$anc, fct=$fct ($used)",ptx_check(f,args(tb,half,riem,anc,fct)))
 end
-report("fct_emf_kernel!",ptx_check(G.fct_emf_kernel!,Tuple{U4,Int}))
-report("fct_update_kernel!",ptx_check(G.fct_update_kernel!,Tuple{U4,U4,U4,f32,Int}))
-for C in unique(values(Suite.CT_BY_GAMMA))
+skip_ptx || report("fct_emf_kernel!",ptx_check(G.fct_emf_kernel!,Tuple{U4,Int}))
+skip_ptx || report("fct_update_kernel!",ptx_check(G.fct_update_kernel!,Tuple{U4,U4,U4,f32,Int}))
+skip_ptx || for C in unique(values(Suite.CT_BY_GAMMA))
     report("$(nameof(C)).flux_kernel! (ct_fix)",ptx_check(C.flux_kernel!,Tuple{U4,U4,U3,U3,U3,U3,Int,f32,Int}))
 end
 # every configuration passes the driver's own checks, and every planned run is one its configuration allows
-configs=sort(filter(endswith(".toml"),readdir(joinpath(@__DIR__,"configs");join=true)))
-for c in configs
-    try Suite.check_config(TOML.parsefile(c)) catch e;push!(failures,basename(c));println("WRONG ",basename(c),": ",sprint(showerror,e)) end
+configs=String[];plan=String[]
+for (dir,name) in (("configs","fixes"),("configs_verify","verify"))
+    mine=sort(filter(endswith(".toml"),readdir(joinpath(@__DIR__,dir);join=true)));append!(configs,mine)
+    for c in mine
+        try Suite.check_config(TOML.parsefile(c)) catch e;push!(failures,basename(c));println("WRONG ",dir,"/",basename(c),": ",sprint(showerror,e)) end
+    end
+    append!(plan,readlines(`python3 $(joinpath(@__DIR__,"fixes.py")) --plan $name runs /nowhere`));append!(plan,readlines(`python3 $(joinpath(@__DIR__,"fixes.py")) --plan $name runs /nowhere --trial`))
 end
-plan=readlines(`python3 $(joinpath(@__DIR__,"fixes.py")) runs /nowhere`);append!(plan,readlines(`python3 $(joinpath(@__DIR__,"fixes.py")) runs /nowhere --trial`))
 for l in plan
     c,out,n,seed,methods=split(l);config=TOML.parsefile(joinpath(@__DIR__,c))
     ok=parse(Int,n) in config["grids"] && parse(Int,seed) in config["seeds"] && all(m->m in Suite.METHODS && m in config["methods"],split(methods,","))
@@ -65,5 +70,5 @@ for m in Suite.FIX_METHODS
     try Suite.check_vendor(m) catch e;push!(failures,string(m));println("WRONG ",m,": ",sprint(showerror,e)) end
 end
 println("ok    $(length(configs)) configurations, $(length(plan)) run directories")
-println(isempty(failures) ? "ALL NEW KERNELS COMPILE FOR THE GPU; CONFIGURATIONS AND RUN LIST AGREE WITH THE DRIVER" : "FAILED: "*join(failures,"; "))
+println(isempty(failures) ? (skip_ptx ? "CONFIGURATIONS AND RUN LISTS AGREE WITH THE DRIVER (PTX not compiled)" : "ALL NEW KERNELS COMPILE FOR THE GPU; CONFIGURATIONS AND RUN LISTS AGREE WITH THE DRIVER") : "FAILED: "*join(failures,"; "))
 exit(isempty(failures) ? 0 : 1)

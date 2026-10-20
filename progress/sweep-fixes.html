@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light"><meta name="description" content="Each problem the comparison sweep found in Abel et al.'s GPU kernels, the fix on the branch sweep-fixes, and the GPU runs that show what is fixed.">
+<meta name="color-scheme" content="light"><meta name="description" content="Each problem the comparison sweep found in Abel et al.'s GPU kernels, the change the branch sweep-fixes makes to the original code, and the GPU runs that show what is fixed.">
 <title>Kernel fixes · MHD Field Notes</title><link rel="stylesheet" href="style.css">
 <!-- Numbers: the records of $SCRATCH/mhd-results-fixes and mhd-results-verify (fetched to fix_results/ on 2026-10-20 by
      sherlock_fixes/tools/pack_for_mac.sh), their summary.txt and control.txt, and scripts/fix_accuracy.py for the shocks. -->
@@ -45,12 +45,12 @@
 <nav class="test-nav" aria-label="Physics tests"><a href="index.html"><span>01</span>Orszag–Tang</a><a href="hydro-decay.html"><span>02</span>Hydro decay</a><a href="isothermal-decay.html"><span>03</span>Prepared decay</a><a href="acoustic-wave.html"><span>04</span>Acoustic check</a><a href="entropy-wave.html"><span>05</span>Entropy wave</a><a href="gpu-suite.html"><span>06</span>GPU suite</a><a href="sweep-plan.html"><span>07</span>Sweep</a><a href="paper-figures.html"><span>08</span>Papers</a><a href="turbulence.html"><span>09</span>Turbulence</a><a href="tests.html"><span>10</span>Tests</a><a href="our-figures.html"><span>11</span>Our figures</a><a href="sweep-fixes.html" aria-current="page"><span>12</span>Kernel fixes</a></nav>
 <main id="main" class="fx">
 <div class="page-heading"><div><div class="eyebrow"><span>12 · Kernel fixes</span><span class="badge">359 GPU runs</span></div>
-<h1>Fixing Abel et al.'s kernels</h1><p>The comparison sweep found nine problems in the GPU kernels. Each fix is a switch on the branch <code>sweep-fixes</code> (on top of commit <code>15ce37d</code> of yipihey/GLMMHDTurb, not yet public). Three jobs on Sherlock's H100s ran every fix beside the original kernel and, for the shocks, against the AthenaK 4096² reference. How they were run: <a href="../sherlock_fixes/README.md">sherlock_fixes/README.md</a>; the shock scores: <a href="../scripts/fix_accuracy.py">scripts/fix_accuracy.py</a>.</p></div></div>
+<h1>Fixing Abel et al.'s kernels</h1><p>The comparison sweep found problems in the GPU kernels. Below is every change the branch <code>sweep-fixes</code> makes to the original code (on top of commit <code>15ce37d</code> of yipihey/GLMMHDTurb, not yet public), with the problem it addresses and the result. The <a href="#code">last section</a> lists the changes by commit and function. Three jobs on Sherlock's H100s ran every fix beside the original kernel and, for the shocks, against the AthenaK 4096² reference. How they were run: <a href="../sherlock_fixes/README.md">sherlock_fixes/README.md</a>; the shock scores: <a href="../scripts/fix_accuracy.py">scripts/fix_accuracy.py</a>.</p></div></div>
 
 <div class="fx-score">
-  <div class="ok"><b>5</b><span>problems fixed and confirmed on the GPU</span></div>
+  <div class="ok"><b>4</b><span>problems fixed and confirmed on the GPU</span></div>
   <div class="part"><b>2</b><span>partly fixed: something remains</span></div>
-  <div class="no"><b>2</b><span>found by the checks, not fixed yet</span></div>
+  <div class="no"><b>1</b><span>problem the fixes exposed, not fixed yet</span></div>
 </div>
 
 <article class="card"><h3>At a glance</h3><div class="table-scroll"><table class="fx-table">
@@ -62,9 +62,7 @@
     <tr><td><a href="#i4">4. HLLD crashes</a></td><td>safety check relative to the pressure</td><td><span class="fx-chip part">partly</span> current sheet 256² still stops</td></tr>
     <tr><td><a href="#i5">5. c_h jumps on short steps</a></td><td>c_h from the normal step</td><td><span class="fx-chip ok">fixed</span> no change elsewhere</td></tr>
     <tr><td><a href="#i6">6. GLM leaks field</a></td><td>new option: constrained transport</td><td><span class="fx-chip ok">fixed</span> leak 27× → 1.3× the reference</td></tr>
-    <tr><td><a href="#i7">7. Float32 6-cell tile can't launch</a></td><td>removed from the list</td><td><span class="fx-chip ok">fixed</span></td></tr>
-    <tr><td><a href="#i8">8. Field loop with constrained transport</a></td><td>not yet</td><td><span class="fx-chip no">found</span> worse than GLM</td></tr>
-    <tr><td><a href="#i9">9. Exact match with the fixes off</a></td><td>not yet</td><td><span class="fx-chip no">found</span> rounding-level differences</td></tr>
+    <tr><td><a href="#i7">7. Field loop with constrained transport</a></td><td>not yet</td><td><span class="fx-chip no">open</span> worse than GLM</td></tr>
   </tbody></table></div></article>
 
 <article class="card" id="i1">
@@ -140,7 +138,7 @@
           <tr><td>rotor, 256, density</td><td class="num">1.2e-1</td><td class="num">4.4e-2</td><td class="num">5.2e-2</td></tr>
           <tr><td>Brio–Wu, 256, density</td><td class="num">3.5e-2</td><td class="num">1.6e-2</td><td class="num">1.8e-2</td></tr>
         </tbody></table></div>
-      <p class="fx-verdict">Fixed: second order, 90–200× more accurate on the smooth waves and 1.6–4.5× on the shocks, where it now matches or beats AthenaK with matched settings. One exception: the field loop (<a href="#i8">issue 8</a>).</p>
+      <p class="fx-verdict">Fixed: second order, 90–200× more accurate on the smooth waves and 1.6–4.5× on the shocks, where it now matches or beats AthenaK with matched settings. One exception: the field loop (<a href="#i7">issue 7</a>).</p>
     </dd>
     <dt>Cost</dt>
     <dd><p>About 3.4× slower: 1.21 → 0.36 billion per second. Each face now reads 12 cells instead of 4.</p></dd>
@@ -211,12 +209,7 @@
 </article>
 
 <article class="card" id="i7">
-  <div class="fx-head"><h3>7. A tile size that could never launch</h3><span class="fx-chip ok">fixed</span></div>
-  <dl class="fx-rows"><dt>Problem</dt><dd><p>A Float32 6-cell tile needs 90 KB of fast memory; the GPU allows 48 KB.</p></dd><dt>Fix</dt><dd><p><code>step_plm!</code> no longer offers it.</p></dd></dl>
-</article>
-
-<article class="card" id="i8">
-  <div class="fx-head"><h3>8. The field loop gets worse with constrained transport</h3><span class="fx-chip no">found, not fixed</span></div>
+  <div class="fx-head"><h3>7. The field loop gets worse with constrained transport</h3><span class="fx-chip no">open</span><code>ct_mhd.jl emf_kernel!; fct_emf_kernel!</code></div>
   <dl class="fx-rows">
     <dt>Result</dt>
     <dd><div class="table-scroll"><table class="fx-table">
@@ -227,23 +220,31 @@
         <tr><td>CT prototype, original</td><td class="num">0.70</td><td class="num">0.49</td><td class="num">0.34</td></tr>
         <tr><td>CT prototype, fixed</td><td class="num">0.60</td><td class="num">0.54</td><td class="num bad">0.88</td></tr>
       </tbody></table></div>
-    <p>The fixed CT prototype gets worse on the finest grid. Both CT schemes build their edge electric fields as a plain average of face fluxes, which is known to fail this test (Gardiner &amp; Stone 2005). The old half slope smoothed that away; the sharp scheme exposes it.</p>
+    <p>The fixed CT prototype gets worse on the finest grid. Its edge electric fields are a plain average of face fluxes (unchanged from the original <code>emf_kernel!</code>; the new option averages the same way), which is known to fail this test (Gardiner &amp; Stone 2005). The original's half slope smoothed that away; with the full slope it shows.</p>
     <p class="fx-verdict no">Next fix: an upwinded edge average (Gardiner &amp; Stone's), in both CT schemes.</p></dd>
   </dl>
 </article>
 
-<article class="card" id="i9">
-  <div class="fx-head"><h3>9. "Fixes off" matches the original to rounding, not to the last digit</h3><span class="fx-chip no">found, not fixed</span></div>
-  <dl class="fx-rows">
-    <dt>Result</dt>
-    <dd><ul>
-      <li>LLF kernel: identical to the sweep in all 21 outputs × 35 columns, on the entropy wave and Orszag–Tang.</li>
-      <li>Production kernel: identical on the entropy wave.</li>
-      <li>Production kernel on Orszag–Tang, and PPM: same number of steps, total energy within 3 × 10⁻⁸, kinetic and magnetic energy within 3 × 10⁻⁶, shock errors equal to 3 digits.</li>
-    </ul>
-    <p>The differences appear only where ψ is not zero (on the entropy wave it stays zero), so the GPU compiler arranges some cleaning arithmetic differently in the larger kernel. The sweep's own repeated runs match each other exactly, so it is not the GPU.</p>
-    <p class="fx-verdict no">Harmless for results. An exact match would need the original kernel kept as a separate function on the branch.</p></dd>
-  </dl>
+<article class="card" id="code"><h3>What changed in the code, by commit</h3>
+  <div class="table-scroll"><table class="fx-table">
+    <thead><tr><th>commit</th><th>file · functions</th><th>change</th></tr></thead>
+    <tbody>
+      <tr><td><code>893e82a</code></td><td><code>glmmhd_turb.jl</code> · <code>hlld_x</code> → <code>star</code></td><td>Issue 4: one line, the degenerate-state test <code>abs(denK) &lt; 1.0f-4*pts</code>. Always on.</td></tr>
+      <tr><td><code>176058b</code></td><td><code>glmmhd_turb.jl</code> · <code>step_fused!</code>, <code>step_tiled!</code>, <code>step_plm!</code>, <code>step_stream!</code>, <code>step_multi!</code>; <code>run_ot</code>, <code>run_turb</code>, the benchmarks</td><td>Issue 5: keyword <code>dt_cfl</code> (default <code>dt</code>) sets c_h; the drivers pass <code>compute_dt</code>'s step.</td></tr>
+      <tr><td><code>9d20e52</code></td><td><code>ct_mhd.jl</code> · <code>pslope</code>, <code>hanc1d</code> → <code>hanc3d</code>, <code>flux_kernel!</code></td><td>Issue 3: full slope; half step with the fluxes of all three directions.</td></tr>
+      <tr><td><code>59d5aa5</code></td><td><code>glmmhd_turb.jl</code> · <code>integrator_plm!</code>, <code>integrator_plm_ppm!</code>, <code>_plm_launch</code>, <code>_plm_ppm_launch</code>, <code>step_plm!</code>; new <code>fct_emf_kernel!</code>, <code>fct_update_kernel!</code>, <code>fct_scratch</code></td><td>Issues 1, 2 and 6: the kernels take three optional trailing arguments, <code>Val(anchored)</code>, <code>Val(fct)</code> and the scratch array; <code>step_plm!</code> takes the keywords <code>anchored</code>, <code>fct</code>, <code>fs</code> and lists the Float32 4-cell tile with HLL and LLF.</td></tr>
+      <tr><td><code>563fcd1</code></td><td><code>glmmhd_turb.jl</code> · <code>step_plm!</code></td><td>Takes back a Float32 6-cell tile that <code>59d5aa5</code> had listed: it needs 90 KB of shared memory, the limit is 48 KB.</td></tr>
+    </tbody></table></div>
+  <p class="fx-verdict part"><b>One default changed:</b> <code>step_plm!(…; half=true)</code> now uses anchored storage, which is about 29% slower. Pass <code>anchored=false</code> for the original storage and speed.</p>
+</article>
+
+<article class="card"><h3>Checking the branch against the original</h3>
+  <p>With the switches off (<code>anchored=false</code>, <code>fct=false</code>, no <code>dt_cfl</code>) the branch runs the original code except for the HLLD test of commit <code>893e82a</code>. Against the sweep's runs of the original:</p>
+  <ul>
+    <li>LLF kernel: identical in all 21 outputs × 35 diagnostics, on the entropy wave and Orszag–Tang.</li>
+    <li>Production kernel: identical on the entropy wave.</li>
+    <li>Production kernel on Orszag–Tang, and PPM: not identical but equal to rounding: the same number of steps, total energy within 3 × 10⁻⁸, kinetic and magnetic energy within 3 × 10⁻⁶, shock errors equal to 3 digits. The differences appear only where ψ is not zero, so the GPU compiler arranges some cleaning arithmetic differently in the larger kernel; the sweep's own repeated runs match each other exactly.</li>
+  </ul>
 </article>
 
 <article class="card"><h3>What we would recommend</h3>

@@ -28,6 +28,7 @@ PAGES = [   # local name, published name, label in the navigation (in its order)
     ("turbulence.html", "turbulence.html", "Turbulence"),
     ("tests.html", "tests.html", "Tests"),
     ("our-figures.html", "our-figures.html", "Our figures"),
+    ("sweep-fixes.html", "sweep-fixes.html", "Kernel fixes"),
     ("problems.html", "problems.html", "Test definitions"),
     ("solver.html", "solver.html", "Inside the solver"),
     ("index.html", "orszag-tang.html", "Orszag–Tang"),

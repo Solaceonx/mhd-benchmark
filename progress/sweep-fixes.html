@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light"><meta name="description" content="Each problem the comparison sweep found in Abel et al.'s GPU kernels, the fix on the branch sweep-fixes, and the GPU runs that show what is fixed.">
+<title>Kernel fixes · MHD Field Notes</title><link rel="stylesheet" href="style.css">
+<!-- Numbers: the records of $SCRATCH/mhd-results-fixes and mhd-results-verify (fetched to fix_results/ on 2026-10-20 by
+     sherlock_fixes/tools/pack_for_mac.sh), their summary.txt and control.txt, and scripts/fix_accuracy.py for the shocks. -->
+<style>
+.fx{--orig:#b8522e;--fixed:#1d6fa5;--ok:#1d7a4c;--ok-bg:#e3f2e8;--part:#8a5a00;--part-bg:#f8eed7;--no:#a83226;--no-bg:#f7e3df}
+.fx .card h3{font-size:17px}
+.fx-score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+.fx-score div{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.fx-score b{font-size:30px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.fx-score .ok b{color:var(--ok)}.fx-score .part b{color:var(--part)}.fx-score .no b{color:var(--no)}
+.fx-score span{font-size:12px;color:var(--muted)}
+.fx-chip{display:inline-block;font:600 10.5px/1 var(--font);padding:4px 8px;border-radius:20px;white-space:nowrap;vertical-align:middle}
+.fx-chip.ok{color:var(--ok);background:var(--ok-bg)}.fx-chip.part{color:var(--part);background:var(--part-bg)}.fx-chip.no{color:var(--no);background:var(--no-bg)}
+.fx-table{border-collapse:collapse;width:100%;font-size:12px}
+.fx-table th{text-align:left;color:var(--muted);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:8px 6px;border-bottom:1px solid var(--line)}
+.fx-table td{padding:9px 6px;border-bottom:1px solid #edf0e9;vertical-align:top;line-height:1.5}
+.fx-table tr:last-child td{border-bottom:0}
+.fx-table .num{text-align:right;font:11px ui-monospace,SFMono-Regular,monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fx-table .bad{color:var(--no)}.fx-table .good{color:var(--ok)}
+.fx-rows{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px 18px;margin:6px 0 0}
+.fx-rows dt{font-size:11px;font-weight:700;color:var(--muted);padding-top:2px}
+.fx-rows dd{margin:0;min-width:0;display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.65}
+.fx-rows dd p{margin:0;color:var(--ink);font-size:13px}
+.fx-rows ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:5px}
+.fx-diff{font:11.5px/1.55 ui-monospace,SFMono-Regular,monospace;background:#f3f5f1;border-radius:6px;padding:10px 12px;overflow-x:auto;white-space:pre;margin:0}
+.fx-diff .old{color:var(--no)}.fx-diff .new{color:var(--ok)}
+.fx-verdict{border-left:3px solid var(--ok);background:var(--ok-bg);padding:9px 12px;border-radius:0 6px 6px 0;font-size:13px}
+.fx-verdict.part{border-color:var(--part);background:var(--part-bg)}.fx-verdict.no{border-color:var(--no);background:var(--no-bg)}
+.fx-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:11px;color:var(--muted)}
+.fx-legend span{display:inline-flex;align-items:center;gap:6px}
+.fx-legend i{display:inline-block;width:20px;border-top:2px solid currentColor}.fx-legend i.dash{border-top-style:dashed}
+.fx-chart svg{width:100%;height:auto;display:block}
+.fx-cap{font-size:11px;color:var(--muted)}
+.fx-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 10px}.fx-head h3{margin:0}
+.fx-head code{font-size:10px;color:var(--muted)}
+.fx .card{margin-top:16px}
+@media (max-width:640px){.fx-score{grid-template-columns:minmax(0,1fr)}.fx-rows{grid-template-columns:minmax(0,1fr);gap:4px}.fx-rows dd{margin-bottom:10px}}
+</style>
+</head>
+<body data-test="sweep-fixes"><a class="skip-link" href="#main">Skip to the fixes</a>
+<header class="masthead"><a class="brand" href="index.html"><span class="brand-mark">∿</span><span>MHD <strong>FIELD NOTES</strong></span></a><div class="masthead-meta"><span class="live-dot"></span>LOCAL RESEARCH NOTEBOOK <span class="separator">/</span> KERNEL FIXES</div></header>
+<nav class="test-nav" aria-label="Physics tests"><a href="index.html"><span>01</span>Orszag–Tang</a><a href="hydro-decay.html"><span>02</span>Hydro decay</a><a href="isothermal-decay.html"><span>03</span>Prepared decay</a><a href="acoustic-wave.html"><span>04</span>Acoustic check</a><a href="entropy-wave.html"><span>05</span>Entropy wave</a><a href="gpu-suite.html"><span>06</span>GPU suite</a><a href="sweep-plan.html"><span>07</span>Sweep</a><a href="paper-figures.html"><span>08</span>Papers</a><a href="turbulence.html"><span>09</span>Turbulence</a><a href="tests.html"><span>10</span>Tests</a><a href="our-figures.html"><span>11</span>Our figures</a><a href="sweep-fixes.html" aria-current="page"><span>12</span>Kernel fixes</a></nav>
+<main id="main" class="fx">
+<div class="page-heading"><div><div class="eyebrow"><span>12 · Kernel fixes</span><span class="badge">359 GPU runs</span></div>
+<h1>Fixing Abel et al.'s kernels</h1><p>The comparison sweep found nine problems in the GPU kernels. Each fix is a switch on the branch <code>sweep-fixes</code> (on top of commit <code>15ce37d</code> of yipihey/GLMMHDTurb, not yet public). Three jobs on Sherlock's H100s ran every fix beside the original kernel and, for the shocks, against the AthenaK 4096² reference. How they were run: <a href="../sherlock_fixes/README.md">sherlock_fixes/README.md</a>; the shock scores: <a href="../scripts/fix_accuracy.py">scripts/fix_accuracy.py</a>.</p></div></div>
+
+<div class="fx-score">
+  <div class="ok"><b>5</b><span>problems fixed and confirmed on the GPU</span></div>
+  <div class="part"><b>2</b><span>partly fixed: something remains</span></div>
+  <div class="no"><b>2</b><span>found by the checks, not fixed yet</span></div>
+</div>
+
+<article class="card"><h3>At a glance</h3><div class="table-scroll"><table class="fx-table">
+  <thead><tr><th>issue</th><th>fix</th><th>result</th></tr></thead>
+  <tbody>
+    <tr><td><a href="#i1">1. Float16 storage too coarse</a></td><td>store differences from a reference value</td><td><span class="fx-chip ok">fixed</span> second order to 512</td></tr>
+    <tr><td><a href="#i2">2. Float16 overflow</a></td><td>store fluxes pre-scaled, in two pieces</td><td><span class="fx-chip part">partly</span> blasts fixed, Mach 9 not</td></tr>
+    <tr><td><a href="#i3">3. CT prototype first order</a></td><td>full slope, predictor in all directions</td><td><span class="fx-chip ok">fixed</span> 1.6–200× more accurate</td></tr>
+    <tr><td><a href="#i4">4. HLLD crashes</a></td><td>safety check relative to the pressure</td><td><span class="fx-chip part">partly</span> current sheet 256² still stops</td></tr>
+    <tr><td><a href="#i5">5. c_h jumps on short steps</a></td><td>c_h from the normal step</td><td><span class="fx-chip ok">fixed</span> no change elsewhere</td></tr>
+    <tr><td><a href="#i6">6. GLM leaks field</a></td><td>new option: constrained transport</td><td><span class="fx-chip ok">fixed</span> leak 27× → 1.3× the reference</td></tr>
+    <tr><td><a href="#i7">7. Float32 6-cell tile can't launch</a></td><td>removed from the list</td><td><span class="fx-chip ok">fixed</span></td></tr>
+    <tr><td><a href="#i8">8. Field loop with constrained transport</a></td><td>not yet</td><td><span class="fx-chip no">found</span> worse than GLM</td></tr>
+    <tr><td><a href="#i9">9. Exact match with the fixes off</a></td><td>not yet</td><td><span class="fx-chip no">found</span> rounding-level differences</td></tr>
+  </tbody></table></div></article>
+
+<article class="card" id="i1">
+  <div class="fx-head"><h3>1. Float16 storage had too few digits</h3><span class="fx-chip ok">fixed</span><code>integrator_plm!, integrator_plm_ppm!</code></div>
+  <dl class="fx-rows">
+    <dt>Problem</dt>
+    <dd><p>The fast production kernel keeps its working data in Float16, about 3 significant digits. On a fine grid, neighbouring cells of a smooth wave differ by less than Float16 can resolve, so slopes become rounding noise and the error grows as the grid gets finer.</p></dd>
+    <dt>Fix</dt>
+    <dd><p>Each tile of cells keeps one reference value in Float32 and stores every cell as "value minus reference" in Float16, so small differences keep all 3 digits. Every GPU block uses the same references, so a face shared by two blocks gets the same flux from both and conservation stays exact. On by default; <code>anchored=false</code> gives the original.</p></dd>
+    <dt>Result</dt>
+    <dd>
+      <div class="fx-chart" id="chart-entropy"><div class="fx-legend"><span style="color:var(--orig)"><i></i>original, 4-cell tile</span><span style="color:var(--orig)"><i class="dash"></i>original, 6-cell tile</span><span style="color:var(--fixed)"><i></i>fixed, 4-cell tile</span><span style="color:var(--fixed)"><i class="dash"></i>fixed, 6-cell tile</span></div></div>
+      <p class="fx-cap">Entropy wave, error of the density at the end, production kernel (Float16, HLL). Dotted line: second order (error ÷4 per doubling). Hover a point for its value.</p>
+      <div class="table-scroll"><table class="fx-table">
+        <thead><tr><th>error at the end</th><th class="num">64</th><th class="num">128</th><th class="num">256</th><th class="num">512</th></tr></thead>
+        <tbody>
+          <tr><td>PPM kernel, original</td><td class="num">9.0e-4</td><td class="num">1.6e-3</td><td class="num">1.4e-3</td><td class="num">2.4e-3</td></tr>
+          <tr><td>PPM kernel, fixed</td><td class="num">3.0e-4</td><td class="num">7.3e-5</td><td class="num">1.9e-5</td><td class="num">6.8e-6</td></tr>
+          <tr><td>oblique Alfvén wave, production, original</td><td class="num">2.1e-3</td><td class="num">7.7e-4</td><td class="num">8.4e-4</td><td class="num"></td></tr>
+          <tr><td>oblique Alfvén wave, production, fixed</td><td class="num">2.1e-3</td><td class="num">6.0e-4</td><td class="num">1.6e-4</td><td class="num"></td></tr>
+        </tbody></table></div>
+      <p class="fx-verdict">Fixed on both tile sizes. At 512 the production kernel is 240× more accurate and PPM 360×; on the 6-cell tile the error at 384 is 2.9e-5 against 2.6e-3.</p>
+    </dd>
+    <dt>Cost</dt>
+    <dd><p>About 29% slower, on the same GPU in the same job: 1.60 → 1.13 billion cell updates per second on the 4-cell tile, 2.70 → 1.91 on the 6-cell tile. PPM: 0.44 → 0.38.</p></dd>
+  </dl>
+</article>
+
+<article class="card" id="i2">
+  <div class="fx-head"><h3>2. Float16 overflowed on strong flows</h3><span class="fx-chip part">partly fixed</span><code>same kernels</code></div>
+  <dl class="fx-rows">
+    <dt>Problem</dt>
+    <dd><p>Float16 can't hold numbers above 65,504. On magnetised blasts some fluxes went past that and became infinity.</p></dd>
+    <dt>Fix</dt>
+    <dd><p>Fluxes are stored as (dt/dx)·F, how much a cell changes in one step, which stays far below 65,504, split into a Float16 head and tail (about 7 digits together).</p></dd>
+    <dt>Result</dt>
+    <dd><div class="table-scroll"><table class="fx-table">
+      <thead><tr><th>test</th><th>original Float16 kernels</th><th>fixed</th></tr></thead>
+      <tbody>
+        <tr><td>2D blast, B = 50/√4π and 100/√4π, 64²–256²</td><td class="bad">stopped at or before the first output, every grid</td><td class="good">all finish</td></tr>
+        <tr><td>3D blast, B = 50/√4π, 64³ and 128³</td><td class="bad">stopped at t ≤ 0.002</td><td class="good">all finish</td></tr>
+        <tr><td>3D blast, B = 100/√4π, 64³ and 128³</td><td class="bad">stopped at t = 0</td><td class="good">production finishes; PPM stops at t = 0.008</td></tr>
+        <tr><td>Mach 2 decay, 64³–256³, 3 seeds</td><td class="bad">3 runs stopped (production 256³ at t = 0.375; PPM twice)</td><td class="good">all finish</td></tr>
+        <tr><td>Mach 9 decay, 64³–256³</td><td class="bad">stopped at t ≤ 0.02</td><td class="bad">still stops (t ≤ 0.04)</td></tr>
+      </tbody></table></div>
+    <p class="fx-verdict part">Fixed except at Mach 9, where differences inside a tile are as large as the values. The Float32 tile survives Mach 9, and on power-of-two grids it is as fast as Float16 (1.63 against 1.61 billion per second, same GPU).</p></dd>
+  </dl>
+</article>
+
+<article class="card" id="i3">
+  <div class="fx-head"><h3>3. The CT prototype was only first order</h3><span class="fx-chip ok">fixed</span><code>ct_mhd.jl</code></div>
+  <dl class="fx-rows">
+    <dt>Problem</dt>
+    <dd><ul>
+      <li><b>Half the slope.</b> <code>pslope</code> returned half the limited slope and its caller halved it again: each face got a quarter of the cell-to-cell difference instead of half.</li>
+      <li><b>Predictor in one direction.</b> The half step of each cell used only the flux along the face's own direction. In 2D and 3D it needs all of them, as the GLM kernels already do.</li>
+    </ul></dd>
+    <dt>Fix</dt>
+    <dd><pre class="fx-diff"><span class="old">- pslope(L,M,R) = 0.5f0*moncen(M-L, R-M)</span>
+<span class="new">+ pslope(L,M,R) =      moncen(M-L, R-M)</span>
+<span class="old">- hanc1d(...)   # half step with the face's own flux only</span>
+<span class="new">+ hanc3d(...)   # half step with the x, y and z fluxes</span></pre></dd>
+    <dt>Result</dt>
+    <dd>
+      <div class="fx-chart" id="chart-ct"><div class="fx-legend"><span style="color:var(--orig)"><i></i>original CT prototype</span><span style="color:var(--fixed)"><i></i>fixed CT prototype</span></div></div>
+      <p class="fx-cap">Oblique Alfvén wave (crossing the grid at an angle), relative error of B at the end.</p>
+      <div class="table-scroll"><table class="fx-table">
+        <thead><tr><th>test (shocks against AthenaK 4096²)</th><th class="num">original</th><th class="num">fixed</th><th class="num">AthenaK, matched</th></tr></thead>
+        <tbody>
+          <tr><td>entropy wave, 256</td><td class="num">1.2e-2</td><td class="num">5.9e-5</td><td class="num"></td></tr>
+          <tr><td>oblique Alfvén wave, 256</td><td class="num">5.6e-3</td><td class="num">6.0e-5</td><td class="num"></td></tr>
+          <tr><td>Orszag–Tang, 256, density</td><td class="num">7.5e-2</td><td class="num">1.6e-2</td><td class="num">2.0e-2</td></tr>
+          <tr><td>rotor, 256, density</td><td class="num">1.2e-1</td><td class="num">4.4e-2</td><td class="num">5.2e-2</td></tr>
+          <tr><td>Brio–Wu, 256, density</td><td class="num">3.5e-2</td><td class="num">1.6e-2</td><td class="num">1.8e-2</td></tr>
+        </tbody></table></div>
+      <p class="fx-verdict">Fixed: second order, 90–200× more accurate on the smooth waves and 1.6–4.5× on the shocks, where it now matches or beats AthenaK with matched settings. One exception: the field loop (<a href="#i8">issue 8</a>).</p>
+    </dd>
+    <dt>Cost</dt>
+    <dd><p>About 3.4× slower: 1.21 → 0.36 billion per second. Each face now reads 12 cells instead of 4.</p></dd>
+  </dl>
+</article>
+
+<article class="card" id="i4">
+  <div class="fx-head"><h3>4. HLLD crashed where the field crosses a face</h3><span class="fx-chip part">partly fixed</span><code>hlld_x</code></div>
+  <dl class="fx-rows">
+    <dt>Problem</dt>
+    <dd><p>HLLD divides by a quantity that becomes zero when the field points straight through a cell face. The check for "is it zero?" used 10⁻¹², but single-precision rounding leaves about 10⁻⁷, so the check never fired.</p></dd>
+    <dt>Fix</dt>
+    <dd><pre class="fx-diff"><span class="old">- small = abs(denK) &lt; 1.0f-12</span>
+<span class="new">+ small = abs(denK) &lt; 1.0f-4*pts      # relative to the face pressure</span></pre></dd>
+    <dt>Result</dt>
+    <dd><div class="table-scroll"><table class="fx-table">
+      <thead><tr><th>test</th><th>original HLLD</th><th>fixed HLLD</th></tr></thead>
+      <tbody>
+        <tr><td>GEM reconnection, 128² and 256²</td><td class="bad">stopped at t = 0.39 and 0</td><td class="good">both finish</td></tr>
+        <tr><td>Mach 9 decay, 128³ and 256³</td><td class="bad">stopped at t = 0.02</td><td class="good">both finish</td></tr>
+        <tr><td>Orszag–Tang 3D, 256³</td><td class="bad">stopped at t = 0.9</td><td class="good">finishes</td></tr>
+        <tr><td>3D blasts, steps needed at 128³ (B = 50, 100)</td><td class="bad">1594, 3248</td><td class="good">646, 864, like the other solvers</td></tr>
+        <tr><td>current sheet, 64² and 128²</td><td class="bad">stopped at t = 0</td><td class="good">finish, but 128² needs 12,091 steps against 4,515</td></tr>
+        <tr><td>current sheet, 256²</td><td class="bad">stopped at t = 0</td><td class="bad">stops at t = 1.125</td></tr>
+        <tr><td>shocks (Brio–Wu, rotor, Orszag–Tang)</td><td>reference</td><td>same error (ratio 0.94–1.01)</td></tr>
+      </tbody></table></div>
+    <p class="fx-verdict part">Fixed everywhere except the current sheet, where HLLD still sees fake high wave speeds: a second problem in HLLD, not found yet.</p></dd>
+  </dl>
+</article>
+
+<article class="card" id="i5">
+  <div class="fx-head"><h3>5. The cleaning speed jumped on short steps</h3><span class="fx-chip ok">fixed</span><code>every step_* function</code></div>
+  <dl class="fx-rows">
+    <dt>Problem</dt>
+    <dd><p>c_h = Courant · dx / (3 · dt) used the step actually taken. The last step before each output is shortened to land on the output time; a step 1,000× shorter made c_h 1,000× larger for that step.</p></dd>
+    <dt>Fix</dt>
+    <dd><p>Each step function takes the normal step as <code>dt_cfl</code> and computes c_h from it. Code that doesn't pass it behaves as before.</p></dd>
+    <dt>Result</dt>
+    <dd><p class="fx-verdict">Fixed with no side effects: the fixed LLF kernel matches the original on every test (same steps, shock errors ratio 0.99–1.00, same speed, 2.03 billion per second).</p></dd>
+  </dl>
+</article>
+
+<article class="card" id="i6">
+  <div class="fx-head"><h3>6. GLM cleaning leaked field into a field-free region</h3><span class="fx-chip ok">fixed</span><code>step_plm!(…; fct=true)</code></div>
+  <dl class="fx-rows">
+    <dt>Problem</dt>
+    <dd><p>In the Kelvin–Helmholtz test with the field confined to one layer, GLM let field into the field-free vortex: 27× the reference amount at 256². No setting of the cleaning fixes that.</p></dd>
+    <dt>Fix</dt>
+    <dd><p>A new option replaces GLM with constrained transport on the cell-centred field (Tóth 2000): B is updated from edge electric fields, which keeps ∇·B at the cell corners at rounding level. No ψ, no c_h.</p></dd>
+    <dt>Result</dt>
+    <dd><div class="table-scroll"><table class="fx-table">
+      <thead><tr><th>field in the field-free vortex, × reference</th><th class="num">128²</th><th class="num">256²</th></tr></thead>
+      <tbody>
+        <tr><td>GLM, original production kernel</td><td class="num bad">110×</td><td class="num bad">27×</td></tr>
+        <tr><td>GLM, fixed production kernel</td><td class="num bad">87×</td><td class="num bad">20×</td></tr>
+        <tr><td>constrained transport, Float16 tile</td><td class="num">5.8×</td><td class="num">5.7×</td></tr>
+        <tr><td>constrained transport, Float32 tile</td><td class="num good">1.8×</td><td class="num good">1.3×</td></tr>
+        <tr><td>CT prototype, original → fixed</td><td class="num">390× → 1.8×</td><td class="num">24× → 1.3×</td></tr>
+      </tbody></table></div>
+    <ul>
+      <li>Also more accurate than GLM on the oblique Alfvén wave at 256: 6.0e-5 against 1.6e-4. Shocks: 0.83–0.98 of GLM's error.</li>
+      <li>With Float16 the leak bottoms out near 2 × 10⁻⁶, the Float16 rounding of the field itself.</li>
+    </ul>
+    <p class="fx-verdict">Fixed: with Float32 the leak is within 1.3× of the 4096² reference.</p></dd>
+    <dt>Cost</dt>
+    <dd><p>Float16: 1.17 billion per second (1.82 on the 6-cell tile). Float32: 1.55. Needs 9 extra numbers per cell.</p></dd>
+  </dl>
+</article>
+
+<article class="card" id="i7">
+  <div class="fx-head"><h3>7. A tile size that could never launch</h3><span class="fx-chip ok">fixed</span></div>
+  <dl class="fx-rows"><dt>Problem</dt><dd><p>A Float32 6-cell tile needs 90 KB of fast memory; the GPU allows 48 KB.</p></dd><dt>Fix</dt><dd><p><code>step_plm!</code> no longer offers it.</p></dd></dl>
+</article>
+
+<article class="card" id="i8">
+  <div class="fx-head"><h3>8. The field loop gets worse with constrained transport</h3><span class="fx-chip no">found, not fixed</span></div>
+  <dl class="fx-rows">
+    <dt>Result</dt>
+    <dd><div class="table-scroll"><table class="fx-table">
+      <thead><tr><th>field loop in the plane, error of B</th><th class="num">64²</th><th class="num">128²</th><th class="num">256²</th></tr></thead>
+      <tbody>
+        <tr><td>GLM, fixed production kernel</td><td class="num">0.26</td><td class="num">0.16</td><td class="num">0.10</td></tr>
+        <tr><td>constrained transport option</td><td class="num">0.39</td><td class="num">0.25</td><td class="num">0.17</td></tr>
+        <tr><td>CT prototype, original</td><td class="num">0.70</td><td class="num">0.49</td><td class="num">0.34</td></tr>
+        <tr><td>CT prototype, fixed</td><td class="num">0.60</td><td class="num">0.54</td><td class="num bad">0.88</td></tr>
+      </tbody></table></div>
+    <p>The fixed CT prototype gets worse on the finest grid. Both CT schemes build their edge electric fields as a plain average of face fluxes, which is known to fail this test (Gardiner &amp; Stone 2005). The old half slope smoothed that away; the sharp scheme exposes it.</p>
+    <p class="fx-verdict no">Next fix: an upwinded edge average (Gardiner &amp; Stone's), in both CT schemes.</p></dd>
+  </dl>
+</article>
+
+<article class="card" id="i9">
+  <div class="fx-head"><h3>9. "Fixes off" matches the original to rounding, not to the last digit</h3><span class="fx-chip no">found, not fixed</span></div>
+  <dl class="fx-rows">
+    <dt>Result</dt>
+    <dd><ul>
+      <li>LLF kernel: identical to the sweep in all 21 outputs × 35 columns, on the entropy wave and Orszag–Tang.</li>
+      <li>Production kernel: identical on the entropy wave.</li>
+      <li>Production kernel on Orszag–Tang, and PPM: same number of steps, total energy within 3 × 10⁻⁸, kinetic and magnetic energy within 3 × 10⁻⁶, shock errors equal to 3 digits.</li>
+    </ul>
+    <p>The differences appear only where ψ is not zero (on the entropy wave it stays zero), so the GPU compiler arranges some cleaning arithmetic differently in the larger kernel. The sweep's own repeated runs match each other exactly, so it is not the GPU.</p>
+    <p class="fx-verdict no">Harmless for results. An exact match would need the original kernel kept as a separate function on the branch.</p></dd>
+  </dl>
+</article>
+
+<article class="card"><h3>What we would recommend</h3>
+  <p>On power-of-two grids, the Float32 4-cell tile: as fast as Float16 there, as accurate as the fixed Float16 kernel up to 256 (less at 512), and it survives Mach 9. On grids divisible by 6, the fixed Float16 6-cell tile is the fastest accurate kernel (1.91 billion per second). Constrained transport where leakage matters, once its field loop is fixed. Courant 0.25–0.3 in 3D.</p>
+</article>
+</main>
+<script>
+(function () {
+  const NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e }
+  // log-log convergence chart: series = [{name, color, dash, label, guide, pts:[[N, err], ...]}]
+  function chart(host, series, title) {
+    const W = 640, H = 290, L = 58, R = 104, T = 12, B = 40;
+    const xs = series.flatMap(s => s.pts.map(p => p[0])), ys = series.flatMap(s => s.pts.map(p => p[1]));
+    const x0 = Math.log10(Math.min(...xs)), x1 = Math.log10(Math.max(...xs));
+    const y0 = Math.floor(Math.log10(Math.min(...ys))), y1 = Math.ceil(Math.log10(Math.max(...ys)));
+    const X = n => L + (Math.log10(n) - x0) / (x1 - x0) * (W - L - R), Y = e => T + (y1 - Math.log10(e)) / (y1 - y0) * (H - T - B);
+    const svg = el('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': title});
+    const mono = 'ui-monospace,SFMono-Regular,monospace';
+    for (let k = y0; k <= y1; k++) {
+      el('line', {x1: L, x2: W - R, y1: Y(10 ** k), y2: Y(10 ** k), stroke: '#e6e9e2', 'stroke-width': 1}, svg);
+      el('text', {x: L - 8, y: Y(10 ** k) + 4, 'text-anchor': 'end', 'font-size': 10.5, fill: '#64716f', 'font-family': mono}, svg).textContent = `1e${k}`;
+    }
+    for (const n of [...new Set(xs)].sort((a, b) => a - b))
+      el('text', {x: X(n), y: H - B + 17, 'text-anchor': 'middle', 'font-size': 10.5, fill: '#64716f', 'font-family': mono}, svg).textContent = n;
+    el('text', {x: L + (W - L - R) / 2, y: H - 5, 'text-anchor': 'middle', 'font-size': 11, fill: '#64716f'}, svg).textContent = 'cells per side';
+    const g = series.find(s => s.guide);
+    if (g) { const [n0, e0] = g.pts[0], n1 = Math.max(...xs); el('line', {x1: X(n0), y1: Y(e0), x2: X(n1), y2: Y(e0 * (n0 / n1) ** 2), stroke: '#64716f', 'stroke-width': 1, 'stroke-dasharray': '1 4', fill: 'none'}, svg) }
+    for (const s of series) {
+      el('polyline', {points: s.pts.map(p => `${X(p[0])},${Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash ? '6 4' : 'none', 'stroke-linejoin': 'round'}, svg);
+      for (const p of s.pts) {
+        const c = el('circle', {cx: X(p[0]), cy: Y(p[1]), r: 4.5, fill: s.color, stroke: '#fff', 'stroke-width': 2}, svg);
+        el('title', {}, c).textContent = `${s.name}, N = ${p[0]}: ${p[1].toExponential(2)}`;
+      }
+      const last = s.pts[s.pts.length - 1];
+      if (s.label) el('text', {x: X(last[0]) + 9, y: Y(last[1]) + 4, 'font-size': 11, fill: '#202a2a'}, svg).textContent = s.label;
+    }
+    host.appendChild(svg);
+  }
+  const O = '#b8522e', F = '#1d6fa5';
+  chart(document.getElementById('chart-entropy'), [
+    {name: 'original, 4-cell tile', color: O, label: 'original', pts: [[32, 3.21e-3], [64, 1.59e-3], [128, 1.95e-3], [256, 2.53e-3], [512, 3.18e-3]]},
+    {name: 'original, 6-cell tile', color: O, dash: true, pts: [[48, 1.30e-3], [96, 2.28e-3], [192, 2.16e-3], [384, 2.62e-3]]},
+    {name: 'fixed, 4-cell tile', color: F, label: 'fixed', guide: true, pts: [[32, 3.23e-3], [64, 8.94e-4], [128, 2.37e-4], [256, 5.93e-5], [512, 1.33e-5]]},
+    {name: 'fixed, 6-cell tile', color: F, dash: true, pts: [[48, 1.51e-3], [96, 4.09e-4], [192, 1.05e-4], [384, 2.85e-5]]}
+  ], 'Entropy wave error against grid size, original and fixed production kernel');
+  chart(document.getElementById('chart-ct'), [
+    {name: 'original CT prototype', color: O, label: 'original', pts: [[32, 3.83e-2], [64, 2.08e-2], [128, 1.09e-2], [256, 5.62e-3]]},
+    {name: 'fixed CT prototype', color: F, label: 'fixed', guide: true, pts: [[32, 5.38e-3], [64, 1.16e-3], [128, 2.64e-4], [256, 6.03e-5]]}
+  ], 'Oblique Alfvén wave error against grid size, original and fixed CT prototype');
+})();
+</script>
+</body></html>

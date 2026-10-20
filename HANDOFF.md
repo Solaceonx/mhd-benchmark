@@ -86,6 +86,10 @@ A follow-up job (after 48083052 ends) runs glm_fct32 on the 4-cell tile and `thr
 the f16 kernels on one node). `sherlock_checks` finished: the Float32 4-cell tile is as accurate as anchored f16
 and faster than any f16 4-cell tile; Float32 6-cell tiles cannot launch; Courant 0.4 stops 3D runs at 256-512.
 Results land in `$SCRATCH/mhd-results-fixes/summary.txt`.
+Checks of the fixes (2026-10-19): job `mhd-verify` (`fixes.py --plan verify`, configs_verify/, README section "Checking
+the fixes"): control of the originals digit by digit, 6-cell tile, oblique Alfvén/field loop, shocks, 3D robustness.
+Fetch both result sets with `tools/pack_for_mac.sh` into `fix_results/` (git-ignored), score shocks with
+`scripts/fix_accuracy.py`. Write-up for lyxia: claude.ai artifact "The sweep-fixes branch".
 
 **Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
 plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,

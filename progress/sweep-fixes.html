@@ -69,9 +69,14 @@
   <div class="fx-head"><h3>1. Float16 storage had too few digits</h3><span class="fx-chip ok">fixed</span><code>integrator_plm!, integrator_plm_ppm!</code></div>
   <dl class="fx-rows">
     <dt>Problem</dt>
-    <dd><p>The fast production kernel keeps its working data in Float16, about 3 significant digits. On a fine grid, neighbouring cells of a smooth wave differ by less than Float16 can resolve, so slopes become rounding noise and the error grows as the grid gets finer.</p></dd>
+    <dd><p>The kernel works on one tile of cells at a time (6×6×6 plus a 2-cell border), and the tile must fit in the GPU's 48 KB of fast memory. In Float32 (about 7 digits) a 6-cell tile needs 90 KB; in Float16 (about 3 digits) it needs 45 KB. So the kernel stores the cell values, the face values and the face fluxes in Float16.</p>
+    <p>Three digits are too few for smooth flows on fine grids. Example: the entropy wave has density near 1.0 with a wiggle of 0.2. On a 512 grid two neighbouring cells differ by about 0.002, but near 1.0 Float16 stores numbers in steps of about 0.001. The slope between neighbours, which the scheme uses, comes out 20–40% wrong. Finer grids make the differences smaller but not the steps, so the error grew as the grid got finer.</p></dd>
     <dt>Fix</dt>
-    <dd><p>Each tile of cells keeps one reference value in Float32 and stores every cell as "value minus reference" in Float16, so small differences keep all 3 digits. Every GPU block uses the same references, so a face shared by two blocks gets the same flux from both and conservation stays exact. On by default; <code>anchored=false</code> gives the original.</p></dd>
+    <dd><ul>
+      <li><b>Store the difference, not the value.</b> Each tile keeps one reference value, the state of its first cell, in Float32. Every cell is stored as "value minus reference" in Float16. In a smooth flow those differences are small, so Float16's 3 digits go to the part that matters. Reading a value adds the reference back in Float32.</li>
+      <li><b>Same reference everywhere, so conservation stays exact.</b> A face between two tiles is computed twice, once by each tile's GPU block. A cell always uses the reference of the tile it belongs to, whichever block reads it (each block loads the references of the 27 tiles around it). Both blocks decode it identically and compute the identical flux, so no mass leaks.</li>
+      <li>On by default with Float16; <code>anchored=false</code> gives the original storage.</li>
+    </ul></dd>
     <dt>Result</dt>
     <dd>
       <div class="fx-chart" id="chart-entropy"><div class="fx-legend"><span style="color:var(--orig)"><i></i>original, 4-cell tile</span><span style="color:var(--orig)"><i class="dash"></i>original, 6-cell tile</span><span style="color:var(--fixed)"><i></i>fixed, 4-cell tile</span><span style="color:var(--fixed)"><i class="dash"></i>fixed, 6-cell tile</span></div></div>
@@ -95,9 +100,13 @@
   <div class="fx-head"><h3>2. Float16 overflowed on strong flows</h3><span class="fx-chip part">partly fixed</span><code>same kernels</code></div>
   <dl class="fx-rows">
     <dt>Problem</dt>
-    <dd><p>Float16 can't hold numbers above 65,504. On magnetised blasts some fluxes went past that and became infinity.</p></dd>
+    <dd><p>Float16 can't hold numbers above 65,504; larger values become infinity. On the strong magnetised blast the flux of ψ (c_h² B) reached about 130,000, turned into infinity, and the run died at the first output.</p></dd>
     <dt>Fix</dt>
-    <dd><p>Fluxes are stored as (dt/dx)·F, how much a cell changes in one step, which stays far below 65,504, split into a Float16 head and tail (about 7 digits together).</p></dd>
+    <dd><ul>
+      <li><b>Store the change, not the flux.</b> Instead of the flux F, the kernel stores (dt/dx)·F: how much that face changes the cell in one time step. The time step keeps nothing moving more than a fraction of a cell per step, so this is always a modest number; the ψ flux that reached 130,000 becomes a number of order 1 to 10. The update then simply adds these stored changes.</li>
+      <li><b>Seven digits for the flux.</b> Fluxes go straight into the update, so 3 digits aren't enough for them either. Each is stored as two Float16 numbers: a head (the value rounded to Float16) and a tail (what that rounding lost). Together they hold about 7 digits, like Float32. This needs no extra memory: once the fluxes are computed the face-value arrays are free, so the head goes into one and the tail into the other.</li>
+      <li><b>Together with <a href="#i5">fix 5</a></b>, c_h comes from the normal time step, so a step shortened to land on an output no longer inflates the ψ flux.</li>
+    </ul></dd>
     <dt>Result</dt>
     <dd><div class="table-scroll"><table class="fx-table">
       <thead><tr><th>test</th><th>original Float16 kernels</th><th>fixed</th></tr></thead>
@@ -108,7 +117,8 @@
         <tr><td>Mach 2 decay, 64³–256³, 3 seeds</td><td class="bad">3 runs stopped (production 256³ at t = 0.375; PPM twice)</td><td class="good">all finish</td></tr>
         <tr><td>Mach 9 decay, 64³–256³</td><td class="bad">stopped at t ≤ 0.02</td><td class="bad">still stops (t ≤ 0.04)</td></tr>
       </tbody></table></div>
-    <p class="fx-verdict part">Fixed except at Mach 9, where differences inside a tile are as large as the values. The Float32 tile survives Mach 9, and on power-of-two grids it is as fast as Float16 (1.63 against 1.61 billion per second, same GPU).</p></dd>
+    <p class="fx-verdict part">Fixed except at Mach 9. Inside a strong shock, cells of one tile differ by large factors, so "value minus reference" is as big as the value and storage is back to 3 digits; most likely the pressure, tiny next to the kinetic energy at Mach 9, is lost in that rounding and goes negative (not yet proven). The Float32 tile survives Mach 9, and on power-of-two grids it is as fast as Float16 (1.63 against 1.61 billion per second, same GPU).</p>
+    <p>Cost of fixes 1 and 2 together: about 29% slower. Each block loads 27 references, does an extra add per value and writes two numbers per flux.</p></dd>
   </dl>
 </article>
 

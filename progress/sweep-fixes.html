@@ -266,8 +266,8 @@
   const NS = 'http://www.w3.org/2000/svg';
   function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e }
   // log-log convergence chart: series = [{name, color, dash, label, guide, pts:[[N, err], ...]}]
-  function chart(host, series, title) {
-    const W = 640, H = 290, L = 58, R = 104, T = 12, B = 40;
+  function chart(host, series, title, yLabel) {
+    const W = 640, H = 290, L = 66, R = 104, T = 12, B = 40;
     const xs = series.flatMap(s => s.pts.map(p => p[0])), ys = series.flatMap(s => s.pts.map(p => p[1]));
     const x0 = Math.log10(Math.min(...xs)), x1 = Math.log10(Math.max(...xs));
     const y0 = Math.floor(Math.log10(Math.min(...ys))), y1 = Math.ceil(Math.log10(Math.max(...ys)));
@@ -281,6 +281,8 @@
     for (const n of [...new Set(xs)].sort((a, b) => a - b))
       el('text', {x: X(n), y: H - B + 17, 'text-anchor': 'middle', 'font-size': 10.5, fill: '#64716f', 'font-family': mono}, svg).textContent = n;
     el('text', {x: L + (W - L - R) / 2, y: H - 5, 'text-anchor': 'middle', 'font-size': 11, fill: '#64716f'}, svg).textContent = 'cells per side';
+    const yc = T + (H - T - B) / 2;
+    el('text', {x: 13, y: yc, 'text-anchor': 'middle', 'font-size': 11, fill: '#64716f', transform: `rotate(-90 13 ${yc})`}, svg).textContent = yLabel;
     const g = series.find(s => s.guide);
     if (g) { const [n0, e0] = g.pts[0], n1 = Math.max(...xs); el('line', {x1: X(n0), y1: Y(e0), x2: X(n1), y2: Y(e0 * (n0 / n1) ** 2), stroke: '#64716f', 'stroke-width': 1, 'stroke-dasharray': '1 4', fill: 'none'}, svg) }
     for (const s of series) {
@@ -300,11 +302,11 @@
     {name: 'original, 6-cell tile', color: O, dash: true, pts: [[48, 1.30e-3], [96, 2.28e-3], [192, 2.16e-3], [384, 2.62e-3]]},
     {name: 'fixed, 4-cell tile', color: F, label: 'fixed', guide: true, pts: [[32, 3.23e-3], [64, 8.94e-4], [128, 2.37e-4], [256, 5.93e-5], [512, 1.33e-5]]},
     {name: 'fixed, 6-cell tile', color: F, dash: true, pts: [[48, 1.51e-3], [96, 4.09e-4], [192, 1.05e-4], [384, 2.85e-5]]}
-  ], 'Entropy wave error against grid size, original and fixed production kernel');
+  ], 'Entropy wave error against grid size, original and fixed production kernel', 'relative L1 error of density');
   chart(document.getElementById('chart-ct'), [
     {name: 'original CT prototype', color: O, label: 'original', pts: [[32, 3.83e-2], [64, 2.08e-2], [128, 1.09e-2], [256, 5.62e-3]]},
     {name: 'fixed CT prototype', color: F, label: 'fixed', guide: true, pts: [[32, 5.38e-3], [64, 1.16e-3], [128, 2.64e-4], [256, 6.03e-5]]}
-  ], 'Oblique Alfvén wave error against grid size, original and fixed CT prototype');
+  ], 'Oblique Alfvén wave error against grid size, original and fixed CT prototype', 'relative L1 error of B');
 })();
 </script>
 </body></html>

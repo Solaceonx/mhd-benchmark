@@ -68,11 +68,10 @@
 
 <dialog class="notes-dialog" id="sync-dialog"><h2>Save the notes to GitHub</h2>
 <p id="sync-state" class="sync-state"></p>
-<p>The notes are kept in this browser and, once connected, in the private repository <code class="repo-name"></code>, encrypted with your password. Every save is a commit there, so GitHub keeps every version. Set it up once:</p>
-<ol><li>Create the repository: <a href="https://github.com/new" target="_blank" rel="noopener">github.com/new</a>, name <code>mhd-notes</code>, <strong>Private</strong>, nothing else.</li>
-<li>Make a token: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>. Expiration: the longest it offers. Repository access: <em>Only select repositories</em> → <code class="repo-name"></code>. Permissions → Repository → <em>Contents</em>: Read and write.</li>
-<li>Paste it below and Connect. Keep the token in your password manager: each new browser or device needs it once.</li></ol>
-<p>The token can reach only that repository, is stored in this browser encrypted with your password, and is sent only to api.github.com.</p>
+<p>The notes are kept in this browser and, once connected, on the <code>notes</code> branch of your website repository <code class="repo-name"></code>, encrypted with your password. Every save is a commit there, so GitHub keeps every version. Each browser needs a token once:</p>
+<ol><li>Make a token: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>. Expiration: the longest it offers. Repository access: <em>Only select repositories</em> → <code class="repo-name"></code>. Permissions → Repository → <em>Contents</em>: Read and write.</li>
+<li>Paste it below and Connect. Keep the token in your password manager for your other browsers and devices.</li></ol>
+<p>The token is stored in this browser encrypted with your password, and is sent only to api.github.com. The encrypted file on that branch is public, so its safety rests on the password.</p>
 <input type="password" id="token" autocomplete="off" aria-label="GitHub token" placeholder="github_pat_…" style="width:100%;box-sizing:border-box">
 <div class="notes-error" id="sync-error" role="alert"></div>
 <div class="row"><button class="nbtn primary" id="connect">Connect</button><button class="nbtn" id="sync-now">Save now</button><button class="nbtn" id="disconnect">Forget token</button><button class="nbtn quiet" id="sync-close">Close</button></div></dialog>
@@ -81,10 +80,8 @@
 (() => {
   // The password is not in this file: `check` only lets the page tell a right password from a wrong one.
   const CFG = {salt: 'RUBQMuIx49pSDmzjV4Uthg==', check: '8c09855b4612d260675b74b099f49a3ab988fa2d0c96d061ac7f241386a5e69c', rounds: 600000,
-    // the copy on GitHub: a private repository of its own, on its default branch
-    gh: {owner: 'Solaceonx', repo: 'mhd-notes', path: 'mhd-notes.enc.json'},
-    // where it was kept until 2026-10-18 (a branch of the public website repository): read once per unlock and merged
-    legacy: {owner: 'Solaceonx', repo: 'solaceonx.github.io', branch: 'notes', path: 'mhd-notes.enc.json'}};
+    // the copy on GitHub: the notes branch of the website repository (lyxia's choice, 2026-10-20; public, encrypted)
+    gh: {owner: 'Solaceonx', repo: 'solaceonx.github.io', branch: 'notes', path: 'mhd-notes.enc.json'}};
   const GROUPS = [
     ['Reference', [['glossary', 'Glossary', 'Write your own definition in the box beside a term. It saves as you type.']]],
     ['Codes', [
@@ -186,7 +183,7 @@
   const hex = u => [...u].map(x => x.toString(16).padStart(2, '0')).join('');
   const clock = t => new Date(t || Date.now()).toLocaleString([], {dateStyle: 'medium', timeStyle: 'short'});
   let key = null, state = {v: 1, notes: {}}, token = null, current = null, saveTimer = null, syncTimer = null, syncing = false, again = false;
-  let localMsg = '', syncError = '', dirty = false, edits = 0, firstDirty = 0, lastSync = 0, tokenExpiry = '', staleToken = false, legacyState = '';
+  let localMsg = '', syncError = '', dirty = false, edits = 0, firstDirty = 0, lastSync = 0, tokenExpiry = '', staleToken = false;
 
   // ---- encryption: PBKDF2 gives the AES key and, from separate bytes, the check value
   async function derive(password) {
@@ -215,7 +212,7 @@
   function expiryDays() { const t = Date.parse(String(tokenExpiry).replace(' UTC', 'Z').replace(' ', 'T')); return isNaN(t) ? null : (t - Date.now())/864e5 }
   function showStatus() {
     let text, cls;
-    if (!token) { text = staleToken ? 'Only in this browser: press GitHub… to connect the new private repository' : 'Only in this browser: press GitHub… to connect'; cls = 'bad' }
+    if (!token) { text = staleToken ? 'Only in this browser: press GitHub… and paste a token for the website repository' : 'Only in this browser: press GitHub… to connect'; cls = 'bad' }
     else if (syncError) { text = 'Not saved to GitHub: ' + syncError; cls = 'bad' }
     else if (syncing) { text = 'Saving to GitHub…'; cls = 'warn' }
     else if (dirty) { text = 'Not on GitHub yet'; cls = 'warn' }
@@ -353,7 +350,7 @@
     state.notes[id] = {title, text: '', updated: Date.now()}; queueSave(); go(id);
   }
 
-  // ---- the copy on GitHub. Every save is a commit in the private repository, so GitHub keeps every version.
+  // ---- the copy on GitHub. Every save is a commit on the notes branch, so GitHub keeps every version.
   const G = CFG.gh, REPO = G.owner + '/' + G.repo;
   async function api(method, repo, path, {body, auth = true, raw = false} = {}) {
     const headers = {Accept: raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json'};
@@ -364,7 +361,7 @@
   }
   const refuse = (r, what) => new Error(r.status === 401 ? 'GitHub did not accept the token (expired or revoked)' :
     r.status === 403 ? `GitHub refused ${what}: the token needs Contents read and write on ${REPO} (or too many requests)` :
-    r.status === 404 ? `the token cannot reach ${REPO} (does the repository exist, and is it selected for the token?)` : `GitHub answered ${r.status} ${what}`);
+    r.status === 404 ? `GitHub found no ${REPO} (or no ${G.branch} branch) that the token can reach` : `GitHub answered ${r.status} ${what}`);
   async function pull(repo, opts = {}) {     // {sha, text}, or null when there is no file yet
     const ref = repo.branch ? `?ref=${repo.branch}` : '';
     const r = await api('GET', repo, `/contents/${repo.path}${ref}`, opts);
@@ -379,7 +376,7 @@
     if (!rr.ok) throw refuse(rr, 'reading the notes'); return {sha: j.sha, text: await rr.text()};
   }
   async function push(text, sha) {           // the new version's sha, or null when another device saved in between
-    const r = await api('PUT', G, `/contents/${G.path}`, {body: {message: 'Notes ' + new Date().toISOString().slice(0, 16), content: btoa(text), ...(sha ? {sha} : {})}});
+    const r = await api('PUT', G, `/contents/${G.path}`, {body: {message: 'Notes ' + new Date().toISOString().slice(0, 16), content: btoa(text), ...(G.branch ? {branch: G.branch} : {}), ...(sha ? {sha} : {})}});
     if (r.status === 409 || r.status === 422) return null; if (!r.ok) throw refuse(r, 'saving');
     return (await r.json()).content.sha;
   }
@@ -427,20 +424,9 @@
     } catch (e) { syncError = e.message || String(e); clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, 60000) }   // try again in a minute
     syncing = false; showStatus(); if (again) { again = false; syncNow() }
   }
-  // Notes kept before 2026-10-18 are merged in, never deleted: the copy on the website repository's notes branch (public,
-  // read without a token) and the "Working notes" boxes of the comparison pages (this browser only, unencrypted).
+  // The "Working notes" boxes of the comparison pages (this browser only, unencrypted) are copied in once, never deleted.
   const hash36 = t => { let h = 5381; for (let i = 0; i < t.length; i++) h = (h * 33 + t.charCodeAt(i)) >>> 0; return h.toString(36) };
   async function importOld() {
-    try {
-      const old = await pull(CFG.legacy, {auth: false});
-      if (!old) legacyState = 'There is no copy on the website repository.';
-      else {
-        const merged = mergeIn(state.notes, (await unseal(old.text)).notes || {}, null);
-        legacyState = `The old copy on the ${CFG.legacy.branch} branch of ${CFG.legacy.owner}/${CFG.legacy.repo} (public, encrypted) was merged in. ` +
-          'Once these notes are saved to GitHub, that branch can be deleted.';
-        if (stamp(merged) !== stamp(state.notes)) { adopt(merged); queueSave() }
-      }
-    } catch (e) { legacyState = 'The old copy on the website repository could not be read: ' + (e.message || e) }
     let n = 0;
     try {
       for (let i = 0; i < localStorage.length; i++) {
@@ -481,7 +467,7 @@
   const dialog = $('#sync-dialog');
   function dialogState() {
     const days = expiryDays();
-    $('#sync-state').textContent = (token ? `Connected to ${REPO}${days !== null ? ', token valid for ' + Math.max(0, Math.ceil(days)) + ' more days' : ''}. ` : 'Not connected: the notes are only in this browser. ') + legacyState;
+    $('#sync-state').textContent = token ? `Connected to the ${G.branch} branch of ${REPO}${days !== null ? ', token valid for ' + Math.max(0, Math.ceil(days)) + ' more days' : ''}.` : 'Not connected: the notes are only in this browser.';
   }
   $('#sync-open').onclick = () => { document.querySelectorAll('.repo-name').forEach(el => el.textContent = REPO); dialogState(); $('#sync-error').textContent = ''; $('#token').value = ''; dialog.showModal() };
   $('#sync-close').onclick = () => dialog.close();
@@ -492,10 +478,8 @@
     const before = token; token = candidate; $('#sync-error').textContent = 'Connecting…';
     try {
       const r = await api('GET', G, ''); if (!r.ok) throw refuse(r, 'reading the repository');
-      const isPublic = (await r.json()).private === false;
       store.set(LS.token, await seal({token, repo: REPO})); staleToken = false; $('#token').value = ''; await syncNow(); dialogState();
-      $('#sync-error').textContent = (syncError ? 'Not saved: ' + syncError : 'Connected and saved to GitHub.') +
-        (isPublic ? ` ${REPO} is PUBLIC: make it private (its Settings → General → Change visibility).` : '');
+      $('#sync-error').textContent = syncError ? 'Not saved: ' + syncError : 'Connected and saved to GitHub.';
     } catch (e) { token = before; $('#sync-error').textContent = e.message }
   };
   $('#gate-form').addEventListener('submit', async e => {
@@ -507,7 +491,7 @@
     if (blob) try { state = await unseal(blob) } catch (err) { store.set(LS.blob + ':unreadable', blob); alert('The notes stored in this browser could not be read. They were set aside, and you start empty.') }
     state.base = state.base || {};
     const kept = store.get(LS.token);
-    if (kept) try { const t = await unseal(kept); if (t.repo === REPO) token = t.token; else staleToken = true } catch (err) {}
+    if (kept) try { const t = await unseal(kept); if (!t.repo || t.repo === REPO) token = t.token; else staleToken = true } catch (err) {}
     try { navigator.storage && navigator.storage.persist && navigator.storage.persist() } catch (err) {}
     $('#gate').hidden = true; $('#app').hidden = false; $('#bar').hidden = false; localMsg = blob ? 'Saved in this browser' : ''; showStatus();
     show(decodeURIComponent(location.hash.slice(1)) || store.get(LS.last) || 'other/general'); $('#text').focus();

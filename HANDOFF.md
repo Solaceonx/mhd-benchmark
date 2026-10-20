@@ -86,7 +86,9 @@ Results land in `$SCRATCH/mhd-results-fixes/summary.txt`.
 Checks of the fixes (2026-10-19): job `mhd-verify` (`fixes.py --plan verify`, configs_verify/, README section "Checking
 the fixes"): control of the originals digit by digit, 6-cell tile, oblique Alfvén/field loop, shocks, 3D robustness.
 Fetch both result sets with `tools/pack_for_mac.sh` into `fix_results/` (git-ignored), score shocks with
-`scripts/fix_accuracy.py`. Write-up for lyxia: claude.ai artifact "The sweep-fixes branch".
+`scripts/fix_accuracy.py`. Results fetched 2026-10-20; the notebook page "Kernel fixes" (`progress/sweep-fixes.html`,
+site nav 06, static numbers from those records) is published. Open: CT field loop (upwinded EMF), HLLD current sheet
+256, Float16 at Mach 9, PPM 3D blast B=100, exact match with the fixes off.
 
 **Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
 plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,

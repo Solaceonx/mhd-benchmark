@@ -59,7 +59,7 @@
      "file": "media/analysis/entropy/06-spectra-0.png",
      "vector": "media/analysis/entropy/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -179,7 +179,7 @@
      "file": "media/analysis/kh_uniform/06-spectra-0.png",
      "vector": "media/analysis/kh_uniform/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -299,7 +299,7 @@
      "file": "media/analysis/current_sheet/06-spectra-0.png",
      "vector": "media/analysis/current_sheet/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 32 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 32 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -423,7 +423,7 @@
      "file": "media/analysis/blast_3d_b50/06-spectra-0.png",
      "vector": "media/analysis/blast_3d_b50/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -667,7 +667,7 @@
      "file": "media/analysis/alfven/06-spectra-0.png",
      "vector": "media/analysis/alfven/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -783,7 +783,7 @@
      "file": "media/analysis/alfven_oblique/06-spectra-0.png",
      "vector": "media/analysis/alfven_oblique/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -899,7 +899,7 @@
      "file": "media/analysis/brio_wu/06-spectra-0.png",
      "vector": "media/analysis/brio_wu/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1020,7 +1020,7 @@
      "file": "media/analysis/brio_wu_rotated/06-spectra-0.png",
      "vector": "media/analysis/brio_wu_rotated/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1143,7 +1143,7 @@
      "file": "media/analysis/orszag_tang/06-spectra-0.png",
      "vector": "media/analysis/orszag_tang/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1265,7 +1265,7 @@
      "file": "media/analysis/orszag_tang_3d/06-spectra-0.png",
      "vector": "media/analysis/orszag_tang_3d/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1386,7 +1386,7 @@
      "file": "media/analysis/rotor/06-spectra-0.png",
      "vector": "media/analysis/rotor/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1509,7 +1509,7 @@
      "file": "media/analysis/gem/06-spectra-0.png",
      "vector": "media/analysis/gem/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 64 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 64 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1634,7 +1634,7 @@
      "file": "media/analysis/field_loop/06-spectra-0.png",
      "vector": "media/analysis/field_loop/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1754,7 +1754,7 @@
      "file": "media/analysis/field_loop_novz/06-spectra-0.png",
      "vector": "media/analysis/field_loop_novz/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1875,7 +1875,7 @@
      "file": "media/analysis/field_loop_3d/06-spectra-0.png",
      "vector": "media/analysis/field_loop_3d/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -1993,7 +1993,7 @@
      "file": "media/analysis/blast_2d_b0/06-spectra-0.png",
      "vector": "media/analysis/blast_2d_b0/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -2110,7 +2110,7 @@
      "file": "media/analysis/blast_2d_b50/06-spectra-0.png",
      "vector": "media/analysis/blast_2d_b50/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -2240,7 +2240,7 @@
      "file": "media/analysis/blast_2d_b100/06-spectra-0.png",
      "vector": "media/analysis/blast_2d_b100/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -2375,7 +2375,7 @@
      "file": "media/analysis/blast_3d_b0/06-spectra-0.png",
      "vector": "media/analysis/blast_3d_b0/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -2497,7 +2497,7 @@
      "file": "media/analysis/blast_3d_b100/06-spectra-0.png",
      "vector": "media/analysis/blast_3d_b100/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -2629,7 +2629,7 @@
      "file": "media/analysis/kh_localized/06-spectra-0.png",
      "vector": "media/analysis/kh_localized/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -2757,7 +2757,7 @@
      "file": "media/analysis/kh_localized_dtjump/06-spectra-0.png",
      "vector": "media/analysis/kh_localized_dtjump/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -2868,7 +2868,7 @@
      "file": "media/analysis/decay/06-spectra-0.png",
      "vector": "media/analysis/decay/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -2990,7 +2990,7 @@
      "file": "media/analysis/decay_supersonic/06-spectra-0.png",
      "vector": "media/analysis/decay_supersonic/06-spectra-0.svg",
      "aspect": 1.625,
-     "caption": "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
+     "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK reference at N=512. Late chaotic flows need statistical interpretation.",
      "details": []
     },
     {
@@ -3128,7 +3128,7 @@
      "file": "media/analysis/driven_M3/06-spectra-all.png",
      "vector": "media/analysis/driven_M3/06-spectra-all.svg",
      "aspect": 1.911764705882353,
-     "caption": "Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.",
+     "caption": "Normalized variance per logarithmic interval of k: k E(k) divided by the total, where E(k) is the shell-summed velocity power, so k E(k) = 4\u03c0k\u00b3P(k); each curve has area 1 over ln k and shows where the variance sits. Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.",
      "details": []
     },
     {
@@ -3208,7 +3208,7 @@
      "file": "media/analysis/driven_M10/06-spectra-all.png",
      "vector": "media/analysis/driven_M10/06-spectra-all.svg",
      "aspect": 1.911764705882353,
-     "caption": "Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.",
+     "caption": "Normalized variance per logarithmic interval of k: k E(k) divided by the total, where E(k) is the shell-summed velocity power, so k E(k) = 4\u03c0k\u00b3P(k); each curve has area 1 over ln k and shows where the variance sits. Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.",
      "details": []
     },
     {
@@ -3288,7 +3288,7 @@
      "file": "media/analysis/driven_M30/06-spectra-all.png",
      "vector": "media/analysis/driven_M30/06-spectra-all.svg",
      "aspect": 1.911764705882353,
-     "caption": "Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.",
+     "caption": "Normalized variance per logarithmic interval of k: k E(k) divided by the total, where E(k) is the shell-summed velocity power, so k E(k) = 4\u03c0k\u00b3P(k); each curve has area 1 over ln k and shows where the variance sits. Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.",
      "details": []
     },
     {
@@ -3368,7 +3368,7 @@
      "file": "media/analysis/driven_M50/06-spectra-all.png",
      "vector": "media/analysis/driven_M50/06-spectra-all.svg",
      "aspect": 1.911764705882353,
-     "caption": "Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.",
+     "caption": "Normalized variance per logarithmic interval of k: k E(k) divided by the total, where E(k) is the shell-summed velocity power, so k E(k) = 4\u03c0k\u00b3P(k); each curve has area 1 over ln k and shows where the variance sits. Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.",
      "details": []
     },
     {
@@ -3399,6 +3399,6 @@
    ]
   }
  },
- "built_utc": "2026-10-13T23:20:24.982342+00:00",
+ "built_utc": "2026-10-20T18:23:27.119389+00:00",
  "synthetic": false
 }

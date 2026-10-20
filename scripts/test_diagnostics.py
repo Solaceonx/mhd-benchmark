@@ -260,6 +260,15 @@ class Data:
         return planar_spectrum(a),"computed from cell-centred plane"
 
 
+def variance_per_lnk(k,e):
+    """Normalized variance per logarithmic interval of k: k E(k) / sum E, where E is the shell-summed power (so
+    k E(k) = 4 pi k^3 P(k) in 3D and 2 pi k^2 P(k) in 2D). Its area over ln k is 1: a curve shows where the
+    variance sits, whatever the total."""
+    k=np.asarray(k,float);e=np.asarray(e,float);ok=np.isfinite(e)&(e>0)&(k>=1)
+    total=e[ok].sum()
+    return (k*e/total) if total>0 else np.full_like(e,np.nan)
+
+
 def planar_spectrum(a):
     """Match the sweep shell convention: round(|k|), shell sums, 1..N/2."""
     n=a.shape[0];k=np.fft.fftfreq(n,d=1/n);kx,ky=np.meshgrid(k,k,indexing="ij")
@@ -452,15 +461,15 @@ class Figures:
             fig,axs=plt.subplots(2,2,figsize=(13,8));missing=[]
             for j,key in enumerate(("v","b")):
                 if ref is not None and key in ref:
-                    good=np.isfinite(ref[key])&(ref[key]>0)
-                    if good.any():axs[j,0].plot(ref["k"][good],ref[key][good],color="#52514e",lw=1.5,label="Reference")
+                    good=np.isfinite(ref[key])&(ref[key]>0)&(ref["k"]>=1)
+                    if good.any():axs[j,0].plot(ref["k"][good],variance_per_lnk(ref["k"],ref[key])[good],color="#52514e",lw=1.5,label="Reference")
                 for r in self.selected(methods,n):
                     if not r.completed:continue
                     d,why=self.data.spectral(r,end)
                     if d is None:missing.append(style(r.method)["label"]+": "+why);continue
                     if key not in d:continue
                     keep=(d["k"]>=1)&(d[key]>0)&np.isfinite(d[key])
-                    if keep.any():draw(axs[j,0],d["k"][keep],d[key][keep],r.method)
+                    if keep.any():draw(axs[j,0],d["k"][keep],variance_per_lnk(d["k"],d[key])[keep],r.method)
                     if ref is not None and key in ref:
                         common=np.intersect1d(d["k"],ref["k"])
                         a=d[key][np.searchsorted(d["k"],common)];b=ref[key][np.searchsorted(ref["k"],common)]
@@ -470,10 +479,10 @@ class Figures:
                     if not ax.lines:blank(ax,"No independent reference spectrum for ratios." if c else "No nonzero spectrum fetched at this grid/time; a saved state or full-volume spectrum is needed.")
                     else:
                         ax.set_xscale("log");ax.set_xlabel(r"Wavenumber k [2π/L]")
-                        if c==0:ax.set_yscale("log");ax.set_ylabel("Velocity power" if key=="v" else "Magnetic power")
+                        if c==0:ax.set_ylim(bottom=0);ax.set_ylabel(("Velocity" if key=="v" else "Magnetic")+r" variance per ln k, $k\,E(k)/\sum E$")
                         else:ax.axhline(1,color="#888888",ls="--",lw=.8);ax.set_ylabel("Code / reference")
             self.save(fig,"06-spectra",str(gi),f"{name} · N={n}, t={end:g}, seed 42",
-                "Shell-integrated power, round(|k|) bins, excluding the mean. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. "+ref_name+". Late chaotic flows need statistical interpretation.",sorted(set(missing)))
+                "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4πk³P(k) in 3D and 2πk²P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. "+ref_name+". Late chaotic flows need statistical interpretation.",sorted(set(missing)))
 
     def validity(self):
         ns=sorted(set(self.config["grids"]));fig,ax=plt.subplots(figsize=(12,max(5,len(self.methods)*.34+2)))

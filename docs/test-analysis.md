@@ -16,7 +16,9 @@ at least 10⁻⁵ of the panel peak, so roundoff does not stretch the displayed 
 3. The same endpoint errors against resource cost, separating GPU-hours and CPU core-hours.
 4. Mass, total energy and momentum budgets, plus component-energy histories.
 5. Common cell-centred RMS/max divergence, with native CT face divergence separately.
-6. Velocity and magnetic spectra and reference ratios at a common time and grid.
+6. Velocity and magnetic spectra at a common time and grid: the normalized variance per logarithmic interval of k,
+   k E(k) / sum E (E the shell-summed power, so k E(k) = 4πk³P(k) in 3D, 2πk²P(k) in 2D; area 1 over ln k),
+   and the ratio of the unnormalized power to the reference (lyxia's request, 2026-10-20).
 7. Completion/finite-state matrix, sampled floor fractions and nonpositive pressure.
 8. Recorded runtime and actual endpoint timings; unrecorded intermediate progress is not inferred.
 

@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import turb_figures as tf
-from test_diagnostics import Figures, OUT, SITE, clean, blank, logarithmic, TITLES
+from test_diagnostics import Figures, OUT, SITE, clean, blank, logarithmic, TITLES, variance_per_lnk
 from plot_style import apply_movie_style,FAMILY
 
 
@@ -75,12 +75,12 @@ class Driven(Figures):
     def spectra(self):
         fig,axs=plt.subplots(1,2,figsize=(13,5.8))
         for r in self.shown:
-            d=r.spectra();good=np.isfinite(d["v"])&(d["v"]>0)
-            draw(axs[0],r,d["k"][good],d["v"][good])
-        axs[0].set_xscale("log");axs[0].set_yscale("log");axs[0].set_xlabel("Wavenumber k [2π/L]");axs[0].set_ylabel("Mean velocity power")
+            d=r.spectra();good=np.isfinite(d["v"])&(d["v"]>0)&(d["k"]>=1)
+            draw(axs[0],r,d["k"][good],variance_per_lnk(d["k"],d["v"])[good])
+        axs[0].set_xscale("log");axs[0].set_ylim(bottom=0);axs[0].set_xlabel("Wavenumber k [2π/L]");axs[0].set_ylabel(r"Velocity variance per ln k, $k\,E(k)/\sum E$")
         blank(axs[1],"No converged truth spectrum for a code/reference accuracy ratio. Pairwise statistical spectrum ratios are already shown elsewhere on this page. Magnetic power is zero for this hydrodynamic experiment.")
         self.save(fig,"06-spectra","all",f"Mach {self.mach:g} · {self.n}³ · time average from 2T to 10T",
-            "Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.")
+            "Normalized variance per logarithmic interval of k: k E(k) divided by the total, where E(k) is the shell-summed velocity power, so k E(k) = 4πk³P(k); each curve has area 1 over ln k and shows where the variance sits. Full-volume spectra averaged over the recorded steady-state window. Fainter curves show seed spread; it is not a formal confidence interval. Corrected and released projection runs are labelled distinctly.")
 
     def validity(self):
         fig,axs=plt.subplots(1,3,figsize=(13,5.8))

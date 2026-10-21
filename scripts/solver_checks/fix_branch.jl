@@ -125,20 +125,47 @@ end
 module CTE end
 Emu.load_physics(CTE,"ct_mhd.jl",Emu.CT_LINES;edit="ntuple(t->0.5f0*moncen(M[t]-L[t],R[t]-M[t]),8)"=>"ntuple(t->moncen(M[t]-L[t],R[t]-M[t]),8)")
 Base.include(CTE,joinpath(@__DIR__,"ct_driver.jl"))
+# The 2D emulation's state placed in the plane (p, q) of the 3D grid, invariant along r; perm = (p, q, r) must be a
+# cyclic order of the axes so that cross products keep their sign. 2D x-components go to axis p, y to q, z to r.
+function place3d(U,bxf,byf,bz,n,perm)
+    p,q,r=perm;U3=zeros(Float32,n,n,n,5);F=ntuple(_->zeros(Float32,n,n,n),3)
+    for c in 1:n,b in 1:n,a in 1:n
+        I=zeros(Int,3);I[p]=a;I[q]=b;I[r]=c;u=U[a,b]
+        U3[I...,1]=u[1];U3[I...,1+p]=u[2];U3[I...,1+q]=u[3];U3[I...,1+r]=u[4];U3[I...,5]=u[5]
+        F[p][I...]=bxf[a,b];F[q][I...]=byf[a,b];F[r][I...]=bz[a,b]
+    end
+    U3,F
+end
+"Largest difference between the 3D kernels' state and the 2D emulation's (relative to each quantity's size), after `steps`."
+function ct_vs_emulation(prim,A,B0,n,perm;steps=4)
+    U,bxf,byf,bz=CTE.initial(n,prim,A,B0);U3,F=place3d(U,bxf,byf,bz,n,perm);p,q,r=perm
+    sc=CF.scratch(n);worst=0.0;wb=0.0
+    for _ in 1:steps
+        dt=Float32(.25f0/(n*CTE.signal(U,bxf,byf,bz,n)))
+        CTE.step_full!(U,bxf,byf,bz,dt,n;emf=:gs05v);CF.step!(U3,F...,sc...,dt,1f0/n,n)
+        at(a,b)=(I=zeros(Int,3);I[p]=a;I[q]=b;I[r]=1;I)
+        for (v,v3) in ((1,1),(2,1+p),(3,1+q),(4,1+r),(5,5))
+            m=max(maximum(abs(U[a,b][v]) for a in 1:n,b in 1:n),1f-30)
+            worst=max(worst,maximum(abs(U3[at(a,b)...,v3]-U[a,b][v]) for a in 1:n,b in 1:n)/max(m,1f0))
+        end
+        mb=max(maximum(abs,bxf),maximum(abs,byf),maximum(abs,bz),1f-30)
+        for (f2,f3) in ((bxf,F[p]),(byf,F[q]),(bz,F[r]))
+            wb=max(wb,maximum(abs(f3[at(a,b)...]-f2[a,b]) for a in 1:n,b in 1:n)/mb)
+        end
+    end
+    worst,wb
+end
 let n=24
     for (what,prim,A,B0) in (("entropy wave",(x,y)->(1+.2*sin(2pi*(x+y)),.5,.5,0.0,1.0),(x,y)->(0.0,0.0,0.0),(.3,.2,0.0)),
                              ("Alfven wave",(x,y)->(1.0,0.0,-.1*cos(2pi*x),-.1*sin(2pi*x),.1),(x,y)->(0.0,-.1*cos(2pi*x)/2pi,-.1*sin(2pi*x)/2pi),(1.0,0.0,0.0)))
-        U,bxf,byf,bz=CTE.initial(n,prim,A,B0)
-        U3=zeros(Float32,n,n,n,5);fx=zeros(Float32,n,n,n);fy=similar(fx);fz=similar(fx)
-        for k in 1:n,j in 1:n,i in 1:n;U3[i,j,k,:].=U[i,j];fx[i,j,k]=bxf[i,j];fy[i,j,k]=byf[i,j];fz[i,j,k]=bz[i,j];end
-        sc=CF.scratch(n);worst=0.0;wb=0.0
-        for _ in 1:4
-            dt=Float32(.25f0/(n*CTE.signal(U,bxf,byf,bz,n)))
-            CTE.step_full!(U,bxf,byf,bz,dt,n);CF.step!(U3,fx,fy,fz,sc...,dt,1f0/n,n)
-            worst=max(worst,maximum(maximum(abs(U3[i,j,1,v]-U[i,j][v]) for i in 1:n,j in 1:n)/max(maximum(abs(U[i,j][v]) for i in 1:n,j in 1:n),1f0) for v in 1:5))
-            wb=max(wb,maximum(abs.(fx[:,:,1].-bxf)),maximum(abs.(fy[:,:,1].-byf)),maximum(abs.(fz[:,:,1].-bz)))
-        end
-        check(worst<2e-6 && wb<1e-6,@sprintf("CT prototype, %s: kernel vs emulation (full slope, predictor in all directions) %.1e, face B %.1e",what,worst,wb))
+        worst,wb=ct_vs_emulation(prim,A,B0,n,(1,2,3))
+        check(worst<2e-6 && wb<2e-6,@sprintf("CT prototype, %s: kernel vs emulation (full slope, all-direction predictor, upwinded edge EMF) %.1e, face B %.1e",what,worst,wb))
+    end
+    # the field loop in each plane of the grid: the edge EMF along z, then along x, then along y does the work
+    loop(x,y)=(1.0,2.0,1.0,0.0,1.0);Aloop(x,y)=(0.0,0.0,1e-3*max(.3-hypot(x-.5,y-.5),0.0))
+    for (plane,perm) in (("x-y plane (E_z)",(1,2,3)),("y-z plane (E_x)",(2,3,1)),("z-x plane (E_y)",(3,1,2)))
+        worst,wb=ct_vs_emulation(loop,Aloop,(0.0,0.0,0.0),n,perm;steps=6)
+        check(worst<2e-6 && wb<2e-6,@sprintf("CT prototype, field loop in the %s: kernel vs emulation %.1e, face B %.1e of its size",plane,worst,wb))
     end
 end
 

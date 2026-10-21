@@ -51,10 +51,12 @@ skip_ptx || report("fct_emf_kernel!",ptx_check(G.fct_emf_kernel!,Tuple{U4,Int}))
 skip_ptx || report("fct_update_kernel!",ptx_check(G.fct_update_kernel!,Tuple{U4,U4,U4,f32,Int}))
 skip_ptx || for C in unique(values(Suite.CT_BY_GAMMA))
     report("$(nameof(C)).flux_kernel! (ct_fix)",ptx_check(C.flux_kernel!,Tuple{U4,U4,U3,U3,U3,U3,Int,f32,Int}))
+    report("$(nameof(C)).ecc_kernel! (ct_fix, reference EMF)",ptx_check(C.ecc_kernel!,Tuple{U3,U3,U3,U4,U3,U3,U3,f32,Int}))
+    report("$(nameof(C)).emf_kernel! (ct_fix, upwinded edge EMF)",ptx_check(C.emf_kernel!,Tuple{U3,U3,U3,U4,U4,U4,U3,U3,U3,Int}))
 end
 # every configuration passes the driver's own checks, and every planned run is one its configuration allows
 configs=String[];plan=String[]
-for (dir,name) in (("configs","fixes"),("configs_verify","verify"))
+for (dir,name) in (("configs","fixes"),("configs_verify","verify"),("configs_emfcheck","emfcheck"),("configs_rerun","rerun"))
     mine=sort(filter(endswith(".toml"),readdir(joinpath(@__DIR__,dir);join=true)));append!(configs,mine)
     for c in mine
         try Suite.check_config(TOML.parsefile(c)) catch e;push!(failures,basename(c));println("WRONG ",dir,"/",basename(c),": ",sprint(showerror,e)) end

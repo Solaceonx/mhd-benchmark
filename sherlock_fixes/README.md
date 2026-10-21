@@ -110,3 +110,37 @@ Fetch both result sets to the Mac (tables, records, last states of the planar sh
 ```bash
 mkdir -p fix_results && ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'bash /scratch/users/lyxia/mhd-study/sherlock_fixes/tools/pack_for_mac.sh' | tar -xzf - -C fix_results && python3 scripts/fix_accuracy.py
 ```
+
+## The full rerun (2026-10-21)
+
+lyxia and Tom keep Float16, so the fixed kernels replace the originals in the comparison: every sweep test (26, not the
+resume gates) at every grid and seed the sweep used, one repeat (the sweep's repeats on `throughput_ot3d`), one run
+directory per kernel, `$SCRATCH/mhd-results-rerun/<test>-N<n>-s<seed>-<kernel>/`.
+
+Before it, the CT prototype got its last fix: edge EMFs upwinded by the mass flux (Gardiner & Stone 2005), with the
+reference EMF from the predictor's half-step velocity and the start-of-step field (branch commit `7256715`). On the
+CPU emulation (`scripts/solver_checks/fieldloop_emf.jl`) the field loop goes 0.26, 0.16 at 64², 128² (was 0.60,
+0.54; GLM 0.26, 0.16), the Alfvén wave stays second order (as GLM with HLL), smooth advection converges as GLM. The
+cell-centred CT option keeps its plain average: upwinding did not change its field loop (0.25 against 0.26 at 128²).
+
+| Job | What | GPU hours |
+|---|---|---|
+| `emfcheck.sh` → `mhd-emfcheck` | `ct_fix` on field loops, Alfvén waves, entropy, Kelvin–Helmholtz leak, shocks (64–256) | ~2 |
+| `rerun.sh glm` → `mhd-rerun-glm` (9 array tasks) | `glm_fix_hll16`, `glm_fct16`, `glm_fix_ppm`, `glm_fix_hlld` everywhere | ~69 |
+| `rerun.sh ct` → `mhd-rerun-ct` (9 array tasks) | `ct_fix` everywhere, after `mhd-emfcheck` passes | ~69 |
+
+`python3 fixes.py --plan rerun configs ../progress/sweep_status/export_latest.json` writes `configs_rerun/` and the
+expected seconds of each run (`estimates.json`, from the sweep's rates and the measured slowdowns); `rerun.sh` splits
+a group into tasks of about 8 hours (`RERUN_HOURS`), longest runs first onto the least loaded task. A task that runs
+out of time: run `rerun.sh` again, it keeps finished runs and resumes interrupted ones.
+
+On the Mac (sends the bundle; leaves `src/` and `vendor/` alone if any `mhd-` job is in the queue), then submits the
+check and the GLM rerun:
+
+```bash
+cd /Users/lyxia/Projects/research/abel_mhd && bash sherlock_fixes/prepare.sh && COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf - -s ',^sherlock_sweep/src,sherlock_fixes/src,' sherlock_fixes sherlock_sweep/src | ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-study && if squeue -h -u lyxia | grep -q mhd-; then tar -xzf - --exclude=sherlock_fixes/src --exclude=sherlock_fixes/vendor; else tar -xzf -; fi && bash -l sherlock_fixes/emfcheck.sh && bash -l sherlock_fixes/rerun.sh glm'
+```
+
+On Sherlock: `bash -l /scratch/users/lyxia/mhd-study/sherlock_fixes/status.sh emfcheck` (or `rerun`); after the check
+passes, `bash -l /scratch/users/lyxia/mhd-study/sherlock_fixes/rerun.sh ct`. Fetch with the command above (the
+fetch script now includes the check and the rerun).

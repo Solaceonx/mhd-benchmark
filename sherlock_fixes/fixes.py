@@ -11,6 +11,12 @@
 
 --plan verify (default: fixes) selects the second set of runs, which checks the fixes rather than measuring them:
 configs in configs_verify/, job mhd-verify (verify.sh), results $SCRATCH/mhd-results-verify.
+--plan emfcheck: the CT prototype with its upwinded edge EMF on the tests that judge it (emfcheck.sh).
+--plan rerun: the fixed kernels on every test of the sweep at every grid and seed, one run directory per kernel,
+split into Slurm array tasks of similar length (rerun.sh; configs_rerun/estimates.json holds the expected seconds):
+    python3 fixes.py --plan rerun configs EXPORT       write configs_rerun/ and the estimates (on the Mac)
+    python3 fixes.py --plan rerun tasks KERNELS HOURS  how many array tasks of about HOURS each
+    python3 fixes.py --plan rerun runs RESULTS --kernels KERNELS --task I --tasks K   the run list of task I
 """
 import array
 import csv
@@ -92,10 +98,39 @@ VERIFY = [
 CONTROL = [(t, n, k) for t, cells, ks in VERIFY[:2] for n, _ in cells for k in ks]
 VTRIAL = FIX + ["glm", "glm_hll16", "glm_ppm"]
 
+# The CT prototype with the upwinded edge EMF (2026-10-21) on the tests that judge an edge EMF, before its full rerun
+EMFCHECK = [
+    ("field_loop_novz", grid([64, 128, 256]), ["ct_fix"]),
+    ("field_loop", grid([64, 128, 256]), ["ct_fix"]),
+    ("alfven", grid([64, 128, 256]), ["ct_fix"]),
+    ("alfven_oblique", grid([64, 128, 256]), ["ct_fix"]),
+    ("entropy", grid([64, 128, 256]), ["ct_fix"]),
+    ("kh_localized", grid([128, 256]), ["ct_fix"]),
+    ("orszag_tang", grid([128, 256]), ["ct_fix"]),
+    ("rotor", grid([128, 256]), ["ct_fix"]),
+    ("brio_wu", grid([128, 256]), ["ct_fix"]),
+]
+# The full rerun: every sweep test (not the resume gates) at the sweep's grids and seeds, each fixed kernel
+RERUN_GROUPS = {"glm": ["glm_fix_hll16", "glm_fct16", "glm_fix_ppm", "glm_fix_hlld"], "ct": ["ct_fix"]}
+KEEP_REPEATS = {"throughput_ot3d"}             # timing tests keep the sweep's repeats; every other run once
+SPLIT = False                                   # one run directory per kernel (the rerun)
+
+
+def rerun_matrix():
+    """From the shipped configs_rerun/ when it exists (so Sherlock plans exactly what was sent), else the sweep's."""
+    out = [];src = HERE/"configs_rerun" if (HERE/"configs_rerun").is_dir() and any((HERE/"configs_rerun").glob("*.toml")) else SOURCE
+    for f in sorted(src.glob("*.toml")):
+        if f.stem.startswith("gate"):continue
+        c = tomllib.loads(f.read_text())
+        out.append((f.stem, grid(c["grids"], c["seeds"]), RERUN_GROUPS["glm"] + RERUN_GROUPS["ct"]))
+    return out
+
 
 def use_plan(name):
-    global MATRIX, TRIAL, CONFIG_DIR
+    global MATRIX, TRIAL, CONFIG_DIR, SPLIT
     if name == "verify":MATRIX, TRIAL, CONFIG_DIR = VERIFY, VTRIAL, "configs_verify"
+    elif name == "emfcheck":MATRIX, TRIAL, CONFIG_DIR = EMFCHECK, ["ct_fix"], "configs_emfcheck"
+    elif name == "rerun":MATRIX, TRIAL, CONFIG_DIR, SPLIT = rerun_matrix(), [], "configs_rerun", True
     elif name != "fixes":sys.exit(f"unknown plan {name}")
 
 
@@ -104,9 +139,10 @@ def runs():
     out = {}
     for test, cells, kernels in MATRIX:
         for n, seed in cells:
-            key = (n, test, seed)
-            if key in out:sys.exit(f"MATRIX names {test} N={n} seed {seed} twice")
-            out[key] = (f"{CONFIG_DIR}/{test}.toml", f"{test}-N{n}-s{seed}", n, seed, list(kernels))
+            for ks in ([[k] for k in kernels] if SPLIT else [kernels]):
+                key = (n, test, seed, ks[0] if SPLIT else "")
+                if key in out:sys.exit(f"MATRIX names {test} N={n} seed {seed} twice")
+                out[key] = (f"{CONFIG_DIR}/{test}.toml", f"{test}-N{n}-s{seed}" + (f"-{ks[0]}" if SPLIT else ""), n, seed, list(ks))
     return [out[k] for k in sorted(out)]
 
 
@@ -135,10 +171,13 @@ def write_configs():
         kernels = list(dict.fromkeys(k for _, ks in mine for k in ks))
         text = (SOURCE/f"{ALIAS.get(test, test)}.toml").read_text()
         text = setting(text, "grids", ns);text = setting(text, "seeds", seeds);text = setting(text, "methods", quoted(kernels))
-        text = setting(text, "repeats", 1)
-        if re.search(r"^repeats_by_grid *=", text, flags=re.M):text = setting(text, "repeats_by_grid", None)
+        if not (SPLIT and test in KEEP_REPEATS):
+            text = setting(text, "repeats", 1)
+            if re.search(r"^repeats_by_grid *=", text, flags=re.M):text = setting(text, "repeats_by_grid", None)
         text = f"# sherlock_fixes: {test} with the sweep-fixes kernels (fixes.py configs). Everything else as in the sweep's\n# config, which follows.\n" + text
         (out/f"{test}.toml").write_text(text);tomllib.loads(text);made.append(test)
+    if not TRIAL:
+        print(f"wrote {len(made)} configs: " + ", ".join(made));return
     text = (SOURCE/"orszag_tang.toml").read_text()
     for key, value in (("t_end", 0.05), ("frames", 3), ("grids", TRIAL_GRIDS), ("repeats", 1), ("repeats_by_grid", None),
                        ("snapshot_frames_by_grid", None), ("methods", quoted(TRIAL))):
@@ -151,7 +190,9 @@ def write_configs():
 def estimate(export):
     """GPU seconds of each planned run from the sweep's records of the original kernel it is set beside."""
     rec = json.loads(Path(export).read_text())["runs"]
-    slower = {"glm_fct16": 1.25, "glm_fct32": 1.25, "ct_fix": 2.5, "glm_fix_hll16": 1.1, "glm_fix_ppm": 1.1}
+    # speed of each fixed kernel against its original, measured on one GPU (throughput_ot3d, 2026-10-16/19); ct_fix
+    # with 15% more for the reference-EMF kernel added on 2026-10-21
+    slower = {"glm_fct16": 1.37, "glm_fct32": 1.05, "ct_fix": 3.8, "glm_fix_hll16": 1.42, "glm_fix_ppm": 1.16, "glm_fix_hlld": 1.17}
     out = {}
     for config, rundir, n, seed, kernels in runs():
         test = Path(config).stem;prefix = f"{test}-gpu-N{n}-s{seed}-"
@@ -159,19 +200,73 @@ def estimate(export):
         steps = max([p.get("steps") or 0 for p in parts.values() if p.get("status") == "complete"] or [0])
         for k in kernels:
             p = parts.get(f"{ORIGINAL.get(k, k)}_r1") or {};rate = p.get("rate") or (parts.get("glm_hlld_r1") or {}).get("rate") or 0
-            out[(rundir, k)] = 30 + (steps*n**3/(rate*1e6)*slower.get(k, 1.0) if steps and rate else float("nan"))
+            reps = 1
+            if SPLIT and test in KEEP_REPEATS:
+                c = tomllib.loads((SOURCE/f"{test}.toml").read_text());reps = int(c.get("repeats_by_grid", {}).get(str(n), c.get("repeats", 1)))
+            out[(rundir, k)] = 30 + reps*(steps*n**3/(rate*1e6)*slower.get(k, 1.0) if steps and rate else float("nan"))
     return out
+
+
+def estimates():
+    """{"rundir|kernel": seconds} written by `configs` for the rerun (600 s where the sweep had no record)."""
+    try:
+        return json.loads((HERE/CONFIG_DIR/"estimates.json").read_text())
+    except OSError:
+        return {}
+
+
+def assign(entries, ntasks):
+    """Longest run first onto the least loaded task: [[entry, ...] per task]."""
+    est = estimates();cost = lambda e: est.get(f"{e[1]}|{e[4][0]}", 600.0)
+    tasks = [[] for _ in range(ntasks)];load = [0.0]*ntasks
+    for e in sorted(entries, key=cost, reverse=True):
+        i = min(range(ntasks), key=lambda t: load[t]);tasks[i].append(e);load[i] += cost(e)
+    return tasks, load
 
 
 def tile(n):
     return 6 if n % 6 == 0 else 4
 
 
+def chosen(argv):
+    """The kernels named by --kernels (a group of RERUN_GROUPS or a comma list), or None."""
+    if "--kernels" not in argv:return None
+    v = argv[argv.index("--kernels") + 1]
+    return RERUN_GROUPS.get(v, v.split(","))
+
+
+def cmd_progress(argv):
+    """Per kernel: runs complete, stopped, started, not started (the rerun prints this instead of the long table)."""
+    results = Path(argv[0]);count = {}
+    for config, rundir, n, seed, kernels in runs():
+        for k in kernels:
+            r = record(results/rundir/"data"/f"{k}_r1"/"run.toml");c = count.setdefault(k, [0, 0, 0, 0])
+            if r is None:c[3] += 1
+            elif r.get("status") == "complete":c[0] += 1
+            elif r.get("status") in ("failed", "stopped", "error"):c[1] += 1
+            else:c[2] += 1
+    print(f"{'kernel':<15}{'complete':>9}{'stopped':>9}{'running':>9}{'waiting':>9}")
+    for k, c in count.items():print(f"{k:<15}" + "".join(f"{x:>9}" for x in c))
+
+
+def cmd_tasks(argv):
+    kernels = RERUN_GROUPS.get(argv[0], argv[0].split(","));hours = float(argv[1])
+    est = estimates();mine = [e for e in runs() if e[4][0] in kernels]
+    total = sum(est.get(f"{e[1]}|{e[4][0]}", 600.0) for e in mine)
+    longest = max([est.get(f"{e[1]}|{e[4][0]}", 600.0) for e in mine] or [0])
+    print(max(1, math.ceil(total/(hours*3600))))
+    print(f"{len(mine)} runs, about {total/3600:.1f} GPU hours, longest run {longest/3600:.1f} h", file=sys.stderr)
+
+
 def cmd_runs(argv):
     results = Path(argv[0]);trial = "--trial" in argv
     ok = None
     if "--ok" in argv:ok = set(Path(argv[argv.index("--ok") + 1]).read_text().split())
-    for config, rundir, n, seed, kernels in (trial_runs() if trial else runs()):
+    entries = trial_runs() if trial else runs()
+    if chosen(argv) is not None:entries = [e for e in entries if all(k in chosen(argv) for k in e[4])]
+    if "--task" in argv:
+        tasks, _ = assign(entries, int(argv[argv.index("--tasks") + 1]));entries = sorted(tasks[int(argv[argv.index("--task") + 1])], key=lambda e: (e[2], e[1]))
+    for config, rundir, n, seed, kernels in entries:
         if ok is not None:kernels = [k for k in kernels if k not in TRIAL or k in ok]     # the trial judges only its own
         if kernels:print(config, results/rundir/"data", n, seed, ",".join(kernels))
 
@@ -300,7 +395,11 @@ def main(argv):
         i = argv.index("--plan");use_plan(argv[i + 1]);argv = argv[:i] + argv[i + 2:]
     if not argv:sys.exit(__doc__)
     command, rest = argv[0], argv[1:]
-    if command == "configs":write_configs()
+    if command == "configs":
+        write_configs()
+        if SPLIT and rest:
+            est = estimate(rest[0]);(HERE/CONFIG_DIR/"estimates.json").write_text(json.dumps({f"{d}|{k}": (v if v == v else 600.0) for (d, k), v in est.items()}, indent=0))
+            print(f"estimates for {len(est)} runs: {sum(v for v in est.values() if v == v)/3600:.1f} GPU hours")
     elif command == "plan":
         est = estimate(rest[0]) if rest else {}
         total = 0.0
@@ -312,6 +411,8 @@ def main(argv):
     elif command == "verdict" and rest:cmd_verdict(rest)
     elif command == "summary" and rest:cmd_summary(rest)
     elif command == "control" and len(rest) == 2:sys.exit(1 if cmd_control(rest) else 0)
+    elif command == "tasks" and len(rest) == 2:cmd_tasks(rest)
+    elif command == "progress" and rest:cmd_progress(rest)
     else:sys.exit(__doc__)
 
 

@@ -31,10 +31,29 @@ function step!(U,bxf,byf,bz,dt,n)
     finish!(U,bxf,byf,bz,Fx,Fy,Fz,dtdx,n)
 end
 
-function finish!(U,bxf,byf,bz,Fx,Fy,Fz,dtdx,n)
-    ez=[0.25f0*(Fy[i,j][6]+Fy[wr(i-1,n),j][6]-Fx[i,j][7]-Fx[i,wr(j-1,n)][7]) for i in 1:n,j in 1:n]
-    ex=[0.25f0*(Fz[i,j][7]+Fz[i,wr(j-1,n)][7]-2f0*Fy[i,j][8]) for i in 1:n,j in 1:n]
-    ey=[0.25f0*(2f0*Fx[i,j][8]-Fz[i,j][6]-Fz[wr(i-1,n),j][6]) for i in 1:n,j in 1:n]
+include(joinpath(@__DIR__,"gs05.jl"))
+# emf = :avg, the plain average of the four face EMFs (the original); :gs05, upwinded by the mass flux, with the
+# cell-centred EMF -(v x B) of the half-step state q (the predictor), at the same time as the face EMFs
+function finish!(U,bxf,byf,bz,Fx,Fy,Fz,dtdx,n;emf=:avg,q=nothing)
+    ez=emf===:avg ? [0.25f0*(Fy[i,j][6]+Fy[wr(i-1,n),j][6]-Fx[i,j][7]-Fx[i,wr(j-1,n)][7]) for i in 1:n,j in 1:n] :
+       begin
+           Er=[c[3]*c[6]-c[2]*c[7] for c in q]
+           [begin im=wr(i-1,n);jm=wr(j-1,n)
+                gs05(-Fx[i,j][7],-Fx[i,jm][7],Fy[i,j][6],Fy[im,j][6],Fx[i,j][1],Fx[i,jm][1],Fy[i,j][1],Fy[im,j][1],
+                     Er[i,j],Er[im,j],Er[i,jm],Er[im,jm]) end for i in 1:n,j in 1:n]
+       end
+    if emf===:avg
+        ex=[0.25f0*(Fz[i,j][7]+Fz[i,wr(j-1,n)][7]-2f0*Fy[i,j][8]) for i in 1:n,j in 1:n]
+        ey=[0.25f0*(2f0*Fx[i,j][8]-Fz[i,j][6]-Fz[wr(i-1,n),j][6]) for i in 1:n,j in 1:n]
+    else      # z-invariant: the two faces along z of an edge are the same face
+        Ex=[c[4]*c[7]-c[3]*c[8] for c in q];Ey=[c[2]*c[8]-c[4]*c[6] for c in q]
+        ex=[begin jm=wr(j-1,n)    # x-edge (j-1/2, k-1/2): a = y, b = z
+                gs05(-Fy[i,j][8],-Fy[i,j][8],Fz[i,j][7],Fz[i,jm][7],Fy[i,j][1],Fy[i,j][1],Fz[i,j][1],Fz[i,jm][1],
+                     Ex[i,j],Ex[i,jm],Ex[i,j],Ex[i,jm]) end for i in 1:n,j in 1:n]
+        ey=[begin im=wr(i-1,n)    # y-edge (i-1/2, k-1/2): a = z, b = x
+                gs05(-Fz[i,j][6],-Fz[im,j][6],Fx[i,j][8],Fx[i,j][8],Fz[i,j][1],Fz[im,j][1],Fx[i,j][1],Fx[i,j][1],
+                     Ey[i,j],Ey[i,j],Ey[im,j],Ey[im,j]) end for i in 1:n,j in 1:n]
+    end
     for j in 1:n,i in 1:n
         ip=wr(i+1,n);jp=wr(j+1,n)
         U[i,j]=ntuple(t->U[i,j][t]+dtdx*((Fx[i,j][t]-Fx[ip,j][t])+(Fy[i,j][t]-Fy[i,jp][t])),5)
@@ -57,7 +76,26 @@ function prim_of(Uh)
     p=max((GAMMA-1f0)*(Uh[5]-0.5f0*rho*(vx*vx+vy*vy+vz*vz)-0.5f0*(bx*bx+by*by+b3*b3)),SMALLP)
     (rho,vx,vy,vz,p,bx,by,b3)
 end
-function step_full!(U,bxf,byf,bz,dt,n)
+# The state whose cell-centred EMF -(v x B) the upwinded edge EMF uses. :gs05n, the start of the step; :gs05, the
+# half-step predictor mh; :gs05v, the predictor's velocity with the start-of-step field; :gs05ct, the predictor's
+# velocity with the field of a half step of CT on the faces (corner EMFs the average of the four cells' EMFs at the
+# start), averaged to the cell centre (as Stone & Gardiner 2009 take the half-step field).
+function refstate(emf,q,mh,bxf,byf,bz,dtdx,n)
+    emf===:avg && return q
+    emf===:gs05n && return q
+    emf===:gs05 && return mh
+    emf===:gs05v && return [(m[1],m[2],m[3],m[4],m[5],c[6],c[7],c[8]) for (m,c) in zip(mh,q)]
+    Ez=[c[3]*c[6]-c[2]*c[7] for c in q];Ex=[c[4]*c[7]-c[3]*c[8] for c in q];Ey=[c[2]*c[8]-c[4]*c[6] for c in q]
+    ez=[(Ez[i,j]+Ez[wr(i-1,n),j]+Ez[i,wr(j-1,n)]+Ez[wr(i-1,n),wr(j-1,n)])/4 for i in 1:n,j in 1:n]    # corner (i-1/2,j-1/2)
+    ex=[(Ex[i,j]+Ex[i,wr(j-1,n)])/2 for i in 1:n,j in 1:n]     # x-edge (j-1/2,k-1/2), z-invariant
+    ey=[(Ey[i,j]+Ey[wr(i-1,n),j])/2 for i in 1:n,j in 1:n]     # y-edge (i-1/2,k-1/2)
+    h=dtdx/2
+    bx=[bxf[i,j]-h*(ez[i,wr(j+1,n)]-ez[i,j]) for i in 1:n,j in 1:n]
+    by=[byf[i,j]+h*(ez[wr(i+1,n),j]-ez[i,j]) for i in 1:n,j in 1:n]
+    b3=[bz[i,j]-h*((ey[wr(i+1,n),j]-ey[i,j])-(ex[i,wr(j+1,n)]-ex[i,j])) for i in 1:n,j in 1:n]
+    [(mh[i,j][1],mh[i,j][2],mh[i,j][3],mh[i,j][4],mh[i,j][5],(bx[i,j]+bx[wr(i+1,n),j])/2,(by[i,j]+by[i,wr(j+1,n)])/2,b3[i,j]) for i in 1:n,j in 1:n]
+end
+function step_full!(U,bxf,byf,bz,dt,n;emf=:avg)
     dtdx=dt*n;q=cellprims(U,bxf,byf,bz,n);h=0.5f0*dtdx
     sx=[pslope(q[wr(i-1,n),j],q[i,j],q[wr(i+1,n),j]) for i in 1:n,j in 1:n]
     sy=[pslope(q[i,wr(j-1,n)],q[i,j],q[i,wr(j+1,n)]) for i in 1:n,j in 1:n]
@@ -69,7 +107,7 @@ function step_full!(U,bxf,byf,bz,dt,n)
     Fx=[hll(fix(psub(mh[wr(i-1,n),j],sx[wr(i-1,n),j],0.5f0),1,bxf[i,j]),fix(psub(mh[i,j],sx[i,j],-0.5f0),1,bxf[i,j]),1) for i in 1:n,j in 1:n]
     Fy=[hll(fix(psub(mh[i,wr(j-1,n)],sy[i,wr(j-1,n)],0.5f0),2,byf[i,j]),fix(psub(mh[i,j],sy[i,j],-0.5f0),2,byf[i,j]),2) for i in 1:n,j in 1:n]
     Fz=[hll(fix(mh[i,j],3,bz[i,j]),fix(mh[i,j],3,bz[i,j]),3) for i in 1:n,j in 1:n]
-    finish!(U,bxf,byf,bz,Fx,Fy,Fz,dtdx,n)
+    finish!(U,bxf,byf,bz,Fx,Fy,Fz,dtdx,n;emf,q=refstate(emf,q,mh,bxf,byf,bz,dtdx,n))
 end
 
 function signal(U,bxf,byf,bz,n)
@@ -93,11 +131,11 @@ function initial(n,prim,A,B0)
     U,bxf,byf,bz
 end
 
-function run(n,prim,A,B0,t_end;frames=21,courant=0.25f0,full=false)
+function run(n,prim,A,B0,t_end;frames=21,courant=0.25f0,full=false,emf=:avg)
     U,bxf,byf,bz=initial(n,prim,A,B0);t=0.0
     for target in range(0,Float64(t_end);length=frames)
         while t<target-1e-10
-            dt=Float32(min(courant/(n*signal(U,bxf,byf,bz,n)),target-t));(full ? step_full!(U,bxf,byf,bz,dt,n) : step!(U,bxf,byf,bz,dt,n));t+=Float64(dt)
+            dt=Float32(min(courant/(n*signal(U,bxf,byf,bz,n)),target-t));(full ? step_full!(U,bxf,byf,bz,dt,n;emf) : step!(U,bxf,byf,bz,dt,n));t+=Float64(dt)
         end
     end
     U,cellprims(U,bxf,byf,bz,n)

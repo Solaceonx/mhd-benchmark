@@ -15,6 +15,7 @@ load_physics(G,"glmmhd_turb.jl",GLM_LINES)
 module GH end         # the same with one line of hlld_x changed: a relative tolerance on the star-state denominator
 load_physics(GH,"glmmhd_turb.jl",GLM_LINES;edit="small = abs(denK) < 1.0f-12"=>"small = abs(denK) < 1.0f-4*pts")
 using Printf
+include(joinpath(@__DIR__,"gs05.jl"))
 const T9=NTuple{9,Float32}
 @inline r16(q::T9)=ntuple(v->Float32(Float16(q[v])),9)
 # Storage of a value that passes through the shared tile. :f32 keeps it; :f16 rounds it to half precision (the production
@@ -47,6 +48,7 @@ Base.@kwdef mutable struct Run
     ppm::Bool=false
     tb::Int=4                       # tile size (anchors of :a16)
     fct::Bool=false                 # cell-centred constrained transport (Toth 2000, flux-CT) in place of GLM: see step!
+    emf::Symbol=:avg                # fct corner EMF: :avg, the plain average of four face fluxes; :gs05, upwinded (gs05.jl)
     fscale::Bool=false              # fluxes pass through storage in units of 1/1024 of the grid's largest flux of each component
     psiflux::Symbol=:raw            # what passes through storage as the flux of psi: :raw = c_h^2 Bn* (original); :bn = Bn*, multiplied by c_h^2 after
     policy::Symbol=:stop            # :stop = the driver stops at a nonpositive pressure; :floor = it floors it in the CFL scan
@@ -140,7 +142,14 @@ function step!(un::Matrix{T9},u::Matrix{T9},W,r::Run,dt::Float32,ch::Float32,::V
         # Flux-CT (Toth 2000, sec. 4.3) on the cell-centred field: one EMF per cell corner, the average of the four face
         # fluxes around it (Fx[By] = -Ez, Fy[Bx] = +Ez), and central differences of it. The central-difference
         # divergence of B does not change. psi stays zero and is not used.
-        Ez=[0.25f0*(-FX[i,j][7]-FX[i,w(j+1,n)][7]+FY[i,j][6]+FY[w(i+1,n),j][6]) for i in 1:n,j in 1:n]
+        Ez=if r.emf===:avg
+            [0.25f0*(-FX[i,j][7]-FX[i,w(j+1,n)][7]+FY[i,j][6]+FY[w(i+1,n),j][6]) for i in 1:n,j in 1:n]
+        else      # corner (i+1/2, j+1/2): cells i..i+1, j..j+1; FX[i,j] is the face between i and i+1
+            Er=[(c[3]*c[6]-c[2]*c[7])/c[1] for c in u]
+            [begin ip=w(i+1,n);jp=w(j+1,n)
+                gs05(-FX[i,jp][7],-FX[i,j][7],FY[ip,j][6],FY[i,j][6],FX[i,jp][1],FX[i,j][1],FY[ip,j][1],FY[i,j][1],
+                     Er[ip,jp],Er[i,jp],Er[ip,j],Er[i,j]) end for i in 1:n,j in 1:n]
+        end
         Threads.@threads for j in 1:n
             jm=w(j-1,n)
             @inbounds for i in 1:n

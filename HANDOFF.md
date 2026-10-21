@@ -89,6 +89,10 @@ Fetch both result sets with `tools/pack_for_mac.sh` into `fix_results/` (git-ign
 `scripts/fix_accuracy.py`. Results fetched 2026-10-20; the notebook page "Kernel fixes" (`progress/sweep-fixes.html`,
 site nav 06, static numbers from those records) is published. Open: CT field loop (upwinded EMF), HLLD current sheet
 256, Float16 at Mach 9, PPM 3D blast B=100, exact match with the fixes off.
+**Full rerun, 2026-10-21:** lyxia and Tom keep Float16, so the fixed kernels are rerun on every test at every grid
+(`sherlock_fixes/README.md`, "The full rerun"): `mhd-emfcheck` (CT prototype with the upwinded edge EMF, branch
+`7256715`), `mhd-rerun-glm` (4 kernels, 9 array tasks), then `mhd-rerun-ct`. ~140 GPU h. Results in
+`$SCRATCH/mhd-results-rerun`; next: fetch, put the fixed kernels on the test pages, paper figures and sweep page.
 
 **Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
 plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,

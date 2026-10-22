@@ -92,7 +92,18 @@ site nav 06, static numbers from those records) is published. Open: CT field loo
 **Full rerun, 2026-10-21:** lyxia and Tom keep Float16, so the fixed kernels are rerun on every test at every grid
 (`sherlock_fixes/README.md`, "The full rerun"): `mhd-emfcheck` (CT prototype with the upwinded edge EMF, branch
 `7256715`), `mhd-rerun-glm` (4 kernels, 9 array tasks), then `mhd-rerun-ct`. ~140 GPU h. Results in
-`$SCRATCH/mhd-results-rerun`; next: fetch, put the fixed kernels on the test pages, paper figures and sweep page.
+`$SCRATCH/mhd-results-rerun`, fetched to `fix_results/mhd-results-rerun` (700 of 700 records, 2026-10-22).
+On the site since 2026-10-22: `sweep_data.Sweep` reads the rerun like AREPO (`FIXES`, `FIXED`, `labels(fixed=True)`,
+`sw.fixed`); test pages and Our figures draw each fixed kernel in its original's colour and line, the original in a
+pale tint; the sweep page has a card per fixed kernel against its original. Rules added there: speed = fastest repeat
+(some rerun repeats were slowed 3-12x on the node), a cost point slower than the same test on twice the grid is left
+out (compile leaked into three `ct_fix` 32^2 runs), and `blew_up`: energy above 10x AthenaK PLM/HLLE's = failed (only
+`glm_fix_ppm` 512^2 on `field_loop_novz` and `kh_localized`; the original stopped on both).
+Open: 14 runs the original finished and the fix does not (CT prototype: all Mach 9 and decay 512 seed 1; cell-CT
+option: decay 256/512 at t = 0.375; PPM: blast_2d_b0 32, kh_uniform 512). Mach 9 for the CT prototype: lyxia says
+not to worry (2026-10-22; on the CPU it loses pressure positivity once second order; GLM with the same slope survives).
+The fixed PPM's 512^2 instability (psi grows from t ~ 1) is not fixed, only no longer a crash. The cell-CT option lets
+B_z grow to 4e-2 B0 on `field_loop` 128^2. The Kernel fixes page does not yet show the rerun.
 
 **Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
 plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,

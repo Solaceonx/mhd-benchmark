@@ -142,9 +142,14 @@ class Sweep:
             meta = self.meta(*key);row = dict(test=test, n=n, seed=seed, label=label, frac=None, state="open")
             if meta is not None:
                 row["state"] = "done" if meta.get("status") == "complete" else "stopped"
-                if row["state"] == "stopped":
-                    t_end = float(self.configs[test]["t_end"]);row["reached"] = float(meta.get("time_reached", 0.0))
-                    row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None;row["note"] = meta.get("error", "").split("\n")[0]
+                t_end = float(self.configs[test]["t_end"]);bad = self.went_bad(*key);grew = self.blew_up(*key)
+                if row["state"] == "done" and bad is not None:          # as sweep_status.mark_nonfinite does for the sweep
+                    row.update(state="stopped", reached=bad, note=f"state not finite after t = {bad:g}; recorded as complete")
+                elif row["state"] == "done" and grew is not None:
+                    row.update(state="stopped", reached=grew, note=f"field energy above 10 times AthenaK's after t = {grew:.3g}: ran to the end, not a result")
+                elif row["state"] == "stopped":
+                    row["reached"] = float(meta.get("time_reached", 0.0));row["note"] = meta.get("error", "").split("\n")[0]
+                if row["state"] == "stopped":row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None
             self.fixed[key] = row;self.rows[key] = row
 
     # ---- the plan ----
@@ -236,6 +241,21 @@ class Sweep:
         if k is None:return None
         t = self.diag(test, label, n, seed)["time"]
         return None if k == len(t) else float(t[k - 1]) if k else 0.0
+
+    def blew_up(self, test, label, n, seed=42, factor=10.0):
+        """Time from which a finished run's magnetic or kinetic energy stays above `factor` times that of AthenaK
+        PLM/HLLE on the same grid and seed; None when it does not (or there is no such AthenaK run). Of the original and
+        fixed kernels only the fixed PPM kernel at 512^2 trips it, on the field loop and the confined-field
+        Kelvin-Helmholtz test (the original stopped on both): energies 92 and 156 times AthenaK's at the end."""
+        d = self.diag(test, label, n, seed);a = self.diag(test, "athenak_matched", n, seed)
+        if d is None or a is None or self.state_of(test, "athenak_matched", n, seed) != "done":return None
+        over = np.zeros(len(d["time"]), dtype=bool)
+        for q in ("magnetic", "kinetic"):
+            ref = np.interp(d["time"], a["time"], a[q])
+            over |= (ref > 0) & (d[q] > factor*ref)
+        if not over[-1]:return None
+        k = len(over) - int(np.argmin(over[::-1])) if not over.all() else 0
+        return float(d["time"][k])
 
     def nonfinite_parts(self):
         """{(test, label, n, seed): time of the last finite output} for every fetched repeat-1 part that has outputs

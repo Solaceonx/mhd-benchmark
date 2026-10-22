@@ -179,7 +179,10 @@ class Data:
             if method not in METHODS:continue
             path=self.sw.path(test,method,n,"run.toml",seed)
             if path and path.is_file():
-                self.runs[key]=Run(test,method,n,seed,path.parent,self.sw.meta(*key),self.sw.diag(*key) or {},planned)
+                meta=self.sw.meta(*key);row=self.sw.fixed.get(key)
+                if row and row["state"]=="stopped" and meta.get("status")=="complete":   # ran to the end, not a result (sweep_data.blew_up)
+                    meta=dict(meta,status="not a result",error=row["note"],result_until=row["reached"])
+                self.runs[key]=Run(test,method,n,seed,path.parent,meta,self.sw.diag(*key) or {},planned)
         # Add-on MHD-ALE uses the same files but is outside the original sweep plan.
         roots=[self.sw.results]+[Path(p) for p in os.environ.get("MHD_ANALYSIS_EXTRA_RESULTS","").split(os.pathsep) if p]
         for root in roots:
@@ -504,7 +507,7 @@ class Figures:
                 if not run:color="#e1e5e4";mark="·"
                 elif run.completed:color=style(method)["color"];mark="✓"
                 else:
-                    color="#f4ddd5";reached=run.diag.get("time",np.array([run.meta.get("time_reached",0)]))[max(0,run.finite_count-1)]
+                    color="#f4ddd5";reached=run.meta.get("result_until",run.diag.get("time",np.array([run.meta.get("time_reached",0)]))[max(0,run.finite_count-1)])
                     mark=f"{100*min(1,float(reached)/float(self.config['t_end'])):.0f}%"
                     reasons.append(f"{style(method)['label']} N={n}: "+str(run.meta.get("error",run.meta.get("status","unknown"))).splitlines()[-1][:240])
                 identify(ax.add_patch(plt.Rectangle((i-.46,j-.40),.92,.8,color=color,alpha=.9)),method)

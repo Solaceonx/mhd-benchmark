@@ -1843,6 +1843,7 @@
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=512: field energy above 10 times AthenaK's after t = 1.9: ran to the end, not a result",
       "AREPO static mesh N=256: AREPO stopped itself at t = 0.882913 (sync point 14677, last timestep 1.19e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not",
       "AREPO static mesh N=512: AREPO stopped itself at t = 0.39819 (sync point 12439, last timestep 1.19e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not "
      ]
@@ -2761,6 +2762,7 @@
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=512: field energy above 10 times AthenaK's after t = 2.9: ran to the end, not a result",
       "MHD-ALE N=256: MHD-ALE stopped itself at t = 0.00427485 (step 20, last timestep 0.000214): Mean-field potential decomposition failed its native flux check",
       "MHD-ALE N=512: MHD-ALE stopped itself at t = 0.00181689 (step 20, last timestep 9.08e-05): Mean-field potential decomposition failed its native flux check"
      ]
@@ -3565,6 +3567,6 @@
    ]
   }
  },
- "built_utc": "2026-10-22T19:33:31.820097+00:00",
+ "built_utc": "2026-10-22T19:52:51.304588+00:00",
  "synthetic": false
 }

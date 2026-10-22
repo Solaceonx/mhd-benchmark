@@ -152,7 +152,7 @@ def core_median(u):
     return float(np.median(bmag(u)[dx**2 + (Y - CORE[1])**2 < CORE[2]**2]))
 
 
-def core_table(F, test="kh_localized", grids=(64, 128, 256, 512), frame="end"):
+def core_table(F, test="kh_localized", grids=(64, 128, 256, 512), frame="end", methods=ALL):
     """{method: {n: median}}, {n: reference median}, {n: initial median}."""
     sw = F.sw;ref, first, out = {}, {}, {}
     for n in grids:
@@ -161,7 +161,7 @@ def core_table(F, test="kh_localized", grids=(64, 128, 256, 512), frame="end"):
             if r is not None and n not in ref:ref[n] = core_median(r)
         u0 = sw.field(test, sweep_data.FIRST_FROM, n, 0)
         if u0 is not None:first[n] = core_median(u0)
-        for m in ALL:
+        for m in methods:
             u = sw.field(test, m, n, frame)
             if u is not None:out.setdefault(m, {})[n] = core_median(u)
     return out, ref, first

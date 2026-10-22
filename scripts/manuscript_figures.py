@@ -41,8 +41,14 @@ logging.getLogger("fontTools").setLevel(logging.ERROR)      # its notes on the f
 OUT = sweep_data.ROOT/"paper_figures"
 FULL, COLUMN = 7.1, 3.4                  # figure widths in inches: both columns, one column
 INK, MUTED, RULE = pc.INK, pc.MUTED, pc.RULE
+# The fixed kernels of the sweep-fixes branch (sweep_data.FIXES), rerun on every test: drawn in full colour, the
+# originals they fix in a light tint and named "original" (as on the test pages). Without the rerun nothing changes.
+FIXED = sweep_data.FIXED if sweep_data.RERUN.is_dir() else ()
+FADED = {sweep_data.FIXES[m] for m in FIXED}
+GPU = pc.GPU + FIXED
+ALL = GPU + pc.OTHER
 # The codes that ran on the H100, in the order of the legends.
-ON_GPU = ("glm", "glm_hlld", "glm_hll16", "glm_ppm", "glm_constch", "ct", "athenak_matched", "athenak_best")
+ON_GPU = ("glm", "glm_hlld", "glm_hll16", "glm_ppm", "glm_constch", "ct") + FIXED + ("athenak_matched", "athenak_best")
 
 
 def style():
@@ -78,18 +84,23 @@ def solve_seconds(sw, test, method, n, seed=42):
 def final_error(sw, test, method, n, key):
     """The error a finished run recorded against the exact solution at its last output; None otherwise."""
     m = sw.meta(test, method, n)
-    if not m or m.get("status") != "complete" or not m.get("frames"):return None
+    if not m or m.get("status") != "complete" or not m.get("frames") or sw.state_of(test, method, n) == "stopped":return None
     e = m["frames"][-1].get("errors", {}).get(key)
     return float(e) if e is not None and np.isfinite(e) and e > 0 else None
 
 
 def name(method):
-    return "CT prototype" if method == "ct" else pc.label(method, True)
+    text = "CT prototype" if method == "ct" else "CT prototype, fixed" if method == "ct_fix" else pc.label(method, True)
+    return text + " (original)" if method in FADED else text
+
+
+def color(method):
+    return tint(pc.color(method), .45) if method in FADED else pc.color(method)
 
 
 def legend_handles(methods):
-    return [Line2D([], [], color=pc.color(m), linestyle=pc.STYLE[m][3], marker=pc.STYLE[m][4], label=name(m),
-                   markerfacecolor="white" if pc.STYLE[m][4] not in ("x", "") else pc.color(m), markeredgewidth=.9) for m in methods]
+    return [Line2D([], [], color=color(m), linestyle=pc.STYLE[m][3], marker=pc.STYLE[m][4], label=name(m),
+                   markerfacecolor="white" if pc.STYLE[m][4] not in ("x", "") else color(m), markeredgewidth=.9) for m in methods]
 
 
 # ---------------------------------------------------------------- cost against error
@@ -99,13 +110,16 @@ def cost_vs_error(sw):
               ("field_loop", "magnetic_relative_L1", "Field loop advection", r"relative $L_1$ error of $\mathbf{B}$"))
     # The constant-c_h kernel is the f16/HLL kernel with another cleaning speed; its points lie on that kernel's here.
     methods = [m for m in ON_GPU if m != "glm_constch"]
-    fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.75), gridspec_kw=dict(wspace=.34, left=.075, right=.99, top=.9, bottom=.3))
+    tall = len(methods) > 8
+    fig, axes = plt.subplots(1, 3, figsize=(FULL, 3.15 if tall else 2.75), gridspec_kw=dict(wspace=.34, left=.075, right=.99, top=.91, bottom=.37 if tall else .3))
     for ax, (test, key, title, ylabel) in zip(axes, panels):
         for m in methods:
             pts = [(*solve_seconds(sw, test, m, n), final_error(sw, test, m, n, key), n) for n in sw.grids(test, m)]
-            pts = [p for p in pts if p[0] and p[2]]
+            # A run that took longer than the same test on twice the grid has a time that is not the solver's: more cells and
+            # more steps always cost more (the fixed CT prototype's first run in a process: compiling leaked into it).
+            pts = [p for i, p in enumerate(pts) if p[0] and p[2] and not (i + 1 < len(pts) and pts[i + 1][0] and p[0] >= pts[i + 1][0])]
             if not pts:continue
-            kw = dict(color=pc.color(m), markeredgewidth=.9, markerfacecolor="white" if pc.STYLE[m][4] != "x" else pc.color(m),
+            kw = dict(color=color(m), markeredgewidth=.9, markerfacecolor="white" if pc.STYLE[m][4] != "x" else color(m),
                       zorder=3 if m.startswith("glm") else 2)
             ax.plot([p[0] for p in pts], [p[2] for p in pts], linestyle=pc.STYLE[m][3], marker="", **kw)
             for sec, approx, err, n in pts:                # a pale symbol: the time of a resumed run
@@ -122,17 +136,19 @@ def cost_vs_error(sw):
 
 
 # ---------------------------------------------------------------- speed
-F16 = ("glm_hll16", "glm_constch", "glm_ppm")     # kernels whose fastest tiles need a grid divisible by 6
+F16 = ("glm_hll16", "glm_constch", "glm_ppm", "glm_fix_hll16", "glm_fct16", "glm_fix_ppm")     # fastest tiles need N divisible by 6
 
 
 def throughput(sw, method, n):
-    """(median, lowest, highest) cell-updates per second over the repeats of the timing run; None without one."""
+    """(fastest, lowest, highest) cell-updates per second over the repeats of the timing run; None without one. The fastest:
+    whatever else runs on the node only slows a repeat down (the originals' repeats agree to 0.1 %; some of the rerun's
+    were 3 to 12 times slower than the others at 64^3 to 384^3)."""
     reps = int(sw.configs["throughput_ot3d"].get("repeats_by_grid", {}).get(str(n), sw.configs["throughput_ot3d"].get("repeats", 1)))
     v = []
     for rep in range(1, reps + 1):
         m = sw.meta("throughput_ot3d", method, n, 42, rep)
         if m and m.get("status") == "complete" and m.get("timing_valid"):v.append(1e6*float(m["million_cell_steps_per_second"]))
-    return (statistics.median(v), min(v), max(v)) if v else None
+    return (max(v), min(v), max(v)) if v else None
 
 
 def clock(seconds):
@@ -152,20 +168,21 @@ def speed(sw):
         sets = [([p for p in pts if p[0] % 6], False), ([p for p in pts if p[0] % 6 == 0], True)] if m in F16 else [(pts, False)]
         for part, filled in sets:
             if not part:continue
-            n = np.array([p[0] for p in part], dtype=float);med, lo, hi = (np.array([p[1][i] for p in part]) for i in range(3))
-            left.fill_between(n**3, lo, hi, color=pc.color(m), alpha=.18, lw=0)
-            left.plot(n**3, med, color=pc.color(m), linestyle=pc.STYLE[m][3], marker=pc.STYLE[m][4], markeredgewidth=.9,
-                      markerfacecolor=pc.color(m) if filled or pc.STYLE[m][4] == "x" else "white")
-            if not filled:ends[m] = med[-1]
+            n = np.array([p[0] for p in part], dtype=float);fast = np.array([p[1][0] for p in part])
+            left.plot(n**3, fast, color=color(m), linestyle=pc.STYLE[m][3], marker=pc.STYLE[m][4], markeredgewidth=.9,
+                      markerfacecolor=color(m) if filled or pc.STYLE[m][4] == "x" else "white")
+            if not filled:ends[m] = fast[-1]
     left.set_xscale("log");left.set_yscale("log")
     grids = sw.grids("throughput_ot3d", "glm")
     left.set_xticks([g**3 for g in grids]);left.set_xticklabels([f"${g}^3$" for g in grids]);left.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     left.set_xlim(grids[0]**3/1.5, grids[-1]**3*1.5);left.set_ylim(3e7, 7e9)
     left.set_xlabel("grid");left.set_ylabel("cell-updates per second, one H100", labelpad=2);ticks(left);left.tick_params(axis="x", which="both", top=False)
-    left.text(.035, .965, "filled symbols: $N$ divisible by 6", transform=left.transAxes, fontsize=7, color=MUTED, va="top")
+    left.text(.035, .965, "fastest of the repeats; filled symbols: $N$ divisible by 6", transform=left.transAxes, fontsize=7, color=MUTED, va="top")
     # labels at the right-hand ends, pushed apart where the curves meet
     groups = (("glm", "glm_hll16", "glm_constch"), ("glm_hlld",), ("ct",), ("glm_ppm",), ("athenak_matched",), ("athenak_best",))
-    names = {("glm", "glm_hll16", "glm_constch"): "GLM LLF, f16/HLL, const. $c_h$"}
+    names = {("glm", "glm_hll16", "glm_constch"): "GLM LLF, f16/HLL, const. $c_h$", ("glm", "glm_constch"): "GLM LLF, const. $c_h$"}
+    if FIXED:              # the pale originals are not labelled
+        groups = (("glm", "glm_constch"),) + tuple((m,) for m in FIXED) + (("athenak_matched",), ("athenak_best",))
     last_y = None
     for g in sorted((g for g in groups if all(m in ends for m in g)), key=lambda g: -max(ends[m] for m in g)):
         y = float(np.mean([ends[m] for m in g]))
@@ -173,7 +190,7 @@ def speed(sw):
         last_y = y
         left.annotate(names.get(g, name(g[0])), (1.0, y), xycoords=("axes fraction", "data"), xytext=(7, 0), textcoords="offset points",
                       va="center", ha="left", fontsize=7.5, annotation_clip=False)
-        left.plot([1.012], [y], marker="s", ms=3.0, color=pc.color(g[0]), transform=left.get_yaxis_transform(), clip_on=False, zorder=5)
+        left.plot([1.012], [y], marker="s", ms=3.0, color=color(g[0]), transform=left.get_yaxis_transform(), clip_on=False, zorder=5)
     left.set_title("(a) Speed", loc="left", pad=4)
 
     # (b) time to solution of the same problem
@@ -189,8 +206,8 @@ def speed(sw):
             sec, approx = solve_seconds(sw, test, m, n) if state == "done" and bad is None else (None, False)
             if sec:
                 hollow = pc.STYLE[m][4] != "x"
-                right.plot([sec/60], [y], marker=pc.STYLE[m][4], color=pc.color(m), ms=4.6, markeredgewidth=1.0, alpha=.45 if approx else 1,
-                           markerfacecolor="white" if hollow else pc.color(m), zorder=3)
+                right.plot([sec/60], [y], marker=pc.STYLE[m][4], color=color(m), ms=4.6, markeredgewidth=1.0, alpha=.45 if approx else 1,
+                           markerfacecolor="white" if hollow else color(m), zorder=3)
                 right.annotate(("$\\approx$" if approx else "") + clock(sec), (sec/60, y), xytext=(6, 0), textcoords="offset points", va="center", ha="left", fontsize=7)
             else:
                 why = (f"not finite after $t = {bad:.1f}$" if bad is not None else "being rerun" if state in ("redo", "open")
@@ -223,10 +240,16 @@ TESTS = (("Smooth waves", (("uniform", "Uniform state", 0), ("entropy", "Entropy
 SLOTS = (32, 64, 128, 256, 512)
 COLUMNS = (("glm", "GLM", (("glm", "LLF"), ("glm_hll16", "f16/\nHLL"), ("glm_hlld", "HLLD"), ("glm_ppm", "PPM"), ("glm_constch", "const.\n$c_h$"))),
            ("ct", "CT", (("ct", "proto-\ntype"),)),
+           ("glm", "GLM, fixed", (("glm_fix_hll16", "f16/\nHLL"), ("glm_fct16", "f16,\ncell CT"), ("glm_fix_hlld", "HLLD"), ("glm_fix_ppm", "PPM"))),
+           ("ct", "CT, fixed", (("ct_fix", "proto-\ntype"),)),
            ("athenak", "AthenaK", (("athenak_matched", "PLM/\nHLLE"), ("athenak_best", "PPM/\nHLLD"))),
            ("ramses", "RAMSES", (("ramses_matched", "HLL"), ("ramses_best", "HLLD"))),
            ("athenapp", "Athena++", (("athenapp_matched", "PLM/\nHLLE"), ("athenapp_best", "PPM/\nHLLD"))),
            ("arepo", "AREPO", (("arepo_moving", "moving\nmesh"), ("arepo_static", "static\nmesh"))))      # planar tests only
+# With the rerun the fixed kernels take the columns of the originals they fix (the figure has no room for both); the
+# originals' counts go under the key.
+COLUMNS = tuple(c for c in COLUMNS if not c[1].endswith("fixed")) if not FIXED else \
+    tuple((f, t, tuple(v for v in vs if v[0] not in FADED)) for f, t, vs in COLUMNS if any(v[0] not in FADED for v in vs))
 MARK_W, MARK_H, PITCH = .82, 1.22, 1.62      # a mark and the distance between rows, in units of the distance between grids
 
 
@@ -266,7 +289,7 @@ def robustness(sw):
                 rows.append(("run", (test, s, label if len(seeds) == 1 else f"{label}, seed {seeds.index(s) + 1}", indent), y));y += PITCH
         y += .55
     height = y - .55 - PITCH
-    label_w = 24.5;top, bottom = 6.9, 6.0
+    label_w = 26.0;top, bottom = 6.9, 6.0 + 1.9*bool(FADED)
     unit = FULL/(label_w + width + 1.0)
     fig = plt.figure(figsize=(FULL, unit*(height + top + bottom)));ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(-label_w, width + 1.0);ax.set_ylim(height + bottom, -top);ax.axis("off")
@@ -300,6 +323,13 @@ def robustness(sw):
     for state, frac, text, w in (("done", None, "finished", 9.5), ("stopped", .45, "solver failed; filled part: how far it got", 30.0),
                                  ("redo", None, "being rerun", 12.0), ("skipped", None, "taken out", 0.0)):
         mark(ax, x, yk, state, frac, MUTED);ax.text(x + 1.0, yk, text, ha="left", va="center", fontsize=7);x += w
+    if FADED:                         # the originals the fixed kernels replace in the columns
+        counts = []
+        for m in dict.fromkeys(sweep_data.FIXES[f] for f in FIXED):
+            keys = [k for k in sw.rows if k[1] == m and k[2] in SLOTS and any(k[0] == t for _, ts in TESTS for t, *_ in ts)]
+            counts.append(f"{name(m).replace(' (original)', '')} {sum(sw.rows[k]['state'] == 'done' for k in keys)}/{len(keys)}")
+        ax.text(-label_w + .7, yk + 1.9, "Before the fixes (Tom Abel's original kernels), finished: " + ", ".join(counts) + ".",
+                ha="left", va="center", fontsize=7, color=MUTED)
     return fig, dict(done=done, planned=planned)
 
 
@@ -317,16 +347,16 @@ class Data:
 
 
 def marker_kw(m):
-    return dict(marker=pc.STYLE[m][4], markeredgewidth=.9, markerfacecolor="white" if pc.STYLE[m][4] != "x" else pc.color(m))
+    return dict(marker=pc.STYLE[m][4], markeredgewidth=.9, markerfacecolor="white" if pc.STYLE[m][4] != "x" else color(m))
 
 
 def curve(ax, x, y, m, markers=True, **kw):
-    style = dict(color=pc.color(m), linestyle=pc.STYLE[m][3]);style.update(marker_kw(m) if markers else {});style.update(kw)
+    style = dict(color=color(m), linestyle=pc.STYLE[m][3]);style.update(marker_kw(m) if markers else {});style.update(kw)
     return ax.plot(x, y, **style)
 
 
 def line_handles(methods, markers=True, extra=()):
-    hs = [Line2D([], [], color=pc.color(m), linestyle=pc.STYLE[m][3], label=name(m), **(marker_kw(m) if markers else {})) for m in methods]
+    hs = [Line2D([], [], color=color(m), linestyle=pc.STYLE[m][3], label=name(m), **(marker_kw(m) if markers else {})) for m in methods]
     return hs + list(extra)
 
 
@@ -342,7 +372,7 @@ def convergence(sw):
     fig, axes = plt.subplots(2, 3, figsize=(FULL, 4.25), sharex=True, gridspec_kw=dict(wspace=.36, hspace=.1, left=.075, right=.775, top=.94, bottom=.1))
     guide = dict(color=MUTED, lw=.6)
     for col, (test, key, title, ylabel) in enumerate(tests):
-        for row, methods in enumerate((pc.GPU, pc.OTHER + pc.AREPO)):
+        for row, methods in enumerate((GPU, pc.OTHER + pc.AREPO)):
             ax = axes[row, col];top = 0.0
             for m in methods:
                 pts = [(n, final_error(sw, test, m, n, key)) for n in sw.grids(test, m)]
@@ -359,7 +389,7 @@ def convergence(sw):
             else:ax.set_xlabel("$N$")
             ax.set_ylabel(ylabel, labelpad=2)
     slopes = [Line2D([], [], ls=(0, (1, 2)), label=r"$\propto N^{-1}$", **guide), Line2D([], [], ls=(0, (4, 2)), label=r"$\propto N^{-2}$", **guide)]
-    for row, methods in enumerate((pc.GPU, pc.OTHER + pc.AREPO)):
+    for row, methods in enumerate((GPU, pc.OTHER + pc.AREPO)):
         box = axes[row, -1].get_position()
         fig.legend(handles=line_handles(methods, extra=slopes), loc="center left", bbox_to_anchor=(.785, (box.y0 + box.y1)/2), handlelength=2.6)
     return fig
@@ -373,6 +403,8 @@ def leakage(sw):
     fig = plt.figure(figsize=(FULL, 4.55))
     # (a) maps of |B| at t = 3
     shown = (("athenak_reference", "Reference ($4096^2$)"), ("athenak_matched", "AthenaK PLM/HLLE"), ("glm", "GLM LLF"), ("glm_hlld", "GLM HLLD"), ("ct", "CT prototype"))
+    if FIXED:                  # the cell-centred CT option is the fix for the leak
+        shown = shown[:3] + (("glm_fct16", "GLM f16, cell CT (fixed)"), ("ct_fix", "CT prototype (fixed)"))
     lo, hi = pt.KH[test]["b"];w = .158;gap = .012;x0 = .055;y0 = .615;h = w*FULL/4.55;im = None
     for i, (m, title) in enumerate(shown):
         ax = fig.add_axes([x0 + i*(w + gap), y0, w, h]);ax.set_xticks([]);ax.set_yticks([])
@@ -391,26 +423,27 @@ def leakage(sw):
         cb.ax.tick_params(labelsize=7, length=2, width=.5);cb.set_label(r"$|\mathbf{B}|$", labelpad=2)
     fig.text(.012, y0 + h + .028, "(a)", fontsize=8.5)
     # (b) the field inside the field-free vortex over the reference's, against resolution
-    ax = fig.add_axes([.075, .1, .3, .4]);grids = (64, 128, 256, 512);vals, ref, first = pt.core_table(F, test, grids)
+    ax = fig.add_axes([.075, .1, .3, .4]);grids = (64, 128, 256, 512);vals, ref, first = pt.core_table(F, test, grids, methods=ALL)
     ax.axhline(1, color=pc.REFERENCE_INK, lw=1.8, alpha=.5)
-    for m in pc.ALL:
-        pts = sorted((g, v/ref[g]) for g, v in vals.get(m, {}).items() if g in ref)
+    for m in ALL:
+        pts = sorted((g, v/ref[g]) for g, v in vals.get(m, {}).items() if g in ref and sw.state_of(test, m, g) != "stopped")
         if pts:curve(ax, *zip(*pts), m)
     ax.set_xscale("log");ax.set_yscale("log");ax.set_xticks(list(grids));ax.set_xticklabels([str(g) for g in grids]);ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     ax.set_xlabel("$N$");ax.set_ylabel("field in the field-free vortex / reference", labelpad=2);ticks(ax);panel_letter(ax, "(b)")
     # (c) the cleaning variable through a sudden timestep change
     jt = "kh_localized_dtjump";nj = 256;zoom = (2.995, 3.06);cx = fig.add_axes([.475, .1, .25, .4]);t0 = float(sw.configs[jt]["dt_jump"][0])
     cx.axvline(t0, color=MUTED, lw=.6, ls=(0, (4, 3)));last = zoom[0]
-    for m in pt.GLM:
+    for m in (m for m in GPU if m.startswith("glm")):
         sr = pt.with_dense(F, jt, m, nj, "psi_max")
         if sr is None:continue
         t, v = sr;keep = (v > 0) & (t >= zoom[0]) & (t <= zoom[1])
         if keep.any():curve(cx, t[keep], v[keep], m, markers=False);last = max(last, float(t[keep].max()))
-    cx.set_yscale("log");cx.set_xlim(zoom[0], min(zoom[1], last + .1*(last - zoom[0])));     # the dense outputs end soon after the jumpcx.set_xlabel("$t$");cx.set_ylabel(r"largest $|\psi|$, $%d^2$" % nj, labelpad=2);ticks(cx);panel_letter(cx, "(c)")
+    cx.set_yscale("log");cx.set_xlim(zoom[0], min(zoom[1], last + .1*(last - zoom[0])))     # the dense outputs end soon after the jump
+    cx.set_xlabel("$t$");cx.set_ylabel(r"largest $|\psi|$, $%d^2$" % nj, labelpad=2);ticks(cx);panel_letter(cx, "(c)")
     cx.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(.01))
     cx.annotate(r"$\Delta t \to \Delta t/40$", (t0, .93), xycoords=("data", "axes fraction"), xytext=(4, 0), textcoords="offset points", fontsize=7, color=MUTED, va="top")
     ref_h = Line2D([], [], color=pc.REFERENCE_INK, lw=1.8, alpha=.5, label="reference")
-    fig.legend(handles=line_handles(pc.ALL, extra=[ref_h]), loc="center left", bbox_to_anchor=(.745, .3), handlelength=2.6, fontsize=7)
+    fig.legend(handles=line_handles(ALL, extra=[ref_h]), loc="center left", bbox_to_anchor=(.745, .3), handlelength=2.6, fontsize=7)
     return fig
 
 
@@ -424,7 +457,7 @@ ACCURACY = (("entropy", "Entropy wave", "density"), ("alfven", "Alfvén wave", "
             ("blast_2d_b50", "Blast, $B = 50$", "density"), ("blast_2d_b100", "Blast, $B = 100$", "density"),
             ("kh_uniform", "Kelvin–Helmholtz", "density"), ("current_sheet", "Current sheet", "density"), ("gem", "GEM", "magnetic"))
 MATCHED = ("athenak_matched", "ramses_matched", "athenapp_matched")     # the same-order CT set-ups: the yardstick
-ABEL = ("glm", "glm_hlld", "glm_hll16", "glm_ppm", "glm_constch", "ct")
+ABEL = ("glm", "glm_hlld", "glm_hll16", "glm_ppm", "glm_constch", "ct") + FIXED
 CONTEXT = ("athenak_best", "ramses_best", "athenapp_best", "arepo_moving")
 
 
@@ -434,8 +467,9 @@ def endpoint_errors(test, n, kind):
     path = sweep_data.ROOT/"progress"/"media"/"analysis"/test/"data.json"
     if not path.is_file():return {}
     d = json.loads(path.read_text());tend = float(d["config"]["t_end"]);key = f"{kind}_relative_L1";out = {}
+    finished = {(r["method"], r["N"]) for r in d.get("runs", []) if r.get("seed", 42) == 42 and r.get("status") == "complete"}
     for e in d.get("diagnostics", []):
-        if e.get("N") != n or e.get("seed", 42) != 42:continue
+        if e.get("N") != n or e.get("seed", 42) != 42 or (e["method"], n) not in finished:continue
         errs = [x for x in (e.get("errors") or []) if x.get("values", {}).get(key) is not None]
         if errs and abs(errs[-1]["time"] - tend) <= 1e-3*max(1.0, tend) and np.isfinite(errs[-1]["values"][key]) and errs[-1]["values"][key] > 0:
             out[e["method"]] = float(errs[-1]["values"][key])
@@ -455,13 +489,13 @@ def accuracy(sw):
                 if m not in err:continue
                 off = (k - (len(CONTEXT) + len(ABEL) - 1)/2)*.055
                 top.append(err[m]/ref)
-                ax.plot(err[m]/ref, y + off, ls="", color=pc.color(m), alpha=.45 if m in CONTEXT else 1, ms=3.8 if m in ABEL else 3.2, **marker_kw(m))
+                ax.plot(err[m]/ref, y + off, ls="", color=color(m), alpha=.45 if m in CONTEXT else 1, ms=3.8 if m in ABEL else 3.2, **marker_kw(m))
         ax.set_xscale("log");ax.set_title(f"${n}^2$", pad=4);ax.grid(False)
         ax.set_xlabel("error / median of the same-order CT codes");ticks(ax)
     for ax in axes:ax.set_xlim(.08, 1.6*max(top))
     axes[0].set_yticks(rows);axes[0].set_yticklabels([label for _, label, _ in ACCURACY]);axes[0].set_ylim(-.7, len(ACCURACY) - .3)
     for ax in axes:ax.tick_params(axis="y", length=0)
-    hs = line_handles(ABEL, markers=True) + [Line2D([], [], ls="", color=pc.color(m), alpha=.45, label=name(m), **marker_kw(m)) for m in CONTEXT]
+    hs = line_handles(ABEL, markers=True) + [Line2D([], [], ls="", color=color(m), alpha=.45, label=name(m), **marker_kw(m)) for m in CONTEXT]
     for h in hs:h.set_linestyle("")
     fig.legend(handles=hs, loc="lower center", ncol=5, bbox_to_anchor=(.5, -.01), fontsize=7, handletextpad=.3, columnspacing=1.2)
     fig.tight_layout(rect=(0, .11, 1, 1))
@@ -473,18 +507,18 @@ def divergence(sw):
     import paper_stone as ps
     F = Data(sw);shock, ns = "brio_wu_rotated", 256;loop, nl = "field_loop", 128
     fig, (a, b) = plt.subplots(1, 2, figsize=(FULL, 3.0), sharey=True, gridspec_kw=dict(wspace=.07, left=.2, right=.985, top=.9, bottom=.16))
-    gamma = ps.gamma_of(sw, shock);rows = list(pc.ALL);y = {m: i + (i >= len(pc.GPU))*.6 for i, m in enumerate(rows)}
+    gamma = ps.gamma_of(sw, shock);rows = list(ALL);y = {m: i + (i >= len(GPU))*.6 for i, m in enumerate(rows)}
     for ax in (a, b):
         for m in rows:ax.axhline(y[m], color=RULE, lw=.5, zorder=0)
     for m in rows:
         u = sw.field(shock, m, ns, "end")
         if u is not None:
             xi, q = ps.normal_profile(u, gamma);mean, lo, hi = q["bn"]
-            a.plot([max(abs(lo.min() - .75), abs(hi.max() - .75))], [y[m]], color=pc.color(m), ms=4.6, ls="", **marker_kw(m))
+            a.plot([max(abs(lo.min() - .75), abs(hi.max() - .75))], [y[m]], color=color(m), ms=4.6, ls="", **marker_kw(m))
         else:a.text(.03, y[m], F.why(shock, m, ns).replace("\n", " "), transform=a.get_yaxis_transform(), fontsize=6.5, color=MUTED, va="center")
         sr = F.series(loop, m, nl, "bz_rms")
         if sr is not None and len(sr[1]) and not F.stopped(loop, m, nl):
-            b.plot([max(sr[1][-1]/ps.B0, 1e-16)], [y[m]], color=pc.color(m), ms=4.6, ls="", **marker_kw(m))
+            b.plot([max(sr[1][-1]/ps.B0, 1e-16)], [y[m]], color=color(m), ms=4.6, ls="", **marker_kw(m))
         else:b.text(.03, y[m], F.why(loop, m, nl).replace("\n", " "), transform=b.get_yaxis_transform(), fontsize=6.5, color=MUTED, va="center")
     for ax in (a, b):
         ax.set_xscale("log");ax.tick_params(axis="y", length=0)
@@ -499,18 +533,18 @@ def divergence(sw):
 def field_loop(sw):
     import paper_stone as ps
     F = Data(sw)
-    fig, (a, b) = plt.subplots(1, 2, figsize=(FULL, 2.85), gridspec_kw=dict(wspace=.26, left=.075, right=.745, top=.9, bottom=.15))
+    fig, (a, b) = plt.subplots(1, 2, figsize=(FULL, 3.5 if FIXED else 2.85), gridspec_kw=dict(wspace=.26, left=.075, right=.745, top=.92, bottom=.13))
     fit = dict(color=pc.REFERENCE_INK, lw=1.0, ls=(0, (4, 2)))
     for ax, test, n, curve_fit, title in ((a, "field_loop_novz", 64, ps.FIT_2005, "(a) Loop in the plane, $64^2$"), (b, "field_loop_3d", 128, ps.FIT_2008[128], "(b) Inclined loop, $128^3$")):
-        for m in pc.ALL:
+        for m in ALL:
             sr = F.series(test, m, n, "magnetic")
             if sr is None:continue
             t, e = sr;curve(ax, t, e/e[0], m, markers=False)
-            if F.stopped(test, m, n):ax.plot(t[-1], e[-1]/e[0], marker="x", color=pc.color(m), ms=4, mew=1)
+            if F.stopped(test, m, n):ax.plot(t[-1], e[-1]/e[0], marker="x", color=color(m), ms=4, mew=1)
         t = np.linspace(0, float(sw.configs[test]["t_end"]), 200);ax.plot(t, ps.fit_curve(t, curve_fit), **fit)
         ax.set_xlabel("$t$");ax.set_ylabel("magnetic energy / initial", labelpad=2);ax.set_xlim(0, t[-1]);ticks(ax);panel_letter(ax, title)
     extra = [Line2D([], [], label="Gardiner & Stone (2005, 2008):\ntheir fits at these grids", **fit)]
-    fig.legend(handles=line_handles(pc.ALL, markers=False, extra=extra), loc="center left", bbox_to_anchor=(.755, .53), handlelength=2.6, fontsize=7)
+    fig.legend(handles=line_handles(ALL, markers=False, extra=extra), loc="center left", bbox_to_anchor=(.755, .53), handlelength=2.6, fontsize=7)
     return fig
 
 
@@ -520,7 +554,7 @@ def turbulence(sw):
     F = Data(sw);n = 512;frame = int(sw.frames(pk.TEST)) - 1;t_end = float(sw.configs[pk.TEST]["t_end"])
     fig, axes = plt.subplots(2, 2, figsize=(FULL, 4.6), gridspec_kw=dict(wspace=.27, hspace=.3, left=.085, right=.745, top=.95, bottom=.1))
     drawn = []
-    for m in pc.ALL:
+    for m in ALL:
         mo = pk.moments(F, m, n)
         if mo is None or F.stopped(pk.TEST, m, n) or mo["t"][-1] < t_end*(1 - 1e-6):continue      # runs that reach the end
         drawn.append(m)

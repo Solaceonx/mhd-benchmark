@@ -27,6 +27,12 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     "glm_hlld": ("glm", "GLM HLLD", "GLM HLLD", "--", "s"),
     "glm_ppm": ("glm", "GLM PPM", "GLM PPM", "-.", "D"),
     "glm_constch": ("glm", "GLM constant $c_h$", "GLM const. $c_h$", (0, (6, 2, 1, 2, 1, 2)), "v"),
+    # the fixed kernels of the sweep-fixes branch (sweep_data.FIXES): the hue and line of the original they fix
+    "glm_fix_hll16": ("glm", "GLM f16/HLL (production), fixed", "GLM f16/HLL fixed", "-", "o"),
+    "glm_fct16": ("glm", "GLM f16/HLL with cell-centred CT, fixed", "GLM f16 + CT fixed", (0, (8, 2.5)), "P"),
+    "glm_fix_hlld": ("glm", "GLM HLLD, fixed", "GLM HLLD fixed", "--", "s"),
+    "glm_fix_ppm": ("glm", "GLM PPM, fixed", "GLM PPM fixed", "-.", "D"),
+    "ct_fix": ("ct", "CT prototype, fixed", "CT fixed", "-", "o"),
     # the three matched set-ups share one dash pattern at different offsets, so coincident curves show all their colours
     "athenak_matched": ("athenak", "AthenaK PLM/HLLE/RK2", "AthenaK PLM/HLLE", (0, (4.5, 4.5)), "s"),
     "athenak_best": ("athenak", "AthenaK PPM/HLLD/RK3", "AthenaK PPM/HLLD", "-", "o"),

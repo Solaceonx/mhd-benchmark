@@ -68,7 +68,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/entropy/07-validity-matrix.png",
      "vector": "media/analysis/entropy/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "MHD-ALE N=256: MHD-ALE stopped itself at t = 0.0164493 (step 40, last timestep 0.000431): Mean-field potential decomposition failed its native flux check",
@@ -91,7 +91,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/entropy/08-runtime-0.png",
      "vector": "media/analysis/entropy/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -99,7 +99,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -107,6 +107,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -188,9 +193,10 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/kh_uniform/07-validity-matrix.png",
      "vector": "media/analysis/kh_uniform/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
+      "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550",
       "MHD-ALE N=256: MHD-ALE stopped itself at t = 0.00999697 (step 50, last timestep 0.000174): Mean-field potential decomposition failed its native flux check",
       "MHD-ALE N=512: MHD-ALE stopped itself at t = 0.000908179 (step 10, last timestep 9.08e-05): Mean-field potential decomposition failed its native flux check"
      ]
@@ -211,7 +217,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/kh_uniform/08-runtime-0.png",
      "vector": "media/analysis/kh_uniform/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -219,7 +225,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 60,
+   "records": 80,
    "methods": [
     "glm",
     "glm_hll16",
@@ -227,6 +233,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -308,14 +319,17 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/current_sheet/07-validity-matrix.png",
      "vector": "media/analysis/current_sheet/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM HLLD N=64:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=128:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=256:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD fixed N=256:     @ Base ./client.jl:550",
+      "Abel GLM HLLD fixed N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550",
       "AREPO static mesh N=256: AREPO stopped itself at t = 1.92291 (sync point 9812, last timestep 1.49e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not a"
      ]
     },
@@ -335,7 +349,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/current_sheet/08-runtime-0.png",
      "vector": "media/analysis/current_sheet/08-runtime-0.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.0551948051948052,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -343,7 +357,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 74,
+   "records": 99,
    "methods": [
     "glm",
     "glm_hll16",
@@ -351,6 +365,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -432,22 +451,23 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_3d_b50/07-validity-matrix.png",
      "vector": "media/analysis/blast_3d_b50/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.5424164524421593,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=32:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=64:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=128:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=256:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=512:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=32:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=128:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=256:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=256:     @ Base ./client.jl:550",
-      "Abel GLM const. $c_h$ N=512:     @ Base ./client.jl:550"
+      "Abel GLM const. $c_h$ N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=32:     @ Base ./client.jl:550"
      ]
     },
     {
@@ -466,7 +486,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b50/08-runtime-0.png",
      "vector": "media/analysis/blast_3d_b50/08-runtime-0.svg",
-     "aspect": 1.625,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -474,7 +494,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 60,
+   "records": 85,
    "methods": [
     "glm",
     "glm_hll16",
@@ -482,6 +502,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -560,7 +585,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/uniform/07-validity-matrix.png",
      "vector": "media/analysis/uniform/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.4184397163120566,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -580,7 +605,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/uniform/08-runtime-0.png",
      "vector": "media/analysis/uniform/08-runtime-0.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.0551948051948052,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -588,7 +613,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 70,
+   "records": 95,
    "methods": [
     "glm",
     "glm_hll16",
@@ -596,6 +621,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -676,7 +706,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/alfven/07-validity-matrix.png",
      "vector": "media/analysis/alfven/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.4184397163120566,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -696,7 +726,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/alfven/08-runtime-0.png",
      "vector": "media/analysis/alfven/08-runtime-0.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.0551948051948052,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -704,7 +734,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 70,
+   "records": 95,
    "methods": [
     "glm",
     "glm_hll16",
@@ -712,6 +742,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -792,7 +827,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/alfven_oblique/07-validity-matrix.png",
      "vector": "media/analysis/alfven_oblique/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.4184397163120566,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -812,7 +847,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/alfven_oblique/08-runtime-0.png",
      "vector": "media/analysis/alfven_oblique/08-runtime-0.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.0551948051948052,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -820,7 +855,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 70,
+   "records": 95,
    "methods": [
     "glm",
     "glm_hll16",
@@ -828,6 +863,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -908,10 +948,10 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/brio_wu/07-validity-matrix.png",
      "vector": "media/analysis/brio_wu/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "MHD-ALE N=256: MHD-ALE stopped itself at t = 0.0036435 (step 20, last timestep 0.00015): Mean-field potential decomposition failed its native flux check",
       "MHD-ALE N=512: MHD-ALE stopped itself at t = 0.000995825 (step 10, last timestep 8.5e-05): Mean-field potential decomposition failed its native flux check"
      ]
@@ -932,7 +972,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/brio_wu/08-runtime-0.png",
      "vector": "media/analysis/brio_wu/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -940,7 +980,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -948,6 +988,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -1029,12 +1074,12 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/brio_wu_rotated/07-validity-matrix.png",
      "vector": "media/analysis/brio_wu_rotated/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=32:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=32:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=32:     @ Base ./client.jl:550",
       "MHD-ALE N=256: MHD-ALE stopped itself at t = 0.00707107 (step 50, last timestep 0.000165): Mean-field potential decomposition failed its native flux check",
       "MHD-ALE N=512: MHD-ALE stopped itself at t = 0.000905023 (step 10, last timestep 8.16e-05): Mean-field potential decomposition failed its native flux check"
      ]
@@ -1055,7 +1100,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/brio_wu_rotated/08-runtime-0.png",
      "vector": "media/analysis/brio_wu_rotated/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1063,7 +1108,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1071,6 +1116,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -1152,11 +1202,11 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/orszag_tang/07-validity-matrix.png",
      "vector": "media/analysis/orszag_tang/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM PPM N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "AREPO static mesh N=256: AREPO stopped itself at t = 0.422095 (sync point 4470, last timestep 2.98e-09): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not ",
       "AREPO static mesh N=512: AREPO stopped itself at t = 0.292739 (sync point 5226, last timestep 2.98e-09): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not "
      ]
@@ -1177,7 +1227,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/orszag_tang/08-runtime-0.png",
      "vector": "media/analysis/orszag_tang/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1185,7 +1235,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1193,6 +1243,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -1274,12 +1329,13 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/orszag_tang_3d/07-validity-matrix.png",
      "vector": "media/analysis/orszag_tang_3d/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.5424164524421593,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM HLLD N=256:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550",
       "RAMSES HLL N=512: srun: error: Timed out waiting for job step to complete",
       "RAMSES HLLD N=512: srun: Force Terminated StepId=46205697.0",
       "Athena++ PPM/HLLD N=512: complete"
@@ -1301,7 +1357,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/orszag_tang_3d/08-runtime-0.png",
      "vector": "media/analysis/orszag_tang_3d/08-runtime-0.svg",
-     "aspect": 1.450892857142857,
+     "aspect": 1.1443661971830987,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1309,7 +1365,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 60,
+   "records": 85,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1317,6 +1373,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -1395,12 +1456,12 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/rotor/07-validity-matrix.png",
      "vector": "media/analysis/rotor/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM HLLD N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "MHD-ALE N=256: MHD-ALE stopped itself at t = 0.0073005 (step 20, last timestep 0.000365): Mean-field potential decomposition failed its native flux check",
       "MHD-ALE N=512: MHD-ALE stopped itself at t = 0.00177944 (step 10, last timestep 0.000178): Mean-field potential decomposition failed its native flux check"
      ]
@@ -1421,7 +1482,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/rotor/08-runtime-0.png",
      "vector": "media/analysis/rotor/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1429,7 +1490,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1437,6 +1498,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -1518,16 +1584,16 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/gem/07-validity-matrix.png",
      "vector": "media/analysis/gem/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=512:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=64:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=128:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=256:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=128:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550"
+      "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550"
      ]
     },
     {
@@ -1546,7 +1612,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/gem/08-runtime-0.png",
      "vector": "media/analysis/gem/08-runtime-0.svg",
-     "aspect": 1.3771186440677965,
+     "aspect": 1.097972972972973,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1554,7 +1620,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 60,
+   "records": 80,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1562,6 +1628,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -1643,10 +1714,10 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop/07-validity-matrix.png",
      "vector": "media/analysis/field_loop/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.4184397163120566,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "AREPO static mesh N=256: AREPO stopped itself at t = 0.839421 (sync point 13762, last timestep 1.19e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not",
       "AREPO static mesh N=512: AREPO stopped itself at t = 0.555973 (sync point 25573, last timestep 1.19e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not"
      ]
@@ -1667,7 +1738,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop/08-runtime-0.png",
      "vector": "media/analysis/field_loop/08-runtime-0.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.0551948051948052,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1675,7 +1746,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 70,
+   "records": 95,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1683,6 +1754,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -1763,10 +1839,10 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop_novz/07-validity-matrix.png",
      "vector": "media/analysis/field_loop_novz/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "AREPO static mesh N=256: AREPO stopped itself at t = 0.882913 (sync point 14677, last timestep 1.19e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not",
       "AREPO static mesh N=512: AREPO stopped itself at t = 0.39819 (sync point 12439, last timestep 1.19e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not "
      ]
@@ -1787,7 +1863,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop_novz/08-runtime-0.png",
      "vector": "media/analysis/field_loop_novz/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1795,7 +1871,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1803,6 +1879,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -1884,10 +1965,11 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop_3d/07-validity-matrix.png",
      "vector": "media/analysis/field_loop_3d/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.5424164524421593,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550",
       "RAMSES HLL N=512: srun: error: sh04-10n14: tasks 104-111: Killed"
      ]
     },
@@ -1907,7 +1989,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop_3d/08-runtime-0.png",
      "vector": "media/analysis/field_loop_3d/08-runtime-0.svg",
-     "aspect": 1.450892857142857,
+     "aspect": 1.1443661971830987,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1916,7 +1998,7 @@
     "Only a few paired snapshots are local. Error points are sparse; a continuous history requires more matched reference snapshots.",
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 60,
+   "records": 85,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1924,6 +2006,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -2002,9 +2089,11 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_2d_b0/07-validity-matrix.png",
      "vector": "media/analysis/blast_2d_b0/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
-     "details": []
+     "details": [
+      "Abel GLM PPM fixed N=32:     @ Base ./client.jl:550"
+     ]
     },
     {
      "category": "07-validity",
@@ -2022,7 +2111,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_2d_b0/08-runtime-0.png",
      "vector": "media/analysis/blast_2d_b0/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2030,7 +2119,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2038,6 +2127,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -2119,19 +2213,19 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_2d_b50/07-validity-matrix.png",
      "vector": "media/analysis/blast_2d_b50/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=32:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=64:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=128:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=256:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=32:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=128:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=256:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "MHD-ALE N=256: MHD-ALE stopped itself at t = 0.000290671 (step 20, last timestep 1.51e-05): Mean-field potential decomposition failed its native flux check",
       "MHD-ALE N=512: MHD-ALE stopped itself at t = 7.03398e-05 (step 10, last timestep 7.03e-06): Mean-field potential decomposition failed its native flux check"
      ]
@@ -2152,7 +2246,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_2d_b50/08-runtime-0.png",
      "vector": "media/analysis/blast_2d_b50/08-runtime-0.svg",
-     "aspect": 1.3771186440677965,
+     "aspect": 1.097972972972973,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2160,7 +2254,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2168,6 +2262,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -2249,19 +2348,19 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_2d_b100/07-validity-matrix.png",
      "vector": "media/analysis/blast_2d_b100/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=32:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=64:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=128:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=256:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=32:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=128:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=256:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=32:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=64:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=128:     @ Base ./client.jl:550",
@@ -2287,7 +2386,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_2d_b100/08-runtime-0.png",
      "vector": "media/analysis/blast_2d_b100/08-runtime-0.svg",
-     "aspect": 1.450892857142857,
+     "aspect": 1.1443661971830987,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2295,7 +2394,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 75,
+   "records": 100,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2303,6 +2402,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -2371,7 +2475,7 @@
     {
      "category": "06-spectra",
      "title": "Power spectra",
-     "group": "All codes on shared axes \u00b7 N=128, t=0.01, seed 42",
+     "group": "All codes on shared axes \u00b7 N=32, t=0.01, seed 42",
      "file": "media/analysis/blast_3d_b0/06-spectra-0.png",
      "vector": "media/analysis/blast_3d_b0/06-spectra-0.svg",
      "aspect": 1.625,
@@ -2384,16 +2488,19 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_3d_b0/07-validity-matrix.png",
      "vector": "media/analysis/blast_3d_b0/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.5424164524421593,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=32:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=128:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=256:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
-      "Abel GLM const. $c_h$ N=512:     @ Base ./client.jl:550"
+      "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM const. $c_h$ N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=256:     @ Base ./client.jl:550"
      ]
     },
     {
@@ -2412,7 +2519,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b0/08-runtime-0.png",
      "vector": "media/analysis/blast_3d_b0/08-runtime-0.svg",
-     "aspect": 1.5330188679245282,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2420,7 +2527,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 60,
+   "records": 85,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2428,6 +2535,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -2493,7 +2605,7 @@
     {
      "category": "06-spectra",
      "title": "Power spectra",
-     "group": "All codes on shared axes \u00b7 N=128, t=0.01, seed 42",
+     "group": "All codes on shared axes \u00b7 N=32, t=0.01, seed 42",
      "file": "media/analysis/blast_3d_b100/06-spectra-0.png",
      "vector": "media/analysis/blast_3d_b100/06-spectra-0.svg",
      "aspect": 1.625,
@@ -2506,26 +2618,28 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_3d_b100/07-validity-matrix.png",
      "vector": "media/analysis/blast_3d_b100/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.5424164524421593,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=32:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=64:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=128:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=256:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=512:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=256:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=32:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=128:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=256:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=32:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=32:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=64:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=128:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=256:     @ Base ./client.jl:550",
-      "Abel GLM const. $c_h$ N=512:     @ Base ./client.jl:550"
+      "Abel GLM const. $c_h$ N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=128:     @ Base ./client.jl:550"
      ]
     },
     {
@@ -2544,7 +2658,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b100/08-runtime-0.png",
      "vector": "media/analysis/blast_3d_b100/08-runtime-0.svg",
-     "aspect": 1.728723404255319,
+     "aspect": 1.3771186440677965,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2552,7 +2666,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 60,
+   "records": 85,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2560,6 +2674,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -2638,10 +2757,10 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/kh_localized/07-validity-matrix.png",
      "vector": "media/analysis/kh_localized/07-validity-matrix.svg",
-     "aspect": 1.6901408450704225,
+     "aspect": 1.3636363636363635,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "MHD-ALE N=256: MHD-ALE stopped itself at t = 0.00427485 (step 20, last timestep 0.000214): Mean-field potential decomposition failed its native flux check",
       "MHD-ALE N=512: MHD-ALE stopped itself at t = 0.00181689 (step 20, last timestep 9.08e-05): Mean-field potential decomposition failed its native flux check"
      ]
@@ -2662,7 +2781,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/kh_localized/08-runtime-0.png",
      "vector": "media/analysis/kh_localized/08-runtime-0.svg",
-     "aspect": 1.2500000000000002,
+     "aspect": 1.015625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2670,7 +2789,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 60,
+   "records": 80,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2678,6 +2797,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -2703,11 +2827,16 @@
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: not available.",
      "details": [
       "Abel GLM LLF: no paired reference data",
-      "Abel GLM f16/HLL: no paired reference data",
-      "Abel GLM HLLD: no paired reference data",
-      "Abel GLM PPM: no paired reference data",
+      "Abel GLM f16/HLL (original): no paired reference data",
+      "Abel GLM HLLD (original): no paired reference data",
+      "Abel GLM PPM (original): no paired reference data",
       "Abel GLM const. $c_h$: no paired reference data",
-      "Abel CT prototype: no paired reference data"
+      "Abel CT prototype (original): no paired reference data",
+      "Abel GLM f16/HLL fixed: no paired reference data",
+      "Abel GLM f16 + CT fixed: no paired reference data",
+      "Abel GLM HLLD fixed: no paired reference data",
+      "Abel GLM PPM fixed: no paired reference data",
+      "Abel CT prototype, fixed: no paired reference data"
      ]
     },
     {
@@ -2769,7 +2898,8 @@
      "aspect": 1.7647058823529411,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550"
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550"
      ]
     },
     {
@@ -2788,7 +2918,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/kh_localized_dtjump/08-runtime-0.png",
      "vector": "media/analysis/kh_localized_dtjump/08-runtime-0.svg",
-     "aspect": 1.911764705882353,
+     "aspect": 1.5330188679245282,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2797,14 +2927,19 @@
     "This timestep-jump experiment has no independent spatial truth reference. Its comparison against the no-jump control belongs in the test-specific analysis; spatial error and accuracy/cost panels are unavailable.",
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 18,
+   "records": 33,
    "methods": [
     "glm",
     "glm_hll16",
     "glm_hlld",
     "glm_ppm",
     "glm_constch",
-    "ct"
+    "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -2877,14 +3012,19 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/decay/07-validity-matrix.png",
      "vector": "media/analysis/decay/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.5424164524421593,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=256:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=512:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL fixed N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16 + CT fixed N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD fixed N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550",
+      "Abel CT prototype, fixed N=512:     @ Base ./client.jl:550",
       "RAMSES HLL N=512: srun: error: Timed out waiting for job step to complete",
       "RAMSES HLLD N=512: srun: error: sh03-04n10: tasks 112-119: Terminated"
      ]
@@ -2905,7 +3045,7 @@
      "group": "All codes on shared axes \u00b7 N=128, seed 42",
      "file": "media/analysis/decay/08-runtime-0.png",
      "vector": "media/analysis/decay/08-runtime-0.svg",
-     "aspect": 1.450892857142857,
+     "aspect": 1.1443661971830987,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2913,7 +3053,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 180,
+   "records": 255,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2921,6 +3061,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -2999,24 +3144,40 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/decay_supersonic/07-validity-matrix.png",
      "vector": "media/analysis/decay_supersonic/07-validity-matrix.svg",
-     "aspect": 1.7647058823529411,
+     "aspect": 1.5424164524421593,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
-      "Abel GLM f16/HLL N=64:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=128:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=256:     @ Base ./client.jl:550",
-      "Abel GLM f16/HLL N=512:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=128:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=256:     @ Base ./client.jl:550",
-      "Abel GLM HLLD N=512:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=64:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=128:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=256:     @ Base ./client.jl:550",
-      "Abel GLM PPM N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=256:     @ Base ./client.jl:550",
+      "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=64:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=128:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=256:     @ Base ./client.jl:550",
       "Abel GLM const. $c_h$ N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL fixed N=64:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL fixed N=128:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL fixed N=256:     @ Base ./client.jl:550",
+      "Abel GLM f16/HLL fixed N=512:     @ Base ./client.jl:550",
+      "Abel GLM f16 + CT fixed N=128:     @ Base ./client.jl:550",
+      "Abel GLM f16 + CT fixed N=256:     @ Base ./client.jl:550",
+      "Abel GLM f16 + CT fixed N=512:     @ Base ./client.jl:550",
+      "Abel GLM HLLD fixed N=512:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=64:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=128:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=256:     @ Base ./client.jl:550",
+      "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550",
+      "Abel CT prototype, fixed N=64:     @ Base ./client.jl:550",
+      "Abel CT prototype, fixed N=128:     @ Base ./client.jl:550",
+      "Abel CT prototype, fixed N=256:     @ Base ./client.jl:550",
+      "Abel CT prototype, fixed N=512:     @ Base ./client.jl:550",
       "AthenaK PPM/HLLD N=64: particle-updates/cpu_second = 0.000000e+00",
       "AthenaK PPM/HLLD N=128: particle-updates/cpu_second = 0.000000e+00",
       "RAMSES HLL N=64:     1282.385     100.0    TOTAL",
@@ -3051,7 +3212,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 88,
+   "records": 128,
    "methods": [
     "glm",
     "glm_hll16",
@@ -3059,6 +3220,11 @@
     "glm_ppm",
     "glm_constch",
     "ct",
+    "glm_fix_hll16",
+    "glm_fct16",
+    "glm_fix_hlld",
+    "glm_fix_ppm",
+    "ct_fix",
     "athenak_matched",
     "athenak_best",
     "ramses_matched",
@@ -3399,6 +3565,6 @@
    ]
   }
  },
- "built_utc": "2026-10-20T18:23:27.119389+00:00",
+ "built_utc": "2026-10-22T19:33:31.820097+00:00",
  "synthetic": false
 }

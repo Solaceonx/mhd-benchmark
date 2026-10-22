@@ -35,7 +35,10 @@ OUT=SITE/"media/analysis"
 FIELDS=("density","magnetic")
 NORMS=("L1","L2","Linf")
 ALE_TESTS=re.search(r'^MHDALE_TESTS="([^"]+)"',(ROOT/"sherlock_mhdale/options.sh").read_text(),re.M).group(1).split()
-METHODS=sd.METHODS+sd.AREPO+("mhdale_ale",)
+OURS=sd.GPU_METHODS+sd.FIXED
+METHODS=OURS+sd.EXTERNAL+sd.AREPO+("mhdale_ale",)
+# With the rerun fetched, an original that has a fixed version is drawn in a light tint of its colour, the fix in full.
+FADED=set(sd.FIXES.values()) if sd.RERUN.is_dir() else set()
 TITLES={"01-errors":"Error norms versus physical time", "02-convergence":"Error versus resolution",
         "03-cost":"Accuracy versus computation", "04-conservation":"Conservation and energy evolution",
         "05-divergence":"Magnetic divergence", "06-spectra":"Power spectra",
@@ -56,11 +59,16 @@ def clean(value):
     return value
 
 
+def tint(color,amount=.55):
+    c=np.array(matplotlib.colors.to_rgb(color));return matplotlib.colors.to_hex(c+(1-c)*amount)
+
+
 def style(method):
     if method=="mhdale_ale":return dict(color="#227c89",linestyle="-",marker="v",label="MHD-ALE")
     v=pc.STYLE[method]
     name=(pc.plain(v[2]).replace("GLM","Abel GLM") if method.startswith("glm") else pc.plain(v[2])).replace("cₕ",r"$c_h$")
-    if method=="ct":name="Abel CT prototype"
+    if method in ("ct","ct_fix"):name="Abel CT prototype"+(", fixed" if method=="ct_fix" else "")
+    if method in FADED:return dict(color=tint(FAMILY[v[0]]),linestyle=v[3],marker=v[4],label=name+" (original)")
     return dict(color=FAMILY[v[0]],linestyle=v[3],marker=v[4],label=name)
 
 
@@ -82,7 +90,7 @@ def draw(ax,x,y,method,points=False):
     if not valid.any():return False
     kw=style(method)
     if not points:kw.pop("marker")
-    line,=ax.plot(x[valid],y[valid],**kw,lw=1.7,ms=4)
+    line,=ax.plot(x[valid],y[valid],**kw,lw=1.7,ms=4,zorder=3 if method in sd.FIXES else 2)   # the fixes on top
     identify(line,method)
     ax.grid(False)
     return True
@@ -98,6 +106,7 @@ def logarithmic(ax):
     values=np.concatenate([np.asarray(l.get_ydata(),float) for l in ax.lines]) if ax.lines else np.array([])
     positive=values[np.isfinite(values)&(values>0)]
     if len(positive):ax.set_yscale("symlog",linthresh=max(1e-16,float(positive.min())/3,float(positive.max())*1e-5))
+    if len(positive) and values[np.isfinite(values)].min()>=0:ax.set_ylim(bottom=0)   # no empty negative half
 
 
 def compute_errors(actual,reference):
@@ -145,7 +154,7 @@ class Run:
                 <=1e-5*max(1,abs(self.diag["time"][-1])))
 
     @property
-    def gpu(self):return self.method in sd.GPU_METHODS or self.method.startswith("athenak")
+    def gpu(self):return self.method in OURS or self.method.startswith("athenak")
 
     @functools.cached_property
     def environment(self):
@@ -181,7 +190,7 @@ class Data:
                 self.runs[key]=Run(test,"mhdale_ale",n,seed,p.parent,m,sd.read_csv(p.parent/"diagnostics.csv") or {},{})
 
     def methods(self,test):
-        out=self.sw.labels(test)+[m for m in sd.AREPO if test in sd.AREPO_TESTS]
+        out=self.sw.labels(test,fixed=True)+[m for m in sd.AREPO if test in sd.AREPO_TESTS]
         if test in ALE_TESTS:out.append("mhdale_ale")
         return list(dict.fromkeys(out))
 
@@ -192,7 +201,8 @@ class Data:
     @functools.lru_cache(maxsize=12)
     def load_array(self,path,n):
         p=Path(path)
-        if not p.is_file():self.missing.add(str(p.relative_to(self.sw.results)) if p.is_relative_to(self.sw.results) else str(p));return None
+        if not p.is_file():
+            self.missing.add(str(next((p.relative_to(r) for r in (self.sw.results,ROOT) if p.is_relative_to(r)),p)));return None
         count=p.stat().st_size//4
         if count==n*n*9:shape=(n,n,9)
         elif count==n**3*9:shape=(n,n,n,9)
@@ -308,7 +318,7 @@ class Figures:
         legends=[[],[]]
         for label,handle in handles.items():
             method=known.get(label)
-            ours=method in sd.GPU_METHODS if method else label.startswith("Abel")
+            ours=method in OURS if method else label.startswith("Abel")
             short=label.replace("Abel et al.","").replace("Abel ","").strip()
             legends[0 if ours else 1].append((handle,short,method))
         for j,entries in enumerate(legends):
@@ -498,7 +508,7 @@ class Figures:
                     mark=f"{100*min(1,float(reached)/float(self.config['t_end'])):.0f}%"
                     reasons.append(f"{style(method)['label']} N={n}: "+str(run.meta.get("error",run.meta.get("status","unknown"))).splitlines()[-1][:240])
                 identify(ax.add_patch(plt.Rectangle((i-.46,j-.40),.92,.8,color=color,alpha=.9)),method)
-                identify(ax.text(i,j,mark,ha="center",va="center",fontsize=12,color="white" if run and run.completed else "#202a2a"),method)
+                identify(ax.text(i,j,mark,ha="center",va="center",fontsize=12,color="white" if run and run.completed and method not in FADED else "#202a2a"),method)
         ax.set_xlim(-.6,len(ns)-.4);ax.set_ylim(len(self.methods)-.5,-.5);ax.set_xticks(range(len(ns)),labels=ns)
         ax.set_yticks(range(len(self.methods)),labels=[style(m)["label"] for m in self.methods],fontsize=10)
         for method,label in zip(self.methods,ax.get_yticklabels()):identify(label,method)
@@ -513,7 +523,7 @@ class Figures:
             t=d["time"][:k]
             # Abel's kernels diagnose their full N³ allocation even on planar
             # tests. External planar codes diagnose an N²×1 state.
-            cells=r.n**(3 if r.method in sd.GPU_METHODS or not r.meta.get("planar") else 2)
+            cells=r.n**(3 if r.method in OURS or not r.meta.get("planar") else 2)
             for j,key in enumerate(("density_floor_cells","pressure_floor_cells","nonpositive_pressure_cells")):
                 if key in d:draw(axs[j],t,100*d[key][:k]/cells,r.method)
         for ax,label in zip(axs,["Density-floor cells [%]","Pressure-floor cells [%]","Nonpositive-pressure cells [%]"]):
@@ -595,8 +605,8 @@ def section(test, figure_prefix=None, data_test=None):
     parts.append('<p class="small">'+" · ".join(f'<a href="#analysis-{category}">{e(category[:2]+" "+title)}</a>' for category,title in TITLES.items())+'</p>')
     methods=item.get("methods",[])
     if methods:
-        options="".join(f'<option value="{e(m)}">{e(style(m)["label"].replace("Abel ","").replace("$c_h$","cₕ"))}</option>' for m in methods if m in sd.GPU_METHODS)
-        families=list(dict.fromkeys(m.split("_")[0] for m in methods if m not in sd.GPU_METHODS))
+        options="".join(f'<option value="{e(m)}">{e(style(m)["label"].replace("Abel ","").replace("$c_h$","cₕ"))}</option>' for m in methods if m in OURS)
+        families=list(dict.fromkeys(m.split("_")[0] for m in methods if m not in OURS))
         names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",mhdale="MHD-ALE")
         external="".join(f'<option value="{e(m)}">{e(names[m])}</option>' for m in families)
         parts.append('<div class="comparison-controls" hidden style="position:sticky;top:0;z-index:4;background:var(--paper);padding:8px 0"><div class="toolbar" style="flex-wrap:wrap;justify-content:flex-start;margin-bottom:6px">'
@@ -660,7 +670,7 @@ def main():
     if args.tests and missing_file.is_file():
         # A subset rebuild must retain other tests' still-missing inputs.
         data.missing.update(p for p in missing_file.read_text().splitlines()
-                            if p and not (data.sw.results/Path(p)).is_file())
+                            if p and not (data.sw.results/Path(p)).is_file() and not (ROOT/Path(p)).is_file())
     missing_file.write_text("\n".join(sorted(data.missing))+"\n")
 
 

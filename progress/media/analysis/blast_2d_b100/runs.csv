@@ -4,7 +4,7 @@ glm,Abel GLM LLF,64,42,complete,True,0.010000000000161435,0.073143345,5,Synchron
 glm,Abel GLM LLF,128,42,complete,True,0.00999999999992518,0.9289170849999986,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/glm_r1,
 glm,Abel GLM LLF,256,42,complete,True,0.009999999999990905,15.936908545000044,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-glm/data/glm_r1,
 glm,Abel GLM LLF,512,42,complete,True,0.010000000000047748,267.0680926410003,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-glm/data/glm_r1,
-glm_hll16,Abel GLM f16/HLL,32,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N32-s42-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+glm_hll16,Abel GLM f16/HLL (original),32,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N32-s42-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -34,7 +34,7 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_hll16,Abel GLM f16/HLL,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N64-s42-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+glm_hll16,Abel GLM f16/HLL (original),64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N64-s42-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -64,7 +64,7 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_hll16,Abel GLM f16/HLL,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+glm_hll16,Abel GLM f16/HLL (original),128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -94,7 +94,7 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_hll16,Abel GLM f16/HLL,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-glm_hll16/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+glm_hll16,Abel GLM f16/HLL (original),256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-glm_hll16/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -124,7 +124,7 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_hll16,Abel GLM f16/HLL,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-glm_hll16/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
+glm_hll16,Abel GLM f16/HLL (original),512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-glm_hll16/data/glm_hll16_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -154,12 +154,12 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_hlld,Abel GLM HLLD,32,42,complete,True,0.009999999999990905,0.014229483000000005,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N32-s42-all/data/glm_hlld_r1,
-glm_hlld,Abel GLM HLLD,64,42,complete,True,0.009999999999877218,0.08706450699999993,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N64-s42-all/data/glm_hlld_r1,
-glm_hlld,Abel GLM HLLD,128,42,complete,True,0.009999999999990905,1.246078743000001,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/glm_hlld_r1,
-glm_hlld,Abel GLM HLLD,256,42,complete,True,0.009999999999877218,21.01098855499997,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-glm_hlld/data/glm_hlld_r1,
-glm_hlld,Abel GLM HLLD,512,42,complete,True,0.010000000000005116,804.0433939930019,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-glm_hlld/data/glm_hlld_r1,
-glm_ppm,Abel GLM PPM,32,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N32-s42-all/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+glm_hlld,Abel GLM HLLD (original),32,42,complete,True,0.009999999999990905,0.014229483000000005,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N32-s42-all/data/glm_hlld_r1,
+glm_hlld,Abel GLM HLLD (original),64,42,complete,True,0.009999999999877218,0.08706450699999993,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N64-s42-all/data/glm_hlld_r1,
+glm_hlld,Abel GLM HLLD (original),128,42,complete,True,0.009999999999990905,1.246078743000001,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/glm_hlld_r1,
+glm_hlld,Abel GLM HLLD (original),256,42,complete,True,0.009999999999877218,21.01098855499997,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-glm_hlld/data/glm_hlld_r1,
+glm_hlld,Abel GLM HLLD (original),512,42,complete,True,0.010000000000005116,804.0433939930019,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-glm_hlld/data/glm_hlld_r1,
+glm_ppm,Abel GLM PPM (original),32,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N32-s42-all/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -189,7 +189,7 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_ppm,Abel GLM PPM,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N64-s42-all/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+glm_ppm,Abel GLM PPM (original),64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N64-s42-all/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -219,7 +219,7 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_ppm,Abel GLM PPM,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+glm_ppm,Abel GLM PPM (original),128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -249,7 +249,7 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_ppm,Abel GLM PPM,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-glm_ppm/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+glm_ppm,Abel GLM PPM (original),256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-glm_ppm/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -279,7 +279,7 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-glm_ppm,Abel GLM PPM,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-glm_ppm/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
+glm_ppm,Abel GLM PPM (original),512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-glm_ppm/data/glm_ppm_r1,"Nonphysical/nonfinite state in CFL scan
 Stacktrace:
   [1] error(s::String)
     @ Base ./error.jl:44
@@ -459,11 +459,36 @@ Stacktrace:
     @ Base ./client.jl:317
  [14] _start()
     @ Base ./client.jl:550"
-ct,Abel CT prototype,32,42,complete,True,0.010000000000218279,0.021852941,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N32-s42-all/data/ct_r1,
-ct,Abel CT prototype,64,42,complete,True,0.010000000000218279,0.12381710399999997,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N64-s42-all/data/ct_r1,
-ct,Abel CT prototype,128,42,complete,True,0.009999999999934062,1.4144591310000012,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/ct_r1,
-ct,Abel CT prototype,256,42,complete,True,0.010000000000104592,23.16068078900003,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-ct/data/ct_r1,
-ct,Abel CT prototype,512,42,complete,True,0.009999999999962483,389.92046461800055,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-ct/data/ct_r1,
+ct,Abel CT prototype (original),32,42,complete,True,0.010000000000218279,0.021852941,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N32-s42-all/data/ct_r1,
+ct,Abel CT prototype (original),64,42,complete,True,0.010000000000218279,0.12381710399999997,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N64-s42-all/data/ct_r1,
+ct,Abel CT prototype (original),128,42,complete,True,0.009999999999934062,1.4144591310000012,5,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N128-s42-all/data/ct_r1,
+ct,Abel CT prototype (original),256,42,complete,True,0.010000000000104592,23.16068078900003,3,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N256-s42-ct/data/ct_r1,
+ct,Abel CT prototype (original),512,42,complete,True,0.009999999999962483,389.92046461800055,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,sweep_results/blast_2d_b100-gpu-N512-s42-ct/data/ct_r1,
+glm_fix_hll16,Abel GLM f16/HLL fixed,32,42,complete,True,0.009999999999990905,0.016901137000000004,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N32-s42-glm_fix_hll16/data/glm_fix_hll16_r1,
+glm_fix_hll16,Abel GLM f16/HLL fixed,64,42,complete,True,0.009999999999763531,0.17876300099999995,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N64-s42-glm_fix_hll16/data/glm_fix_hll16_r1,
+glm_fix_hll16,Abel GLM f16/HLL fixed,128,42,complete,True,0.010000000000161435,1.6185412640000012,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N128-s42-glm_fix_hll16/data/glm_fix_hll16_r1,
+glm_fix_hll16,Abel GLM f16/HLL fixed,256,42,complete,True,0.009999999999990905,27.99603961299996,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N256-s42-glm_fix_hll16/data/glm_fix_hll16_r1,
+glm_fix_hll16,Abel GLM f16/HLL fixed,512,42,complete,True,0.009999999999976694,466.4158855280001,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N512-s42-glm_fix_hll16/data/glm_fix_hll16_r1,
+glm_fct16,Abel GLM f16 + CT fixed,32,42,complete,True,0.010000000000786713,0.019078789999999998,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N32-s42-glm_fct16/data/glm_fct16_r1,
+glm_fct16,Abel GLM f16 + CT fixed,64,42,complete,True,0.010000000000331966,0.11586999200000005,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N64-s42-glm_fct16/data/glm_fct16_r1,
+glm_fct16,Abel GLM f16 + CT fixed,128,42,complete,True,0.010000000000005116,1.6258779579999982,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N128-s42-glm_fct16/data/glm_fct16_r1,
+glm_fct16,Abel GLM f16 + CT fixed,256,42,complete,True,0.009999999999934062,27.133770418000065,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N256-s42-glm_fct16/data/glm_fct16_r1,
+glm_fct16,Abel GLM f16 + CT fixed,512,42,complete,True,0.009999999999962483,451.8627216990013,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N512-s42-glm_fct16/data/glm_fct16_r1,
+glm_fix_hlld,Abel GLM HLLD fixed,32,42,complete,True,0.010000000000218279,0.02370471200000001,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N32-s42-glm_fix_hlld/data/glm_fix_hlld_r1,
+glm_fix_hlld,Abel GLM HLLD fixed,64,42,complete,True,0.009999999999877218,0.10320096699999998,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N64-s42-glm_fix_hlld/data/glm_fix_hlld_r1,
+glm_fix_hlld,Abel GLM HLLD fixed,128,42,complete,True,0.009999999999990905,1.4258710889999981,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N128-s42-glm_fix_hlld/data/glm_fix_hlld_r1,
+glm_fix_hlld,Abel GLM HLLD fixed,256,42,complete,True,0.009999999999990905,23.501304422000032,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N256-s42-glm_fix_hlld/data/glm_fix_hlld_r1,
+glm_fix_hlld,Abel GLM HLLD fixed,512,42,complete,True,0.009999999999990905,387.7828270809985,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N512-s42-glm_fix_hlld/data/glm_fix_hlld_r1,
+glm_fix_ppm,Abel GLM PPM fixed,32,42,complete,True,0.010000000000204068,0.03303606400000001,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N32-s42-glm_fix_ppm/data/glm_fix_ppm_r1,
+glm_fix_ppm,Abel GLM PPM fixed,64,42,complete,True,0.009999999999848797,0.373864793,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N64-s42-glm_fix_ppm/data/glm_fix_ppm_r1,
+glm_fix_ppm,Abel GLM PPM fixed,128,42,complete,True,0.010000000000189857,6.602285239000004,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N128-s42-glm_fix_ppm/data/glm_fix_ppm_r1,
+glm_fix_ppm,Abel GLM PPM fixed,256,42,complete,True,0.009999999999934062,111.8700132369999,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N256-s42-glm_fix_ppm/data/glm_fix_ppm_r1,
+glm_fix_ppm,Abel GLM PPM fixed,512,42,complete,True,0.009999999999990905,2040.5119183170036,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N512-s42-glm_fix_ppm/data/glm_fix_ppm_r1,
+ct_fix,"Abel CT prototype, fixed",32,42,complete,True,0.010000000000786713,0.041809437000000026,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N32-s42-ct_fix/data/ct_fix_r1,
+ct_fix,"Abel CT prototype, fixed",64,42,complete,True,0.010000000000218279,1.8295916909999976,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N64-s42-ct_fix/data/ct_fix_r1,
+ct_fix,"Abel CT prototype, fixed",128,42,complete,True,0.009999999999962483,15.89498192900001,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N128-s42-ct_fix/data/ct_fix_r1,
+ct_fix,"Abel CT prototype, fixed",256,42,complete,True,0.010000000000133014,102.96828064500001,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N256-s42-ct_fix/data/ct_fix_r1,
+ct_fix,"Abel CT prototype, fixed",512,42,complete,True,0.010000000000047748,1754.2920279579978,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b100-N512-s42-ct_fix/data/ct_fix_r1,
 athenak_matched,AthenaK PLM/HLLE,32,42,complete,True,0.01,0.1042375,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b100-athenak-matched-run-N32-s42/data/athenak_matched_r1,
 athenak_matched,AthenaK PLM/HLLE,64,42,complete,True,0.01,0.3942269,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b100-athenak-matched-run-N64-s42/data/athenak_matched_r1,
 athenak_matched,AthenaK PLM/HLLE,128,42,complete,True,0.01,3.268762,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b100-athenak-matched-run-N128-s42/data/athenak_matched_r1,

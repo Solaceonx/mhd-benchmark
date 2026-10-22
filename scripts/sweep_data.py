@@ -17,6 +17,7 @@ rho, mx, my, mz, E, Bx, By, Bz, psi (psi is zero for codes without divergence cl
 import functools
 import json
 import os
+import re
 import sys
 import tomllib
 from pathlib import Path
@@ -43,6 +44,13 @@ METHODS = GPU_METHODS + EXTERNAL
 AREPO = ("arepo_moving", "arepo_static")
 AREPO_TESTS = ("entropy", "alfven", "alfven_oblique", "uniform", "field_loop", "field_loop_novz", "brio_wu", "brio_wu_rotated",
                "orszag_tang", "rotor", "current_sheet", "blast_2d_b0", "blast_2d_b50", "blast_2d_b100", "kh_uniform", "kh_localized", "gem")
+# The fixed kernels of the sweep-fixes branch (sherlock_fixes/README.md, "The full rerun"): every sweep test at every
+# grid and seed, one directory per kernel, fetched into fix_results/ (git-ignored). Each is set beside the original it
+# fixes (FIXES); like AREPO they are outside the plan, so a page shows them only when it asks (labels(fixed=True)).
+FIXES = {"glm_fix_hll16": "glm_hll16", "glm_fct16": "glm_hll16", "glm_fix_hlld": "glm_hlld", "glm_fix_ppm": "glm_ppm",
+         "ct_fix": "ct"}
+FIXED = tuple(FIXES)
+RERUN = Path(os.environ.get("MHD_RERUN_RESULTS", ROOT/"fix_results"/"mhd-results-rerun"))
 FIELDS = ("rho", "mx", "my", "mz", "E", "Bx", "By", "Bz", "psi")
 
 # The binary files the paper figures read, per test: frames of the full state for every method (STATE: {grid: frames},
@@ -124,6 +132,20 @@ class Sweep:
                             row["frac"] = min(1.0, reached/t_end) if t_end else None;row["reached"] = reached
                             row["note"] = m.get("arepo_stopped", "")
                     self.arepo[key] = row;self.rows[key] = row
+        self.fixed = {}                                # (test, label, n, seed) -> status row, from the fetched records
+        for d in sorted(RERUN.glob("*-N*-s*-*")) if RERUN.is_dir() else ():
+            m = re.fullmatch(r"(.+)-N(\d+)-s(\d+)-(\w+)", d.name)
+            if not m or m[4] not in FIXES or m[1] not in self.configs:continue
+            test, n, seed, label = m[1], int(m[2]), int(m[3]), m[4];key = (test, label, n, seed)
+            # dir is absolute: self.results/dir is then the rerun's directory
+            self.by[key] = dict(test=test, code="fixed", variant=label, mode="run", n=n, seed=seed, extra=label, dir=str(d), key=d.name)
+            meta = self.meta(*key);row = dict(test=test, n=n, seed=seed, label=label, frac=None, state="open")
+            if meta is not None:
+                row["state"] = "done" if meta.get("status") == "complete" else "stopped"
+                if row["state"] == "stopped":
+                    t_end = float(self.configs[test]["t_end"]);row["reached"] = float(meta.get("time_reached", 0.0))
+                    row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None;row["note"] = meta.get("error", "").split("\n")[0]
+            self.fixed[key] = row;self.rows[key] = row
 
     # ---- the plan ----
     def frames(self, test):
@@ -147,10 +169,10 @@ class Sweep:
     def seeds(self, test):
         return list(self.configs[test].get("seeds", [42]))
 
-    def labels(self, test, references=False):
-        """Methods planned for a test, in display order."""
+    def labels(self, test, references=False, fixed=False):
+        """Methods planned for a test, in display order; fixed: with the rerun's fixed kernels (after the originals)."""
         have = {l for (t, l, n, s) in self.by if t == test}
-        return [m for m in METHODS + (REFERENCES if references else ()) if m in have]
+        return [m for m in GPU_METHODS + (FIXED if fixed else ()) + EXTERNAL + (REFERENCES if references else ()) if m in have]
 
     def reference_n(self, test, label):
         g = self.grids(test, label);return g[0] if g else None
@@ -178,8 +200,8 @@ class Sweep:
     def recorded(self, test, label, n, seed=42, rep=1):
         """The export's record of a part (status, reached, frames, steps, ...), or None."""
         r = self.by.get((test, label, n, seed))
-        if r is not None and r["code"] == "arepo":          # not in the export: from the fetched record
-            m = self.meta(test, label, n, seed, rep);row = self.arepo.get((test, label, n, seed), {})
+        if r is not None and r["code"] in ("arepo", "fixed"):          # not in the export: from the fetched record
+            m = self.meta(test, label, n, seed, rep);row = self.rows.get((test, label, n, seed), {})
             return None if m is None else dict(part=f"{label}_r{rep}", status=m.get("status"), frames=len(m.get("frames", [])),
                                                reached=row.get("reached", m.get("time_reached")), steps=m.get("steps"))
         if r is None or self.export is None:return None

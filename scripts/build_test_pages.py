@@ -57,7 +57,7 @@ def config_of(test):
 
 def results_table(sweep, test):
     """Rows: the codes' set-ups; columns: the grids; a cell says whether every seed finished, or where a run stopped."""
-    labels = list(sweep.labels(test)) + [a for a in sd.AREPO if test in sd.AREPO_TESTS and sweep.grids(test, a)]
+    labels = list(sweep.labels(test, fixed=True)) + [a for a in sd.AREPO if test in sd.AREPO_TESTS and sweep.grids(test, a)]
     grids = sorted({n for l in labels for n in sweep.grids(test, l)});seeds = sweep.seeds(test);rows = [];stopped = 0;total = 0
     for label in labels:
         cells = []

@@ -103,7 +103,7 @@ Open: 14 runs the original finished and the fix does not (CT prototype: all Mach
 option: decay 256/512 at t = 0.375; PPM: blast_2d_b0 32, kh_uniform 512). Mach 9 for the CT prototype: lyxia says
 not to worry (2026-10-22; on the CPU it loses pressure positivity once second order; GLM with the same slope survives).
 The fixed PPM's 512^2 instability (psi grows from t ~ 1) is not fixed, only no longer a crash. The cell-CT option lets
-B_z grow to 4e-2 B0 on `field_loop` 128^2. The Kernel fixes page shows the rerun (issues 8-10 open; published 2026-10-22). Next: lyxia forks yipihey/GLMMHDTurb, then push `sweep-fixes` to the fork.
+B_z grow to 4e-2 B0 on `field_loop` 128^2. The Kernel fixes page shows the rerun (issues 8-10 open; published 2026-10-22). Branch pushed 2026-10-22 to the fork github.com/Solaceonx/GLMMHDTurb (remote `fork` in the clone); no pull request to Tom yet.
 
 **Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
 plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,

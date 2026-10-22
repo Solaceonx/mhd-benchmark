@@ -273,6 +273,34 @@ def tally(status):
     return out
 
 
+def fixed_card():
+    """The full rerun of the fixed kernels (sweep-fixes branch), outside the plan: per kernel, what finished beside its
+    original on the same runs, and the runs that went the other way (empty when the rerun is not here)."""
+    import sweep_data
+    sw = sweep_data.Sweep();rows = sw.fixed
+    if not rows:return ""
+    names = {"glm_fix_hll16": "GLM f16/HLL", "glm_fct16": "GLM f16 with cell-centred CT", "glm_fix_hlld": "GLM HLLD", "glm_fix_ppm": "GLM PPM",
+             "ct_fix": "CT prototype"}
+    where = lambda k, r: f"{k[0].replace('_', ' ')} {k[2]}" + (f" seed {sw.seeds(k[0]).index(k[3]) + 1}" if len(sw.seeds(k[0])) > 1 else "") + \
+        (f" (t = {r['reached']:.3g})" if r.get("reached") is not None else "")
+    parts = []
+    for label in sweep_data.FIXED:
+        orig = sweep_data.FIXES[label];mine = [(k, r) for k, r in rows.items() if k[1] == label]
+        done = sum(r["state"] == "done" for _, r in mine);was = sum(sw.state_of(k[0], orig, k[2], k[3]) == "done" for k, _ in mine)
+        lost = [where(k, r) for k, r in sorted(mine) if r["state"] != "done" and sw.state_of(k[0], orig, k[2], k[3]) == "done"]
+        won = sum(r["state"] == "done" and sw.state_of(k[0], orig, k[2], k[3]) != "done" for k, r in mine)
+        text = (f"<strong>{e(names[label])}</strong>, fixed: {done} of {len(mine)} runs reached the end; the original "
+                + ("(the same kernel) " if label == "glm_fct16" else "") + f"{was} of the same runs. {won} finish now that did not")
+        text += (f"; {len(lost)} that finished no longer do: " + e(", ".join(lost)) if lost else "") + "."
+        parts.append(f"<li>{text}</li>")
+    return ('<div class="card"><h3>Run after the sweep: the fixed kernels</h3><p>Every test of the sweep at every grid and seed, with the kernels of '
+            'the sweep-fixes branch (GPU, one repeat; not in the plan or the tables above). Each is set beside the original it fixes; the f16 '
+            'kernel with cell-centred CT beside the f16/HLL production kernel.</p>'
+            f'<ul class="checks plain">{"".join(parts)}</ul><p class="small">What was fixed and how: <a href="sweep-fixes.html">Kernel fixes</a>. '
+            'The test pages and Our figures show the fixed kernels beside the originals. A run whose field or kinetic energy ends above 10 times '
+            'AthenaK\'s on the same grid counts as not reaching the end.</p></div>')
+
+
 def arepo_card():
     """AREPO ran after the sweep, outside its plan: a card with what its fetched records say (empty when none are here)."""
     import sweep_data
@@ -659,6 +687,7 @@ Only the original GLM kernel and CT run nearly everything; they are also the mos
 </div>
 <div class="card"><h3>Still open</h3><ul class="checks plain">{sv["notes"] or "<li>Nothing: every planned run has a result.</li>"}</ul></div>
 {arepo_card()}
+{fixed_card()}
 
 <h2 class="section-title">The plan and its cost</h2>
 '''

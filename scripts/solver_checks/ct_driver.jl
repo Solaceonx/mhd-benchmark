@@ -95,17 +95,21 @@ function refstate(emf,q,mh,bxf,byf,bz,dtdx,n)
     b3=[bz[i,j]-h*((ey[wr(i+1,n),j]-ey[i,j])-(ex[i,wr(j+1,n)]-ex[i,j])) for i in 1:n,j in 1:n]
     [(mh[i,j][1],mh[i,j][2],mh[i,j][3],mh[i,j][4],mh[i,j][5],(bx[i,j]+bx[wr(i+1,n),j])/2,(by[i,j]+by[i,wr(j+1,n)])/2,b3[i,j]) for i in 1:n,j in 1:n]
 end
-function step_full!(U,bxf,byf,bz,dt,n;emf=:avg)
+# robust: the fallbacks of the GLM kernels (integrator_plm!): a half-step state with density or pressure at the floor
+# becomes the cell's own state, and so does a face state that comes out below the floors (iflo)
+function step_full!(U,bxf,byf,bz,dt,n;emf=:avg,robust=false)
     dtdx=dt*n;q=cellprims(U,bxf,byf,bz,n);h=0.5f0*dtdx
     sx=[pslope(q[wr(i-1,n),j],q[i,j],q[wr(i+1,n),j]) for i in 1:n,j in 1:n]
     sy=[pslope(q[i,wr(j-1,n)],q[i,j],q[i,wr(j+1,n)]) for i in 1:n,j in 1:n]
     mh=[begin
         c=q[i,j];a=dflux(psub(c,sx[i,j],0.5f0),1);b=dflux(psub(c,sx[i,j],-0.5f0),1);e=dflux(psub(c,sy[i,j],0.5f0),2);f=dflux(psub(c,sy[i,j],-0.5f0),2)
-        C=toC(c);prim_of(ntuple(t->C[t]-h*((a[t]-b[t])+(e[t]-f[t])),8))
+        C=toC(c);m=prim_of(ntuple(t->C[t]-h*((a[t]-b[t])+(e[t]-f[t])),8))
+        robust && (m[1]<=SMALLR || m[5]<=SMALLP) ? c : m
     end for i in 1:n,j in 1:n]
     fix(L,d,bn)=(max(L[1],SMALLR),L[2],L[3],L[4],max(L[5],SMALLP),d==1 ? bn : L[6],d==2 ? bn : L[7],d==3 ? bn : L[8])
-    Fx=[hll(fix(psub(mh[wr(i-1,n),j],sx[wr(i-1,n),j],0.5f0),1,bxf[i,j]),fix(psub(mh[i,j],sx[i,j],-0.5f0),1,bxf[i,j]),1) for i in 1:n,j in 1:n]
-    Fy=[hll(fix(psub(mh[i,wr(j-1,n)],sy[i,wr(j-1,n)],0.5f0),2,byf[i,j]),fix(psub(mh[i,j],sy[i,j],-0.5f0),2,byf[i,j]),2) for i in 1:n,j in 1:n]
+    face(m,s,sg,c)=(f=psub(m,s,sg);robust && (f[1]<SMALLR || f[5]<SMALLP) ? c : f)
+    Fx=[hll(fix(face(mh[wr(i-1,n),j],sx[wr(i-1,n),j],0.5f0,q[wr(i-1,n),j]),1,bxf[i,j]),fix(face(mh[i,j],sx[i,j],-0.5f0,q[i,j]),1,bxf[i,j]),1) for i in 1:n,j in 1:n]
+    Fy=[hll(fix(face(mh[i,wr(j-1,n)],sy[i,wr(j-1,n)],0.5f0,q[i,wr(j-1,n)]),2,byf[i,j]),fix(face(mh[i,j],sy[i,j],-0.5f0,q[i,j]),2,byf[i,j]),2) for i in 1:n,j in 1:n]
     Fz=[hll(fix(mh[i,j],3,bz[i,j]),fix(mh[i,j],3,bz[i,j]),3) for i in 1:n,j in 1:n]
     finish!(U,bxf,byf,bz,Fx,Fy,Fz,dtdx,n;emf,q=refstate(emf,q,mh,bxf,byf,bz,dtdx,n))
 end
@@ -131,11 +135,11 @@ function initial(n,prim,A,B0)
     U,bxf,byf,bz
 end
 
-function run(n,prim,A,B0,t_end;frames=21,courant=0.25f0,full=false,emf=:avg)
+function run(n,prim,A,B0,t_end;frames=21,courant=0.25f0,full=false,emf=:avg,robust=false)
     U,bxf,byf,bz=initial(n,prim,A,B0);t=0.0
     for target in range(0,Float64(t_end);length=frames)
         while t<target-1e-10
-            dt=Float32(min(courant/(n*signal(U,bxf,byf,bz,n)),target-t));(full ? step_full!(U,bxf,byf,bz,dt,n;emf) : step!(U,bxf,byf,bz,dt,n));t+=Float64(dt)
+            dt=Float32(min(courant/(n*signal(U,bxf,byf,bz,n)),target-t));(full ? step_full!(U,bxf,byf,bz,dt,n;emf,robust) : step!(U,bxf,byf,bz,dt,n));t+=Float64(dt)
         end
     end
     U,cellprims(U,bxf,byf,bz,n)

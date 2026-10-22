@@ -44,13 +44,13 @@
 <header class="masthead"><a class="brand" href="index.html"><span class="brand-mark">∿</span><span>MHD <strong>FIELD NOTES</strong></span></a><div class="masthead-meta"><span class="live-dot"></span>LOCAL RESEARCH NOTEBOOK <span class="separator">/</span> KERNEL FIXES</div></header>
 <nav class="test-nav" aria-label="Physics tests"><a href="index.html"><span>01</span>Orszag–Tang</a><a href="hydro-decay.html"><span>02</span>Hydro decay</a><a href="isothermal-decay.html"><span>03</span>Prepared decay</a><a href="acoustic-wave.html"><span>04</span>Acoustic check</a><a href="entropy-wave.html"><span>05</span>Entropy wave</a><a href="gpu-suite.html"><span>06</span>GPU suite</a><a href="sweep-plan.html"><span>07</span>Sweep</a><a href="paper-figures.html"><span>08</span>Papers</a><a href="turbulence.html"><span>09</span>Turbulence</a><a href="tests.html"><span>10</span>Tests</a><a href="our-figures.html"><span>11</span>Our figures</a><a href="sweep-fixes.html" aria-current="page"><span>12</span>Kernel fixes</a></nav>
 <main id="main" class="fx">
-<div class="page-heading"><div><div class="eyebrow"><span>12 · Kernel fixes</span><span class="badge">359 GPU runs</span></div>
-<h1>Fixing Abel et al.'s kernels</h1><p>The comparison sweep found problems in the GPU kernels. Below is every change the branch <code>sweep-fixes</code> makes to the original code (on top of commit <code>15ce37d</code> of yipihey/GLMMHDTurb, not yet public), with the problem it addresses and the result. The <a href="#code">last section</a> lists the changes by commit and function. Three jobs on Sherlock's H100s ran every fix beside the original kernel and, for the shocks, against the AthenaK 4096² reference. How they were run: <a href="../sherlock_fixes/README.md">sherlock_fixes/README.md</a>; the shock scores: <a href="../scripts/fix_accuracy.py">scripts/fix_accuracy.py</a>.</p></div></div>
+<div class="page-heading"><div><div class="eyebrow"><span>12 · Kernel fixes</span><span class="badge">1,059 GPU runs</span></div>
+<h1>Fixing Abel et al.'s kernels</h1><p>The comparison sweep found problems in the GPU kernels. Below is every change the branch <code>sweep-fixes</code> makes to the original code (on top of commit <code>15ce37d</code> of yipihey/GLMMHDTurb, not yet public), with the problem it addresses and the result. The <a href="#code">last section</a> lists the changes by commit and function. Three jobs on Sherlock's H100s ran every fix beside the original kernel and, for the shocks, against the AthenaK 4096² reference. A fourth reran the five fixed kernels on every test of the sweep at every grid and seed: 700 runs, <a href="#rerun">results below</a>. How they were run: <a href="../sherlock_fixes/README.md">sherlock_fixes/README.md</a>; the shock scores: <a href="../scripts/fix_accuracy.py">scripts/fix_accuracy.py</a>.</p></div></div>
 
 <div class="fx-score">
   <div class="ok"><b>4</b><span>problems fixed and confirmed on the GPU</span></div>
-  <div class="part"><b>2</b><span>partly fixed: something remains</span></div>
-  <div class="no"><b>1</b><span>problem the fixes exposed, not fixed yet</span></div>
+  <div class="part"><b>3</b><span>partly fixed: something remains</span></div>
+  <div class="no"><b>3</b><span>problems the full rerun found, not fixed yet</span></div>
 </div>
 
 <article class="card"><h3>At a glance</h3><div class="table-scroll"><table class="fx-table">
@@ -58,11 +58,14 @@
   <tbody>
     <tr><td><a href="#i1">1. Float16 storage too coarse</a></td><td>store differences from a reference value</td><td><span class="fx-chip ok">fixed</span> second order to 512</td></tr>
     <tr><td><a href="#i2">2. Float16 overflow</a></td><td>store fluxes pre-scaled, in two pieces</td><td><span class="fx-chip part">partly</span> blasts fixed, Mach 9 not</td></tr>
-    <tr><td><a href="#i3">3. CT prototype first order</a></td><td>full slope, predictor in all directions</td><td><span class="fx-chip ok">fixed</span> 1.6–200× more accurate</td></tr>
+    <tr><td><a href="#i3">3. CT prototype first order</a></td><td>full slope, predictor in all directions</td><td><span class="fx-chip ok">fixed</span> 1.6–200× more accurate; now stops at Mach 9</td></tr>
     <tr><td><a href="#i4">4. HLLD crashes</a></td><td>safety check relative to the pressure</td><td><span class="fx-chip part">partly</span> current sheet 256² still stops</td></tr>
     <tr><td><a href="#i5">5. c_h jumps on short steps</a></td><td>c_h from the normal step</td><td><span class="fx-chip ok">fixed</span> no change elsewhere</td></tr>
     <tr><td><a href="#i6">6. GLM leaks field</a></td><td>new option: constrained transport</td><td><span class="fx-chip ok">fixed</span> leak 27× → 1.3× the reference</td></tr>
-    <tr><td><a href="#i7">7. Field loop with constrained transport</a></td><td>not yet</td><td><span class="fx-chip no">open</span> worse than GLM</td></tr>
+    <tr><td><a href="#i7">7. Field loop with constrained transport</a></td><td>upwinded edge electric fields (CT prototype)</td><td><span class="fx-chip part">partly</span> CT prototype as good as GLM; the option still behind</td></tr>
+    <tr><td><a href="#r8">8. PPM blows up at 512²</a></td><td>not yet</td><td><span class="fx-chip no">open</span> runs to the end with a wrong field</td></tr>
+    <tr><td><a href="#r9">9. Runs that no longer finish</a></td><td>not yet</td><td><span class="fx-chip no">open</span> 14 of 700</td></tr>
+    <tr><td><a href="#r10">10. B_z grows with the CT option</a></td><td>not yet</td><td><span class="fx-chip no">open</span> 6× the GLM kernel</td></tr>
   </tbody></table></div></article>
 
 <article class="card" id="i1">
@@ -151,7 +154,7 @@
       <p class="fx-verdict">Fixed: second order, 90–200× more accurate on the smooth waves and 1.6–4.5× on the shocks, where it now matches or beats AthenaK with matched settings. One exception: the field loop (<a href="#i7">issue 7</a>).</p>
     </dd>
     <dt>Cost</dt>
-    <dd><p>About 3.4× slower: 1.21 → 0.36 billion per second. Each face now reads 12 cells instead of 4.</p></dd>
+    <dd><p>About 3.4× slower: 1.21 → 0.36 billion per second. Each face now reads 12 cells instead of 4. With the upwinded edge electric fields of <a href="#i7">issue 7</a>: 0.30, about 4× slower than the original.</p></dd>
   </dl>
 </article>
 
@@ -219,19 +222,49 @@
 </article>
 
 <article class="card" id="i7">
-  <div class="fx-head"><h3>7. The field loop gets worse with constrained transport</h3><span class="fx-chip no">open</span><code>ct_mhd.jl emf_kernel!; fct_emf_kernel!</code></div>
+  <div class="fx-head"><h3>7. The field loop got worse with constrained transport</h3><span class="fx-chip part">partly fixed</span><code>ct_mhd.jl emf_kernel!, gs05, ecc_kernel!</code></div>
   <dl class="fx-rows">
+    <dt>Problem</dt>
+    <dd><p>Once the CT prototype had its full slope (<a href="#i3">issue 3</a>), its field loop got worse on finer grids (error of B 0.60, 0.54, 0.88 at 64²–256²). Its edge electric fields are a plain average of the four face fluxes around each edge, which is known to fail this test (Gardiner &amp; Stone 2005). The original's half slope smoothed that away. The new constrained-transport option averages the same way.</p></dd>
+    <dt>Fix</dt>
+    <dd><p>In the CT prototype only: each edge electric field is upwinded by the mass flux through the faces around it (Gardiner &amp; Stone 2005, “CT-contact”), with the cell-centred electric field from the predictor's half-step velocity and the field at the start of the step. New function <code>gs05</code> and kernel <code>ecc_kernel!</code>; <code>emf_kernel!</code> calls them. In the option, upwinding did not help (0.25 against 0.26 at 128² on the CPU), so it keeps the plain average.</p></dd>
     <dt>Result</dt>
     <dd><div class="table-scroll"><table class="fx-table">
-      <thead><tr><th>field loop in the plane, error of B</th><th class="num">64²</th><th class="num">128²</th><th class="num">256²</th></tr></thead>
+      <thead><tr><th>field loop in the plane, error of B (full rerun)</th><th class="num">64²</th><th class="num">128²</th><th class="num">256²</th><th class="num">512²</th></tr></thead>
       <tbody>
-        <tr><td>GLM, fixed production kernel</td><td class="num">0.26</td><td class="num">0.16</td><td class="num">0.10</td></tr>
-        <tr><td>constrained transport option</td><td class="num">0.39</td><td class="num">0.25</td><td class="num">0.17</td></tr>
-        <tr><td>CT prototype, original</td><td class="num">0.70</td><td class="num">0.49</td><td class="num">0.34</td></tr>
-        <tr><td>CT prototype, fixed</td><td class="num">0.60</td><td class="num">0.54</td><td class="num bad">0.88</td></tr>
+        <tr><td>GLM, fixed production kernel</td><td class="num">0.26</td><td class="num">0.16</td><td class="num">0.10</td><td class="num">0.075</td></tr>
+        <tr><td>CT prototype, original</td><td class="num">0.70</td><td class="num">0.49</td><td class="num">0.34</td><td class="num">0.23</td></tr>
+        <tr><td>CT prototype, fixed (upwinded)</td><td class="num good">0.26</td><td class="num good">0.16</td><td class="num good">0.094</td><td class="num good">0.058</td></tr>
+        <tr><td>constrained transport option (plain average)</td><td class="num bad">0.39</td><td class="num bad">0.25</td><td class="num bad">0.17</td><td class="num bad">0.12</td></tr>
+        <tr><td>AthenaK, matched settings</td><td class="num">0.31</td><td class="num">0.18</td><td class="num">0.11</td><td class="num">0.066</td></tr>
       </tbody></table></div>
-    <p>The fixed CT prototype gets worse on the finest grid. Its edge electric fields are a plain average of face fluxes (unchanged from the original <code>emf_kernel!</code>; the new option averages the same way), which is known to fail this test (Gardiner &amp; Stone 2005). The original's half slope smoothed that away; with the full slope it shows.</p>
-    <p class="fx-verdict no">Next fix: an upwinded edge average (Gardiner &amp; Stone's), in both CT schemes.</p></dd>
+    <p class="fx-verdict part">Fixed in the CT prototype: it now converges and beats AthenaK with matched settings at 512². The Alfvén waves stay second order. The constrained-transport option is still 1.5× GLM's error; it needs its own upwinding.</p></dd>
+  </dl>
+</article>
+
+<article class="card" id="rerun"><h3>The full rerun: every test, every grid</h3>
+  <p>The five fixed kernels on all 25 tests of the sweep at every grid and seed, one run each (Courant 0.25, as in the sweep), set beside the sweep's runs of the original kernels on the same tests. A run counts as finished when it reached the end time and its magnetic and kinetic energy stayed within 10 times AthenaK's on the same grid.</p>
+  <div class="table-scroll"><table class="fx-table">
+    <thead><tr><th>kernel</th><th class="num">finished, original</th><th class="num">finished, fixed</th><th class="num">finish now, did not</th><th class="num">finished, no longer</th></tr></thead>
+    <tbody>
+      <tr><td>production (Float16, HLL)</td><td class="num">106 of 140</td><td class="num good">132</td><td class="num">26</td><td class="num">0</td></tr>
+      <tr><td>production with the CT option (<a href="#i6">6</a>)</td><td class="num">106 of 140</td><td class="num good">131</td><td class="num">28</td><td class="num bad">3</td></tr>
+      <tr><td>HLLD</td><td class="num">118 of 140</td><td class="num good">133</td><td class="num">15</td><td class="num">0</td></tr>
+      <tr><td>PPM (Float16)</td><td class="num">86 of 140</td><td class="num good">115</td><td class="num">31</td><td class="num bad">2</td></tr>
+      <tr><td>CT prototype</td><td class="num">140 of 140</td><td class="num bad">131</td><td class="num">0</td><td class="num bad">9</td></tr>
+    </tbody></table></div>
+  <p>Every fixed kernel is second order on the three smooth waves up to 512² (entropy wave at 512², production kernel: 1.3 × 10⁻⁵ against 3.2 × 10⁻³). The test pages and <a href="our-figures.html">Our figures</a> show each fixed kernel beside its original.</p>
+  <dl class="fx-rows">
+    <dt id="r8">8. PPM blows up at 512²</dt>
+    <dd><p>On the field loop and on Kelvin–Helmholtz with a confined field, the fixed PPM kernel runs to the end, but ψ grows exponentially from t ≈ 1 and the field energy ends 92 and 156 times AthenaK's. The original PPM stopped on both runs (field loop at t = 1.8, Kelvin–Helmholtz at t = 2.7); the fixes removed the crash, not the instability. No other run, original or fixed, ends that far off. <span class="fx-chip no">open</span></p></dd>
+    <dt id="r9">9. Runs that no longer finish</dt>
+    <dd><ul>
+      <li><b>CT prototype, 9 runs:</b> every Mach 9 decay run (64³–512³, two seeds; stops at t ≤ 0.02) and the Mach 2 decay at 512³, seed 1 (t = 0.375). Once second order, the pressure goes negative behind the strongest shocks; the original's first-order diffusion kept it positive. The GLM kernels, with the same slope limiter and HLL speeds, survive the same flow on the CPU, so the CT prototype lacks a safeguard they have, not yet found.</li>
+      <li><b>CT option, 3 runs:</b> Mach 2 decay, 256³ seed 3 and 512³ seeds 2 and 3, all at t = 0.375.</li>
+      <li><b>PPM, 2 runs:</b> 2D blast without a field at 32² (t = 0.008) and Kelvin–Helmholtz with a uniform field at 512² (t = 2.9).</li>
+    </ul><p><span class="fx-chip no">open</span></p></dd>
+    <dt id="r10">10. B_z grows with the CT option</dt>
+    <dd><p>On the field loop moving out of the plane (128²), B_z, which only divergence errors can create, reaches 4 × 10⁻² of the loop's field: 6 times the fixed production kernel with GLM (6.5 × 10⁻³). The option does keep the field along the rotated Brio–Wu shock normal to 5 × 10⁻⁵ (GLM 6 × 10⁻⁴). <span class="fx-chip no">open</span></p></dd>
   </dl>
 </article>
 
@@ -244,6 +277,7 @@
       <tr><td><code>9d20e52</code></td><td><code>ct_mhd.jl</code> · <code>pslope</code>, <code>hanc1d</code> → <code>hanc3d</code>, <code>flux_kernel!</code></td><td>Issue 3: full slope; half step with the fluxes of all three directions.</td></tr>
       <tr><td><code>59d5aa5</code></td><td><code>glmmhd_turb.jl</code> · <code>integrator_plm!</code>, <code>integrator_plm_ppm!</code>, <code>_plm_launch</code>, <code>_plm_ppm_launch</code>, <code>step_plm!</code>; new <code>fct_emf_kernel!</code>, <code>fct_update_kernel!</code>, <code>fct_scratch</code></td><td>Issues 1, 2 and 6: the kernels take three optional trailing arguments, <code>Val(anchored)</code>, <code>Val(fct)</code> and the scratch array; <code>step_plm!</code> takes the keywords <code>anchored</code>, <code>fct</code>, <code>fs</code> and lists the Float32 4-cell tile with HLL and LLF.</td></tr>
       <tr><td><code>563fcd1</code></td><td><code>glmmhd_turb.jl</code> · <code>step_plm!</code></td><td>Takes back a Float32 6-cell tile that <code>59d5aa5</code> had listed: it needs 90 KB of shared memory, the limit is 48 KB.</td></tr>
+      <tr><td><code>7256715</code></td><td><code>ct_mhd.jl</code> · new <code>gs05</code>, <code>ecc_kernel!</code>; <code>emf_kernel!</code>, <code>step!</code>, <code>scratch</code></td><td>Issue 7: edge electric fields upwinded by the mass flux (Gardiner &amp; Stone 2005); <code>step!</code> takes three more scratch arrays for the cell-centred electric fields.</td></tr>
     </tbody></table></div>
   <p class="fx-verdict part"><b>One default changed:</b> <code>step_plm!(…; half=true)</code> now uses anchored storage, which is about 29% slower. Pass <code>anchored=false</code> for the original storage and speed.</p>
 </article>
@@ -258,7 +292,7 @@
 </article>
 
 <article class="card"><h3>What we would recommend</h3>
-  <p>On power-of-two grids, the Float32 4-cell tile: as fast as Float16 there, as accurate as the fixed Float16 kernel up to 256 (less at 512), and it survives Mach 9. On grids divisible by 6, the fixed Float16 6-cell tile is the fastest accurate kernel (1.91 billion per second). Constrained transport where leakage matters, once its field loop is fixed. Courant 0.25–0.3 in 3D.</p>
+  <p>On power-of-two grids, the Float32 4-cell tile: as fast as Float16 there, as accurate as the fixed Float16 kernel up to 256 (less at 512), and it survives Mach 9. On grids divisible by 6, the fixed Float16 6-cell tile is the fastest accurate kernel (1.91 billion per second). Where leakage matters, the fixed CT prototype: it leaks no more than the CT codes (0.9–1.7 times the reference at 64²–512²), is second order and handles the field loop, but it is 4 times slower and stops at Mach 9. Courant 0.25–0.3 in 3D.</p>
 </article>
 </main>
 <script>

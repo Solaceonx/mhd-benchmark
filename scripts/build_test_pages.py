@@ -72,7 +72,8 @@ def results_table(sweep, test):
             for s, st in bad:
                 if st == "stopped":
                     stopped += 1;rec = sweep.recorded(test, label, n, s) or {};t = rec.get("reached")
-                    parts.append("stopped" + (f" at t = {t:.3g}" if isinstance(t, (int, float)) else ""))
+                    blown = "not a result" in (sweep.rows.get((test, label, n, s)) or {}).get("note", "")     # sweep_data.blew_up
+                    parts.append(("blew up after" if blown else "stopped") + (f"{'' if blown else ' at'} t = {t:.3g}" if isinstance(t, (int, float)) else ""))
                 elif st == "invalid":
                     stopped += 1;t = sweep.went_bad(test, label, n, s)
                     parts.append(f"nonfinite after saved t = {t:.3g}")

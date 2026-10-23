@@ -1,7 +1,7 @@
 #!/bin/bash
-# GIZMO on the sweep's planar tests (README.md). One array task per test and set-up, running that test's grids in turn;
-# task 0 is the pilot: it builds every executable and runs Orszag-Tang at 32^2 and 64^2 with both methods.
-#   p=$(sbatch --parsable --array=0 gizmo.sbatch) && sbatch --dependency=afterok:$p --array=1-34 gizmo.sbatch
+# GIZMO (MFM) on the sweep's planar tests (README.md). One array task per test, running that test's grids in turn;
+# task 0 is the pilot: it builds every executable and runs Orszag-Tang at 32^2 and 64^2 with each method.
+#   p=$(sbatch --parsable --array=0 gizmo.sbatch) && sbatch --dependency=afterok:$p --array=1-17 gizmo.sbatch
 # A requeued task keeps its finished runs and starts the interrupted one again.
 #SBATCH --job-name=gizmo
 #SBATCH --partition=normal,owners
@@ -25,6 +25,7 @@ source "$venv/bin/activate"; python3 -c 'import h5py, scipy' 2>/dev/null || pip 
 python3 -c 'import h5py, scipy; print("python:", h5py.__version__, "h5py,", scipy.__version__, "scipy")' || { echo "NO h5py/scipy: cannot write GIZMO initial conditions"; exit 2; }
 echo "== task $task on $(hostname), $(date -u)"; module list 2>&1 | tail -n +2
 
+METHODS=(mfm)
 TESTS=(entropy alfven alfven_oblique uniform field_loop field_loop_novz brio_wu brio_wu_rotated orszag_tang rotor current_sheet
        blast_2d_b0 blast_2d_b50 blast_2d_b100 kh_uniform kh_localized gem)
 gamma_of() { python3 -c "import sys; sys.path.insert(0, '$SWEEP_BUNDLE/codes'); import external as X; print(repr(float(X.gamma_of(X.load_config(sys.argv[1])))))" "$1"; }
@@ -51,15 +52,15 @@ if [[ -n "${GIZMO_ONLY:-}" ]]; then        # a check run: GIZMO_ONLY="test metho
     run_test $GIZMO_ONLY
 elif [[ "$task" == 0 ]]; then
     set -e
-    for method in mfm mfv; do for gamma in 1.6666666666666667 2.0 1.4; do bash "$here/build.sh" "$method" "$gamma" 2; done; done
+    for method in "${METHODS[@]}"; do for gamma in 1.6666666666666667 2.0 1.4; do bash "$here/build.sh" "$method" "$gamma" 2; done; done
     set +e
-    run_test orszag_tang mfm 32 64; run_test orszag_tang mfv 32 64
+    for method in "${METHODS[@]}"; do run_test orszag_tang "$method" 32 64; done
     python3 "$here/summarize.py" "$MHD_RESULTS" | tee "$here/logs/pilot_summary.txt"
-    # The array waits for this task: it must fail unless both methods ran.
-    [[ "$(grep -cE "^orszag_tang-gizmo-(mfm|mfv)-run-N(32|64)-s42 +complete" "$here/logs/pilot_summary.txt")" -eq 4 ]] \
-        || { echo "PILOT FAILED: not all four pilot runs are complete"; exit 1; }
+    # The array waits for this task: it must fail unless every method ran.
+    [[ "$(grep -cE "^orszag_tang-gizmo-mfm-run-N(32|64)-s42 +complete" "$here/logs/pilot_summary.txt")" -eq 2 ]] \
+        || { echo "PILOT FAILED: not both pilot runs are complete"; exit 1; }
 else
-    index=$((task - 1)); test="${TESTS[$((index / 2))]}"; method=mfm; [[ $((index % 2)) -eq 1 ]] && method=mfv
+    test="${TESTS[$((task - 1))]}"; method=mfm
     run_test "$test" "$method"
 fi
 echo "== task $task finished $(date -u)"

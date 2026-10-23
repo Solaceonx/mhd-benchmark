@@ -1,6 +1,6 @@
 """GIZMO in the comparison suite, through the sweep's external-code driver.
 
-    python3 gizmo_run.py gizmo mfm|mfv CONFIG.toml N OUTDIR --exe PATH --mpi "srun -n K" --geometry plane [--repeats 1] [--resume]
+    python3 gizmo_run.py gizmo mfm CONFIG.toml N OUTDIR --exe PATH --mpi "srun -n K" --geometry plane [--repeats 1] [--resume]
 
 The same command line, run directory layout, records and measurements as RAMSES, AthenaK, Athena++ and AREPO in
 sherlock_sweep/codes/external.py: this file adds only what is specific to GIZMO (initial conditions, parameter file,
@@ -8,10 +8,10 @@ reading its snapshots) and then calls that driver's main(). Nothing in the sweep
 sherlock_arepo/arepo_run.py, since GIZMO and AREPO share GADGET's file formats and timestep scheme.
 
 GIZMO (github.com/pfhopkins/gizmo): mesh-free finite-volume Godunov methods (Hopkins 2015), MHD with Dedner cleaning
-and the constrained-gradient correction (Hopkins & Raives 2016; Hopkins 2016). Two set-ups:
+and the constrained-gradient correction (Hopkins & Raives 2016; Hopkins 2016). One set-up:
   mfm   meshless finite mass: the particles move with the gas and keep their mass (GIZMO's default method)
-  mfv   meshless finite volume: the particles move with the gas, mass flows between them
-Both: one particle per cell centre of the other codes' grid to start, cubic-spline kernel with DesNumNgb neighbours
+GIZMO's other methods were tried and left out (build.sh says why): meshless finite volume and the regular grid fail
+from the start at this commit, pressure-SPH does not conserve energy here. One particle per cell centre of the other codes' grid to start, cubic-spline kernel with DesNumNgb neighbours
 (20 in 2D, 32 in 3D, GIZMO's test problems), one global timestep, double precision. The Courant factor is GIZMO's own
 for MHD, 0.2: it can be set only in GIZMO's DEVELOPER_MODE, which this build leaves off.
 
@@ -22,10 +22,9 @@ Output times: as AREPO, GIZMO's steps are power-of-two fractions of TimeMax - Ti
 times the output interval, which makes every output time a synchronisation point, and the run is ended with GIZMO's
 stop file once the last snapshot is written.
 
-Snapshots to our (N, N, Nz, 9) cell state: the particles move, so each grid cell is sampled at SUB x SUB points (SUB^3
-in 3D) and takes the mean of the particles nearest to them (as AREPO's moving mesh; for GIZMO's kernel-weighted volume
-partition this is an approximation at the scale of a particle). Conserved variables from each particle's density,
-velocity, specific internal energy and field; psi = 0.
+Snapshots to our (N, N, Nz, 9) cell state: each particle's mass, momentum, total energy and field times its volume
+(mass / density) are deposited cloud-in-cell on the grid and divided by the cell volume, so the grid holds exactly the
+particles' mass, momentum, energy and magnetic flux; a particle still at a cell centre lands wholly in its cell. psi = 0.
 """
 import math
 import os
@@ -43,12 +42,10 @@ SWEEP = Path(os.environ.get("SWEEP_BUNDLE", Path(__file__).resolve().parents[1]/
 sys.path.insert(0, str(SWEEP/"codes"))
 import external as X  # noqa: E402
 
-SUB = 4                               # samples per grid cell and dimension when the particles are put on the grid
 COURANT = 0.2                         # GIZMO's own for MHD: CourantFac is a tag of DEVELOPER_MODE only (begrun.cc: 0.4, at most 0.2 with MAGNETIC)
 UNIT_B = 3.5449077018110318           # sqrt(4 pi): GIZMO's code unit of B in Gauss for cgs code units, i.e. ours
 X.VARIANTS["gizmo"] = {
     "mfm": dict(method="meshless finite mass", divb="Dedner + constrained gradient", courant=COURANT, precision="fp64"),
-    "mfv": dict(method="meshless finite volume", divb="Dedner + constrained gradient", courant=COURANT, precision="fp64"),
 }
 
 
@@ -114,34 +111,39 @@ def snapshot_time(path):
     with h5py.File(path, "r") as s:return float(s["Header"].attrs["Time"])
 
 
-def nearest(points, generators, dims):
-    """Index of the particle nearest to each point on the periodic unit box (the first `dims` coordinates)."""
-    from scipy.spatial import cKDTree
-    return cKDTree(np.mod(generators[:, :dims], 1.0), boxsize=1.0).query(np.mod(points[:, :dims], 1.0))[1]
+def deposit(pos, ext, n, nz):
+    """Cloud-in-cell deposit of per-particle extensive quantities `ext` (count, k) on the periodic grid: (n, n, nz, k)
+    sums. A particle at a cell centre lands wholly in that cell; one between centres is shared by area (volume)."""
+    dims = 3 if nz > 1 else 2
+    x = np.mod(pos[:, :dims], 1.0)*n - 0.5;i0 = np.floor(x).astype(int);f = x - i0
+    out = np.zeros((n, n, nz, ext.shape[1]))
+    for corner in np.ndindex(*(2,)*dims):
+        w = np.prod([f[:, d] if corner[d] else 1 - f[:, d] for d in range(dims)], axis=0)
+        idx = [(i0[:, d] + corner[d]) % n for d in range(dims)] + ([] if dims == 3 else [np.zeros(len(w), dtype=int)])
+        np.add.at(out, tuple(idx), w[:, None]*ext)
+    return out
 
 
-def read_snapshot(path, n, nz, sub=SUB, record=None):
+def read_snapshot(path, n, nz, record=None):
     """(time, (n, n, nz, 9) cell state) of a GIZMO snapshot; conserved variables, B in our units, psi = 0.
+    Each particle's mass, momentum, total energy and field times volume are deposited cloud-in-cell and divided by the
+    cell volume, so the grid holds exactly the particles' mass, momentum, energy and magnetic flux.
     record: a dict that receives GIZMO's own divergence of B for this snapshot, where the snapshot has it."""
     import h5py
     with h5py.File(path, "r") as s:
         t = float(s["Header"].attrs["Time"]);p = s["PartType0"]
         pos = p["Coordinates"][:].astype(np.float64);rho = p["Density"][:].astype(np.float64);vel = p["Velocities"][:].astype(np.float64)
-        e = p["InternalEnergy"][:].astype(np.float64);b = p["MagneticField"][:].astype(np.float64)
-        if record is not None and "DivergenceOfMagneticField" in p and "Masses" in p:
-            vol = p["Masses"][:].astype(np.float64)/rho;div = p["DivergenceOfMagneticField"][:].astype(np.float64)
+        e = p["InternalEnergy"][:].astype(np.float64);b = p["MagneticField"][:].astype(np.float64);mass = p["Masses"][:].astype(np.float64)
+        if record is not None and "DivergenceOfMagneticField" in p:
+            vol = mass/rho;div = p["DivergenceOfMagneticField"][:].astype(np.float64)
             size = vol**(1.0/(3 if nz > 1 else 2));brms = math.sqrt(float((vol*(b**2).sum(1)).sum()/vol.sum()))
             record.update(time=t, particles=len(rho), div_rms=math.sqrt(float((vol*div**2).sum()/vol.sum())), b_rms=brms,
                           normalized_div_rms=math.sqrt(float((vol*(div*size)**2).sum()/vol.sum()))/brms if brms > 0 else 0.0,
                           smallest_cell=float(size.min()), largest_cell=float(size.max()))
-    cons = np.column_stack([rho, rho[:, None]*vel, rho*(e + .5*(vel**2).sum(1)) + .5*(b**2).sum(1), b, np.zeros_like(rho)])
-    dims = 3 if nz > 1 else 2;shape = (n, n, nz)
-    off = (np.arange(sub) + .5)/sub;u = np.zeros(shape + (9,))
-    lower = cell_centres(n, nz)[:, :dims] - .5/n
-    for shift in np.ndindex(*(sub,)*dims):
-        pts = lower + np.array([off[a] for a in shift])/n
-        u += cons[nearest(pts, pos, dims)].reshape(shape + (9,))
-    return t, u/sub**dims
+    vol = mass/rho
+    ext = np.column_stack([mass, mass[:, None]*vel, mass*(e + .5*(vel**2).sum(1)) + .5*vol*(b**2).sum(1), vol[:, None]*b])
+    u = deposit(pos, ext, n, nz)*n**(3 if nz > 1 else 2)
+    return t, np.concatenate([u, np.zeros(u.shape[:3] + (1,))], axis=-1)
 
 
 def steps_of(text):

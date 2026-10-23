@@ -51,8 +51,7 @@ ADDED = [("glm_fix_hll16", "GLM f16 fix", "GLM production kernel fixed (sweep-fi
 # Codes being set up: a column each, empty until their runs are fetched.
 PLANNED = [("miniramses_matched", "mini-RAMSES m", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLL: ready to run"),
            ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: ready to run"),
-           ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass, Dedner + constrained-gradient MHD (planar tests): ready to run"),
-           ("gizmo_mfv", "GIZMO MFV", "GIZMO meshless finite volume, Dedner + constrained-gradient MHD (planar tests): ready to run")]
+           ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass, Dedner + constrained-gradient MHD (planar tests): ready to run")]
 # Abel et al.'s GLM kernels, original and fixed: one column in the status grid that opens into one per kernel.
 GLM_GROUP = ("glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "glm_fix_hll16", "glm_fct16", "glm_fix_hlld", "glm_fix_ppm")
 ALL_METHODS = [m for m in METHODS if m[0] in GLM_GROUP] + [m for m in ADDED if m[0] in GLM_GROUP] + \

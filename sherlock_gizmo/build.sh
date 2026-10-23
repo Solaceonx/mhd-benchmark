@@ -1,6 +1,6 @@
 #!/bin/bash
 # Build GIZMO for one set-up of the comparison suite.
-#   bash build.sh METHOD GAMMA DIMS        METHOD: mfm | mfv; GAMMA: e.g. 1.6666666666666667, 2.0, 1.4; DIMS: 2 | 3
+#   bash build.sh METHOD GAMMA DIMS        METHOD: mfm; GAMMA: e.g. 1.6666666666666667, 2.0, 1.4; DIMS: 2 | 3
 # -> $MHD_CODES/gizmo-build/<method>_g<gamma>_<dims>d/GIZMO. The method, the adiabatic index and the dimension are
 # compile-time options in GIZMO, so each combination is its own build, in its own copy of the source (GIZMO builds in
 # its source tree). Needs mpicc/mpicxx, GSL and HDF5 (no FFTW: no gravity); their paths come from GSL_PREFIX and
@@ -12,7 +12,13 @@ method="${1:?usage: build.sh METHOD GAMMA DIMS}"; gamma="${2:?usage: build.sh ME
 tag="${method}_g${gamma}_${dims}d"; build="${GIZMO_BUILD_ROOT:-$codes/gizmo-build}/$tag"; exe="$build/GIZMO"
 [[ -x "$exe" ]] && { echo "already built: $exe"; exit 0; }
 [[ -f "$src/Makefile" ]] || { echo "GIZMO source not found in $src (run fetch.sh)" >&2; exit 2; }
-case "$method" in mfm) hydro=HYDRO_MESHLESS_FINITE_MASS ;; mfv) hydro=HYDRO_MESHLESS_FINITE_VOLUME ;; *) echo "METHOD must be mfm or mfv" >&2; exit 2 ;; esac
+# Only meshless finite mass. Tried on the Mac at this commit and left out: meshless finite volume
+# (HYDRO_MESHLESS_FINITE_VOLUME) and the regular grid built on it (HYDRO_REGULAR_GRID): their gas velocities are NaN
+# from the start and GIZMO then removes every particle (2D and 3D, 1 to 4 ranks, with and without MHD, any
+# HYDRO_FIX_MESH_MOTION, gravity on or off); the grid with MHD_CONSTRAINED_GRADIENT does not compile. Pressure-SPH
+# (HYDRO_PRESSURE_SPH): runs, but 2D Orszag-Tang at 64^2 gains 60 % of its total energy by t = 0.5 (50 % with the
+# quintic kernel and 40 neighbours), where MFM loses about 1 % (its Dedner cleaning removes energy, as GLM does).
+case "$method" in mfm) hydro=HYDRO_MESHLESS_FINITE_MASS ;; *) echo "METHOD must be mfm" >&2; exit 2 ;; esac
 rm -rf "$build"; mkdir -p "$(dirname "$build")"; cp -R "$src" "$build"; rm -rf "$build/.git"
 {
     echo "$hydro"
@@ -22,6 +28,7 @@ rm -rf "$build"; mkdir -p "$(dirname "$build")"; cp -R "$src" "$build"; rm -rf "
     echo "EOS_GAMMA=($gamma)"
     echo "FORCE_EQUAL_TIMESTEPS"                            # one timestep for all particles, as in the other codes
     echo "INPUT_IN_DOUBLEPRECISION"; echo "OUTPUT_IN_DOUBLEPRECISION"
+    echo "OUTPUT_BFIELD_DIVCLEAN_INFO"                      # output only: div B and the cleaning field in the snapshots
 } > "$build/Config.sh"
 gsl="${GSL_PREFIX:-$(gsl-config --prefix 2>/dev/null || true)}"
 hdf5="${HDF5_PREFIX:-}"

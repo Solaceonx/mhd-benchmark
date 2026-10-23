@@ -49,18 +49,17 @@ ADDED = [("glm_fix_hll16", "GLM f16 fix", "GLM production kernel fixed (sweep-fi
          ("arepo_static", "AREPO stat", "AREPO static Cartesian mesh, Powell / HLLD (planar tests)"),
          ("mhdale_ale", "MHD-ALE", "MHD-ALE (Tom Abel's MFEM code), ALE remap")]
 # Codes being set up: a column each, empty until their runs are fetched.
-PLANNED = [("miniramses_matched", "mini-RAMSES m", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLL: being set up"),
-           ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: being set up"),
-           ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass: being set up"),
-           ("gizmo_mfv", "GIZMO MFV", "GIZMO meshless finite volume: being set up"),
-           ("flash_usm", "FLASH", "FLASH 4.8 unsplit staggered-mesh MHD (CT): waiting for access to the code")]
+PLANNED = [("miniramses_matched", "mini-RAMSES m", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLL: ready to run"),
+           ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: ready to run"),
+           ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass, Dedner + constrained-gradient MHD (planar tests): ready to run"),
+           ("gizmo_mfv", "GIZMO MFV", "GIZMO meshless finite volume, Dedner + constrained-gradient MHD (planar tests): ready to run")]
 # Abel et al.'s GLM kernels, original and fixed: one column in the status grid that opens into one per kernel.
 GLM_GROUP = ("glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "glm_fix_hll16", "glm_fct16", "glm_fix_hlld", "glm_fix_ppm")
 ALL_METHODS = [m for m in METHODS if m[0] in GLM_GROUP] + [m for m in ADDED if m[0] in GLM_GROUP] + \
     [m for m in METHODS if m[0] == "ct"] + [m for m in ADDED if m[0] == "ct_fix"] + \
     [m for m in METHODS if m[0] not in GLM_GROUP and m[0] != "ct" and not m[0].endswith("reference")] + \
     [m for m in ADDED if m[0] not in GLM_GROUP and m[0] != "ct_fix"] + PLANNED + [m for m in METHODS if m[0].endswith("reference")]
-PLANAR_LABELS = ("ramses", "athenapp", "arepo", "mhdale", "miniramses", "gizmo", "flash")     # planar tests run as planes
+PLANAR_LABELS = ("ramses", "athenapp", "arepo", "mhdale", "miniramses", "gizmo")     # planar tests run as planes
 STATE_TEXT = dict(done="finished", stopped="stopped by the solver", redo="failed, to rerun", open="not finished",
                   unknown="finished or not: only the count is known", skipped="taken out of the sweep")
 COLUMNS = [("gpu", "glm", "GLM ×5", "the five GLM kernels (T. Abel)"), ("gpu", "ct", "CT", "CT prototype (T. Abel)"),
@@ -548,7 +547,7 @@ def status_html(status, configs, families, family_of, driven=None, added=()):
             "<script>document.querySelectorAll('.glm-toggle').forEach(b=>b.addEventListener('click',()=>{const t=b.closest('table');"
             "t.classList.toggle('glm-closed');}))</script>"
             f'<p class="small">The GLM column holds Abel et al.\'s {len(GLM_GROUP)} GLM kernels (5 original, 4 fixed); open it for one column per kernel. '
-            'Columns in italics are codes being set up. AREPO, MHD-ALE and the fixed kernels ran after the sweep, outside its plan.</p>')
+            'Columns in italics are codes whose runs have not been made yet. AREPO, MHD-ALE and the fixed kernels ran after the sweep, outside its plan.</p>')
 
     # ---- counts by method, with a part-to-whole bar (the numbers beside it are the table view)
     t = tally(dict(status, rows=every));tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}
@@ -559,7 +558,7 @@ def status_html(status, configs, families, family_of, driven=None, added=()):
     trs = "".join(f'<tr><td title="{e(d)}">{e(l)}</td><td class="num">{v["planned"]}</td><td class="num">{v["finished"]}</td>'
                   f'<td class="num">{v["stopped"] or "·"}</td><td class="num">{v["redo"] or "·"}</td><td class="num">{v["unfinished"] or "·"}</td>{out_col(v)}'
                   f'<td class="bar-cell"><span class="stack">{seg(v)}</span></td></tr>' if v["planned"] else
-                  f'<tr><td title="{e(d)}">{e(l)}</td><td colspan="{6 + bool(tot["skipped"])}" class="small">{"being set up" if m in planned_set else "no runs fetched"}</td></tr>'
+                  f'<tr><td title="{e(d)}">{e(l)}</td><td colspan="{6 + bool(tot["skipped"])}" class="small">{"not run yet" if m in planned_set else "no runs fetched"}</td></tr>'
                   for (m, l, d), v in ((x, t[x[0]]) for x in ALL_METHODS))
     counts = (f'<table class="metrics-table sweep-text sweep-counts"><thead><tr><th>Method</th><th class="num">Planned</th><th class="num">Finished</th>'
               f'<th class="num">Stopped</th><th class="num">To rerun</th><th class="num">Not finished</th>{"<th class=num>Taken out</th>" if tot["skipped"] else ""}<th></th></tr></thead><tbody>{trs}'

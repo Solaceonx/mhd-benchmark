@@ -108,8 +108,9 @@ B_z grow to 4e-2 B0 on `field_loop` 128^2. The Kernel fixes page shows the rerun
 **New codes, 2026-10-22:** lyxia asked for Eric Moseley's mini-ramses-ism (his RAMSES II, bitbucket ermoseley,
 `develop`) and GIZMO; FLASH dropped (its licence bars cloud AI tools from the code). Both bundles are ready, not yet
 sent (lyxia: "not gonna run those yet"): `sherlock_miniramses/` (GPU, 268 runs, CPU-tested on the Mac against classic
-RAMSES) and `sherlock_gizmo/` (MFM and MFV, 17 planar tests, 164 CPU runs; tested with a stand-in executable, as
-AREPO was). Each README has the one send command (`submit.sh`), status and fetch. After the fetch: add their labels to
+RAMSES) and `sherlock_gizmo/` (MFM only, 17 planar tests, 82 CPU runs; built and run for real on the Mac 2026-10-23 with
+Homebrew open-mpi/gsl/hdf5: Orszag-Tang 64^2 matches AthenaK/RAMSES; MFV and the regular grid fail from the start at
+this commit and pressure-SPH gains 60 % energy, so they are out; findings in its build.sh, worth reporting to Hopkins). Each README has the one send command (`submit.sh`), status and fetch. After the fetch: add their labels to
 `sweep_data` (as AREPO) and the pages. The sweep page has their columns (italic until run) and the GLM kernels in one
 column that opens (`build_sweep_plan.py`: ADDED, PLANNED, GLM_GROUP, added_rows). Eric's `switch_llf` in
 hydro/godunov_utils.f90 (~line 2118): with both thresholds set the pressure test overwrites the density test; tell him.

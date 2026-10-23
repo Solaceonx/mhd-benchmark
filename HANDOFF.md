@@ -105,6 +105,15 @@ not to worry (2026-10-22; on the CPU it loses pressure positivity once second or
 The fixed PPM's 512^2 instability (psi grows from t ~ 1) is not fixed, only no longer a crash. The cell-CT option lets
 B_z grow to 4e-2 B0 on `field_loop` 128^2. The Kernel fixes page shows the rerun (issues 8-10 open; published 2026-10-22). Branch pushed 2026-10-22 to the fork github.com/Solaceonx/GLMMHDTurb (remote `fork` in the clone); no pull request to Tom yet.
 
+**New codes, 2026-10-22:** lyxia asked for Eric Moseley's mini-ramses-ism (his RAMSES II, bitbucket ermoseley,
+`develop`), FLASH and GIZMO. `sherlock_miniramses/` is ready (README there; CPU-tested on the Mac against classic
+RAMSES; GPU build and 268 runs not yet sent). GIZMO: public repo bitbucket phopkins/gizmo-public, to be set up like
+`sherlock_arepo/` (MFM and MFV planned). FLASH: needs lyxia to request the code (FLASH 4.8 form at the Flash Center;
+Flash-X needs an email for GitHub access); not started. The sweep page has a column for each (italic until run) and
+the GLM kernels in one column that opens (`build_sweep_plan.py`: ADDED, PLANNED, GLM_GROUP, added_rows). Eric's
+`switch_llf` in hydro/godunov_utils.f90 (~line 2118): with both thresholds set the pressure test overwrites the density
+test, so "either" holds only for one; worth telling him.
+
 **Sweep-page popups, 2026-10-15:** hovering or tapping a run that did not finish shows its reach, steps, outputs, a
 plain reading of its error line, and the traced cause where there is one (`build_sweep_plan.py`: `WHY`, `CAUSES`,
 `why_of`; data from `sweep_status.py` `row["detail"]`). Published. The publisher now skips `progress/media/showcase/`

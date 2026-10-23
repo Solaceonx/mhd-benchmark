@@ -38,6 +38,29 @@ METHODS = [("glm", "GLM", "GLM original: step_tiled!, Float32, LLF"), ("glm_hll1
            ("ramses_matched", "RAMSES m", "RAMSES matched: HLL"), ("ramses_best", "RAMSES b", "RAMSES best: HLLD"),
            ("athenapp_matched", "Athena++ m", "Athena++ matched: PLM / HLLE / VL2"), ("athenapp_best", "Athena++ b", "Athena++ best: PPM / HLLD / RK3"),
            ("athenak_reference", "Reference", "AthenaK reference (truth)"), ("athenapp_reference", "Check", "Athena++ check of the reference")]
+# Columns for runs made outside the sweep's plan, by their own bundles; their rows come from the fetched records
+# (scripts/sweep_data.py), not from the status export.
+ADDED = [("glm_fix_hll16", "GLM f16 fix", "GLM production kernel fixed (sweep-fixes): anchored f16, HLL"),
+         ("glm_fct16", "GLM f16 CT", "GLM production kernel fixed, cell-centred CT in place of GLM"),
+         ("glm_fix_hlld", "GLM HLLD fix", "GLM step_plm!, Float32, HLLD with the fixed guard"),
+         ("glm_fix_ppm", "GLM PPM fix", "GLM PPM kernel fixed: anchored f16"),
+         ("ct_fix", "CT fix", "CT prototype fixed: full slope, 3D predictor, upwinded edge EMFs"),
+         ("arepo_moving", "AREPO mov", "AREPO moving mesh, Powell / HLLD (planar tests)"),
+         ("arepo_static", "AREPO stat", "AREPO static Cartesian mesh, Powell / HLLD (planar tests)"),
+         ("mhdale_ale", "MHD-ALE", "MHD-ALE (Tom Abel's MFEM code), ALE remap")]
+# Codes being set up: a column each, empty until their runs are fetched.
+PLANNED = [("miniramses_matched", "mini-RAMSES m", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLL: being set up"),
+           ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: being set up"),
+           ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass: being set up"),
+           ("gizmo_mfv", "GIZMO MFV", "GIZMO meshless finite volume: being set up"),
+           ("flash_usm", "FLASH", "FLASH 4.8 unsplit staggered-mesh MHD (CT): waiting for access to the code")]
+# Abel et al.'s GLM kernels, original and fixed: one column in the status grid that opens into one per kernel.
+GLM_GROUP = ("glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "glm_fix_hll16", "glm_fct16", "glm_fix_hlld", "glm_fix_ppm")
+ALL_METHODS = [m for m in METHODS if m[0] in GLM_GROUP] + [m for m in ADDED if m[0] in GLM_GROUP] + \
+    [m for m in METHODS if m[0] == "ct"] + [m for m in ADDED if m[0] == "ct_fix"] + \
+    [m for m in METHODS if m[0] not in GLM_GROUP and m[0] != "ct" and not m[0].endswith("reference")] + \
+    [m for m in ADDED if m[0] not in GLM_GROUP and m[0] != "ct_fix"] + PLANNED + [m for m in METHODS if m[0].endswith("reference")]
+PLANAR_LABELS = ("ramses", "athenapp", "arepo", "mhdale", "miniramses", "gizmo", "flash")     # planar tests run as planes
 STATE_TEXT = dict(done="finished", stopped="stopped by the solver", redo="failed, to rerun", open="not finished",
                   unknown="finished or not: only the count is known", skipped="taken out of the sweep")
 COLUMNS = [("gpu", "glm", "GLM ×5", "the five GLM kernels (T. Abel)"), ("gpu", "ct", "CT", "CT prototype (T. Abel)"),
@@ -263,13 +286,38 @@ def combine(rows):
 
 def tally(status):
     """Per method: planned, finished, stopped, redo, unfinished (the counts are exact even where the cells are not)."""
-    out = {m: dict(planned=0, finished=0, stopped=0, redo=0, unfinished=0, skipped=0) for m, _, _ in METHODS}
+    out = {m: dict(planned=0, finished=0, stopped=0, redo=0, unfinished=0, skipped=0) for m, _, _ in ALL_METHODS}
     for r in status["rows"]:
         t = out[r["label"]];t["planned"] += 1
         key = {"done": "finished", "stopped": "stopped", "redo": "redo", "open": "unfinished", "skipped": "skipped"}.get(r["state"])
         if key:t[key] += 1
     for a in status["ambiguous"]:
         out[a["label"]]["finished"] += a["complete"];out[a["label"]]["unfinished"] += a["unfinished"]
+    return out
+
+
+def added_rows():
+    """Status rows of the runs made outside the plan (ADDED), from the fetched records: (test, label, n, seed, state,
+    frac, note, detail) as the export's rows."""
+    import sweep_data
+    sw = sweep_data.Sweep();out = []
+    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()):
+        test, label, n, seed = key;row = dict(test=test, label=label, n=n, seed=seed, state=r["state"], frac=r.get("frac"), note=r.get("note", ""))
+        if r["state"] == "stopped":
+            m = sw.meta(*key) or {}
+            row["detail"] = dict(reached=r.get("reached"), t_end=float(sw.configs[test]["t_end"]), steps=m.get("steps"),
+                                 frames=len(m.get("frames", [])) or None, error=r.get("note") or m.get("error", ""))
+        out.append(row)
+    for p in sorted(sw.results.glob("*-mhdale-ale-run-N*-s*/data/mhdale_ale_r1/run.toml")):
+        m = tomllib.loads(p.read_text());test = m.get("test")
+        if test not in sw.configs:continue
+        t_end = float(sw.configs[test]["t_end"]);done = m.get("status") == "complete"
+        reached = float(m.get("time_reached", t_end if done else 0.0) or 0.0)
+        row = dict(test=test, label="mhdale_ale", n=int(m["N"]), seed=int(m.get("seed", 42)), state="done" if done else "stopped",
+                   frac=None if done else min(1.0, reached/t_end), note="")
+        if not done:row["detail"] = dict(reached=reached, t_end=t_end, steps=m.get("steps"), frames=len(m.get("frames", [])) or None,
+                                         error=str(m.get("error", "")))
+        out.append(row)
     return out
 
 
@@ -322,7 +370,7 @@ def arepo_card():
 def driven_grid_rows(campaign, methods):
     """Use the common method columns, with hydro-specific solver descriptions."""
     labels = {'euler_hll': ('gpu-hydro', 'Abel et al. Euler / HLL'),
-              'glm': ('gpu-glm', 'Abel et al. GLM / LLF, B = 0'),
+              'glm': ('gpu-glm', 'Abel et al. GLM / LLF, B = 0'), 'glm_all': ('gpu-glm', 'Abel et al. GLM / LLF, B = 0'),
               'ramses_matched': ('ramsesfix-matched', 'RAMSES hydro / HLL, corrected forcing'),
               'ramses_best': ('ramsesfix-best', 'RAMSES hydro / HLLC, corrected forcing')}
     records = campaign['records']
@@ -336,7 +384,7 @@ def driven_grid_rows(campaign, methods):
             kind, description = labels.get(label, (None, ''))
             runs = [r for r in group if r['method'] == kind]
             if not runs:
-                cells.append('<td class="not-configured">—</td>');continue
+                cells.append(f'<td class="not-configured"{col_attr(label)}>—</td>');continue
             marks = []
             for n in grids:
                 mine = [r for r in runs if r['n'] == n]
@@ -348,7 +396,7 @@ def driven_grid_rows(campaign, methods):
                 seeds = ', '.join(f"seed {r['seed']}: {r['status']}" for r in mine)
                 title = f'{n}³: {description}; {tip}; {seeds}'
                 marks.append(f'<i class="g s-{state}" title="{e(title)}"></i>')
-            cells.append(f'<td data-method="{label}"><span class="ladder">{"".join(marks)}</span></td>')
+            cells.append(f'<td data-method="{label}"{col_attr(label)}><span class="ladder">{"".join(marks)}</span></td>')
         page = f'test-driven-mach-{mach}.html' if mach >= 30 else 'turbulence.html'
         done = sum(r['status'] == 'complete' for r in group)
         rows.append(f'<tr data-campaign="driven" data-test="driven_M{mach}"><td><a href="{page}">Mach {mach} driven</a> '
@@ -403,13 +451,41 @@ def why_of(rows, n, geo):
     return json.dumps(dict(h=f"{n}{geo}: did not finish", l=lines, m=raw), ensure_ascii=False)
 
 
-def status_html(status, configs, families, family_of, driven=None):
-    """The status tiles, grid and tables."""
+def col_attr(label):
+    """The GLM kernels' columns open and close together (GLM_GROUP); 'glm_all' is the closed column."""
+    return ' data-col="glm-sum"' if label == "glm_all" else ' data-col="glm"' if label in GLM_GROUP else ""
+
+
+def glm_summary(by, test, config, ladder, planar):
+    """The closed GLM column of one test: per grid, full when every GLM kernel finished; otherwise filled by the share
+    that finished, with the kernels that did not in the tip."""
+    names = {m: l for m, l, _ in ALL_METHODS}
+    grids = [n for n in ladder if n in config["grids"] or any(n in by.get((test, m), {}) for m in GLM_GROUP)]
+    if not any(by.get((test, m)) for m in GLM_GROUP):return f'<td class="not-configured"{col_attr("glm_all")}>—</td>'
+    marks, tips = [], [];geo = "³"
+    for n in grids:
+        rows = [(m, r) for m in GLM_GROUP for r in by.get((test, m), {}).get(n, [])]
+        if not rows:
+            marks.append('<i class="g none"></i>');continue
+        kernels = {m for m, _ in rows};ok = {m for m in kernels if all(r["state"] == "done" for mm, r in rows if mm == m)}
+        bad = sorted(kernels - ok, key=GLM_GROUP.index)
+        tip = f"{n}{geo}: " + (f"all {len(kernels)} GLM kernels finished" if not bad else
+                               f"{len(ok)} of {len(kernels)} GLM kernels finished; not: " + ", ".join(names[m] for m in bad))
+        state = "done" if not bad else "stopped"
+        marks.append(f'<i class="g s-{state}"' + (f' style="--f:{len(ok)/len(kernels):.2f}"' if bad else "") + f' title="{e(tip)}"></i>')
+        tips.append(tip)
+    return f'<td{col_attr("glm_all")}><span class="ladder">{"".join(marks)}</span></td>'
+
+
+def status_html(status, configs, families, family_of, driven=None, added=()):
+    """The status tiles, grid and tables. added: rows of runs outside the plan (added_rows), shown in the grid and counts."""
+    every = status["rows"] + list(added)
     by = {}                                              # (test, label) -> n -> rows
-    for r in status["rows"]:by.setdefault((r["test"], r["label"]), {}).setdefault(r["n"], []).append(r)
+    for r in every:by.setdefault((r["test"], r["label"]), {}).setdefault(r["n"], []).append(r)
     amb = {(a["label"], a["n"]): a for a in status["ambiguous"]}
     ladder = [32, 64, 96, 128, 192, 256, 384, 512]
-    methods = list(METHODS)
+    methods = list(ALL_METHODS)
+    methods.insert(0, ("glm_all", f"GLM ×{len(GLM_GROUP)}", "Abel et al.'s GLM kernels, original and fixed: a mark is full when every kernel finished"))
     if driven and driven['records']:
         methods.insert(0, ('euler_hll', 'Euler / HLL', 'Abel et al. Euler kernel; driven nonmagnetic turbulence'))
         methods = [(m, label, description + ('; HLLC for the driven hydro rows' if m == 'ramses_best' else ''))
@@ -424,10 +500,12 @@ def status_html(status, configs, families, family_of, driven=None):
         for t in tests:
             c = configs[t];p2 = plan.planar(c);tds = [];fin = tot = 0
             for label, _, _ in methods:
+                if label == "glm_all":
+                    tds.append(glm_summary(by, t, c, ladder, p2));continue
                 cell = by.get((t, label))
                 if not cell:
-                    tds.append('<td class="not-configured">—</td>');continue
-                cube = p2 and not label.startswith(("ramses", "athenapp")) and not label.endswith("reference")
+                    tds.append(f'<td class="not-configured"{col_attr(label)}>—</td>');continue
+                cube = p2 and not label.startswith(PLANAR_LABELS) and not label.endswith("reference")
                 geo = "²" if p2 and not cube else "³"
                 marks, tips = [], [];has_why = False
                 grids = sorted(cell) if label.endswith("reference") else [n for n in ladder if n in c["grids"] or n in cell]
@@ -447,7 +525,7 @@ def status_html(status, configs, families, family_of, driven=None):
                 if label.endswith("reference"):
                     tds.append(f'<td><span class="ladder"{span_title}><span class="grid-tag">{grids[0]}{geo}</span>{"".join(marks)}</span></td>')
                 else:
-                    tds.append(f'<td><span class="ladder"{span_title}>{"".join(marks)}</span></td>')
+                    tds.append(f'<td{col_attr(label)}><span class="ladder"{span_title}>{"".join(marks)}</span></td>')
             unsure = any(x["state"] == "unknown" for (tt, _), cell in by.items() if tt == t for xs in cell.values() for x in xs)
             rows.append(f'<tr><td><code>{e(t)}</code> <span class="divb-flag">{"2D" if p2 else "3D"}</span></td>{"".join(tds)}'
                         f'<td class="num">{"≥ " if unsure else ""}{fin}/{tot}</td></tr>')
@@ -457,18 +535,32 @@ def status_html(status, configs, families, family_of, driven=None):
     if driven and driven['records'] and not driven_added:
         rows.append(f'<tr class="family-row" id="turbulence-run-status"><th colspan="{len(methods)+2}">Turbulence</th></tr>')
         rows.append(driven_grid_rows(driven, methods))
-    head = "".join(f'<th title="{e(d)}">{e(l)}</th>' for _, l, d in methods)
-    grid = (f'<div class="matrix-scroll"><table class="suite-matrix sweep-matrix sweep-status"><thead><tr><th>Test</th>{head}'
-            f'<th class="num" title="finished of planned MHD runs or fetched driven runs, over all methods, grids and seeds">Finished</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>')
+    toggle = lambda l, opened: (f'<button type="button" class="glm-toggle" aria-expanded="{"true" if opened else "false"}" '
+                                f'title="Show {"one column" if opened else "a column per kernel"}">{e(l) + " " if l else ""}{"◂" if opened else "▸"}</button>')
+    planned_set = {m for m, _, _ in PLANNED}
+    head = "".join(f'<th title="{e(d)}"{col_attr(m)}' + (' class="planned"' if m in planned_set else "") + '>'
+                   + (toggle(l, False) if m == "glm_all" else toggle("", True) + " " + e(l) if m == GLM_GROUP[0] else e(l)) + "</th>" for m, l, d in methods)
+    grid = ('<style>.sweep-status.glm-closed [data-col="glm"]{display:none}.sweep-status:not(.glm-closed) [data-col="glm-sum"]{display:none}'
+            '.glm-toggle{font:inherit;font-weight:600;background:none;border:1px solid currentColor;border-radius:4px;padding:1px 6px;cursor:pointer;color:inherit;white-space:nowrap}'
+            '.sweep-status th.planned{font-style:italic;opacity:.75}</style>'
+            f'<div class="matrix-scroll"><table class="suite-matrix sweep-matrix sweep-status glm-closed"><thead><tr><th>Test</th>{head}'
+            f'<th class="num" title="finished of planned MHD runs or fetched driven runs, over all methods, grids and seeds">Finished</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
+            "<script>document.querySelectorAll('.glm-toggle').forEach(b=>b.addEventListener('click',()=>{const t=b.closest('table');"
+            "t.classList.toggle('glm-closed');}))</script>"
+            f'<p class="small">The GLM column holds Abel et al.\'s {len(GLM_GROUP)} GLM kernels (5 original, 4 fixed); open it for one column per kernel. '
+            'Columns in italics are codes being set up. AREPO, MHD-ALE and the fixed kernels ran after the sweep, outside its plan.</p>')
 
     # ---- counts by method, with a part-to-whole bar (the numbers beside it are the table view)
-    t = tally(status);tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}
+    t = tally(dict(status, rows=every));tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}
+    t_plan = tally(status);tot_plan = {k: sum(v[k] for v in t_plan.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}
     seg = lambda v: "".join(f'<i class="seg-{k}" style="flex:{v[k]}" title="{v[k]} {STATE_TEXT[s]}"></i>'
                             for k, s in (("finished", "done"), ("stopped", "stopped"), ("redo", "redo"), ("unfinished", "open"), ("skipped", "skipped")) if v[k])
     out_col = lambda v: f'<td class="num">{v["skipped"] or "·"}</td>' if tot["skipped"] else ""
     trs = "".join(f'<tr><td title="{e(d)}">{e(l)}</td><td class="num">{v["planned"]}</td><td class="num">{v["finished"]}</td>'
                   f'<td class="num">{v["stopped"] or "·"}</td><td class="num">{v["redo"] or "·"}</td><td class="num">{v["unfinished"] or "·"}</td>{out_col(v)}'
-                  f'<td class="bar-cell"><span class="stack">{seg(v)}</span></td></tr>' for (m, l, d), v in ((x, t[x[0]]) for x in METHODS))
+                  f'<td class="bar-cell"><span class="stack">{seg(v)}</span></td></tr>' if v["planned"] else
+                  f'<tr><td title="{e(d)}">{e(l)}</td><td colspan="{6 + bool(tot["skipped"])}" class="small">{"being set up" if m in planned_set else "no runs fetched"}</td></tr>'
+                  for (m, l, d), v in ((x, t[x[0]]) for x in ALL_METHODS))
     counts = (f'<table class="metrics-table sweep-text sweep-counts"><thead><tr><th>Method</th><th class="num">Planned</th><th class="num">Finished</th>'
               f'<th class="num">Stopped</th><th class="num">To rerun</th><th class="num">Not finished</th>{"<th class=num>Taken out</th>" if tot["skipped"] else ""}<th></th></tr></thead><tbody>{trs}'
               f'<tr class="total"><td><strong>All</strong></td><td class="num">{tot["planned"]:,}</td><td class="num">{tot["finished"]:,}</td><td class="num">{tot["stopped"]}</td>'
@@ -476,7 +568,7 @@ def status_html(status, configs, families, family_of, driven=None):
 
     # ---- what stopped, by method and grid
     stops = {}
-    for r in status["rows"]:
+    for r in every:
         if r["state"] == "stopped":stops.setdefault(r["label"], {}).setdefault(r["n"], []).append((r["test"], r["frac"]))
     grids = sorted({n for v in stops.values() for n in v})
     def items(xs):
@@ -484,7 +576,7 @@ def status_html(status, configs, families, family_of, driven=None):
         for name, f in sorted(xs):acc.setdefault(name, []).append(f)
         return ", ".join(f'{e(name)} <span class="at">{"/".join("?" if f is None else f"{f:.0%}" for f in fs)}</span>' for name, fs in acc.items())
     srows = "".join(f'<tr><td title="{e(d)}">{e(l)}</td>' + "".join(f'<td>{items(stops[m].get(n, [])) or "·"}</td>' for n in grids) + "</tr>"
-                    for m, l, d in METHODS if m in stops)
+                    for m, l, d in ALL_METHODS if m in stops)
     stopped = (f'<table class="metrics-table sweep-text sweep-stops"><thead><tr><th>Method</th>' + "".join(f"<th>{n}</th>" for n in grids) +
                f'</tr></thead><tbody>{srows}</tbody></table>') if stops else "<p>No run was stopped by its solver.</p>"
 
@@ -519,7 +611,7 @@ def status_html(status, configs, families, family_of, driven=None):
     if gone:notes.append(f"<strong>Taken out of the sweep</strong> ({len(gone)}): " +
                          "; ".join(f"{e(t)}, {e(name[l])}, {n}, seed {sd}" for t, l, n, sd in gone) + ".")
     notes += [e(x) for x in status.get("remarks", [])]
-    return dict(grid=grid, counts=counts, stopped=stopped, notes="".join(f"<li>{x}</li>" for x in notes), tally=t, total=tot)
+    return dict(grid=grid, counts=counts, stopped=stopped, notes="".join(f"<li>{x}</li>" for x in notes), tally=t_plan, total=tot_plan)
 
 
 def build():
@@ -545,7 +637,7 @@ def build():
         bad = sweep_data.Sweep().nonfinite_parts()
         sweep_status.mark_nonfinite(status, bad, {name: float(c["t_end"]) for name, c in configs.items()})
     driven = driven_campaign()
-    sv = status_html(status, configs, families, family_of, driven) if status else None
+    sv = status_html(status, configs, families, family_of, driven, added_rows()) if status else None
     accounting_error = None
     try:
         accounting = sweep_accounting.summarize()

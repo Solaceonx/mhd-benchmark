@@ -5,7 +5,7 @@
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$here"
 if squeue -h -u "$USER" -n miniramses | grep -q .; then echo "miniramses jobs are still in the queue: not submitting"; squeue -u "$USER" -n miniramses; exit 1; fi
-bash fetch.sh
+bash -l fetch.sh
 mkdir -p logs
 tasks="$(python3 -c "import json; print(len(json.load(open('runs.json'))['tasks']))")"
 p="$(sbatch --parsable --array=0 miniramses.sbatch)"

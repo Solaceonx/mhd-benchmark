@@ -22,7 +22,7 @@ rm -rf "$build"; mkdir -p "$(dirname "$build")"; cp -R "$src" "$build"
 python3 "$here/prepare_patch.py" "$src" "$build/abel-patch"
 opts=(COMPILER=NVHPC "CUDA_ARCH=$arch" "NDIM=$ndim" MPI=0 HYDRO=1 MHD=1 "NPRE=$npre" "PATCH=$build/abel-patch")
 echo "== building $variant: make ramses ${opts[*]}"
-jobs="${SLURM_CPUS_PER_TASK:-8}"; lowered=""; ok=0
+jobs="${SLURM_CPUS_PER_TASK:-8}"; lowered=""; ok=0; keep=()
 mk() { ( cd "$build/bin" && make "$@" "${opts[@]}" ); }
 mk -j "$jobs" ramses > "$build/build.log" 2>&1 && ok=1
 for pass in 1 2 3 4 5 6 7 8; do
@@ -36,13 +36,15 @@ for pass in 1 2 3 4 5 6 7 8; do
         grep -q "Internal compiler error" "$build/retry_$obj.log" || { echo "   $obj: an error of the code, not of the compiler"; progress=0; break; }
         for level in -O3 -O2 -O1 -O0; do
             if mk "$obj" "F90=nvfortran -Mfreeform $level" >> "$build/retry_$obj.log" 2>&1; then
-                lowered="$lowered $obj($level)"; progress=1
+                lowered="$lowered $obj($level)"; progress=1; keep+=(-o "$obj")   # make must not build it again at -O4
                 echo "   $obj: internal compiler error at -O4, built at $level"; break
             fi
         done
     done
     [[ $progress -eq 1 ]] || break
-    mk -j "$jobs" ramses > "$build/build.log" 2>&1 && ok=1
+    # -o: take the objects built at a lower level as they are (job 49368458: without it the full build compiled
+    # cooling_module.o again at -O4 and crashed again)
+    mk -j "$jobs" ${keep[@]+"${keep[@]}"} ramses > "$build/build.log" 2>&1 && ok=1      # (old bash: empty array under set -u)
 done
 [[ $ok -eq 1 ]] || {
     echo "BUILD FAILED: $variant (last lines of $build/build.log)"; grep -n -i "error\|fatal\|undefined\|killed" "$build/build.log" | head -20; tail -n 15 "$build/build.log"; exit 1; }

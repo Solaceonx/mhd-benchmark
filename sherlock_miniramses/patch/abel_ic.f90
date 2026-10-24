@@ -1,7 +1,8 @@
 !================================================================
 ! mini-ramses initial conditions for the comparison suite (sherlock_miniramses).
 ! Reads the exact Float32 initial state the sweep writes for RAMSES (tools/write_spec.jl --state; NDIM=2: --plane):
-!   $ABEL_IC_PREFIX.state : N x N x Nz x 9 cell state (rho, m, E, Bcc, psi), x fastest; Nz = N (3D) or 1 (2D)
+!   $ABEL_IC_PREFIX.state : N x N x Nz x 9 cell state (rho, m, E, Bcc, psi), x fastest; Nz = N (3D) or 1 (a plane,
+!                           which a 3D build repeats through z: the GPU build of mini-ramses-ism is 3D only)
 !   $ABEL_IC_PREFIX.face1..3 : lower-face B (N x N x Nz each), x fastest; $ABEL_IC_N = N
 ! This module goes at the top of input_hydro_condinit.f90 (prepare_patch.py): the Makefile compiles that file before
 ! condinit.f90, which uses it. condinit returns primitive variables (mini-ramses' convention); abel_faces (the end of
@@ -17,6 +18,7 @@ contains
   subroutine load_ic()
     character(len=4096) :: prefix, nstr
     integer :: unit, d, status, n
+    integer(kind=8) :: nbytes
     character(len=1) :: c
     if (nic > 0) return
     call get_environment_variable('ABEL_IC_N', nstr, status=status)
@@ -30,10 +32,12 @@ contains
        write(*,*) 'abel condinit: ABEL_IC_PREFIX is not set'
        stop 1
     end if
-#if NDIM == 3
-    nzic = n
-#else
+    ! A plane (N x N x 1, the sweep's --plane data) is the same at every z: a 3D run of a planar test reads it once and
+    ! wrap() repeats it through z. Otherwise N x N x N in 3D.
+    inquire(file=trim(prefix)//'.state', size=nbytes)
     nzic = 1
+#if NDIM == 3
+    if (nbytes /= int(n, 8)*n*9*4) nzic = n
 #endif
     allocate(st(n, n, nzic, 9), bf(n, n, nzic, 3))
     open(newunit=unit, file=trim(prefix)//'.state', access='stream', form='unformatted', status='old')

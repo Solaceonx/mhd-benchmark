@@ -8,7 +8,9 @@ sherlock_sweep/codes/external.py: this file adds only what is specific to mini-r
 its outputs) and then calls that driver's main(). Nothing in the sweep bundle is changed.
 
 mini-ramses-ism (bitbucket.org/ermoseley/mini-ramses-ism, branch develop): Eric Moseley's version of RAMSES II, the
-GPU (CUDA Fortran) rewrite of RAMSES. Constrained transport on a uniform grid here (levelmin = levelmax = log2 N),
+GPU (CUDA Fortran) rewrite of RAMSES. Its GPU path is 3D only (gpu/gpu_utils.cuf: "CUDA GPU path requires NDIM=3"), so
+the planar tests run in 3D on an N x N x N grid that is the same at every z, as AthenaK's runs in the sweep; their
+records keep the z = 0 plane, as AthenaK's. Constrained transport on a uniform grid here (levelmin = levelmax = log2 N),
 MUSCL-Hancock with the MonCen slope, two set-ups as for classic RAMSES in the sweep:
   matched   HLL, Courant 0.5
   best      HLLD, Courant 0.8
@@ -90,12 +92,13 @@ def info(outdir):
                 levelmin=get("levelmin", int), levelmax=get("levelmax", int))
 
 
-def read_output(outdir, n, gamma):
-    """A uniform-grid mini-ramses output -> (time, steps, (N, N, Nz, 9) conservative state); Nz = 1 in 2D. The layout
+def read_output(outdir, n, gamma, planar=False):
+    """A uniform-grid mini-ramses output -> (time, steps, (N, N, Nz, 9) conservative state); Nz = 1 in 2D, and for a
+    planar test run in 3D (planar: only its z = 0 plane is kept; the others are copies of it). The layout
     is that of utils/py/miniramses.py (rd_amr, rd_hydro): per file a header, the oct count of each level, then per level
     the integer key of every oct (and its refinement map) and the Float32 primitive state of its 2^ndim cells."""
     i = info(outdir);ndim = i["ndim"];lmin, lmax = i["levelmin"], i["levelmax"];level = int(round(np.log2(n)))
-    u = np.full((n, n, n if ndim == 3 else 1, 9), np.nan)
+    nz = n if ndim == 3 and not planar else 1;u = np.full((n, n, nz, 9), np.nan)
     for cpu in range(1, i["ncpu"] + 1):
         amr = (outdir/f"amr.{cpu:05d}").read_bytes();hyd = (outdir/f"hydro.{cpu:05d}").read_bytes()
         counts = np.frombuffer(amr, "<i4", lmax - lmin + 1, 12)
@@ -105,13 +108,17 @@ def read_output(outdir, n, gamma):
         for il, nc in zip(range(lmin, lmax + 1), counts):
             nc = int(nc)
             keys = np.frombuffer(amr, "<i4", nc*(ndim + 1), pa).reshape(nc, ndim + 1)[:, :ndim]
-            q = np.frombuffer(hyd, "<f4", nc*nvar*2**ndim, ph).reshape(nc, nvar, 2**ndim).astype(np.float64)
+            q = np.frombuffer(hyd, "<f4", nc*nvar*2**ndim, ph).reshape(nc, nvar, 2**ndim)
             pa += 4*nc*(ndim + 1);ph += 4*nc*nvar*2**ndim
             if il != level:continue
+            if ndim == 3 and nz == 1:                             # only the octs of the z = 0 plane (1/(N/2) of them)
+                bottom = keys[:, 2] == 0;keys, q = keys[bottom], q[bottom];nc = len(keys)
+            q = q.astype(np.float64)
             for ind in range(2**ndim):
                 ijk = 2*keys + np.array([(ind >> d) & 1 for d in range(ndim)])
                 if ndim == 2:ijk = np.column_stack([ijk, np.zeros(nc, int)])
-                rho, v, p, b = q[:, 0, ind], q[:, 1:4, ind], q[:, 4, ind], q[:, 5:8, ind]
+                sel = ijk[:, 2] < nz                                  # a planar test in 3D: the z = 0 plane
+                ijk = ijk[sel];rho, v, p, b = q[sel, 0, ind], q[sel, 1:4, ind], q[sel, 4, ind], q[sel, 5:8, ind]
                 cells = (ijk[:, 0], ijk[:, 1], ijk[:, 2])
                 u[cells + (0,)] = rho
                 for c in range(3):
@@ -131,10 +138,11 @@ def run_miniramses(args, config, spec, settings, rundir, rep, outputs, resume=Fa
     ndim = 2 if args.geometry == "plane" else 3;n = args.n
     targets = X.output_times(config) if outputs else [0.0, float(config["t_end"])]
     tol = 1e-6*float(config["t_end"])/(int(config["frames"]) - 1)
-    prefix = spec.removesuffix(".spec")
+    prefix = spec.removesuffix(".spec");planar = X.planar(config)
     if not Path(prefix + ".state").is_file():                # the driver writes the cell state for RAMSES only
         seed = args.seed if args.seed is not None else config.get("seeds", [42])[0]
-        X.write_spec(args.config, n, prefix, seed, state=True, plane=ndim == 2)
+        # a planar test: the plane, also for a 3D run (the patched condinit repeats it through z)
+        X.write_spec(args.config, n, prefix, seed, state=True, plane=planar)
     # A requeued attempt runs again from the start: mini-ramses's backups are not used (the runs are short on a GPU).
     for o in rundir.glob("output_*"):shutil.rmtree(o)
     nml = rundir/"abel.nml";nml.write_text(namelist(config, n, settings, outputs, ndim))
@@ -150,7 +158,7 @@ def run_miniramses(args, config, spec, settings, rundir, rep, outputs, resume=Fa
     outs = outputs_of(rundir);gamma = X.gamma_of(config)
     keep = [o for o in outs if any(abs(info(o)["time"] - t) <= tol for t in targets)]
     if keep:perf["steps"] = info(outs[-1])["steps"]
-    frames = (read_output(o, n, gamma) for o in keep)
+    frames = (read_output(o, n, gamma, planar) for o in keep)
     complete = bool(keep) and abs(info(keep[-1])["time"] - targets[-1]) <= tol
     rc = code if code else (0 if complete else 1)
     return rc, text[-2000:], perf, frames

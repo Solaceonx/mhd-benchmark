@@ -19,10 +19,12 @@ pressure threshold (`switch_llf_dmin`, `switch_llf_pmin`, his newest commit) are
 
 ## What runs
 
-`runs.json` (`python3 make_tasks.py` on the Mac): every run classic RAMSES has in the sweep, the same tests, grids,
-seeds and geometry (the planar tests as planes, with the 2D build), 130 per set-up; plus the speed test
-`throughput_ot3d` at 64³–512³ with its repeats, which classic RAMSES did not run. 268 runs, about 19 GPU hours by the
-estimate in `make_tasks.py`, in three tasks. Results: `$SCRATCH/mhd-results-sweep/<test>-miniramses-<set-up>-run-N<n>-s<seed>/`,
+`runs.json` (`python3 make_tasks.py` on the Mac): every run classic RAMSES has in the sweep, the same tests, grids and
+seeds, 130 per set-up; plus the speed test `throughput_ot3d` at 64³–512³ with its repeats, which classic RAMSES did not
+run. All in 3D: the GPU path of mini-ramses-ism is 3D only (`gpu/gpu_utils.cuf`: "CUDA GPU path requires NDIM=3", job
+49368458), so a planar test runs on N³ cells that are the same at every z, as AthenaK's planar runs in the sweep; the
+patched `condinit` reads the sweep's plane and repeats it through z, and the records keep the z = 0 plane. 268 runs,
+about 43 GPU hours by the estimate in `make_tasks.py`, in seven tasks. Results: `$SCRATCH/mhd-results-sweep/<test>-miniramses-<set-up>-run-N<n>-s<seed>/`,
 the sweep's layout and records (`run.toml`, `diagnostics.csv`, `state_###.bin`), through the sweep's own driver:
 `miniramses_run.py` adds only the namelist, the run and the reading of mini-ramses's outputs.
 
@@ -51,10 +53,19 @@ PATCH=... ramses`, 13 s):
 Every output lands on its time; the magnetic energy at t = 0 is the sweep's to every digit. **Not tested:** the GPU
 build, which needs the NVIDIA compiler; the pilot does that first.
 
+Since the switch to 3D (2026-10-24): `abel_ic.f90` compiled alone (gfortran, NDIM=3) reads a plane as the same state
+at every z, cell values, faces and coarse cells alike, and a full N³ file as before; the reader keeps exactly the z = 0
+plane of a 3D output (synthetic output in mini-ramses's layout). The Mac copy of the source is gone and the repository
+is private since 2026-10-23, so the CPU build was not repeated.
+
+**On Sherlock:** nvhpc 25.1 (and 24.7) build with `CUDA_ARCH=sm_90`; nvhpc 25.1 stops with an internal compiler error on
+`cooling/cooling_module.f90` at -O4, which `build.sh` builds at a lower level and keeps (`make -o`); the newer nvhpc
+modules are visible only after `module load devel`; the job asks for H100s (`GPU_SKU:H100_SXM5`).
+
 ## Commands
 
 On the Mac, in the project directory (sends the bundle; `submit.sh` gets the source and submits the pilot and, depending
-on it, the three tasks; it refuses while a `miniramses` job is still queued):
+on it, the seven tasks; it refuses while a `miniramses` job is still queued):
 
 ```bash
 cd /Users/lyxia/Projects/research/abel_mhd && COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf - sherlock_miniramses | ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-study && tar -xzf - && bash -l sherlock_miniramses/submit.sh'
@@ -66,7 +77,7 @@ On Sherlock, any time:
 bash -l /scratch/users/lyxia/mhd-study/sherlock_miniramses/status.sh
 ```
 
-If the pilot fails, the three tasks wait on it forever (`squeue` shows `DependencyNeverSatisfied`): cancel them with
+If the pilot fails, the seven tasks wait on it forever (`squeue` shows `DependencyNeverSatisfied`): cancel them with
 `scancel -n miniramses` and send the status output. The compiler: the newest `nvhpc` module that builds the code
 (`compiler.sh`, as for RAMSES II); `MINIRAMSES_NVHPC_MODULE` chooses one.
 

@@ -1,5 +1,5 @@
-# Sourced by miniramses.sbatch: choose the NVIDIA HPC SDK module and build the 2D code with it (as sherlock_ramses2).
-#   choose_compiler_and_build   -> 0 with the module loaded and the 2D build made; 1 if no module could build it
+# Sourced by miniramses.sbatch: choose the NVIDIA HPC SDK module and build the 3D code with it (as sherlock_ramses2; the GPU path is 3D only).
+#   choose_compiler_and_build   -> 0 with the module loaded and the 3D build made; 1 if no module could build it
 # Tried in turn: MINIRAMSES_NVHPC_MODULE if set; else the module an earlier build under this build root used; else the
 # newest nvhpc modules (MINIRAMSES_NVHPC_TRY of them, default 3). The module that worked is written next to the builds,
 # so that a requeued job runs its executables with the libraries they were built with.
@@ -24,7 +24,7 @@ choose_compiler_and_build() {
     [[ -n "$list" ]] || { echo "NO NVHPC MODULE FOUND"; module spider nvhpc 2>&1 | head -n 30; return 1; }
     for nv in $list; do
         use_nvhpc "$nv" || continue
-        if bash "$miniramses_here/build.sh" 2 "${MINIRAMSES_NPRE:-8}"; then mkdir -p "$root"; echo "$nv" > "$root/nvhpc_module.txt"; nvhpc_chosen="$nv"; return 0; fi
+        if bash "$miniramses_here/build.sh" 3 "${MINIRAMSES_NPRE:-8}"; then mkdir -p "$root"; echo "$nv" > "$root/nvhpc_module.txt"; nvhpc_chosen="$nv"; return 0; fi
         echo "   $nv could not build mini-ramses-ism"
     done
     return 1

@@ -2,12 +2,13 @@
 
     python3 sherlock_miniramses/make_tasks.py [--hours 6]
 
-Writes sherlock_miniramses/runs.json: the runs of classic RAMSES in the sweep (the same tests, grids, seeds and
-geometry, for both set-ups), plus the speed test throughput_ot3d at its power-of-two grids, which classic RAMSES did not
-run; each with the GPU seconds it should take. The estimate: the steps classic RAMSES took on that run (the same
-Courant factor), at 0.3 billion cell updates a second in 3D and 0.15 billion in 2D (RAMSES II in double precision on
-an H100, sherlock_ramses2), plus 90 seconds for the start, the initial data and the measurements; a run classic RAMSES
-did not finish is estimated from AthenaK's steps. Then tasks of about --hours each, the longest runs first onto the
+Writes sherlock_miniramses/runs.json: the runs of classic RAMSES in the sweep (the same tests, grids and seeds, for
+both set-ups), plus the speed test throughput_ot3d at its power-of-two grids, which classic RAMSES did not run; each
+with the GPU seconds it should take. All run in 3D ("cube"): mini-ramses-ism's GPU path is 3D only, so a planar test
+runs on N^3 cells that are the same at every z, as AthenaK's in the sweep. The estimate: the steps classic RAMSES took
+on that run (the same Courant factor), at 0.3 billion cell updates a second (RAMSES II in double precision on an H100,
+sherlock_ramses2), plus 90 seconds for the start, the initial data and the measurements; a run classic RAMSES did not
+finish is estimated from AthenaK's steps. Then tasks of about --hours each, the longest runs first onto the
 least loaded task. miniramses.sbatch runs task k of tasks.json.
 """
 import argparse
@@ -19,7 +20,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent/"scripts"))
 import sweep_data as sd  # noqa: E402
 
-RATE = {3: 0.3e9, 2: 0.15e9}
+RATE = 0.3e9
 OVERHEAD = 90.0
 
 
@@ -39,7 +40,7 @@ def main():
     sw = sd.Sweep();runs = []
     for r in sw.runs:
         if r["code"] != "ramses" or r["mode"] != "run":continue
-        runs.append(dict(test=r["test"], variant=r["variant"], n=r["n"], seed=r["seed"], geometry=r["geometry"], repeats=1))
+        runs.append(dict(test=r["test"], variant=r["variant"], n=r["n"], seed=r["seed"], geometry="cube", repeats=1))
     c = sw.configs["throughput_ot3d"]
     for variant in ("matched", "best"):
         for n in c["grids"]:
@@ -47,9 +48,8 @@ def main():
             reps = int(c.get("repeats_by_grid", {}).get(str(n), c.get("repeats", 1)))
             runs.append(dict(test="throughput_ot3d", variant=variant, n=n, seed=42, geometry="cube", repeats=reps))
     for r in runs:
-        ndim = 2 if r["geometry"] == "plane" else 3
         steps, source = steps_of(sw, r["test"], r["variant"], r["n"], r["seed"])
-        r["est_seconds"] = round(r["repeats"]*(r["n"]**ndim*steps/RATE[ndim] + OVERHEAD), 1);r["steps_from"] = source
+        r["est_seconds"] = round(r["repeats"]*(r["n"]**3*steps/RATE + OVERHEAD), 1);r["steps_from"] = source
         r["dir"] = f'{r["test"]}-miniramses-{r["variant"]}-run-N{r["n"]}-s{r["seed"]}'
     total = sum(r["est_seconds"] for r in runs);k = max(1, round(total/3600/a.hours))
     load = [0.0]*k;tasks = [[] for _ in range(k)]

@@ -21,6 +21,9 @@ here="$SLURM_SUBMIT_DIR"; task="${SLURM_ARRAY_TASK_ID:-0}"; npre="${MINIRAMSES_N
 export SWEEP_BUNDLE="${SWEEP_BUNDLE:-/scratch/users/lyxia/mhd-study/sherlock_sweep}"
 cd "$SWEEP_BUNDLE" && source jobs/common.sh && prepare_environment && prepare_codes || { echo "the sweep bundle's environment could not be set up"; exit 2; }
 cd "$here" || exit 2
+# The newer nvhpc modules are visible only with `devel` loaded: without it the job saw nvhpc/23.3 alone, whose nvfortran
+# does not know -gpu=sm_90 (job 49282778). The RAMSES II speed job loaded it and built with nvhpc/25.1.
+module load devel 2>/dev/null || true
 source "$here/compiler.sh"
 root="${MINIRAMSES_BUILD_ROOT:-$MHD_CODES/miniramses-build}"
 gpu="$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1)"

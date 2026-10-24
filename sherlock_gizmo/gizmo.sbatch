@@ -38,7 +38,7 @@ run_test() {     # test method [grids...]
     for n in "$@"; do
         ranks=1; [[ $n -ge 128 ]] && ranks=4; [[ $n -ge 256 ]] && ranks=8; [[ $n -ge 512 ]] && ranks=16
         ranks="${GIZMO_RANKS:-$ranks}"
-        out="$MHD_RESULTS/$test-gizmo-$method-run-N$n-s42/data"
+        out="$MHD_RESULTS/$test-gizmo-$method-run-N$n-s42/data"; mkdir -p "${out%/data}"   # the run guard's lock goes beside data/
         python3 "$here/gizmo_run.py" gizmo "$method" "$config" "$n" "$out" --exe "$exe" --mpi "srun -n $ranks" --geometry plane \
             --repeats 1 --resume --device "$(hostname)" --device-kind cpu; rc=$?
         [[ $rc -eq 76 ]] && { echo "this job is being stopped; it will be requeued"; exit 1; }

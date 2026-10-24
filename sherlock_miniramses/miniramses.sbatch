@@ -8,6 +8,7 @@
 #SBATCH --partition=gpu,owners
 #SBATCH --requeue
 #SBATCH --gpus=1
+#SBATCH --constraint=GPU_SKU:H100_SXM5
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -35,6 +36,7 @@ run() {     # test variant n seed geometry repeats
     local test="$1" variant="$2" n="$3" seed="$4" geometry="$5" reps="$6" ndim=3 rc
     [[ "$geometry" == plane ]] && ndim=2
     local out="$MHD_RESULTS/$test-miniramses-$variant-run-N$n-s$seed/data"
+    mkdir -p "${out%/data}"                   # the driver's run guard writes its lock file beside data/
     python3 "$here/miniramses_run.py" miniramses "$variant" "$SWEEP_BUNDLE/configs/$test.toml" "$n" "$out" \
         --exe "$root/nd${ndim}_p$npre/bin/ramses${ndim}d" --geometry "$geometry" --seed "$seed" --repeats "$reps" --resume \
         --device "$(hostname) $gpu" --device-kind gpu; rc=$?

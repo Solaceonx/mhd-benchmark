@@ -146,6 +146,16 @@ def read_snapshot(path, n, nz, record=None):
     return t, np.concatenate([u, np.zeros(u.shape[:3] + (1,))], axis=-1)
 
 
+def last_sync(log):
+    """(step, time) of the last Sync-Point in GIZMO's log, from its end (the log of a long run is large); None if none."""
+    try:
+        with open(log, "rb") as f:
+            f.seek(0, 2);f.seek(max(0, f.tell() - 65536));tail = f.read().decode(errors="replace")
+    except OSError:return None
+    m = re.findall(r"Sync-Point (\d+), Time: ([-+0-9.eE]+)", tail)
+    return (int(m[-1][0]), float(m[-1][1])) if m else None
+
+
 def steps_of(text):
     """[(time, step number)] from GIZMO's log ("Sync-Point 12, Time: 0.0375, ...")."""
     return [(float(t), int(k)) for k, t in re.findall(r"Sync-Point (\d+), Time: ([-+0-9.eE]+)", text)]
@@ -162,8 +172,13 @@ def run_gizmo(args, config, spec, settings, rundir, rep, outputs, resume=False):
     out = rundir/"output";log = rundir/"gizmo.log"
     last = out/f"snapshot_{len(targets) - 1:03d}.hdf5"
     finished = resume and last.is_file() and abs(snapshot_time(last) - targets[-1]) <= tol     # only the conversion was interrupted
+    # The sweep's runaway guard (a collapsing timestep), as for the other codes: max_steps_per_n * N steps.
+    cap = X.step_cap(config, n);reached = last_sync(log) if resume and log.is_file() else None
+    capped = cap > 0 and reached is not None and reached[0] >= cap        # an earlier attempt already went past it
+    if capped:print(f"GIZMO went past the step limit ({cap}) in an earlier attempt (step {reached[0]}, t = {reached[1]:g}): "
+                    "its outputs are converted, it is not run again", flush=True)
     start = time.perf_counter();code = 0;stopped = False
-    if not finished:
+    if not finished and not capped:
         # A requeued attempt starts this run again; GIZMO's own restart files are not used.
         for old in (out, rundir/"restartfiles"):shutil.rmtree(old, ignore_errors=True)
         out.mkdir(parents=True)
@@ -179,6 +194,9 @@ def run_gizmo(args, config, spec, settings, rundir, rep, outputs, resume=False):
                     try:
                         if abs(snapshot_time(last) - targets[-1]) <= tol:(out/"stop").touch();stopped = True
                     except (OSError, KeyError):pass              # still being written
+                if not stopped and cap > 0:                      # or once it is past the step limit
+                    now = last_sync(log)
+                    if now and now[0] >= cap:(out/"stop").touch();stopped = capped = True
             code = proc.returncode
         print(f"GIZMO ended with exit code {code} on {X.mpi_ranks(args.mpi)} ranks" + (" after its stop file" if stopped else ""), flush=True)
     wall = time.perf_counter() - start;text = log.read_text(errors="replace") if log.is_file() else ""
@@ -214,6 +232,10 @@ def run_gizmo(args, config, spec, settings, rundir, rep, outputs, resume=False):
         before = text[:own.start()].strip().splitlines()[-3:]
         tail = "GIZMO stopped itself" + (f" at t = {steps[-1][0]:g} (sync point {steps[-1][1]})" if steps else "") + ": " \
             + perf["gizmo_stopped"] + ("; " + " | ".join(before) if before else "")
+    if capped and not complete:
+        at = last_sync(log);perf["gizmo_stopped"] = f"step limit {cap}"
+        if at:perf.update(gizmo_stopped_at_time=at[1], gizmo_sync_points=at[0])
+        tail = f"Step limit reached ({cap})" + (f" at t = {at[1]:g}, timestep collapsing" if at else "") + "\n" + tail
     rc = 0 if complete and (code == 0 or stopped) and not X.was_killed(code, tail) else (code or 1)
     return rc, tail, perf, frames()
 

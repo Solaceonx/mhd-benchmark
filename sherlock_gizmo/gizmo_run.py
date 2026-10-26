@@ -235,7 +235,10 @@ def run_gizmo(args, config, spec, settings, rundir, rep, outputs, resume=False):
     if capped and not complete:
         at = last_sync(log);perf["gizmo_stopped"] = f"step limit {cap}"
         if at:perf.update(gizmo_stopped_at_time=at[1], gizmo_sync_points=at[0])
-        tail = f"Step limit reached ({cap})" + (f" at t = {at[1]:g}, timestep collapsing" if at else "") + "\n" + tail
+        # GIZMO's log ends with Slurm's report of the earlier attempt being stopped (time limit): that is not this
+        # result, and the driver would take it for this job being killed and record nothing (job 49641025).
+        kept = "\n".join(l for l in tail.splitlines() if not X.KILL_TEXT.search(l))
+        tail = f"Step limit reached ({cap})" + (f" at t = {at[1]:g}, timestep collapsing" if at else "") + "\n" + kept
     rc = 0 if complete and (code == 0 or stopped) and not X.was_killed(code, tail) else (code or 1)
     return rc, tail, perf, frames()
 

@@ -108,15 +108,36 @@ def order(curve):
     return -float(np.log(p[-1]["error"]/p[-2]["error"])/np.log(p[-1]["N"]/p[-2]["N"]))
 
 
+def split(plm_hll, ppm_hll, plm_hlld, ppm_hlld):
+    """The gains of a code's four pairs (a cost or an error each; above 1: the change lowers it): order at each solver,
+    solver at each order, both, and the interaction (both over the product of the two alone; 1 when they multiply)."""
+    return dict(order_hll=plm_hll/ppm_hll, order_hlld=plm_hlld/ppm_hlld, solver_plm=plm_hll/plm_hlld, solver_ppm=ppm_hll/ppm_hlld,
+                both=plm_hll/ppm_hlld, interaction=plm_hll*ppm_hlld/(ppm_hll*plm_hlld))
+
+
 def factorial(row, cells):
-    """A code's gains in cost at a test's eps from its four pairs: order at each solver, solver at each order, both,
-    and the interaction (both over the product of the two alone; 1 when they multiply). None when a pair misses eps;
-    at_most: some pair reached eps on its coarsest grid already, so its cost is an upper bound."""
+    """The split of the cost at a test's eps. None when a pair misses eps; at_most: some pair reached eps on its
+    coarsest grid already, so its cost is an upper bound."""
     m = [row["methods"].get(c) or {} for c in cells];c = [x.get("cost") for x in m]
     if not all(c):return None
-    plm_hll, ppm_hll, plm_hlld, ppm_hlld = c
-    return dict(order_hll=plm_hll/ppm_hll, order_hlld=plm_hlld/ppm_hlld, solver_plm=plm_hll/plm_hlld, solver_ppm=ppm_hll/ppm_hlld,
-                both=plm_hll/ppm_hlld, interaction=plm_hll*ppm_hlld/(ppm_hll*plm_hlld), at_most=any(x.get("at_most") for x in m))
+    return dict(split(*c), at_most=any(x.get("at_most") for x in m))
+
+
+def errors(row, method):
+    return {N: e for N, e, _ in (row["methods"].get(method) or {}).get("points", [])}
+
+
+def error_factorial(row, cells):
+    """The same split of the error at every grid all four pairs ran: no cost model and no eps, so it exists on every
+    test, but says nothing of the time (PPM and HLLD cost more per step)."""
+    e = [errors(row, c) for c in cells]
+    return {N: split(*(x[N] for x in e)) for N in sorted(set.intersection(*(set(x) for x in e)))}
+
+
+def across(row, i):
+    """Pair i of GRID in every code at every grid they all ran: {N: {code: error}}."""
+    e = {name: errors(row, cells[i]) for name, cells in GRID}
+    return {N: {name: x[N] for name, x in e.items()} for N in sorted(set.intersection(*(set(x) for x in e.values())))}
 
 
 def table(sw=None):
@@ -132,6 +153,8 @@ def table(sw=None):
             hit = at_error(cur, eps)
             row["methods"][m] = dict(N=hit[0] if hit else None, cost=hit[1] if hit else None, at_most=bool(hit and hit[2]), order=order(cur),
                                      rate=cur["rate"], cpu=cur["cpu"], points=[(x["N"], x["error"], x["cost"]) for x in cur["points"]])
+        row["error_split"] = {name: error_factorial(row, cells) for name, cells in GRID}
+        row["across"] = {pair: across(row, i) for i, pair in enumerate(("plm_hll", "ppm_hll", "plm_hlld", "ppm_hlld"))}
         rows[test] = row
     return rows
 
@@ -151,6 +174,12 @@ def main():
             g = factorial(row, cells)
             if g:print(f"   {name:18s} faster by: PPM {g['order_hll']:.2f}x with HLL, {g['order_hlld']:.2f}x with HLLD; HLLD {g['solver_plm']:.2f}x "
                        f"with PLM, {g['solver_ppm']:.2f}x with PPM; both {g['both']:.2f}x; interaction {g['interaction']:.2f}" + (" (upper bounds)" if g["at_most"] else ""))
+            for N, g in error_factorial(row, cells).items():
+                print(f"   {name:18s} N {N:4d} error lower by: PPM {g['order_hll']:.2f}x with HLL, {g['order_hlld']:.2f}x with HLLD; HLLD "
+                      f"{g['solver_plm']:.2f}x with PLM, {g['solver_ppm']:.2f}x with PPM; both {g['both']:.2f}x; interaction {g['interaction']:.2f}")
+        for i, pair in enumerate(("PLM/HLL", "PPM/HLL", "PLM/HLLD", "PPM/HLLD")):
+            for N, e in across(row, i).items():
+                print(f"   {pair:9s} N {N:4d} error: " + ", ".join(f"{k} {v:.3g}" for k, v in e.items()))
 
 
 if __name__ == "__main__":

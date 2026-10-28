@@ -42,7 +42,7 @@ run_test() {     # test method [grids...]
         ranks="${GIZMO_RANKS:-$ranks}"
         out="$MHD_RESULTS/$test-gizmo-$method-run-N$n-s42/data"; mkdir -p "${out%/data}"   # the run guard's lock goes beside data/
         python3 "$here/gizmo_run.py" gizmo "$method" "$config" "$n" "$out" --exe "$exe" --mpi "srun -n $ranks" --geometry plane \
-            --repeats 1 --resume --device "$(hostname)" --device-kind cpu; rc=$?
+            --repeats 1 --resume --device "$(hostname)" --device-kind cpu ${GIZMO_KEEP_NATIVE:+--keep-native}; rc=$?
         [[ $rc -eq 76 ]] && { echo "this job is being stopped; it will be requeued"; exit 1; }
         [[ $rc -ne 0 ]] && echo "   $test $method N=$n: exit code $rc (see its run.toml and gizmo.log)"
     done

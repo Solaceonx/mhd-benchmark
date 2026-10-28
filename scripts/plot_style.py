@@ -67,7 +67,7 @@ def family_map(family, kind):
 INK, MUTED, RULE, PANEL = "#202a2a", "#64716f", "#d9dedd", "#f3f5f4"       # as scripts/paper_common.py
 # Hue = the code, on every page (checked for every pair under normal, protan and deutan vision: OKLab distance >= 15
 # and >= 8). AREPO's ochre was chosen the same way against the five others (18.7; 10.9 protan, 9.1 deutan).
-FAMILY = dict(ct="#eb6834", glm="#199e70", athenak="#2a78d6", ramses="#4a3aa7", athenapp="#a72a68", arepo="#7b5e1c")
+FAMILY = dict(ct="#eb6834", glm="#199e70", athenak="#2a78d6", ramses="#4a3aa7", athenapp="#a72a68", arepo="#7b5e1c", gizmo="#d4a017")
 RUN = FAMILY["glm"]        # the green of Tom Abel's kernels: a run made with them
 REFERENCE = "#52514e"      # the grey of reference runs: the branch or code another is compared with
 COLUMN = {"glm": FAMILY["glm"], "ct": FAMILY["ct"], "truth": REFERENCE}     # the three columns of the first pages (progress/style.css)

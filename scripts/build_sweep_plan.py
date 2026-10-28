@@ -47,11 +47,11 @@ ADDED = [("glm_fix_hll16", "GLM f16 fix", "GLM production kernel fixed (sweep-fi
          ("ct_fix", "CT fix", "CT prototype fixed: full slope, 3D predictor, upwinded edge EMFs"),
          ("arepo_moving", "AREPO mov", "AREPO moving mesh, Powell / HLLD (planar tests)"),
          ("arepo_static", "AREPO stat", "AREPO static Cartesian mesh, Powell / HLLD (planar tests)"),
+         ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass, Dedner + constrained-gradient MHD (planar tests)"),
          ("mhdale_ale", "MHD-ALE", "MHD-ALE (Tom Abel's MFEM code), ALE remap")]
 # Codes being set up: a column each, empty until their runs are fetched.
 PLANNED = [("miniramses_matched", "mini-RAMSES m", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLL: ready to run"),
-           ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: ready to run"),
-           ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass, Dedner + constrained-gradient MHD (planar tests): ready to run")]
+           ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: ready to run")]
 # Abel et al.'s GLM kernels, original and fixed: one column in the status grid that opens into one per kernel.
 GLM_GROUP = ("glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "glm_fix_hll16", "glm_fct16", "glm_fix_hlld", "glm_fix_ppm")
 ALL_METHODS = [m for m in METHODS if m[0] in GLM_GROUP] + [m for m in ADDED if m[0] in GLM_GROUP] + \
@@ -299,7 +299,7 @@ def added_rows():
     frac, note, detail) as the export's rows."""
     import sweep_data
     sw = sweep_data.Sweep();out = []
-    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()):
+    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()) + list(sw.gizmo.items()):
         test, label, n, seed = key;row = dict(test=test, label=label, n=n, seed=seed, state=r["state"], frac=r.get("frac"), note=r.get("note", ""))
         if r["state"] == "stopped":
             m = sw.meta(*key) or {}
@@ -363,6 +363,24 @@ def arepo_card():
             'on its moving mesh and on a static Cartesian mesh (CPUs; not in the plan or the tables above).</p>'
             f'<ul class="checks plain">{"".join(parts)}</ul><p class="small">Figures: <a href="paper-figures.html#arepo">the AREPO section of the paper figures</a>. '
             'A static-mesh run that reached the end is not thereby right: the field loop is unstable there at every grid.</p></div>')
+
+
+def gizmo_card():
+    """GIZMO ran after the sweep, outside its plan: a card with what its fetched records say (empty when none are here)."""
+    import sweep_data
+    rows = sweep_data.Sweep().gizmo
+    if not any(r["state"] != "open" for r in rows.values()):return ""
+    done = sum(r["state"] == "done" for r in rows.values())
+    stopped = sorted((k[0], k[2], r.get("reached") or 0.0, r.get("note", "")) for k, r in rows.items() if r["state"] == "stopped")
+    text = f"<strong>meshless finite mass</strong>: {done} of {len(rows)} runs reached the end"
+    why = lambda note: "at the sweep's step limit, its timestep collapsing" if note.startswith("Step limit") else "GIZMO stopped itself"
+    if stopped:text += "; " + ", ".join(f"{e(t.replace('_', ' '))} {n}² stopped {why(note)} (last output t = {x:.3g})" for t, n, x, note in stopped)
+    return ('<div class="card"><h3>Run after the sweep: GIZMO</h3><p>GIZMO (Hopkins) on the 17 planar tests at every grid: meshless finite mass, '
+            'Dedner cleaning with the constrained-gradient correction, one timestep for all particles, one particle per cell to start '
+            '(CPUs; not in the plan or the tables above).</p>'
+            f'<ul class="checks plain"><li>{text}.</li></ul><p class="small">The particles are put on the grid with each one spread over its own '
+            'kernel, mass, momentum, energy and magnetic flux conserved exactly. GIZMO\'s other methods were left out at this commit: '
+            'meshless finite volume and its regular grid fail from the first step, and pressure-SPH gains 60 % of its energy on Orszag–Tang.</p></div>')
 
 
 def driven_grid_rows(campaign, methods):
@@ -546,7 +564,7 @@ def status_html(status, configs, families, family_of, driven=None, added=()):
             "<script>document.querySelectorAll('.glm-toggle').forEach(b=>b.addEventListener('click',()=>{const t=b.closest('table');"
             "t.classList.toggle('glm-closed');}))</script>"
             f'<p class="small">The GLM column holds Abel et al.\'s {len(GLM_GROUP)} GLM kernels (5 original, 4 fixed); open it for one column per kernel. '
-            'Columns in italics are codes whose runs have not been made yet. AREPO, MHD-ALE and the fixed kernels ran after the sweep, outside its plan.</p>')
+            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE and the fixed kernels ran after the sweep, outside its plan.</p>')
 
     # ---- counts by method, with a part-to-whole bar (the numbers beside it are the table view)
     t = tally(dict(status, rows=every));tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}
@@ -777,6 +795,7 @@ Only the original GLM kernel and CT run nearly everything; they are also the mos
 </div>
 <div class="card"><h3>Still open</h3><ul class="checks plain">{sv["notes"] or "<li>Nothing: every planned run has a result.</li>"}</ul></div>
 {arepo_card()}
+{gizmo_card()}
 {fixed_card()}
 
 <h2 class="section-title">The plan and its cost</h2>

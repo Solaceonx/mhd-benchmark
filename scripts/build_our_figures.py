@@ -46,7 +46,7 @@ FIGURES = (
     ("accuracy", "Accuracy on every planar test", [t for t, _, _ in mf.ACCURACY],
      "Relative L1 error at the end of each test (density, or the field where the density does not change, and for GEM), divided by the median of the "
      "same-order CT set-ups: AthenaK PLM/HLLE, RAMSES HLL and Athena++ PLM/HLLE. Against the exact answer where there is one, otherwise against a "
-     "time-matched AthenaK run at 4096² averaged to the grid. Faint symbols are the external codes' best set-ups and AREPO, for context. "
+     "time-matched AthenaK run at 4096² averaged to the grid. Faint symbols are the external codes' best set-ups, AREPO and GIZMO, for context. "
      "A missing symbol is a run that did not finish (see Robustness). Since the full rerun (2026-10-21) the fixed kernels of the sweep-fixes branch are drawn in full colour and the originals they fix in a pale tint, marked “original”. ",
      "1 means as accurate as the same-order CT codes; the shaded band is ±25 %. Kelvin–Helmholtz at t = 3 is turbulent, so its error also measures "
      "where the vortices happen to be."),
@@ -96,9 +96,9 @@ def robust_note():
     import sweep_data
     sw = sweep_data.Sweep();count = {}
     for (test, label, n, seed), row in sw.rows.items():
-        if label not in ("glm", "glm_hll16", "glm_fix_hll16", "ct", "ct_fix", "athenak_best", "ramses_best"):continue
+        if label not in ("glm", "glm_hll16", "glm_fix_hll16", "ct", "ct_fix", "athenak_best", "ramses_best", "gizmo_mfm"):continue
         done, total = count.get(label, (0, 0));count[label] = (done + (row.get("state") == "done"), total + 1)
-    parts = [f"{mf.name(m)} {count[m][0]} of {count[m][1]}" for m in ("glm", "glm_hll16", "glm_fix_hll16", "ct", "ct_fix", "athenak_best", "ramses_best") if m in count]
+    parts = [f"{mf.name(m)} {count[m][0]} of {count[m][1]}" for m in ("glm", "glm_hll16", "glm_fix_hll16", "ct", "ct_fix", "athenak_best", "ramses_best", "gizmo_mfm") if m in count]
     return "Runs that reached the end: " + ", ".join(parts) + "."
 
 

@@ -42,6 +42,7 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     "athenapp_best": ("athenapp", "Athena++ PPM/HLLD/RK3", "Athena++ PPM/HLLD", "-", "o"),
     "arepo_moving": ("arepo", "AREPO moving mesh, Powell/HLLD", "AREPO moving mesh", "-", "o"),
     "arepo_static": ("arepo", "AREPO static mesh, Powell/HLLD", "AREPO static mesh", (1.5, (4.5, 4.5)), "s"),
+    "gizmo_mfm": ("gizmo", "GIZMO meshless finite mass, Dedner + constrained gradient", "GIZMO MFM", "-", "^"),
     "athenak_reference": ("reference", "AthenaK reference", "Reference", "-", ""),
     "athenapp_reference": ("reference", "Athena++ check", "Check", (0, (4, 2)), ""),
 }
@@ -50,6 +51,7 @@ OTHER = ("athenak_matched", "athenak_best", "ramses_matched", "ramses_best", "at
 GROUPS = (("gpu", "GLM kernels and CT prototype (T. Abel), H100", GPU), ("other", "AthenaK, RAMSES and Athena++", OTHER))
 ALL = GPU + OTHER
 AREPO = ("arepo_moving", "arepo_static")      # run after the sweep on the planar tests (sherlock_arepo/); not part of ALL
+GIZMO = ("gizmo_mfm",)                        # the same (sherlock_gizmo/)
 
 
 def color(method):

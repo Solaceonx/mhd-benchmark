@@ -3,8 +3,8 @@
   python3 scripts/build_test_pages.py        -> progress/tests.html, progress/test-<name>.html
 
 Reads the sweep's configs (set-up, grids, end time), progress/gpu_tests.json (family, source, what the test shows),
-progress/test_movies.json (the movies of progress/media/tests/, drawn by render_suite_movies.py --family-maps) and the
-sweep's plan and status through sweep_data.Sweep (who finished, who stopped). The gates and the timing test have no
+progress/test_movies.json (the movies of progress/media/tests/, drawn by render_suite_movies.py --family-maps),
+progress/test_movies_codes.json (the codes side by side, render_sweep_movie.py --tag codes) and the sweep's plan and status through sweep_data.Sweep (who finished, who stopped). The gates and the timing test have no
 page. Driven turbulence has its own page (build_turbulence.py) and a card in the index.
 """
 import html
@@ -57,7 +57,7 @@ def config_of(test):
 
 def results_table(sweep, test):
     """Rows: the codes' set-ups; columns: the grids; a cell says whether every seed finished, or where a run stopped."""
-    labels = list(sweep.labels(test, fixed=True)) + [a for a in sd.AREPO if test in sd.AREPO_TESTS and sweep.grids(test, a)]
+    labels = list(sweep.labels(test, fixed=True)) + sweep.after(test)
     grids = sorted({n for l in labels for n in sweep.grids(test, l)});seeds = sweep.seeds(test);rows = [];stopped = 0;total = 0
     for label in labels:
         cells = []
@@ -89,22 +89,35 @@ def results_table(sweep, test):
     return table, total, stopped, len(labels)
 
 
-def movie_card(test, movie):
+def movie_card(test, movie, slot="movie", heading="Movie"):
     if not movie:
         return '<article class="card"><h3>Movie</h3><p>No movie of this test yet: its runs kept too few outputs to make one.</p></article>'
     fields = [f for f in FIELD_NAMES if f in movie["fields"]]
     buttons = "".join(f'<button type="button" data-src="{e(movie["fields"][f])}" aria-pressed="{"true" if i == 0 else "false"}">{e(FIELD_NAMES[f])}</button>' for i, f in enumerate(fields))
     dims = "³, shown in its midplane" if movie.get("midplane") else "²"
-    sparse = movie["frames"] < 100
-    note = (f'{movie["frames"]} outputs on {movie["grid"]}{dims}, to t = {movie["tEnd"]:.3g}. Left to right: {"; ".join(movie["panels"])}.'
-            + (" From the sweep's own runs, which kept every output on this grid." if movie.get("source") == "sweep_results" else
+    sparse = movie["frames"] < 100;side = slot != "movie"
+    note = (f'{movie["frames"]} outputs on {movie["grid"]}{dims}, to t = {movie["tEnd"]:.3g}. {"Panels, row by row" if side else "Left to right"}: {"; ".join(movie["panels"])}.'
+            + (" From the sweep's own runs on this grid, which kept every output: one set-up of each code, the same initial state."
+               " GIZMO's particles are put on the grid with each spread over its own kernel." if side else
+               " From the sweep's own runs, which kept every output on this grid." if movie.get("source") == "sweep_results" else
                " A short preview from the ordinary runs of the first campaign; the other movies come from runs that saved 241 outputs." if sparse else
                " From the movie runs of the first campaign, which saved 241 outputs."))
-    return (f'<article class="card test-movie"><div class="fig-head"><h3>Movie</h3><div class="field-switch" role="group" aria-label="Quantity shown">{buttons}</div></div>'
-            f'<video id="movie" controls loop muted playsinline preload="metadata" src="{e(movie["fields"][fields[0]])}"></video><p>{e(note)}</p></article>'
-            "<script>document.querySelectorAll('.field-switch button').forEach(b=>b.addEventListener('click',()=>{const v=document.getElementById('movie'),t=v.currentTime,"
-            "playing=!v.paused;v.src=b.dataset.src;v.addEventListener('loadedmetadata',()=>{v.currentTime=Math.min(t,v.duration||t);if(playing)v.play()},{once:true});"
-            "document.querySelectorAll('.field-switch button').forEach(x=>x.setAttribute('aria-pressed',x===b))}))</script>")
+    return (f'<article class="card test-movie"><div class="fig-head"><h3>{e(heading)}</h3><div class="field-switch" role="group" aria-label="Quantity shown">{buttons}</div></div>'
+            f'<video id="{slot}" controls loop muted playsinline preload="metadata" src="{e(movie["fields"][fields[0]])}"></video><p>{e(note)}</p></article>')
+
+
+MOVIE_SCRIPT = ("<script>document.querySelectorAll('.test-movie').forEach(card=>{const v=card.querySelector('video'),bs=card.querySelectorAll('.field-switch button');"
+                "bs.forEach(b=>b.addEventListener('click',()=>{const t=v.currentTime,playing=!v.paused;v.src=b.dataset.src;"
+                "v.addEventListener('loadedmetadata',()=>{v.currentTime=Math.min(t,v.duration||t);if(playing)v.play()},{once:true});"
+                "bs.forEach(x=>x.setAttribute('aria-pressed',x===b))}))})</script>")
+
+
+def movie_cards(test, movie, codes):
+    """The test's movie and the codes side by side (render_sweep_movie.py --tag codes); a sweep-run movie the codes movie
+    replaces is left out."""
+    if codes and movie and movie.get("source") == "sweep_results":movie = None
+    cards = ([movie_card(test, movie)] if movie or not codes else []) + ([movie_card(test, codes, "codes", "The codes side by side")] if codes else [])
+    return "".join(cards) + MOVIE_SCRIPT
 
 
 def setup_html(test):
@@ -114,7 +127,7 @@ def setup_html(test):
                                    for p in row["parts"]) + "</p>" for row in rows)
 
 
-def test_page(sweep, test, info, movie, order):
+def test_page(sweep, test, info, movie, codes, order):
     notes, config = config_of(test);table, total, stopped, setups = results_table(sweep, test)
     i = order.index(test);prev, nxt = order[i - 1], order[(i + 1) % len(order)]
     grids = config["grids"];three = test.startswith(("decay", "blast_3d", "orszag_tang_3d", "field_loop_3d"));dim = "³" if three else "²"
@@ -126,7 +139,7 @@ def test_page(sweep, test, info, movie, order):
 <h1>{e(TITLES[test])}</h1><p>{e(info["focus"])}</p></div>
 <a class="method-link" href="tests.html">All tests <span>↗</span></a></div>
 <div class="chips">{"".join(f'<span class="chip">{e(c)}</span>' for c in chips)}</div>
-{movie_card(test, movie)}
+{movie_cards(test, movie, codes)}
 <article class="card test-setup"><h3>Set-up</h3>{setup_html(test)}<p class="small">{e(notes)} After: {e(info["source"])}. The same initial state goes to every code.</p>
 <p><a href="problems.html#config-{test}">Read the setup source and configuration ↗</a></p></article>
 <article class="card"><h3>Who finished it</h3><p>Each set-up on each grid of the sweep. ✓ the run reached the end time; saved nonfinite outputs are flagged where available.
@@ -181,22 +194,24 @@ def main():
     order = [t for f in families for t in tests if tests[t]["family"] == f]
     manifest = SITE/"test_movies.json";movies = json.loads(manifest.read_text()) if manifest.is_file() else {}
     movies = {t: m for t, m in movies.items() if all((SITE/p).is_file() for p in m["fields"].values())}
+    manifest = SITE/"test_movies_codes.json";codes = json.loads(manifest.read_text()) if manifest.is_file() else {}
+    codes = {t: m for t, m in codes.items() if all((SITE/p).is_file() for p in m["fields"].values())}
     sweep = sd.Sweep()
     registry = json.loads((SITE/"tests.json").read_text());page = dict(PAGE, status=f"{len(tests)} tests")
     registry = [page if t["id"] == PAGE["id"] else t for t in registry] if any(t["id"] == PAGE["id"] for t in registry) else registry + [page]
     (SITE/"tests.json").write_text(json.dumps(registry, ensure_ascii=False, indent=2) + "\n")
     for test in TITLES:
         (SITE/page_of(test)).unlink(missing_ok=True)
-    (SITE/PAGE["page"]).write_text(render(index_page(tests, movies, families), registry, "Tests"))
+    (SITE/PAGE["page"]).write_text(render(index_page(tests, set(movies) | set(codes), families), registry, "Tests"))
     for test in order:
-        (SITE/page_of(test)).write_text(render(test_page(sweep, test, tests[test], movies.get(test), order), registry, TITLES[test]))
+        (SITE/page_of(test)).write_text(render(test_page(sweep, test, tests[test], movies.get(test), codes.get(test), order), registry, TITLES[test]))
     link = f'<a href="{PAGE["page"]}"><span>{PAGE["number"]}</span>{PAGE["nav"]}</a>'
     for t in registry:                       # the navigation of the pages already built
         path = SITE/t["page"]
         if t["id"] == PAGE["id"] or path.name == 'notes.html' or not path.is_file():continue
         text = path.read_text()
         if f'href="{PAGE["page"]}"' not in text and "</nav>" in text:path.write_text(text.replace("</nav>", link + "</nav>", 1))
-    print(f"Test pages: {len(order)} tests, {len(movies)} with a movie ({', '.join(t for t in order if t not in movies) or 'none'} without); {SITE/PAGE['page']}")
+    print(f"Test pages: {len(order)} tests, {len(set(movies) | set(codes))} with a movie ({', '.join(t for t in order if t not in movies and t not in codes) or 'none'} without), {len(codes)} with the codes side by side; {SITE/PAGE['page']}")
 
 
 if __name__ == "__main__":

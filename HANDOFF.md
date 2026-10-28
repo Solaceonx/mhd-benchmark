@@ -109,8 +109,22 @@ B_z grow to 4e-2 B0 on `field_loop` 128^2. The Kernel fixes page shows the rerun
 an assistant may use it only while lyxia's own login is open. Sherlock's `/etc/agents/AGENTS.md` (rules for automated
 tools) must be read at the start of every session and after every context summary (its rule 12; keep this line in any
 handoff). Read on 2026-10-27; changes made for it: the h5py/scipy environment of the AREPO and GIZMO jobs moved from
-`$SCRATCH/mhd-venv-arepo` to `$HOME/.venvs/mhd-h5py` (rule 8); a 7-day persistent connection was refused as an
-unattended tunnel (rule 5, policy.md).
+`$SCRATCH/mhd-venv-arepo` to `$HOME/.venvs/mhd-h5py` (rule 8). lyxia kept `ControlPersist 7d`; an assistant uses the
+connection only while lyxia is present in the conversation, never for scheduled or unattended checks (rule 5: no
+unattended tunnels), and reminds lyxia to close it with `ssh -O exit sherlock`.
+
+**GIZMO on the pages, 2026-10-27:** the first 82 runs were fetched (81 complete; blast B = 100 at 512² stops at the
+step limit). Their conversion to the grid was cloud-in-cell, which left up to 7 % of the cells of the 2D blasts empty
+(Orszag–Tang, rotor, current sheet 512² too) and striped the density where particles were disordered. New deposit in
+`sherlock_gizmo/gizmo_run.py` (`deposit`: GIZMO's own partition of space at the cell centres, exactly conservative);
+lyxia chose to rerun all 17 tests: job 49916432 into `$SCRATCH/mhd-results-gizmo2`, keeping GIZMO's snapshots
+(fetch command in `sherlock_gizmo/README.md`). The page code is ready and unpublished: `sweep_data` (`GIZMO`, `AFTER`,
+`Sweep.after`, `sw.gizmo`), colour `plot_style.FAMILY["gizmo"]`, `test_diagnostics`, the sweep page (column and card),
+Our figures (robustness column, context points), and a second movie on the test pages, "The codes side by side"
+(`render_sweep_movie.py TESTS --tag codes --rows 2 --labels glm ct athenak_best ramses_best arepo_moving gizmo_mfm`,
+128², the 17 planar tests; `progress/test_movies_codes.json`; it replaces GEM's AREPO-only movie). After the fetch
+(old `sweep_results/*-gizmo-*` moved away first): `test_diagnostics.py` for the 17 tests, the codes movies, the page
+builders, publish.
 
 **New codes, 2026-10-22:** lyxia asked for Eric Moseley's mini-ramses-ism (his RAMSES II, bitbucket ermoseley,
 `develop`) and GIZMO; FLASH dropped (its licence bars cloud AI tools from the code). Both bundles are ready, not yet

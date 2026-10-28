@@ -245,7 +245,8 @@ COLUMNS = (("glm", "GLM", (("glm", "LLF"), ("glm_hll16", "f16/\nHLL"), ("glm_hll
            ("athenak", "AthenaK", (("athenak_matched", "PLM/\nHLLE"), ("athenak_best", "PPM/\nHLLD"))),
            ("ramses", "RAMSES", (("ramses_matched", "HLL"), ("ramses_best", "HLLD"))),
            ("athenapp", "Athena++", (("athenapp_matched", "PLM/\nHLLE"), ("athenapp_best", "PPM/\nHLLD"))),
-           ("arepo", "AREPO", (("arepo_moving", "moving\nmesh"), ("arepo_static", "static\nmesh"))))      # planar tests only
+           ("arepo", "AREPO", (("arepo_moving", "moving\nmesh"), ("arepo_static", "static\nmesh"))),     # planar tests only
+           ("gizmo", "GIZMO", (("gizmo_mfm", "MFM"),)))                                              # planar tests only
 # With the rerun the fixed kernels take the columns of the originals they fix (the figure has no room for both); the
 # originals' counts go under the key.
 COLUMNS = tuple(c for c in COLUMNS if not c[1].endswith("fixed")) if not FIXED else \
@@ -372,7 +373,7 @@ def convergence(sw):
     fig, axes = plt.subplots(2, 3, figsize=(FULL, 4.25), sharex=True, gridspec_kw=dict(wspace=.36, hspace=.1, left=.075, right=.775, top=.94, bottom=.1))
     guide = dict(color=MUTED, lw=.6)
     for col, (test, key, title, ylabel) in enumerate(tests):
-        for row, methods in enumerate((GPU, pc.OTHER + pc.AREPO)):
+        for row, methods in enumerate((GPU, pc.OTHER + pc.AREPO + pc.GIZMO)):
             ax = axes[row, col];top = 0.0
             for m in methods:
                 pts = [(n, final_error(sw, test, m, n, key)) for n in sw.grids(test, m)]
@@ -389,7 +390,7 @@ def convergence(sw):
             else:ax.set_xlabel("$N$")
             ax.set_ylabel(ylabel, labelpad=2)
     slopes = [Line2D([], [], ls=(0, (1, 2)), label=r"$\propto N^{-1}$", **guide), Line2D([], [], ls=(0, (4, 2)), label=r"$\propto N^{-2}$", **guide)]
-    for row, methods in enumerate((GPU, pc.OTHER + pc.AREPO)):
+    for row, methods in enumerate((GPU, pc.OTHER + pc.AREPO + pc.GIZMO)):
         box = axes[row, -1].get_position()
         fig.legend(handles=line_handles(methods, extra=slopes), loc="center left", bbox_to_anchor=(.785, (box.y0 + box.y1)/2), handlelength=2.6)
     return fig
@@ -458,7 +459,7 @@ ACCURACY = (("entropy", "Entropy wave", "density"), ("alfven", "Alfvén wave", "
             ("kh_uniform", "Kelvin–Helmholtz", "density"), ("current_sheet", "Current sheet", "density"), ("gem", "GEM", "magnetic"))
 MATCHED = ("athenak_matched", "ramses_matched", "athenapp_matched")     # the same-order CT set-ups: the yardstick
 ABEL = ("glm", "glm_hlld", "glm_hll16", "glm_ppm", "glm_constch", "ct") + FIXED
-CONTEXT = ("athenak_best", "ramses_best", "athenapp_best", "arepo_moving")
+CONTEXT = ("athenak_best", "ramses_best", "athenapp_best", "arepo_moving", "gizmo_mfm")
 
 
 def endpoint_errors(test, n, kind):

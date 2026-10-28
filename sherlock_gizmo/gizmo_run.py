@@ -23,8 +23,10 @@ times the output interval, which makes every output time a synchronisation point
 stop file once the last snapshot is written.
 
 Snapshots to our (N, N, Nz, 9) cell state: each particle's mass, momentum, total energy and field times its volume
-(mass / density) are deposited cloud-in-cell on the grid and divided by the cell volume, so the grid holds exactly the
-particles' mass, momentum, energy and magnetic flux; a particle still at a cell centre lands wholly in its cell. psi = 0.
+(mass / density) are shared among the cell centres inside its kernel, by its part of each in GIZMO's own partition of
+space, and divided by the cell volume (deposit), so the grid holds exactly the particles' mass, momentum, energy and
+magnetic flux, and a uniform state stays uniform however the particles are arranged. psi = 0. (Until 2026-10-27:
+cloud-in-cell, which left cells of thin gas empty and striped the density where the particles were disordered.)
 """
 import math
 import os
@@ -111,29 +113,82 @@ def snapshot_time(path):
     with h5py.File(path, "r") as s:return float(s["Header"].attrs["Time"])
 
 
-def deposit(pos, ext, n, nz):
-    """Cloud-in-cell deposit of per-particle extensive quantities `ext` (count, k) on the periodic grid: (n, n, nz, k)
-    sums. A particle at a cell centre lands wholly in that cell; one between centres is shared by area (volume)."""
+def kernel(q):
+    """GIZMO's cubic spline as a function of r/H (H: its SmoothingLength, where the kernel ends), not normalised."""
+    return np.where(q < .5, 1 - 6*q**2 + 6*q**3, np.where(q < 1, 2*(1 - q)**3, 0.0))
+
+
+def footprints(x, r, n, nz):
+    """Per group of particles: (indices, flat cells (m, c), kernel values (m, c)) of the cell centres inside each kernel
+    (at x, radius r; cells)."""
+    dims = x.shape[1];start = np.floor(x - r[:, None]).astype(int)
+    width = (np.floor(x + r[:, None]).astype(int) - start + 1).max(1)
+    for w in np.unique(width):
+        group = np.flatnonzero(width == w)
+        for part in np.array_split(group, len(group)*w**dims//1_000_000 + 1):       # bounded memory
+            m = len(part);k = start[part][:, :, None] + np.arange(w)                # (m, dims, w): cells along each axis
+            d2 = ((k + .5 - x[part][:, :, None])/r[part, None, None])**2
+            cell, q2 = k[:, 0] % n, d2[:, 0]
+            for d in range(1, dims):                  # flat index of (n, n, nz): (ix*n + iy)*nz + iz
+                shape = (m,) + (1,)*d + (w,)
+                cell = cell[..., None]*(n if d == 1 else nz) + (k[:, d] % n).reshape(shape)
+                q2 = q2[..., None] + d2[:, d].reshape(shape)
+            if dims == 2:cell = cell*nz
+            yield part, cell.reshape(m, -1), kernel(np.sqrt(q2)).reshape(m, -1)
+
+
+def spread(x, r, ext, n, nz):
+    """((n*n*nz, k) sums, cells each particle effectively spans). GIZMO's partition of space among its particles, at the
+    cell centres: particle i's part of a centre is its kernel there over the sum of all kernels there (Hopkins 2015, eq.
+    3), so every centre is shared out in full. Each particle's quantities go to its centres in proportion to its part
+    of them (its weights sum to one)."""
+    cover = np.zeros(n*n*nz)
+    for part, cell, wt in footprints(x, r, n, nz):cover += np.bincount(cell.ravel(), weights=wt.ravel(), minlength=n*n*nz)
+    out = np.zeros((n*n*nz, ext.shape[1]));share = np.zeros(len(x))
+    for part, cell, wt in footprints(x, r, n, nz):
+        c = cover[cell];wt = np.divide(wt, c, out=np.zeros_like(wt), where=c > 0);wt /= wt.sum(1, keepdims=True)
+        share[part] = 1.0/(wt**2).sum(1);cell = cell.ravel()
+        for k in range(ext.shape[1]):
+            out[:, k] += np.bincount(cell, weights=(wt*ext[part, k:k + 1]).ravel(), minlength=n*n*nz)
+    return out, share
+
+
+def deposit(pos, ext, n, nz, hsml, stats=None):
+    """Deposit of per-particle extensive quantities `ext` (count, k) on the periodic grid: (n, n, nz, k) sums, exactly
+    conservative. Each particle is shared among the cell centres inside its own kernel (GIZMO's cubic spline out to its
+    smoothing length `hsml`, box units; at least one cell) in proportion to its part of each in GIZMO's partition of
+    space (spread): a uniform state stays uniform however the particles are arranged. Cloud-in-cell (the sweep's GIZMO runs of 2026-10-25) left
+    up to 7 % of the cells of the 2D blasts empty, and striped the density where particles were disordered. A cell no
+    kernel reaches takes a share of its nearest particle, whose other cells give it up in proportion.
+    stats: receives the number of such cells. Column 0 of ext must be the mass."""
     dims = 3 if nz > 1 else 2
-    x = np.mod(pos[:, :dims], 1.0)*n - 0.5;i0 = np.floor(x).astype(int);f = x - i0
-    out = np.zeros((n, n, nz, ext.shape[1]))
-    for corner in np.ndindex(*(2,)*dims):
-        w = np.prod([f[:, d] if corner[d] else 1 - f[:, d] for d in range(dims)], axis=0)
-        idx = [(i0[:, d] + corner[d]) % n for d in range(dims)] + ([] if dims == 3 else [np.zeros(len(w), dtype=int)])
-        np.add.at(out, tuple(idx), w[:, None]*ext)
-    return out
+    x = np.mod(pos[:, :dims], 1.0)*n;x[x >= n] = 0.0                    # in cells; cell k spans [k, k + 1)
+    r = np.maximum(np.asarray(hsml, float)*n, 1.0)
+    out, share = spread(x, r, ext, n, nz)
+    gap = np.flatnonzero(out[:, 0] <= 0)
+    if stats is not None:stats["gap_cells"] = len(gap)
+    if len(gap):
+        from scipy.spatial import cKDTree
+        centres = np.stack(np.unravel_index(gap, (n, n, nz)), 1)[:, :dims] + 0.5
+        j = cKDTree(x, boxsize=float(n)).query(centres)[1]
+        grown = np.bincount(j, minlength=len(x)).astype(float);p = np.flatnonzero(grown > 0)
+        keep = share[p]/(share[p] + grown[p])           # the part a particle's own cells keep
+        out += spread(x[p], r[p], ext[p]*(keep - 1.0)[:, None], n, nz)[0]
+        np.add.at(out, gap, ext[j]/(share[j] + grown[j])[:, None])
+    return out.reshape(n, n, nz, ext.shape[1])
 
 
 def read_snapshot(path, n, nz, record=None):
     """(time, (n, n, nz, 9) cell state) of a GIZMO snapshot; conserved variables, B in our units, psi = 0.
-    Each particle's mass, momentum, total energy and field times volume are deposited cloud-in-cell and divided by the
-    cell volume, so the grid holds exactly the particles' mass, momentum, energy and magnetic flux.
+    Each particle's mass, momentum, total energy and field times volume are deposited (deposit) and divided by the cell
+    volume, so the grid holds exactly the particles' mass, momentum, energy and magnetic flux.
     record: a dict that receives GIZMO's own divergence of B for this snapshot, where the snapshot has it."""
     import h5py
     with h5py.File(path, "r") as s:
         t = float(s["Header"].attrs["Time"]);p = s["PartType0"]
         pos = p["Coordinates"][:].astype(np.float64);rho = p["Density"][:].astype(np.float64);vel = p["Velocities"][:].astype(np.float64)
         e = p["InternalEnergy"][:].astype(np.float64);b = p["MagneticField"][:].astype(np.float64);mass = p["Masses"][:].astype(np.float64)
+        hsml = p["SmoothingLength"][:].astype(np.float64)
         if record is not None and "DivergenceOfMagneticField" in p:
             vol = mass/rho;div = p["DivergenceOfMagneticField"][:].astype(np.float64)
             size = vol**(1.0/(3 if nz > 1 else 2));brms = math.sqrt(float((vol*(b**2).sum(1)).sum()/vol.sum()))
@@ -142,7 +197,8 @@ def read_snapshot(path, n, nz, record=None):
                           smallest_cell=float(size.min()), largest_cell=float(size.max()))
     vol = mass/rho
     ext = np.column_stack([mass, mass[:, None]*vel, mass*(e + .5*(vel**2).sum(1)) + .5*vol*(b**2).sum(1), vol[:, None]*b])
-    u = deposit(pos, ext, n, nz)*n**(3 if nz > 1 else 2)
+    stats = {};u = deposit(pos, ext, n, nz, hsml, stats)*n**(3 if nz > 1 else 2)
+    if record is not None:record["gap_cells"] = stats["gap_cells"]
     return t, np.concatenate([u, np.zeros(u.shape[:3] + (1,))], axis=-1)
 
 
@@ -200,7 +256,8 @@ def run_gizmo(args, config, spec, settings, rundir, rep, outputs, resume=False):
             code = proc.returncode
         print(f"GIZMO ended with exit code {code} on {X.mpi_ranks(args.mpi)} ranks" + (" after its stop file" if stopped else ""), flush=True)
     wall = time.perf_counter() - start;text = log.read_text(errors="replace") if log.is_file() else ""
-    perf = dict(wall_seconds=wall)
+    perf = dict(wall_seconds=wall, deposit="each particle over the cell centres inside its kernel (GIZMO's cubic spline to its "
+                "smoothing length, at least one cell); exactly conservative (gizmo_run.deposit, 2026-10-27)")
     if finished:perf["converted_only"] = True
     sync = steps_of(text);snaps = sorted(out.glob("snapshot_*.hdf5")) if out.is_dir() else []
     times = {}

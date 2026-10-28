@@ -44,6 +44,10 @@ METHODS = GPU_METHODS + EXTERNAL
 AREPO = ("arepo_moving", "arepo_static")
 AREPO_TESTS = ("entropy", "alfven", "alfven_oblique", "uniform", "field_loop", "field_loop_novz", "brio_wu", "brio_wu_rotated",
                "orszag_tang", "rotor", "current_sheet", "blast_2d_b0", "blast_2d_b50", "blast_2d_b100", "kh_uniform", "kh_localized", "gem")
+# GIZMO (sherlock_gizmo/): the same, after the sweep on the same planar tests at seed 42, meshless finite mass only.
+GIZMO = ("gizmo_mfm",)
+GIZMO_TESTS = AREPO_TESTS
+AFTER = (("arepo", AREPO, AREPO_TESTS), ("gizmo", GIZMO, GIZMO_TESTS))      # (code, labels, tests) run after the sweep
 # The fixed kernels of the sweep-fixes branch (sherlock_fixes/README.md, "The full rerun"): every sweep test at every
 # grid and seed, one directory per kernel, fetched into fix_results/ (git-ignored). Each is set beside the original it
 # fixes (FIXES); like AREPO they are outside the plan, so a page shows them only when it asks (labels(fixed=True)).
@@ -115,23 +119,26 @@ class Sweep:
         if self.status and self.status.get("source") == "export":
             data = json.loads((SITE/"sweep_status"/self.status["file"]).read_text())
             self.export = {r["key"]: {p["part"]: p for p in r.get("parts", [])} for r in data["runs"]}
-        self.arepo = {}                                # (test, label, n, 42) -> status row, from the fetched records
-        for test in AREPO_TESTS:
-            c = self.configs.get(test)
-            if c is None:continue
-            for label in AREPO:
-                mesh = label.split("_")[1]
-                for n in c["grids"]:
-                    key = (test, label, int(n), 42);d = f"{test}-arepo-{mesh}-run-N{n}-s42"
-                    self.by[key] = dict(test=test, code="arepo", variant=mesh, mode="run", n=int(n), seed=42, extra="", dir=d, key=d)
-                    m = self.meta(*key);row = dict(test=test, n=int(n), seed=42, label=label, frac=None, state="open")
-                    if m is not None:
-                        row["state"] = "done" if m.get("status") == "complete" else "stopped"
-                        if row["state"] == "stopped":
-                            reached = float(m.get("arepo_stopped_at_time", m.get("time_reached", 0.0)));t_end = float(c["t_end"])
-                            row["frac"] = min(1.0, reached/t_end) if t_end else None;row["reached"] = reached
-                            row["note"] = m.get("arepo_stopped", "")
-                    self.arepo[key] = row;self.rows[key] = row
+        self.arepo, self.gizmo = {}, {}                # (test, label, n, 42) -> status row, from the fetched records
+        for code, codelabels, tests in AFTER:
+            for test in tests:
+                c = self.configs.get(test)
+                if c is None:continue
+                for label in codelabels:
+                    variant = label.split("_")[1]
+                    for n in c["grids"]:
+                        key = (test, label, int(n), 42);d = f"{test}-{code}-{variant}-run-N{n}-s42"
+                        self.by[key] = dict(test=test, code=code, variant=variant, mode="run", n=int(n), seed=42, extra="", dir=d, key=d)
+                        m = self.meta(*key);row = dict(test=test, n=int(n), seed=42, label=label, frac=None, state="open")
+                        if m is not None:
+                            row["state"] = "done" if m.get("status") == "complete" else "stopped"
+                            if row["state"] == "stopped":
+                                reached = float(m.get("arepo_stopped_at_time", m.get("time_reached", 0.0)));t_end = float(c["t_end"])
+                                row["frac"] = min(1.0, reached/t_end) if t_end else None;row["reached"] = reached
+                                lines = m.get("error", "").splitlines()      # GIZMO: the step limit, else the first line
+                                row["note"] = m.get("arepo_stopped", "") if code == "arepo" else \
+                                    next((l for l in lines if l.startswith("Step limit")), lines[0] if lines else "")
+                        getattr(self, code)[key] = row;self.rows[key] = row
         self.fixed = {}                                # (test, label, n, seed) -> status row, from the fetched records
         for d in sorted(RERUN.glob("*-N*-s*-*")) if RERUN.is_dir() else ():
             m = re.fullmatch(r"(.+)-N(\d+)-s(\d+)-(\w+)", d.name)
@@ -179,6 +186,10 @@ class Sweep:
         have = {l for (t, l, n, s) in self.by if t == test}
         return [m for m in GPU_METHODS + (FIXED if fixed else ()) + EXTERNAL + (REFERENCES if references else ()) if m in have]
 
+    def after(self, test):
+        """The labels run after the sweep (AREPO, GIZMO) that have runs of a test, in display order."""
+        return [l for code, labels, tests in AFTER if test in tests for l in labels if self.grids(test, l)]
+
     def reference_n(self, test, label):
         g = self.grids(test, label);return g[0] if g else None
 
@@ -205,7 +216,7 @@ class Sweep:
     def recorded(self, test, label, n, seed=42, rep=1):
         """The export's record of a part (status, reached, frames, steps, ...), or None."""
         r = self.by.get((test, label, n, seed))
-        if r is not None and r["code"] in ("arepo", "fixed"):          # not in the export: from the fetched record
+        if r is not None and r["code"] in ("arepo", "gizmo", "fixed"):          # not in the export: from the fetched record
             m = self.meta(test, label, n, seed, rep);row = self.rows.get((test, label, n, seed), {})
             return None if m is None else dict(part=f"{label}_r{rep}", status=m.get("status"), frames=len(m.get("frames", [])),
                                                reached=row.get("reached", m.get("time_reached")), steps=m.get("steps"))

@@ -78,7 +78,7 @@ def frame_limits(kind, planes, adaptive):
     return [[a, b] for a, b in zip(lo, hi)]
 
 
-def render(path, test, field, times, planes, labels, n, fps, adaptive, midplane, lines=None, clock=(1.0, "t")):
+def render(path, test, field, times, planes, labels, n, fps, adaptive, midplane, lines=None, clock=(1.0, "t"), rows=1):
     import imageio_ffmpeg
     roles = list(planes)
     arrays = [p for role in roles for p in planes[role] if p is not None]
@@ -87,22 +87,24 @@ def render(path, test, field, times, planes, labels, n, fps, adaptive, midplane,
     adaptive = adaptive or field in ("vorticity", "current")
     kind = suite.scale_kind(field, arrays);limits = frame_limits(kind, planes, adaptive)
     norm = matplotlib.colors.LogNorm(*limits[0]) if kind == "log" else matplotlib.colors.Normalize(*limits[0])
-    width = 6.4 * len(roles)
-    fig, axes = plt.subplots(1, len(roles), figsize=(width, 7.2), dpi=100, layout="constrained")
+    cols = -(-len(roles) // rows)       # rows > 1: the panels in a grid, row by row
+    fig, axes = plt.subplots(rows, cols, figsize=(6.4 * cols, 7.2 if rows == 1 else 6.2 * rows + .8), dpi=100, layout="constrained")
+    panels = np.ravel(axes)
+    for ax in panels[len(roles):]:ax.set_visible(False)
     ims, notes = [], []
-    for ax, role in zip(np.atleast_1d(axes), roles):
+    for ax, role in zip(panels, roles):
         first = next((p for p in planes[role] if p is not None), np.zeros((n, n)))
         ims.append(ax.imshow(first, origin="lower", extent=(0, 1, 0, 1), cmap=movie_cmap(test, field), norm=norm,
                              interpolation="bilinear"))
         ax.set_title(labels[role], fontsize=13);ax.set_xticks([]);ax.set_yticks([])
         notes.append(ax.text(.5, .04, "", transform=ax.transAxes, ha="center", va="bottom", fontsize=12, color="white",
                              bbox=dict(boxstyle="round,pad=.4", fc="#000000aa", ec="none")))
-    bar = fig.colorbar(ims[0], ax=axes, shrink=.9, pad=.01)
+    bar = fig.colorbar(ims[0], ax=list(panels), shrink=.9, pad=.01)
     scale = " (log)" if kind == "log" else ""
     bar.set_label(TITLES[field] + scale + (" · limits follow the run" if adaptive else ""), fontsize=11);bar.ax.tick_params(labelsize=10)
-    title = fig.suptitle("", fontsize=15)
-    grid = (np.arange(n) + .5) / n;drawn = []   # field-line contours of the current frame
     where = " · midplane z = ½" if midplane else ""
+    title = fig.suptitle(f"{test} · {TITLES[field]}{where} · t = 0.000", fontsize=15)    # text now, so the layout keeps room for it
+    grid = (np.arange(n) + .5) / n;drawn = []   # field-line contours of the current frame
     fig.canvas.draw()
     # Freeze the layout after the first draw: constrained layout re-solved on every frame makes panels jitter.
     fig.set_layout_engine("none")
@@ -128,7 +130,7 @@ def render(path, test, field, times, planes, labels, n, fps, adaptive, midplane,
                 if present:
                     lo, hi = min(a.min() for a in present), max(a.max() for a in present)
                     levels = np.linspace(lo, hi, 26)[1:-1]
-                    for ax, role in zip(np.atleast_1d(axes), roles):
+                    for ax, role in zip(panels, roles):
                         if lines[role][i] is not None:
                             # light lines: the map of the current is black where the current vanishes
                             drawn.append(ax.contour(grid, grid, lines[role][i], levels=levels, colors="#ffffff", linewidths=.6, alpha=.45))

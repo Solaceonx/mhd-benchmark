@@ -41,9 +41,15 @@ measure of div B on its particles at every output). Specific to GIZMO, in `gizmo
 - Output times: GIZMO's steps are power-of-two fractions of TimeMax − TimeBegin; TimeMax is a power of two times the
   output interval, so every output time is a synchronisation point, and the run ends through GIZMO's stop file once
   the last snapshot is written.
-- Snapshots to the grid: each particle's mass, momentum, total energy and field times volume are deposited
-  cloud-in-cell and divided by the cell volume, so the grid holds exactly the particles' mass, momentum, energy and
-  magnetic flux; a particle still at a cell centre lands wholly in its cell.
+- Snapshots to the grid: each particle's mass, momentum, total energy and field times volume are shared among the
+  cell centres inside its kernel (GIZMO's cubic spline to its smoothing length), by its part of each centre in GIZMO's
+  own partition of space (its kernel there over the sum of all kernels there; Hopkins 2015, eq. 3), and divided by the
+  cell volume. The grid holds exactly the particles' mass, momentum, energy and magnetic flux, a uniform state stays
+  uniform however the particles are arranged, and no cell is left empty (a cell no kernel reaches would take a share
+  of its nearest particle; `gap_cells` in `gizmo_divergence.csv` counts them). The first runs (2026-10-25) used
+  cloud-in-cell: up to 7 % of the cells of the 2D blasts were left empty (Orszag–Tang, the rotor and the current
+  sheet at 512² too), and the density was striped where the particles were disordered (Kelvin–Helmholtz, GEM). All 82
+  runs were repeated with this deposit (below).
 - A run GIZMO stops itself (`ENDRUN issued ...`) is recorded as failed with GIZMO's reason, not as a job being killed.
 
 ## Tested on the Mac (2026-10-23)
@@ -87,7 +93,21 @@ gizmo.sbatch` (with `GIZMO_RANKS`, `MHD_RESULTS`). Python's h5py and scipy come 
 (default `gcc/12.4.0 openmpi/4.1.6`), `GIZMO_MODULES` (default `gsl/2.7 hdf5/1.14.4`), `GSL_PREFIX`, `HDF5_PREFIX`,
 `GIZMO_MEMORY_MB_PER_RANK`, `GIZMO_VENV`.
 
-Fetch to the Mac when the tasks are done:
+**The rerun with the kernel deposit (2026-10-27):** job 49916432, the 17 tasks into
+`$SCRATCH/mhd-results-gizmo2`, keeping GIZMO's own snapshots (`GIZMO_KEEP_NATIVE=1`, so a change of the deposit
+needs no new run). Submitted, from `sherlock_gizmo/` on Sherlock, as
+
+```bash
+MHD_RESULTS=/scratch/users/lyxia/mhd-results-gizmo2 GIZMO_KEEP_NATIVE=1 sbatch --array=1-17 gizmo.sbatch
+```
+
+Fetch it (on the Mac, after moving the old `sweep_results/*-gizmo-*` out of the way):
+
+```bash
+cd /Users/lyxia/Projects/research/abel_mhd && ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'MHD_RESULTS=/scratch/users/lyxia/mhd-results-gizmo2 bash /scratch/users/lyxia/mhd-study/sherlock_gizmo/tools/pack_for_mac.sh' | tar -xzf - -C sweep_results
+```
+
+The first runs' fetch, for the record:
 
 ```bash
 cd /Users/lyxia/Projects/research/abel_mhd && ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'bash /scratch/users/lyxia/mhd-study/sherlock_gizmo/tools/pack_for_mac.sh' | tar -xzf - -C sweep_results

@@ -36,7 +36,7 @@ FIELDS=("density","magnetic")
 NORMS=("L1","L2","Linf")
 ALE_TESTS=re.search(r'^MHDALE_TESTS="([^"]+)"',(ROOT/"sherlock_mhdale/options.sh").read_text(),re.M).group(1).split()
 OURS=sd.GPU_METHODS+sd.FIXED
-METHODS=OURS+sd.EXTERNAL+sd.AREPO+("mhdale_ale",)
+METHODS=OURS+sd.EXTERNAL+sd.AREPO+sd.GIZMO+("mhdale_ale",)
 # With the rerun fetched, an original that has a fixed version is drawn in a light tint of its colour, the fix in full.
 FADED=set(sd.FIXES.values()) if sd.RERUN.is_dir() else set()
 TITLES={"01-errors":"Error norms versus physical time", "02-convergence":"Error versus resolution",
@@ -193,7 +193,7 @@ class Data:
                 self.runs[key]=Run(test,"mhdale_ale",n,seed,p.parent,m,sd.read_csv(p.parent/"diagnostics.csv") or {},{})
 
     def methods(self,test):
-        out=self.sw.labels(test,fixed=True)+[m for m in sd.AREPO if test in sd.AREPO_TESTS]
+        out=self.sw.labels(test,fixed=True)+[m for m in sd.AREPO if test in sd.AREPO_TESTS]+[m for m in sd.GIZMO if test in sd.GIZMO_TESTS]
         if test in ALE_TESTS:out.append("mhdale_ale")
         return list(dict.fromkeys(out))
 
@@ -610,7 +610,7 @@ def section(test, figure_prefix=None, data_test=None):
     if methods:
         options="".join(f'<option value="{e(m)}">{e(style(m)["label"].replace("Abel ","").replace("$c_h$","cₕ"))}</option>' for m in methods if m in OURS)
         families=list(dict.fromkeys(m.split("_")[0] for m in methods if m not in OURS))
-        names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",mhdale="MHD-ALE")
+        names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",gizmo="GIZMO",mhdale="MHD-ALE")
         external="".join(f'<option value="{e(m)}">{e(names[m])}</option>' for m in families)
         parts.append('<div class="comparison-controls" hidden style="position:sticky;top:0;z-index:4;background:var(--paper);padding:8px 0"><div class="toolbar" style="flex-wrap:wrap;justify-content:flex-start;margin-bottom:6px">'
             '<label class="control-group">Abel kernel <select class="field-select" name="abel-kernel"><option value="">All kernels</option>'+options+'</select></label>'

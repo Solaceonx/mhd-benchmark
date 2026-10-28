@@ -17,6 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import manuscript_figures as mf  # noqa: E402
+import work_precision as wp  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT/"progress"
@@ -43,6 +44,27 @@ FIGURES = (
      "32² to 512². A run that took longer than the same test on twice the grid is left out: its time is not the solver's (three 32² runs of the "
      "fixed CT prototype, where compiling leaked into the timing).",
      "Lower and further left is better. A curve that turns up stops converging: the original half-precision kernels. Fixed, they converge."),
+    ("work_precision", "Accuracy for the time: grid against order", [t for t, _ in mf.WP_TESTS],
+     "Error at the end against the cost of the run, one point per grid (32² to 512², 3D field loop 32³ to 512³). The cost is that of each code "
+     "at its full speed: the steps the run took (each code's own timestep) times the cells of the problem, divided by the cell updates per "
+     "second it reached on its largest grid with a valid clock; one H100 for Abel et al.'s kernels and AthenaK, 128 CPU cores for RAMSES "
+     "and Athena++ (their speed per core times 128). Start-up does not count, and neither do the cells the GPU codes computed along z for "
+     "the planar tests. Dotted: the error AthenaK PLM/HLLE reaches at 256², the yardstick of the next figure.",
+     "Lower and further left is better. Each code is a curve; along it the grid is refined. Abel et al.'s kernels take about 3.3 times more "
+     "steps than the other codes (their Courant rule), which their costs carry."),
+    ("order_tradeoff", "Higher order on a coarser grid, or a better solver?", [t for t, _ in wp.TESTS if t != "current_sheet"],
+     "Pairs of set-ups of one code, the lower against the higher, both reaching the error AthenaK PLM/HLLE has at 256² on each test "
+     "(interpolated between grids, log–log; scripts/work_precision.py). (a) How many times less the higher set-up costs to get there; (b) how "
+     "many times fewer cells per side it needs. Dots: only the reconstruction changes (Abel et al.'s Float16/HLL kernel, PLM to PPM, both "
+     "fixed). Diamonds: reconstruction, Riemann solver and time integrator change at once (AthenaK's and Athena++'s matched and best "
+     "set-ups). Hollow squares: only the Riemann solver changes, at the same order. Arrows: the higher set-up is already there on its "
+     "coarsest grid, so the gain is larger still. The current sheet is left out: no set-up converges on it. On Kelvin–Helmholtz the "
+     "yardstick lies just above the level where every code stops improving against the reference, so its ratios are uncertain.",
+     "To the same error, the PPM kernel needs 1.0 to 2.2 times fewer cells per side than the PLM kernel but costs 3.0 to 3.2 times more per "
+     "cell update: it is cheaper on the three smooth waves (1.9 to 3.2 times) and dearer on every other test (it costs 1.5 to 5 times more). "
+     "A better Riemann solver alone (HLLD) pays on shocks and nonlinear flows (1.4 to 8 times, more on Kelvin–Helmholtz and GEM) and "
+     "loses or breaks even on smooth waves. Most of what AthenaK's and Athena++'s higher set-ups gain on the nonlinear tests looks like the solver's; "
+     "runs that change one ingredient at a time in one code would settle it."),
     ("accuracy", "Accuracy on every planar test", [t for t, _, _ in mf.ACCURACY],
      "Relative L1 error at the end of each test (density, or the field where the density does not change, and for GEM), divided by the median of the "
      "same-order CT set-ups: AthenaK PLM/HLLE, RAMSES HLL and Athena++ PLM/HLLE. Against the exact answer where there is one, otherwise against a "

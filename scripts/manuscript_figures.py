@@ -640,8 +640,68 @@ def arepo(sw):
     return fig
 
 
+# ---------------------------------------------------------------- accuracy for the time: order against grid
+WP_TESTS = (("alfven_oblique", "Alfvén wave, oblique"), ("brio_wu_rotated", "Brio–Wu at 45°"), ("orszag_tang", "Orszag–Tang"),
+            ("rotor", "Rotor"), ("kh_uniform", "Kelvin–Helmholtz"), ("field_loop_3d", "Field loop, 3D"))
+WP_SHOW = ("glm", "glm_fix_hll16", "glm_fix_ppm", "glm_fix_hlld", "athenak_matched", "athenak_best", "athenapp_matched", "athenapp_best",
+           "ramses_matched", "ramses_best")
+
+
+def work_precision(sw):
+    """Error at the end against the cost of the run at each code's full speed (scripts/work_precision.py), one point per
+    grid; the dotted line is the error the test's yardstick, AthenaK PLM/HLLE at 256^2, reaches."""
+    import work_precision as wp
+    rows = wp.table(sw)
+    fig, axes = plt.subplots(2, 3, figsize=(FULL, 5.0), gridspec_kw=dict(wspace=.32, hspace=.42, left=.075, right=.99, top=.95, bottom=.2))
+    for ax, (test, title) in zip(axes.flat, WP_TESTS):
+        row = rows.get(test)
+        if not row:ax.set_visible(False);continue
+        for m in WP_SHOW:
+            x = row["methods"].get(m)
+            if x:curve(ax, [c for _, _, c in x["points"]], [e for _, e, _ in x["points"]], m)
+        ax.axhline(row["eps"], color=MUTED, lw=.7, ls=(0, (1, 2)), zorder=0)
+        ax.set_xscale("log");ax.set_yscale("log");ticks(ax);ax.set_title(title, pad=4)
+        ax.set_xlabel("cost (s): one H100, or 128 cores" if test == "kh_uniform" else "");ax.set_ylabel(r"relative $L_1$ error" if ax in axes[:, 0] else "")
+    fig.legend(handles=line_handles(WP_SHOW, extra=[Line2D([], [], color=MUTED, lw=.7, ls=(0, (1, 2)), label="AthenaK PLM/HLLE at 256²")]),
+               loc="lower center", ncol=4, columnspacing=1.4, handlelength=2.6, bbox_to_anchor=(.53, 0))
+    return fig
+
+
+WP_PAIR = {"order": ("o", True), "all": ("D", True), "solver": ("s", False)}      # marker, filled
+
+
+def order_tradeoff(sw):
+    """Per test and pair of set-ups (work_precision.PAIRS): (a) how many times less the higher set-up costs to reach the
+    error of AthenaK PLM/HLLE at 256^2; (b) how many times fewer cells per side it needs. An arrow: the higher set-up
+    reaches that error already on its coarsest grid (a lower bound)."""
+    import work_precision as wp
+    rows = wp.table(sw);tests = [t for t, _ in wp.TESTS if t in rows and t != "current_sheet"]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(FULL, 4.3), sharey=True, gridspec_kw=dict(wspace=.08, left=.15, right=.99, top=.93, bottom=.25))
+    off = np.linspace(-.28, .28, len(wp.PAIRS))
+    for k, (kind, lo, hi, label) in enumerate(wp.PAIRS):
+        mk, filled = WP_PAIR[kind];c = color(hi)
+        for i, t in enumerate(tests):
+            x, y = rows[t]["methods"].get(lo), rows[t]["methods"].get(hi)
+            if not (x and y and x["cost"] and y["cost"]):continue
+            for ax, v in ((a, x["cost"]/y["cost"]), (b, x["N"]/y["N"])):
+                ax.plot(v, i + off[k], marker=">" if y["at_most"] else mk, ms=4.6, color=c, mfc=c if filled else "white", mew=.9, ls="")
+    for ax, head in ((a, "(a) cost to the same error: lower set-up ÷ higher"), (b, "(b) cells per side: lower ÷ higher")):
+        ax.axvline(1, color=MUTED, lw=.7);ax.set_xscale("log");ticks(ax);ax.set_title(head, loc="left", pad=4, fontsize=8.5)
+        ax.xaxis.set_major_locator(matplotlib.ticker.FixedLocator([.1, .3, 1, 3, 10, 30, 100] if ax is a else [.5, 1, 2, 4, 8]))
+        ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}"));ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+        for i in range(len(tests)):ax.axhline(i + .5, color=RULE, lw=.4)
+    a.set_yticks(range(len(tests)));a.set_yticklabels([t.replace("_", " ") for t in tests]);a.set_ylim(len(tests) - .5, -.5)
+    a.set_xlabel("← the lower set-up is cheaper · the higher set-up is cheaper →", fontsize=7.5)
+    hs = [Line2D([], [], color=color(hi), marker=WP_PAIR[kind][0], ls="", mfc=color(hi) if WP_PAIR[kind][1] else "white", mew=.9, label=label)
+          for kind, lo, hi, label in wp.PAIRS]
+    hs.append(Line2D([], [], color=MUTED, marker=">", ls="", label="higher set-up already there on its coarsest grid"))
+    fig.legend(handles=hs, loc="lower center", ncol=2, columnspacing=1.6, bbox_to_anchor=(.55, 0), fontsize=7)
+    return fig
+
+
 FIGURES = dict(cost_vs_error=cost_vs_error, speed=speed, accuracy=accuracy, robustness=robustness, convergence=convergence, leakage=leakage,
-               divergence=divergence, field_loop=field_loop, turbulence=turbulence, arepo=arepo)
+               divergence=divergence, field_loop=field_loop, turbulence=turbulence, arepo=arepo,
+               work_precision=work_precision, order_tradeoff=order_tradeoff)
 
 
 def main(argv):

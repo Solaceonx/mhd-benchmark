@@ -188,7 +188,7 @@ def read_snapshot(path, n, nz, record=None):
         t = float(s["Header"].attrs["Time"]);p = s["PartType0"]
         pos = p["Coordinates"][:].astype(np.float64);rho = p["Density"][:].astype(np.float64);vel = p["Velocities"][:].astype(np.float64)
         e = p["InternalEnergy"][:].astype(np.float64);b = p["MagneticField"][:].astype(np.float64);mass = p["Masses"][:].astype(np.float64)
-        hsml = p["SmoothingLength"][:].astype(np.float64)
+        hsml = p["KernelMaxRadius" if "KernelMaxRadius" in p else "SmoothingLength"][:].astype(np.float64)   # the kernel's support radius
         if record is not None and "DivergenceOfMagneticField" in p:
             vol = mass/rho;div = p["DivergenceOfMagneticField"][:].astype(np.float64)
             size = vol**(1.0/(3 if nz > 1 else 2));brms = math.sqrt(float((vol*(b**2).sum(1)).sum()/vol.sum()))

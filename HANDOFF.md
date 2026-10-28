@@ -118,7 +118,8 @@ step limit). Their conversion to the grid was cloud-in-cell, which left up to 7 
 (Orszag–Tang, rotor, current sheet 512² too) and striped the density where particles were disordered. New deposit in
 `sherlock_gizmo/gizmo_run.py` (`deposit`: GIZMO's own partition of space at the cell centres, exactly conservative);
 lyxia chose to rerun all 17 tests: job 49916432 into `$SCRATCH/mhd-results-gizmo2`, keeping GIZMO's snapshots
-(fetch command in `sherlock_gizmo/README.md`). The page code is ready and unpublished: `sweep_data` (`GIZMO`, `AFTER`,
+(fetch command in `sherlock_gizmo/README.md`); its conversions failed on a field name (`KernelMaxRadius`), so job
+49919167 (`gizmo-convert`, after it) converts the kept snapshots. The page code is ready and unpublished: `sweep_data` (`GIZMO`, `AFTER`,
 `Sweep.after`, `sw.gizmo`), colour `plot_style.FAMILY["gizmo"]`, `test_diagnostics`, the sweep page (column and card),
 Our figures (robustness column, context points), and a second movie on the test pages, "The codes side by side"
 (`render_sweep_movie.py TESTS --tag codes --rows 2 --labels glm ct athenak_best ramses_best arepo_moving gizmo_mfm`,

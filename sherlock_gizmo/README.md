@@ -101,6 +101,13 @@ needs no new run). Submitted, from `sherlock_gizmo/` on Sherlock, as
 MHD_RESULTS=/scratch/users/lyxia/mhd-results-gizmo2 GIZMO_KEEP_NATIVE=1 sbatch --array=1-17 gizmo.sbatch
 ```
 
+Its conversions all failed (this GIZMO names the kernel radius `KernelMaxRadius`, not `SmoothingLength`; fixed),
+while GIZMO's own runs and snapshots are fine. The fixed runner went to a copy of this bundle,
+`$SCRATCH/mhd-study/sherlock_gizmo_convert` (the running job's files untouched), and job 49919167 (`gizmo-convert`,
+`--dependency=afterany:49916432`, the same 17 tasks and settings) converts every run whose last snapshot is there
+(`--resume`) and runs any other. Checked on Orszag–Tang 64² at t = 0.5 against AthenaK 4096² averaged to 64²: density
+L1 error 0.076 with this deposit, 0.152 with cloud-in-cell (AthenaK PLM/HLLE 0.073, PPM/HLLD 0.039); mass exact.
+
 Fetch it (on the Mac, after moving the old `sweep_results/*-gizmo-*` out of the way):
 
 ```bash

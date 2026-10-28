@@ -250,11 +250,11 @@ pass; the new RAMSES density-only movie runner has not yet run on Sherlock.
    norm. lyxia: "let's actually just fork and fix it ourselves". Our branch `sweep-fixes` of the fork
    (`external/mhd-ale-abel`, Mac only, on T. Abel's newer `adde93b`, which also fixes the remap between ranks):
    tolerance 1e-11 × norm / h, and the fast speed sqrt(cs² + vA²) (the code had + vA). `sherlock_mhdale/` applies
-   both (`prepare_patch.py`); not yet sent. Send with `check.sh trial` (README), read the trial's speed at 256²/512²,
+   both (`prepare_patch.py`); sent 2026-10-28, trial job 50008594 (`status.sh`). Read the trial's speed at 256²/512²,
    then size the production runs (the old ones took 1,350 core-hours; KH and the current sheet at 512² will not fit
    48 h, the code has no restart) and `check.sh production`. Runs go to `mhd-results-mhdale-fix`; label them as with
-   our fixes. Check job 49996615 (`divfree_check.cpp`, the divergence ratio per grid) result not read yet:
-   `$SCRATCH/mhd-results-mhdale-checks/divfree/divfree_check.txt`. Tell T. Abel about both fixes.
+   our fixes. Check job 49996615 (`divfree_check.cpp`) confirmed it: div/norm of the projected uniform field 1.8e-13, 6.1e-13,
+   2.5e-12, 9.8e-12 (1.0e-11 on the translated mesh), 3.7e-11 at N = 32 to 512, on every mesh shape (4x per doubling). Tell T. Abel about both fixes.
 
 ## 5. Next, in the order I would take it
 

@@ -132,7 +132,7 @@ figures, unpublished) suggest much of AthenaK's and Athena++'s "best" gain on no
 lyxia wants it tested in several codes. `sherlock_order/` gives AthenaK, Athena++ and Abel et al.'s kernels (Float32,
 4-cell tile, unedited kernels through the driver) all four PLM/PPM x HLL-family/HLLD pairs at one integrator, 13 tests,
 32-512, seed 42: 567 runs, about 66 GPU hours and 620 core-hours; pilots gate the arrays. Built and checked on the Mac
-(PTX of the four GLM pairs compiles, configs agree with the driver, the AthenaK/Athena++ inputs are right). Send and
+(PTX of the four GLM pairs compiles, configs agree with the driver, the AthenaK/Athena++ inputs are right). Sent and
 submitted 2026-10-28 (lyxia: "send it, full"): pilots order-glm 49982560, order-athenak 49982565, order-athenapp
 49982569; arrays 49982561 (glm, 5 tasks), 49982566 (athenak, 7), 49982571/74/75, 49982601/03/05/07/09 (athenapp, 1 to
 128 ranks), each waiting on its pilot. Follow with `status.sh` (README); if a pilot fails, cancel its array and find the

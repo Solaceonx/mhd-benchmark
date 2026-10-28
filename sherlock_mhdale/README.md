@@ -71,9 +71,10 @@ small where the field is strong (the magnetised blasts).
    the starting state of each of the 13 tests at 64^2 with the suite's own (`ic_check.py`); takes 30 steps with
    remaps on two ranks for four tests; runs Brio-Wu at 256^2 and 512^2 on 16 ranks through its first remaps, which
    must pass the mean-field check without the mixed solve. It ends cleanly only if all of that is clean.
-2. `mhdale.sbatch`, to start only if the trial passed: 13 array tasks, one per test, each running that test's grids
-   (32^2 to 512^2) in turn on up to 16 ranks. MHD-ALE has no restart, so a run that does not fit in 48 hours ends
-   its task there.
+2. `mhdale.sbatch`, to start only if the trial passed, as four arrays sized by grid (MHD-ALE has no restart; a
+   normal job ends at 48 hours): 32^2-128^2 in turn on 8 ranks; 256^2 on 16; 512^2 on 64, and on 128 for the two
+   Kelvin-Helmholtz tests and the current sheet (at 16 ranks those took 21 h at most at 512^2 before, and the other
+   three would have needed 70 to 110 h). `check.sh production TRIAL_JOB` submits them to wait for a queued trial.
 
 On the Mac:
 

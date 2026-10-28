@@ -18,11 +18,12 @@ here="$SLURM_SUBMIT_DIR"; task="${SLURM_ARRAY_TASK_ID:-1}"
 export SWEEP_BUNDLE="${SWEEP_BUNDLE:-/scratch/users/lyxia/mhd-study/sherlock_sweep}"
 cd "$SWEEP_BUNDLE" && source jobs/common.sh && prepare_environment && prepare_codes || { echo "the sweep bundle's environment could not be set up"; exit 2; }
 load_modules "${MHDALE_COMPILER_MODULES:-gcc/12.4.0 openmpi/4.1.6}"
-source "$here/options.sh"; tests=($MHDALE_TESTS)
+source "$here/options.sh"; tests=(${MHDALE_ARRAY_TESTS:-$MHDALE_TESTS})      # MHDALE_ARRAY_TESTS: the tests of this array
 exe="$MHD_CODES/mhdale-yipihey/build-abel/MHD"; [[ -x "$exe" ]] || { echo "NO EXECUTABLE: $exe (the trial builds it)"; exit 2; }
 test="${MHDALE_ONLY:-${tests[$((task - 1))]}}"; config="$SWEEP_BUNDLE/configs/$test.toml"
 echo "== task $task: $test on $(hostname), $(date -u)"; module list 2>&1 | tail -n +2
-for n in ${MHDALE_GRIDS:-$(python3 -c "import tomllib, sys; print(*tomllib.load(open(sys.argv[1], 'rb'))['grids'])" "$config")}; do
+# MHDALE_GRIDS: only those of the test's grids (check.sh production sizes the jobs by grid)
+for n in $(python3 -c "import tomllib, sys; w = sys.argv[2].split(); print(*[g for g in tomllib.load(open(sys.argv[1], 'rb'))['grids'] if not w or str(g) in w])" "$config" "${MHDALE_GRIDS:-}"); do
     ranks=1; [[ $n -ge 64 ]] && ranks=4; [[ $n -ge 128 ]] && ranks=8; [[ $n -ge 256 ]] && ranks=16
     ranks="${MHDALE_RANKS:-$ranks}"
     out="$MHD_RESULTS/$test-mhdale-ale-run-N$n-s42/data"

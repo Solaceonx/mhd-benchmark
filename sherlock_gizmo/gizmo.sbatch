@@ -20,7 +20,9 @@ load_modules "${GIZMO_COMPILER_MODULES:-gcc/12.4.0 openmpi/4.1.6}"
 for m in ${GIZMO_MODULES:-gsl/2.7 hdf5/1.14.4}; do module load "$m" 2>/dev/null || echo "module $m: not loaded"; done
 # Python: h5py and scipy from pip in a private environment on scratch, the one sherlock_arepo made (Sherlock's py-h5py
 # module does not import with the numpy 2 module the sweep loads). Wheels only.
-venv="${GIZMO_VENV:-$SCRATCH/mhd-venv-arepo}"; [[ -x "$venv/bin/python3" ]] || python3 -m venv --system-site-packages "$venv"
+# In $HOME, not $SCRATCH: Sherlock's rules for automated tools (/etc/agents/AGENTS.md, rule 8) keep environments off the
+# purged filesystems; this one is small (h5py, scipy).
+venv="${GIZMO_VENV:-$HOME/.venvs/mhd-h5py}"; [[ -x "$venv/bin/python3" ]] || python3 -m venv --system-site-packages "$venv"
 source "$venv/bin/activate"; python3 -c 'import h5py, scipy' 2>/dev/null || pip install --quiet --only-binary=:all: "h5py>=3.11" "scipy>=1.13"
 python3 -c 'import h5py, scipy; print("python:", h5py.__version__, "h5py,", scipy.__version__, "scipy")' || { echo "NO h5py/scipy: cannot write GIZMO initial conditions"; exit 2; }
 echo "== task $task on $(hostname), $(date -u)"; module list 2>&1 | tail -n +2

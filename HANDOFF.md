@@ -105,6 +105,13 @@ not to worry (2026-10-22; on the CPU it loses pressure positivity once second or
 The fixed PPM's 512^2 instability (psi grows from t ~ 1) is not fixed, only no longer a crash. The cell-CT option lets
 B_z grow to 4e-2 B0 on `field_loop` 128^2. The Kernel fixes page shows the rerun (issues 8-10 open; published 2026-10-22). Branch pushed 2026-10-22 to the fork github.com/Solaceonx/GLMMHDTurb (remote `fork` in the clone); no pull request to Tom yet.
 
+**Sherlock access and its rules, 2026-10-27:** lyxia added `Host sherlock` (shared connection) to `~/.ssh/config`;
+an assistant may use it only while lyxia's own login is open. Sherlock's `/etc/agents/AGENTS.md` (rules for automated
+tools) must be read at the start of every session and after every context summary (its rule 12; keep this line in any
+handoff). Read on 2026-10-27; changes made for it: the h5py/scipy environment of the AREPO and GIZMO jobs moved from
+`$SCRATCH/mhd-venv-arepo` to `$HOME/.venvs/mhd-h5py` (rule 8); a 7-day persistent connection was refused as an
+unattended tunnel (rule 5, policy.md).
+
 **New codes, 2026-10-22:** lyxia asked for Eric Moseley's mini-ramses-ism (his RAMSES II, bitbucket ermoseley,
 `develop`) and GIZMO; FLASH dropped (its licence bars cloud AI tools from the code). Both bundles are ready, not yet
 sent (lyxia: "not gonna run those yet"): `sherlock_miniramses/` (GPU, 268 runs, CPU-tested on the Mac against classic

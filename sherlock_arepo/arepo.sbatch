@@ -22,7 +22,9 @@ for m in ${AREPO_MODULES:-gsl/2.7 hdf5/1.14.4 gmp/6.2.1}; do module load "$m" 2>
 # Python: h5py and scipy from pip, in a private environment on scratch. Sherlock's py-h5py module is built for numpy 1
 # and does not import with the numpy 2 module the sweep's tools load ("numpy.dtype size changed"), so it is not used.
 # Wheels only: left to itself pip took a release without a wheel for this system and failed building it from source.
-venv="${AREPO_VENV:-$SCRATCH/mhd-venv-arepo}"; [[ -x "$venv/bin/python3" ]] || python3 -m venv --system-site-packages "$venv"
+# In $HOME, not $SCRATCH: Sherlock's rules for automated tools (/etc/agents/AGENTS.md, rule 8) keep environments off the
+# purged filesystems; this one is small (h5py, scipy).
+venv="${AREPO_VENV:-$HOME/.venvs/mhd-h5py}"; [[ -x "$venv/bin/python3" ]] || python3 -m venv --system-site-packages "$venv"
 source "$venv/bin/activate"; python3 -c 'import h5py, scipy' 2>/dev/null || pip install --quiet --only-binary=:all: "h5py>=3.11" "scipy>=1.13"
 python3 -c 'import h5py, numpy; print("python:", h5py.__version__, "h5py,", numpy.__version__, "numpy")' || { echo "NO h5py: cannot write AREPO initial conditions"; exit 2; }
 echo "== task $task on $(hostname), $(date -u)"; module list 2>&1 | tail -n +2

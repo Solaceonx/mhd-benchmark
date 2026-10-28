@@ -53,7 +53,7 @@ After the pilot (a few minutes once it starts):
 If the pilot fails the array never starts (`squeue` shows it waiting on the dependency); cancel it with
 `scancel -n arepo` and send the output above.
 
-Python's h5py and scipy come from pip in `$SCRATCH/mhd-venv-arepo` (Sherlock's `py-h5py` module does not import with
+Python's h5py and scipy come from pip in `$HOME/.venvs/mhd-h5py` (environments stay off `$SCRATCH`: Sherlock's rule 8 for automated tools) (Sherlock's `py-h5py` module does not import with
 the numpy 2 module the sweep uses).
 
 Overrides: `AREPO_COMPILER_MODULES` (default `gcc/12.4.0 openmpi/4.1.6`, as for RAMSES), `AREPO_MODULES`

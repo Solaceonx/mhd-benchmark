@@ -83,7 +83,7 @@ bash -l /scratch/users/lyxia/mhd-study/sherlock_gizmo/status.sh
 If the pilot fails, the 17 tasks wait on it forever (`squeue` shows `DependencyNeverSatisfied`): cancel them with
 `scancel -n gizmo` and send the status output. One test again by hand: `GIZMO_ONLY="field_loop mfm 64" sbatch --array=0
 gizmo.sbatch` (with `GIZMO_RANKS`, `MHD_RESULTS`). Python's h5py and scipy come from the environment
-`$SCRATCH/mhd-venv-arepo` that the AREPO runs made (made here if missing). Overrides: `GIZMO_COMPILER_MODULES`
+`$HOME/.venvs/mhd-h5py`, shared with the AREPO runs (made here if missing; environments stay off `$SCRATCH`, Sherlock's rule 8 for automated tools). Overrides: `GIZMO_COMPILER_MODULES`
 (default `gcc/12.4.0 openmpi/4.1.6`), `GIZMO_MODULES` (default `gsl/2.7 hdf5/1.14.4`), `GSL_PREFIX`, `HDF5_PREFIX`,
 `GIZMO_MEMORY_MB_PER_RANK`, `GIZMO_VENV`.
 

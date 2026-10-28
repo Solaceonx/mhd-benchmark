@@ -47,6 +47,11 @@ PAIRS = (("order", "glm_fix_hll16", "glm_fix_ppm", "Abel GLM f16/HLL: PLM → PP
          ("all", "athenapp_matched", "athenapp_best", "Athena++: PLM/HLLE/VL2 → PPM/HLLD/RK3"),
          ("solver", "ramses_matched", "ramses_best", "RAMSES: HLL → HLLD"),
          ("solver", "glm", "glm_fix_hlld", "Abel GLM Float32: LLF → HLLD"))
+# The order x solver study (sherlock_order/): each code's four pairs (PLM, HLL-family), (PPM, HLL-family), (PLM, HLLD),
+# (PPM, HLLD) at one integrator (Abel et al.'s kernels: also one precision and tile, Float32 4-cell).
+GRID = (("Abel GLM, Float32", ("glm_fix_hll32", "glm_fix_ppm32", "glm_fix_hlld", "glm_fix_ppm_hlld")),
+        ("AthenaK, RK3", ("athenak_plm_hlle_rk3", "athenak_ppm_hlle", "athenak_plm_hlld", "athenak_best")),
+        ("Athena++, RK3", ("athenapp_plm_hlle_rk3", "athenapp_ppm_hlle", "athenapp_plm_hlld", "athenapp_best")))
 
 
 def ranks(resource):
@@ -103,6 +108,17 @@ def order(curve):
     return -float(np.log(p[-1]["error"]/p[-2]["error"])/np.log(p[-1]["N"]/p[-2]["N"]))
 
 
+def factorial(row, cells):
+    """A code's gains in cost at a test's eps from its four pairs: order at each solver, solver at each order, both,
+    and the interaction (both over the product of the two alone; 1 when they multiply). None when a pair misses eps;
+    at_most: some pair reached eps on its coarsest grid already, so its cost is an upper bound."""
+    m = [row["methods"].get(c) or {} for c in cells];c = [x.get("cost") for x in m]
+    if not all(c):return None
+    plm_hll, ppm_hll, plm_hlld, ppm_hlld = c
+    return dict(order_hll=plm_hll/ppm_hll, order_hlld=plm_hlld/ppm_hlld, solver_plm=plm_hll/plm_hlld, solver_ppm=ppm_hll/ppm_hlld,
+                both=plm_hll/ppm_hlld, interaction=plm_hll*ppm_hlld/(ppm_hll*plm_hlld), at_most=any(x.get("at_most") for x in m))
+
+
 def table(sw=None):
     sw = sw or sd.Sweep();rows = {}
     for test, kind in TESTS:
@@ -131,6 +147,10 @@ def main():
             f = lambda x: "–" if x["N"] is None else f"N {'≤' if x['at_most'] else ''}{x['N']:.0f}, {x['cost']:.3g} s"
             gain = f"{a['cost']/b['cost']:.2f}x faster, {a['N']/b['N']:.2f}x fewer cells per side" if a["cost"] and b["cost"] else ""
             print(f"   {label:42s} {f(a):22s} -> {f(b):22s} {gain}   (orders {a['order'] or float('nan'):.2f} -> {b['order'] or float('nan'):.2f})")
+        for name, cells in GRID:
+            g = factorial(row, cells)
+            if g:print(f"   {name:18s} faster by: PPM {g['order_hll']:.2f}x with HLL, {g['order_hlld']:.2f}x with HLLD; HLLD {g['solver_plm']:.2f}x "
+                       f"with PLM, {g['solver_ppm']:.2f}x with PPM; both {g['both']:.2f}x; interaction {g['interaction']:.2f}" + (" (upper bounds)" if g["at_most"] else ""))
 
 
 if __name__ == "__main__":

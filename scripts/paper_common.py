@@ -43,6 +43,16 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     "arepo_moving": ("arepo", "AREPO moving mesh, Powell/HLLD", "AREPO moving mesh", "-", "o"),
     "arepo_static": ("arepo", "AREPO static mesh, Powell/HLLD", "AREPO static mesh", (1.5, (4.5, 4.5)), "s"),
     "gizmo_mfm": ("gizmo", "GIZMO meshless finite mass, Dedner + constrained gradient", "GIZMO MFM", "-", "^"),
+    # the order x solver study (sweep_data.ORDER): the other pairs of reconstruction and solver, at one integrator
+    "glm_fix_hll32": ("glm", "GLM Float32 PLM/HLL, fixed", "GLM f32 PLM/HLL", (0, (4.5, 4.5)), "s"),
+    "glm_fix_ppm32": ("glm", "GLM Float32 PPM/HLL, fixed", "GLM f32 PPM/HLL", "-.", "D"),
+    "glm_fix_ppm_hlld": ("glm", "GLM Float32 PPM/HLLD, fixed", "GLM f32 PPM/HLLD", "-", "o"),
+    "athenak_plm_hlle_rk3": ("athenak", "AthenaK PLM/HLLE/RK3", "AthenaK PLM/HLLE/RK3", (0, (1.5, 2.5)), "v"),
+    "athenak_ppm_hlle": ("athenak", "AthenaK PPM/HLLE/RK3", "AthenaK PPM/HLLE", "-.", "D"),
+    "athenak_plm_hlld": ("athenak", "AthenaK PLM/HLLD/RK3", "AthenaK PLM/HLLD", "--", "^"),
+    "athenapp_plm_hlle_rk3": ("athenapp", "Athena++ PLM/HLLE/RK3", "Athena++ PLM/HLLE/RK3", (0, (1.5, 2.5)), "v"),
+    "athenapp_ppm_hlle": ("athenapp", "Athena++ PPM/HLLE/RK3", "Athena++ PPM/HLLE", "-.", "D"),
+    "athenapp_plm_hlld": ("athenapp", "Athena++ PLM/HLLD/RK3", "Athena++ PLM/HLLD", "--", "^"),
     "athenak_reference": ("reference", "AthenaK reference", "Reference", "-", ""),
     "athenapp_reference": ("reference", "Athena++ check", "Check", (0, (4, 2)), ""),
 }

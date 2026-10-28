@@ -55,6 +55,13 @@ FIXES = {"glm_fix_hll16": "glm_hll16", "glm_fct16": "glm_hll16", "glm_fix_hlld":
          "ct_fix": "ct"}
 FIXED = tuple(FIXES)
 RERUN = Path(os.environ.get("MHD_RERUN_RESULTS", ROOT/"fix_results"/"mhd-results-rerun"))
+# The order x solver study (sherlock_order/README.md): with the set-ups above, every pair of reconstruction (PLM, PPM)
+# and Riemann solver (HLL-family, HLLD) at one integrator in the codes that can change them one at a time, on the
+# work-precision tests at seed 42; fetched into order_results/ (git-ignored), in the rerun's layout. Outside the plan.
+ORDER_GLM = ("glm_fix_hll32", "glm_fix_ppm32", "glm_fix_ppm_hlld")
+ORDER = ORDER_GLM + ("athenak_plm_hlle_rk3", "athenak_ppm_hlle", "athenak_plm_hlld",
+                     "athenapp_plm_hlle_rk3", "athenapp_ppm_hlle", "athenapp_plm_hlld")
+ORDER_RESULTS = Path(os.environ.get("MHD_ORDER_RESULTS", ROOT/"order_results"/"mhd-results-order"))
 FIELDS = ("rho", "mx", "my", "mz", "E", "Bx", "By", "Bz", "psi")
 
 # The binary files the paper figures read, per test: frames of the full state for every method (STATE: {grid: frames},
@@ -139,25 +146,26 @@ class Sweep:
                                 row["note"] = m.get("arepo_stopped", "") if code == "arepo" else \
                                     next((l for l in lines if l.startswith("Step limit")), lines[0] if lines else "")
                         getattr(self, code)[key] = row;self.rows[key] = row
-        self.fixed = {}                                # (test, label, n, seed) -> status row, from the fetched records
-        for d in sorted(RERUN.glob("*-N*-s*-*")) if RERUN.is_dir() else ():
-            m = re.fullmatch(r"(.+)-N(\d+)-s(\d+)-(\w+)", d.name)
-            if not m or m[4] not in FIXES or m[1] not in self.configs:continue
-            test, n, seed, label = m[1], int(m[2]), int(m[3]), m[4];key = (test, label, n, seed)
-            # dir is absolute: self.results/dir is then the rerun's directory
-            self.by[key] = dict(test=test, code="fixed", variant=label, mode="run", n=n, seed=seed, extra=label, dir=str(d), key=d.name)
-            meta = self.meta(*key);row = dict(test=test, n=n, seed=seed, label=label, frac=None, state="open")
-            if meta is not None:
-                row["state"] = "done" if meta.get("status") == "complete" else "stopped"
-                t_end = float(self.configs[test]["t_end"]);bad = self.went_bad(*key);grew = self.blew_up(*key)
-                if row["state"] == "done" and bad is not None:          # as sweep_status.mark_nonfinite does for the sweep
-                    row.update(state="stopped", reached=bad, note=f"state not finite after t = {bad:g}; recorded as complete")
-                elif row["state"] == "done" and grew is not None:
-                    row.update(state="stopped", reached=grew, note=f"field energy above 10 times AthenaK's after t = {grew:.3g}: ran to the end, not a result")
-                elif row["state"] == "stopped":
-                    row["reached"] = float(meta.get("time_reached", 0.0));row["note"] = meta.get("error", "").split("\n")[0]
-                if row["state"] == "stopped":row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None
-            self.fixed[key] = row;self.rows[key] = row
+        self.fixed, self.order = {}, {}                # (test, label, n, seed) -> status row, from the fetched records
+        for root, known, code in ((RERUN, FIXES, "fixed"), (ORDER_RESULTS, ORDER, "order")):
+            for d in sorted(root.glob("*-N*-s*-*")) if root.is_dir() else ():
+                m = re.fullmatch(r"(.+)-N(\d+)-s(\d+)-(\w+)", d.name)
+                if not m or m[4] not in known or m[1] not in self.configs:continue
+                test, n, seed, label = m[1], int(m[2]), int(m[3]), m[4];key = (test, label, n, seed)
+                # dir is absolute: self.results/dir is then the rerun's directory
+                self.by[key] = dict(test=test, code=code, variant=label, mode="run", n=n, seed=seed, extra=label, dir=str(d), key=d.name)
+                meta = self.meta(*key);row = dict(test=test, n=n, seed=seed, label=label, frac=None, state="open")
+                if meta is not None:
+                    row["state"] = "done" if meta.get("status") == "complete" else "stopped"
+                    t_end = float(self.configs[test]["t_end"]);bad = self.went_bad(*key);grew = self.blew_up(*key)
+                    if row["state"] == "done" and bad is not None:          # as sweep_status.mark_nonfinite does for the sweep
+                        row.update(state="stopped", reached=bad, note=f"state not finite after t = {bad:g}; recorded as complete")
+                    elif row["state"] == "done" and grew is not None:
+                        row.update(state="stopped", reached=grew, note=f"field energy above 10 times AthenaK's after t = {grew:.3g}: ran to the end, not a result")
+                    elif row["state"] == "stopped":
+                        row["reached"] = float(meta.get("time_reached", 0.0));row["note"] = meta.get("error", "").split("\n")[0]
+                    if row["state"] == "stopped":row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None
+                getattr(self, code)[key] = row;self.rows[key] = row
 
     # ---- the plan ----
     def frames(self, test):
@@ -216,7 +224,7 @@ class Sweep:
     def recorded(self, test, label, n, seed=42, rep=1):
         """The export's record of a part (status, reached, frames, steps, ...), or None."""
         r = self.by.get((test, label, n, seed))
-        if r is not None and r["code"] in ("arepo", "gizmo", "fixed"):          # not in the export: from the fetched record
+        if r is not None and r["code"] in ("arepo", "gizmo", "fixed", "order"):          # not in the export: from the fetched record
             m = self.meta(test, label, n, seed, rep);row = self.rows.get((test, label, n, seed), {})
             return None if m is None else dict(part=f"{label}_r{rep}", status=m.get("status"), frames=len(m.get("frames", [])),
                                                reached=row.get("reached", m.get("time_reached")), steps=m.get("steps"))

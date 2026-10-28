@@ -53,11 +53,18 @@ const CT_BY_GAMMA=Dict(CTMHD.GAMMA=>CTMHD,CTMHD_gamma7_5.GAMMA=>CTMHD_gamma7_5,C
 #   glm_fct16      glm_fix_hll16 with cell-centred constrained transport in place of GLM cleaning (no psi, no c_h)
 #   glm_fct32      the production kernel with a Float32 4-cell tile and cell-centred constrained transport
 #   ct_fix         the CT prototype with the full limited slope and the predictor in all three directions
+# With glm_fix_hlld, the four reconstruction x solver pairs at one tile and precision (Float32, 4-cell tile), for the
+# order x solver study (sherlock_order/); the two PPM ones are triples step_plm! does not list (plm_unlisted!):
+#   glm_fix_hll32     PLM, HLL
+#   glm_fix_ppm32     lean PPM, HLL
+#   glm_fix_ppm_hlld  lean PPM, HLLD with the branch's guard
 # With the branch as vendor/, glm_hll16, glm_ppm and glm_constch pass anchored=false and are the original kernels bit
 # for bit; glm_hlld, glm_hlld_x and ct are not available (the branch changed what they run).
 const METHODS=("glm","glm_hll16","glm_hlld","glm_ppm","glm_constch","ct","glm_hll32","glm_ppm32","glm_hlld_x",
-               "glm_fix","glm_fix_hll16","glm_fix_hlld","glm_fix_ppm","glm_fct16","glm_fct32","ct_fix")
-const FIX_METHODS=(:glm_fix,:glm_fix_hll16,:glm_fix_hlld,:glm_fix_ppm,:glm_fct16,:glm_fct32,:ct_fix)
+               "glm_fix","glm_fix_hll16","glm_fix_hlld","glm_fix_ppm","glm_fct16","glm_fct32","ct_fix",
+               "glm_fix_hll32","glm_fix_ppm32","glm_fix_ppm_hlld")
+const FIX_METHODS=(:glm_fix,:glm_fix_hll16,:glm_fix_hlld,:glm_fix_ppm,:glm_fct16,:glm_fct32,:ct_fix,
+                   :glm_fix_hll32,:glm_fix_ppm32,:glm_fix_ppm_hlld)
 const FIXES=isdefined(G,:fct_scratch)       # vendor/ is the sweep-fixes branch
 "Keywords that keep step_plm! the original kernel on the sweep-fixes branch (none with the original vendor/)."
 const ORIGINAL_STORAGE=FIXES ? (;anchored=false) : (;)
@@ -85,7 +92,10 @@ const SOLVER_TEXT=Dict(
     :glm_fix_ppm=>"sweep-fixes step_plm! recon=:ppm: lean PPM, anchored f16 tile, HLL, c_h from the CFL step",
     :glm_fct16=>"sweep-fixes step_plm!: anchored f16 tile, HLL, cell-centred constrained transport (flux-CT, Toth 2000) in place of GLM",
     :glm_fct32=>"sweep-fixes step_plm!: Float32 tile, HLL, cell-centred constrained transport (flux-CT, Toth 2000) in place of GLM",
-    :ct_fix=>"sweep-fixes CTMHD.step!: full MonCen slope, MUSCL-Hancock predictor in all directions, HLL, arithmetic edge EMF")
+    :ct_fix=>"sweep-fixes CTMHD.step!: full MonCen slope, MUSCL-Hancock predictor in all directions, HLL, arithmetic edge EMF",
+    :glm_fix_hll32=>"sweep-fixes step_plm!: Float32 tile TB=4, MonCen PLM, Hancock, HLL, c_h from the CFL step",
+    :glm_fix_ppm32=>"sweep-fixes integrator_plm_ppm! (a triple step_plm! does not list): Float32 tile TB=4, lean PPM, HLL, c_h from the CFL step",
+    :glm_fix_ppm_hlld=>"sweep-fixes integrator_plm_ppm! (a triple step_plm! does not list): Float32 tile TB=4, lean PPM, HLLD with the guard |denK| < 1e-4 p_tot*, c_h from the CFL step")
 function ct_module(gamma)
     haskey(CT_BY_GAMMA,Float32(gamma)) || error("CT adapter supports gamma in $(sort(collect(keys(CT_BY_GAMMA)))); got $gamma")
     CT_BY_GAMMA[Float32(gamma)]
@@ -172,10 +182,10 @@ with_ch_scale(p,scale)=G.Params(;Dict(f=>getfield(p,f) for f in fieldnames(G.Par
 The kernel behind step_plm! for a (tile, precision, Riemann solver) triple that step_plm! does not list. The lines
 before the launch are step_plm!'s own, copied; the launchers and kernels are the vendored ones, unedited.
 """
-function plm_unlisted!(uold,unew,afield,p,dt::Float32,t::Float32,tv::Val{TB},hv::Val,rv::Val;ppm::Bool=false) where {TB}
+function plm_unlisted!(uold,unew,afield,p,dt::Float32,t::Float32,tv::Val{TB},hv::Val,rv::Val;ppm::Bool=false,dt_cfl::Float32=dt) where {TB}
     N=p.N;dx=G.dxof(p);pfl=G.pfloor(p)
     N%TB==0 || error("N=$N not divisible by the tile size $TB")
-    ch=p.courant*dx/dt/Float32(G.NDIM)*p.glm_ch_scale
+    ch=p.courant*dx/dt_cfl/Float32(G.NDIM)*p.glm_ch_scale
     glm_fac=p.glm_cp_coef>0 ? exp(-(ch*ch/(p.glm_cp_coef*p.boxlen*ch))*dt) : 1.0f0
     ramp=min(t/p.turb_T,1.0f0);nb=N÷TB
     (ppm ? G._plm_ppm_launch : G._plm_launch)(tv,hv,rv,192,nb,unew,uold,afield,p,pfl,dt,dx,ch,glm_fac,ramp,false)
@@ -213,6 +223,12 @@ function advance!(s,p,dt,t;dt_cfl::Float32=dt)
         plm_unlisted!(s.u,s.other,s.force,p,dt,Float32(t),tile,Val(false),Val(:hll);ppm=m===:glm_ppm32)
     elseif m===:glm_hlld_x
         plm_unlisted!(s.u,s.other,s.force,p,dt,Float32(t),Val(4),Val(false),Val(:hlld))
+    elseif m===:glm_fix_hll32
+        G.step_plm!(s.u,s.other,s.force,p,dt,Float32(t);tb=4,half=false,riemann=:hll,anchored=false,dt_cfl)
+    elseif m===:glm_fix_ppm32
+        plm_unlisted!(s.u,s.other,s.force,p,dt,Float32(t),Val(4),Val(false),Val(:hll);ppm=true,dt_cfl)
+    elseif m===:glm_fix_ppm_hlld
+        plm_unlisted!(s.u,s.other,s.force,p,dt,Float32(t),Val(4),Val(false),Val(:hlld);ppm=true,dt_cfl)
     end
     if is_glm(m)
         s.u,s.other=s.other,s.u

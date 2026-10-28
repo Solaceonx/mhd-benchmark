@@ -35,8 +35,8 @@ OUT=SITE/"media/analysis"
 FIELDS=("density","magnetic")
 NORMS=("L1","L2","Linf")
 ALE_TESTS=re.search(r'^MHDALE_TESTS="([^"]+)"',(ROOT/"sherlock_mhdale/options.sh").read_text(),re.M).group(1).split()
-OURS=sd.GPU_METHODS+sd.FIXED
-METHODS=OURS+sd.EXTERNAL+sd.AREPO+sd.GIZMO+("mhdale_ale",)
+OURS=sd.GPU_METHODS+sd.FIXED+sd.ORDER_GLM
+METHODS=OURS+sd.EXTERNAL+sd.ORDER[len(sd.ORDER_GLM):]+sd.AREPO+sd.GIZMO+("mhdale_ale",)
 # With the rerun fetched, an original that has a fixed version is drawn in a light tint of its colour, the fix in full.
 FADED=set(sd.FIXES.values()) if sd.RERUN.is_dir() else set()
 TITLES={"01-errors":"Error norms versus physical time", "02-convergence":"Error versus resolution",
@@ -179,7 +179,7 @@ class Data:
             if method not in METHODS:continue
             path=self.sw.path(test,method,n,"run.toml",seed)
             if path and path.is_file():
-                meta=self.sw.meta(*key);row=self.sw.fixed.get(key)
+                meta=self.sw.meta(*key);row=self.sw.fixed.get(key) or self.sw.order.get(key)
                 if row and row["state"]=="stopped" and meta.get("status")=="complete":   # ran to the end, not a result (sweep_data.blew_up)
                     meta=dict(meta,status="not a result",error=row["note"],result_until=row["reached"])
                 self.runs[key]=Run(test,method,n,seed,path.parent,meta,self.sw.diag(*key) or {},planned)

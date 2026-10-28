@@ -52,5 +52,5 @@ trial="$(sbatch --parsable --partition=dev trial.sbatch 2> logs/sbatch_dev.err)"
 if [[ -z "$trial" ]]; then echo "   (dev partition refused the job: $(head -n 1 logs/sbatch_dev.err)); trying normal"; trial="$(sbatch --parsable --partition=normal,owners --requeue trial.sbatch)" || { echo "the trial could not be submitted"; exit 1; }; fi
 trial="${trial%%;*}"; echo "Submitted the trial as job $trial"
 [[ "$mode" == trial ]] && { echo "The trial takes about an hour. Then: bash -l $here/status.sh; production: bash -l $here/check.sh production"; exit 0; }
-production "$trial"; echo "The production tasks wait for the trial to pass; if it does not, Slurm keeps them pending (DependencyNeverSatisfied): scancel them."
+production "$trial"; echo "The production tasks wait for the trial to pass; if it does not, Slurm cancels them (as it did after trial 50008594)."
 echo "The trial takes about an hour. Then: bash -l $here/status.sh (runs go to $MHD_RESULTS)"

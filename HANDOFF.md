@@ -253,7 +253,7 @@ pass; the new RAMSES density-only movie runner has not yet run on Sherlock.
    both (`prepare_patch.py`); sent 2026-10-28, trial job 50008594 (`status.sh`). lyxia: rerun all tests at every grid with the
    fixed code, as for the CT fixes. Production queued behind the trial (afterok): arrays 50009253 (32-128², 8
    ranks), 50009255 (256², 16), 50009256 (512² KH ×2 + current sheet, 128 ranks, 48 h), 50009259 (512² others, 64
-   ranks, 24 h); normal only for 256/512 (no restart). If the trial fails they stay pending: scancel them. Old runs
+   ranks, 24 h); normal only for 256/512 (no restart). If the trial fails Slurm cancels them (it did after the first trial). First trial 50008594: fix works (Brio-Wu 256²/512² clean), but the Taylor-Green reference moved with the fast-speed fix; trial now also builds the tolerance fix alone. Resubmitted: trial 50014914, arrays 50014917 (32-128²), 50014919 (256²), 50014956 (512² long), 50014957 (512²). Old runs
    took 1,350 core-hours; this rerun is likely 5,000-10,000. Runs go to `mhd-results-mhdale-fix`; label them as with
    our fixes. Check job 49996615 (`divfree_check.cpp`) confirmed it: div/norm of the projected uniform field 1.8e-13, 6.1e-13,
    2.5e-12, 9.8e-12 (1.0e-11 on the translated mesh), 3.7e-11 at N = 32 to 512, on every mesh shape (4x per doubling). Tell T. Abel about both fixes.

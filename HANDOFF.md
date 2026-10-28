@@ -244,9 +244,17 @@ pass; the new RAMSES density-only movie runner has not yet run on Sherlock.
 5. **Two 3D blasts have no movie** (`blast_3d_b0`, `blast_3d_b100`): only six slices per run exist. A movie needs
    new runs with dense output; offered to lyxia, not built. The sweep driver can do it through a config with more
    `frames` and `slice_frames = "all"`, run like the checks.
-6. **MHD-ALE:** 45 of 62 runs done; tests with a mean field stop at 256² and 512² (16 ranks). Whether the grid or
-   the rank count triggers it: `bash -l /scratch/users/lyxia/mhd-study/sherlock_mhdale/rank_check_status.sh`
-   (run `rank_check.sh` first if it reports nothing).
+6. **MHD-ALE (2026-10-28):** the 16 stopped runs (every test with a mean field at 256² and 512²) all went through
+   `DivFreeProject`'s mixed solve, which does not converge on a fully periodic mesh; no finished run did. Cause: the
+   projected uniform background's divergence is round-off growing with resolution, tested against a fixed 1e-11 ×
+   norm. lyxia: "let's actually just fork and fix it ourselves". Our branch `sweep-fixes` of the fork
+   (`external/mhd-ale-abel`, Mac only, on T. Abel's newer `adde93b`, which also fixes the remap between ranks):
+   tolerance 1e-11 × norm / h, and the fast speed sqrt(cs² + vA²) (the code had + vA). `sherlock_mhdale/` applies
+   both (`prepare_patch.py`); not yet sent. Send with `check.sh trial` (README), read the trial's speed at 256²/512²,
+   then size the production runs (the old ones took 1,350 core-hours; KH and the current sheet at 512² will not fit
+   48 h, the code has no restart) and `check.sh production`. Runs go to `mhd-results-mhdale-fix`; label them as with
+   our fixes. Check job 49996615 (`divfree_check.cpp`, the divergence ratio per grid) result not read yet:
+   `$SCRATCH/mhd-results-mhdale-checks/divfree/divfree_check.txt`. Tell T. Abel about both fixes.
 
 ## 5. Next, in the order I would take it
 

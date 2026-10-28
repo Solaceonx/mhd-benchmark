@@ -4,15 +4,37 @@ MHD-ALE is "a structure-preserving, helicity-conserving high-order ALE finite el
 MHD" on MFEM: the mesh moves with the gas and is remapped from time to time; B is the curl of a vector potential in a
 Raviart-Thomas space, so its divergence is zero by construction. MPI on CPUs.
 
-We run **T. Abel's fork**, github.com/yipihey/MHD-ALE at commit `2e900cd4` (2026-10-07), of the original
+We run **T. Abel's fork**, github.com/yipihey/MHD-ALE at commit `adde93b1` (2026-10-07; the runs before 2026-10-28
+used `2e900cd4`) **with our two fixes** (below), of the original
 github.com/ruijie-xi/MHD-ALE (`0e0564ed`). The fork adds what the suite needs: remap in a box periodic in x as well
 (`-mst 1`, `-crz`), and a correction that keeps the stretching of a uniform background field across remaps (`-pmf`),
 with its own regression suite (`tests/regression.py`). MFEM is the fork its README names
 (github.com/ruijie-xi/mfem-develop, `842fac6a`), gslib commit `375eda25`; hypre 2.31.0 and METIS 4.0.3 are our
 choice (the README uses system packages). No licence file in either repository.
 
-Nothing of MHD-ALE is in this directory. `fetch.sh` gets it at the pinned commit; `prepare_patch.py` copies it and
-adds the suite to the copy (problem 100), without changing the solver.
+Nothing of MHD-ALE is in this directory. `fetch.sh` gets it at the pinned commit; `prepare_patch.py` copies it,
+applies our two fixes and adds the suite to the copy (problem 100).
+
+## Our two fixes (2026-10-28)
+
+The same two commits are on the branch `sweep-fixes` of the fork in `external/mhd-ale-abel` (on the Mac only);
+`prepare_patch.py` applies them on Sherlock as anchored edits.
+
+1. `tools.cpp`, `DivFreeProject`: the projection of the uniform background is kept if its divergence is at most
+   1e-11 x norm / h (h: the smallest element size), not 1e-11 x norm. That divergence is round-off that grows as the
+   mesh is refined; it passed the old limit from 256^2 on (128^2 elements), and the mixed solve the code then fell to
+   does not converge on a fully periodic mesh (MINRES stops at 500 iterations): the background came back wrong by
+   1e-7 to 1e-6 and `-pmf`'s flux check stopped the run. Every one of the 16 runs that stopped (all tests with a mean
+   field at 256^2 and 512^2) had gone through that solve; no run that finished had.
+2. `MHD_solver.hpp`: the fast speed for the time step and the artificial viscosity is sqrt(cs^2 + vA^2); the code
+   had sqrt(cs^2 + vA), too slow where vA > 1 (Brio-Wu's right state by 1.65x, the B = 100/sqrt(4 pi) blast's ambient
+   medium by 5.3x).
+
+Commit `adde93b1` itself fixes a third fault the earlier runs had: on several ranks the remap used the initial node
+positions on the faces between ranks. Its remap is also faster (remaps were about 85 % of the run time).
+`build.sh` builds the fork as it is (`build-stock`), with the fixes (`build-fixed`; the regression suite runs on
+both) and with the fixes and the suite (`build-abel`, the one that runs). `divfree_check.cpp` measures the
+divergence of the projected uniform field on the suite's meshes from 32^2 to 512^2.
 
 ## What it can run of the suite
 
@@ -37,22 +59,25 @@ small where the field is strong (the magnetised blasts).
 - `options.sh`: the run options (the fork's own: degrees 2/1/1/3, SSP RK3, CFL 0.5, remap every 10 steps,
   `-mst 1 -crz -pmf`), and the list of tests.
 - `mhdale_run.py`: MHD-ALE in the sweep's driver (`codes/external.py`, imported): the run directories
-  (`$SCRATCH/mhd-results-sweep/<test>-mhdale-ale-run-N<n>-s42/`), records and measurements are those of the other codes.
+  (`$MHD_RESULTS/<test>-mhdale-ale-run-N<n>-s42/`; `mhd-results-mhdale-fix` for the runs with the fixes), records and measurements are those of the other codes.
 
 ## Running it
 
-`check.sh` (on a login node) fetches the sources and submits two jobs:
+`check.sh` (on a login node) fetches the sources and submits two jobs (`check.sh trial`: the first only;
+`check.sh production`: the second, after a trial that passed). The runs with the fixes go to
+`$SCRATCH/mhd-results-mhdale-fix`.
 
-1. `trial.sbatch`: builds everything; runs the fork's regression suite; compares the starting state of each of the
-   13 tests at 64^2 with the suite's own (`ic_check.py`); takes 30 steps with remaps on two ranks for four tests.
-   It ends cleanly only if all of that is clean.
+1. `trial.sbatch`: builds everything; runs the fork's regression suite on `build-stock` and `build-fixed`; compares
+   the starting state of each of the 13 tests at 64^2 with the suite's own (`ic_check.py`); takes 30 steps with
+   remaps on two ranks for four tests; runs Brio-Wu at 256^2 and 512^2 on 16 ranks through its first remaps, which
+   must pass the mean-field check without the mixed solve. It ends cleanly only if all of that is clean.
 2. `mhdale.sbatch`, to start only if the trial passed: 13 array tasks, one per test, each running that test's grids
    (32^2 to 512^2) in turn on up to 16 ranks. MHD-ALE has no restart, so a run that does not fit in 48 hours ends
    its task there.
 
 On the Mac:
 
-    cd /Users/lyxia/Projects/research/abel_mhd && COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf - sherlock_mhdale | ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-study && tar -xzf - && bash -l sherlock_mhdale/check.sh'
+    cd /Users/lyxia/Projects/research/abel_mhd && COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf - sherlock_mhdale | ssh -o ServerAliveInterval=30 lyxia@login.sherlock.stanford.edu 'cd /scratch/users/lyxia/mhd-study && tar -xzf - && bash -l sherlock_mhdale/check.sh trial'
 
 and later, as often as wanted:
 

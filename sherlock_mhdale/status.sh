@@ -1,7 +1,7 @@
 #!/bin/bash
 # Where MHD-ALE stands: the trial's report, the production tasks, the runs recorded so far: bash -l status.sh
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$here"
-results="${MHD_RESULTS:-${SCRATCH:?SCRATCH is not set}/mhd-results-sweep}"
+results="${MHD_RESULTS:-${SCRATCH:?SCRATCH is not set}/mhd-results-mhdale-fix}"       # the runs with our two fixes
 echo "== mhdale jobs in the queue"; squeue -h -u "$USER" -o "   %.20i %.14j %.9T %.10M %R" | grep mhdale || echo "   none"
 echo "== mhdale jobs of the last 3 days, by state"
 sacct -X -n -P -u "$USER" -S now-3days -o JobID,JobName,State,ExitCode,Elapsed | grep "|mhdale" | awk -F'|' '{ split($1, a, "_"); n[a[1] " " $2 " " $3]++ } END { for (k in n) printf "   %4d  %s\n", n[k], k }' | sort -k2

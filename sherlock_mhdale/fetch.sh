@@ -10,13 +10,15 @@ get() {     # directory, repository, tag or commit (a full commit id is checked 
     if [[ ! -d "$dir/.git" ]]; then
         if [[ ${#ref} -eq 40 ]]; then git clone --quiet "$url" "$dir"; else git clone --quiet --depth 1 --branch "$ref" "$url" "$dir"; fi
     fi
-    [[ ${#ref} -ne 40 ]] || (cd "$dir" && git checkout --quiet "$ref")      # cd, not `git -C`: the login nodes' git is old
+    if [[ ${#ref} -eq 40 ]]; then       # cd, not `git -C`: the login nodes' git is old; fetch a commit made after the clone
+        (cd "$dir" && { git cat-file -e "$ref^{commit}" 2>/dev/null || git fetch --quiet origin; } && git checkout --quiet "$ref")
+    fi
     echo "$dir: $(cd "$dir" && git rev-parse HEAD) ($ref)"
 }
 get hypre https://github.com/hypre-space/hypre.git v2.31.0
 get gslib https://github.com/Nek5000/gslib.git 375eda25b04205d1f749ab0e00a0bb3f22225b22
 get mfem https://github.com/ruijie-xi/mfem-develop.git 842fac6a3b038eaee848921f096e80ceb5f895fa
-get mhd-ale https://github.com/yipihey/MHD-ALE.git 2e900cd42d3b9041cd87e7e36e1334f239798438
+get mhd-ale https://github.com/yipihey/MHD-ALE.git adde93b106092f8bcaf93ca9a70c6da686d95f48     # our two fixes: prepare_patch.py
 if [[ ! -f metis-4.0.3/Makefile ]]; then
     curl -sSL -o metis-4.0.3.tar.gz https://github.com/mfem/tpls/raw/gh-pages/metis-4.0.3.tar.gz && tar -xzf metis-4.0.3.tar.gz
 fi

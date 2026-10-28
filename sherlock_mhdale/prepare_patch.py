@@ -1,10 +1,18 @@
 """Copy the MHD-ALE source and add the comparison suite to it.
 
     python3 prepare_patch.py SOURCE_DIR BUILD_DIR ABEL_PROBLEMS_HPP
+    python3 prepare_patch.py --fixes-only TREE          only our two fixes, in place, in a copy of the whole tree
 
 SOURCE_DIR is the checkout of T. Abel's fork of MHD-ALE at the pinned commit (never changed); BUILD_DIR receives its C++ files with the
 edits below, our testcase_Abel.cpp and abel_dump.cpp/.hpp, and the suite's abel_problems.hpp. Every edit is anchored
 on text of the pinned commit and fails loudly if that text is not there once.
+
+Fixes (the two commits of our branch sweep-fixes of the fork, marked "abel fix:"):
+  tools.cpp             DivFreeProject keeps the projection of the uniform background if its divergence is at most
+                        1e-11 x norm / h, not 1e-11 x norm: that divergence is round-off growing with resolution, and
+                        the mixed solve it fell to does not converge on a fully periodic mesh, so every test with a
+                        mean field stopped at 256^2 and 512^2 (-pmf's flux check)
+  MHD_solver.hpp        the fast speed of the time step and the viscosity is sqrt(cs^2 + vA^2), not sqrt(cs^2 + vA)
 
 Edits (all marked "abel:" in the patched files):
   Problemdata.hpp/.cpp  problem number 100 = the suite's tests (GetProblemAbel in testcase_Abel.cpp)
@@ -14,19 +22,35 @@ Edits (all marked "abel:" in the patched files):
                            at the first step past the time), and the step size from before is restored afterwards
                         3. ABEL_ONLY_INITIAL: stop after writing the initial state; ABEL_DUMP_LAST: also write the
                            last state of a run cut short by -ms
-Nothing in the solver is changed.
+Nothing else in the solver is changed.
 """
 import shutil
 import sys
 from pathlib import Path
 
-COMMIT = "2e900cd42d3b9041cd87e7e36e1334f239798438"       # yipihey/MHD-ALE (T. Abel): x-periodic ALE, mean-field remap
+COMMIT = "adde93b106092f8bcaf93ca9a70c6da686d95f48"       # yipihey/MHD-ALE (T. Abel): faster remaps, multi-rank face fix
 
 
 def edit(text, old, new, name):
     if text.count(old) != 1:
         sys.exit(f"prepare_patch.py: {name}: expected this text once, found it {text.count(old)} times:\n{old}")
     return text.replace(old, new)
+
+
+def fixes(tree):
+    tree = Path(tree)
+    p = tree/"tools.cpp";t = p.read_text()
+    t = edit(t, "        if(GFDivError(gf) <= 1e-11*std::max(norm,real_t(1e-30))) return;\n",
+             "        // abel fix: div B is B over a length, so compare it with norm/h. The divergence of an exactly represented\n"
+             "        // field is round-off that grows as the mesh is refined: against norm alone it passes 1e-11 from 128^2\n"
+             "        // elements of the unit square on, and the mixed solve below does not converge on a fully periodic mesh.\n"
+             "        const real_t h = GetMeshSize(gf.ParFESpace()->GetParMesh());\n"
+             "        if(GFDivError(gf) <= 1e-11*std::max(norm,real_t(1e-30))/h) return;\n", p.name)
+    p.write_text(t)
+    p = tree/"MHD_solver.hpp";t = p.read_text()
+    t = edit(t, "         if (magnetic_active) { cs2 += sqrt(B2[v])/sqrt(mu*rho[v]); }\n",
+             "         if (magnetic_active) { cs2 += B2[v]/(mu*rho[v]); } // abel fix: fast speed cs^2 + vA^2 (was + vA)\n", p.name)
+    p.write_text(t)
 
 
 def main(source, build, header):
@@ -38,6 +62,7 @@ def main(source, build, header):
         shutil.copy2(here/f, build/f)
     shutil.copy2(header, build/"abel_problems.hpp")
 
+    fixes(build)
     p = build/"Problemdata.hpp";t = p.read_text()
     t = edit(t, "   TAYLOR_GREEN = 0,\n", "   TAYLOR_GREEN = 0,\n   ABEL = 100, // abel: the comparison suite (testcase_Abel.cpp)\n", p.name)
     t = edit(t, "ProblemData *GetProblemData(Testcase p, int dim, real_t Bmag);",
@@ -85,10 +110,11 @@ def main(source, build, header):
              "      { AbelDump(999, t, abel_steps, *pmesh, rho_gf, v_gf, e_gf, B_gf, mat_gf, pd->mu, outputdir); }\n"
              "      if (last_step || CheckPlot(plot_time, t))\n", p.name)
     p.write_text(t)
-    (build/"ABEL_PATCH.txt").write_text(f"MHD-ALE {COMMIT} with the comparison suite added by prepare_patch.py\n")
+    (build/"ABEL_PATCH.txt").write_text(f"MHD-ALE {COMMIT} with our two fixes (DivFreeProject tolerance, fast speed) and the comparison suite added by prepare_patch.py\n")
     print(f"patched source in {build}")
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 3 and sys.argv[1] == "--fixes-only":fixes(sys.argv[2]);sys.exit(0)
     if len(sys.argv) != 4:sys.exit(__doc__)
     main(*sys.argv[1:])

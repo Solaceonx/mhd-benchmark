@@ -1,15 +1,17 @@
 #!/bin/bash
 # Does MHD-ALE (T. Abel's fork) work here, with the suite added? (see README.md)
-#   1. build everything;  2. the fork's own regression suite;  3. the starting state of every test of the suite, on
-#   the suite's grid, against the suite's own;  4. a few steps with remaps in the periodic box, on two ranks.
-# Ends with exit code 0 only if all four are clean: the production array (mhdale.sbatch) waits on that.
+#   1. build everything;  2. the fork's own regression suite, on the fork as it is and with our two fixes;  3. the
+#   starting state of every test of the suite, on the suite's grid, against the suite's own;  4. a few steps with remaps
+#   in the periodic box, on two ranks;  5. the mean-field check where it failed before the fixes: Brio-Wu at 256^2 and
+#   512^2 on 16 ranks, through its first remaps.
+# Ends with exit code 0 only if all five are clean: the production array (mhdale.sbatch) waits on that.
 # Submitted by check.sh. The report is logs/trial_report.txt (bash -l status.sh shows it).
 #SBATCH --job-name=mhdale-trial
 #SBATCH --nodes=1
-#SBATCH --ntasks=4
+#SBATCH --ntasks=16
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=4G
-#SBATCH --time=02:00:00
+#SBATCH --time=03:00:00
 #SBATCH --output=logs/%x-%j.out
 #SBATCH --error=logs/%x-%j.out
 set -uo pipefail
@@ -25,11 +27,15 @@ say "== MHD-ALE (yipihey fork) trial, job ${SLURM_JOB_ID:-?} on $(hostname), $(d
 bash "$here/build.sh" 2>&1 | tee -a "$report"
 [[ -x "$root/build-stock/MHD" ]] || { say "TRIAL FAILED: the fork did not build"; exit 1; }
 
-# ---- 2. the fork's own regression suite (tests/regression.py: about 28 short runs on one and two ranks)
-say ""; say "== 2. the fork's regression suite"
-( cd "$root/build-stock" && rm -rf "$trial/regression" && MPIEXEC="${MHDALE_MPIEXEC:-bash $here/srun_np.sh}" python3 tests/regression.py --output "$trial/regression" ) > "$trial/regression.log" 2>&1; rc=$?
-say "   exit code $rc; $(grep -c ' PASS$' "$trial/regression.log") runs passed, $(grep -c 'FAIL' "$trial/regression.log") lines with FAIL; last line: $(grep -v '^ *$' "$trial/regression.log" | tail -n 1 | cut -c1-200)"
-if [[ $rc -ne 0 ]]; then bad=1; grep -n -i -E "FAIL|error|abort" "$trial/regression.log" | head -n 8 | cut -c1-220 | tee -a "$report"; fi
+# ---- 2. the fork's own regression suite (tests/regression.py: about 28 short runs on one and two ranks), on the fork
+# as it is and with our two fixes
+for build in stock fixed; do
+    say ""; say "== 2. the fork's regression suite, build-$build"
+    ( cd "$root/build-$build" && rm -rf "$trial/regression-$build" && MPIEXEC="${MHDALE_MPIEXEC:-bash $here/srun_np.sh}" python3 tests/regression.py --output "$trial/regression-$build" ) > "$trial/regression-$build.log" 2>&1; rc=$?
+    log="$trial/regression-$build.log"
+    say "   exit code $rc; $(grep -c ' PASS$' "$log") runs passed, $(grep -c 'FAIL' "$log") lines with FAIL; last line: $(grep -v '^ *$' "$log" | tail -n 1 | cut -c1-200)"
+    if [[ $rc -ne 0 ]]; then bad=1; grep -n -i -E "FAIL|error|abort" "$log" | head -n 8 | cut -c1-220 | tee -a "$report"; fi
+done
 
 [[ -x "$root/build-abel/MHD" ]] || { say "TRIAL FAILED: the fork with the suite added did not build (see above)"; exit 1; }
 
@@ -94,6 +100,20 @@ sys.exit(0 if ok else 1)
 PY
     [[ ${PIPESTATUS[0]} -eq 0 ]] || bad=1
     [[ -s "$out/B_divergence_error.dat" ]] && say "      its own divergence error of B, first and last step: $(head -n 1 "$out/B_divergence_error.dat" | awk '{print $2}'), $(tail -n 1 "$out/B_divergence_error.dat" | awk '{print $2}')"
+done
+# ---- 5. the mean-field check where it failed before the fixes (every test with a mean field, 256^2 and 512^2)
+say ""; say "== 5. Brio-Wu at 256^2 and 512^2 on 16 ranks through its first remaps: the mean-field check (-pmf) without the mixed solve"
+for N in 256 512; do
+    mesh="$trial/unit_$((N / 2)).mesh"; python3 "$here/make_mesh.py" "$((N / 2))" "$mesh"
+    steps=$([[ $N -eq 256 ]] && echo 28 || echo 15)    # attempts: two remaps at 256^2, one at 512^2
+    prepare brio_wu || { bad=1; continue; }
+    t0=$SECONDS; ABEL_TAG="_n$N" run_abel 16 brio_wu -ms "$steps"; rc=$?
+    log="$out/MHD.out"; checks=$(grep -c "Mean-field decomposition" "$log"); fallback=$(grep -c "Solving div-free" "$log")
+    worst=$(grep "Mean-field decomposition" "$log" | awk '{print $NF}' | sort -g | tail -n 1)
+    line="   N=$N: exit code $rc, $(grep -c '^step ' "$log") steps in $((SECONDS - t0)) s, $checks remap checks, largest error ${worst:-none}, mixed solves $fallback"
+    if [[ $rc -ne 0 || $checks -lt 1 || $fallback -ne 0 ]] || ! awk -v w="${worst:-1}" 'BEGIN { exit !(w < 1e-10) }'; then
+        bad=1; say "$line  NOT CLEAN; end of its output: $(grep -v '^ *$' "$log" | tail -n 3 | tr '\n' ' ' | cut -c1-240)"
+    else say "$line  clean"; fi
 done
 say ""
 if [[ $bad -eq 0 ]]; then say "== TRIAL PASSED $(date -u): the production runs (mhdale.sbatch) may start"; exit 0; fi

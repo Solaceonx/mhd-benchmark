@@ -29,6 +29,7 @@ for n in ${MHDALE_GRIDS:-$(python3 -c "import tomllib, sys; print(*tomllib.load(
     python3 "$here/mhdale_run.py" mhdale ale "$config" "$n" "$out" --exe "$exe" --mpi "srun -n $ranks" --geometry plane \
         --repeats 1 --resume --device "$(hostname)" --device-kind cpu; rc=$?
     [[ $rc -eq 76 ]] && { echo "this job is being stopped; it will be requeued"; exit 1; }
+    cp "$MHD_CODES/mhdale-yipihey/build-abel/ABEL_PATCH.txt" "$MHD_CODES/mhdale-yipihey/BUILD_INFO.txt" "$out/" 2>/dev/null
     [[ $rc -ne 0 ]] && echo "   $test N=$n: exit code $rc (see its run.toml and mhdale.log)"
 done
 echo "== task $task finished $(date -u)"

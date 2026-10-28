@@ -32,8 +32,11 @@ The same two commits are on the branch `sweep-fixes` of the fork in `external/mh
 
 Commit `adde93b1` itself fixes a third fault the earlier runs had: on several ranks the remap used the initial node
 positions on the faces between ranks. Its remap is also faster (remaps were about 85 % of the run time).
-`build.sh` builds the fork as it is (`build-stock`), with the fixes (`build-fixed`; the regression suite runs on
-both) and with the fixes and the suite (`build-abel`, the one that runs). `divfree_check.cpp` measures the
+`build.sh` builds the fork as it is (`build-stock`), with the first fix (`build-tolerance`), with both
+(`build-fixed`) and with both and the suite (`build-abel`, the one that runs); the regression suite runs on the
+first three. With the second fix its Taylor-Green reference moves (by 1e-4 in density, 4e-5 in v, e and B, against a
+limit of 1e-6: the fields were recorded with the old fast speed); every other check passes, and the trial accepts
+exactly that. `divfree_check.cpp` measures the
 divergence of the projected uniform field on the suite's meshes from 32^2 to 512^2.
 
 ## What it can run of the suite

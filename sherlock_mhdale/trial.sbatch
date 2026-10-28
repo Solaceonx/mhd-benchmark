@@ -28,13 +28,20 @@ bash "$here/build.sh" 2>&1 | tee -a "$report"
 [[ -x "$root/build-stock/MHD" ]] || { say "TRIAL FAILED: the fork did not build"; exit 1; }
 
 # ---- 2. the fork's own regression suite (tests/regression.py: about 28 short runs on one and two ranks), on the fork
-# as it is and with our two fixes
-for build in stock fixed; do
+# as it is, with our first fix (the tolerance) and with both. The fork as it is and with the first fix must pass every
+# check. With both, the Taylor-Green reference (fields recorded by the fork, whose time step and viscosity used the
+# old fast speed) moves with the second fix: those checks are reported, every other check must pass.
+for build in stock tolerance fixed; do
     say ""; say "== 2. the fork's regression suite, build-$build"
     ( cd "$root/build-$build" && rm -rf "$trial/regression-$build" && MPIEXEC="${MHDALE_MPIEXEC:-bash $here/srun_np.sh}" python3 tests/regression.py --output "$trial/regression-$build" ) > "$trial/regression-$build.log" 2>&1; rc=$?
     log="$trial/regression-$build.log"
     say "   exit code $rc; $(grep -c ' PASS$' "$log") runs passed, $(grep -c 'FAIL' "$log") lines with FAIL; last line: $(grep -v '^ *$' "$log" | tail -n 1 | cut -c1-200)"
-    if [[ $rc -ne 0 ]]; then bad=1; grep -n -i -E "FAIL|error|abort" "$log" | head -n 8 | cut -c1-220 | tee -a "$report"; fi
+    if [[ $rc -ne 0 ]]; then
+        other=$(grep -E "FAIL|error|abort" "$log" | grep -v -E "^FAIL Taylor-Green reference: |^Regression checks failed" | wc -l)
+        if [[ $build == fixed && $other -eq 0 ]] && grep -q "^FAIL Taylor-Green reference: " "$log"; then
+            say "   expected with the second fix (the fast speed changes the time step), every other check passed:"; grep "^FAIL Taylor-Green reference: " "$log" | sed 's/^/      /' | tee -a "$report"
+        else bad=1; grep -n -i -E "FAIL|error|abort" "$log" | head -n 8 | cut -c1-220 | tee -a "$report"; fi
+    fi
 done
 
 [[ -x "$root/build-abel/MHD" ]] || { say "TRIAL FAILED: the fork with the suite added did not build (see above)"; exit 1; }

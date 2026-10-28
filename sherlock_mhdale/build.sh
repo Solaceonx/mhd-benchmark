@@ -30,9 +30,9 @@ build_stock() {       # the whole tree, with the fork's own tests (make check); 
         && (cd "$src/mhd-ale" && tar -cf - --exclude=.git .) | tar -xf - \
         && make -j "$jobs" MFEM_INSTALL_DIR="$root/mfem-install" MHD test_mean_field_geometry test_periodic_projection
 }
-build_fixed() {       # the whole tree with our two fixes (prepare_patch.py --fixes-only), for the regression suite
-    rm -rf "$root/build-fixed" && mkdir -p "$root/build-fixed" && cd "$root/build-fixed" \
-        && (cd "$src/mhd-ale" && tar -cf - --exclude=.git .) | tar -xf - && python3 "$here/prepare_patch.py" --fixes-only . \
+build_fixed() {       # tree, which: the whole tree with our fixes (prepare_patch.py --fixes-only), for the regression suite
+    rm -rf "$root/$1" && mkdir -p "$root/$1" && cd "$root/$1" \
+        && (cd "$src/mhd-ale" && tar -cf - --exclude=.git .) | tar -xf - && python3 "$here/prepare_patch.py" --fixes-only . "$2" \
         && make -j "$jobs" MFEM_INSTALL_DIR="$root/mfem-install" MHD test_mean_field_geometry test_periodic_projection
 }
 build_abel() {
@@ -45,9 +45,10 @@ step hypre "$src/hypre/src/hypre/lib/libHYPRE.a" build_hypre || exit 1
 step metis "$src/metis-4.0.3/libmetis.a" build_metis || exit 1
 step gslib "$src/gslib/build/lib/libgs.a" build_gslib || exit 1
 step mfem "$root/mfem-install/share/mfem/config.mk" build_mfem || exit 1
-rm -f "$root/build-stock/test_periodic_projection" "$root/build-fixed/test_periodic_projection" "$root/build-abel/MHD"
+rm -f "$root/build-stock/test_periodic_projection" "$root/build-fixed/test_periodic_projection" "$root/build-tolerance/test_periodic_projection" "$root/build-abel/MHD"
 step mhd-ale-fork "$root/build-stock/test_periodic_projection" build_stock || exit 1
-step mhd-ale-fixed "$root/build-fixed/test_periodic_projection" build_fixed || exit 1
+step mhd-ale-fixed "$root/build-fixed/test_periodic_projection" build_fixed build-fixed all || exit 1
+step mhd-ale-tolerance-fix "$root/build-tolerance/test_periodic_projection" build_fixed build-tolerance tolerance || exit 1
 step mhd-ale-with-the-suite "$root/build-abel/MHD" build_abel || exit 1
 { date -u; hostname; for d in hypre gslib mfem mhd-ale; do echo "$d $(cd "$src/$d" && git rev-parse HEAD)"; done; mpicxx --version | head -n 1; module list 2>&1; } > "$root/BUILD_INFO.txt"
 echo "built: $root/build-stock/MHD, $root/build-fixed/MHD and $root/build-abel/MHD"

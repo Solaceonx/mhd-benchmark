@@ -1,7 +1,8 @@
 """Copy the MHD-ALE source and add the comparison suite to it.
 
     python3 prepare_patch.py SOURCE_DIR BUILD_DIR ABEL_PROBLEMS_HPP
-    python3 prepare_patch.py --fixes-only TREE          only our two fixes, in place, in a copy of the whole tree
+    python3 prepare_patch.py --fixes-only TREE [all|tolerance]   only our fixes (both, or the first), in place, in a
+                                                                  copy of the whole tree
 
 SOURCE_DIR is the checkout of T. Abel's fork of MHD-ALE at the pinned commit (never changed); BUILD_DIR receives its C++ files with the
 edits below, our testcase_Abel.cpp and abel_dump.cpp/.hpp, and the suite's abel_problems.hpp. Every edit is anchored
@@ -37,7 +38,7 @@ def edit(text, old, new, name):
     return text.replace(old, new)
 
 
-def fixes(tree):
+def fixes(tree, which="all"):
     tree = Path(tree)
     p = tree/"tools.cpp";t = p.read_text()
     t = edit(t, "        if(GFDivError(gf) <= 1e-11*std::max(norm,real_t(1e-30))) return;\n",
@@ -47,6 +48,7 @@ def fixes(tree):
              "        const real_t h = GetMeshSize(gf.ParFESpace()->GetParMesh());\n"
              "        if(GFDivError(gf) <= 1e-11*std::max(norm,real_t(1e-30))/h) return;\n", p.name)
     p.write_text(t)
+    if which == "tolerance":return
     p = tree/"MHD_solver.hpp";t = p.read_text()
     t = edit(t, "         if (magnetic_active) { cs2 += sqrt(B2[v])/sqrt(mu*rho[v]); }\n",
              "         if (magnetic_active) { cs2 += B2[v]/(mu*rho[v]); } // abel fix: fast speed cs^2 + vA^2 (was + vA)\n", p.name)
@@ -115,6 +117,8 @@ def main(source, build, header):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3 and sys.argv[1] == "--fixes-only":fixes(sys.argv[2]);sys.exit(0)
+    if sys.argv[1:2] == ["--fixes-only"]:
+        if len(sys.argv) not in (3, 4) or sys.argv[3:] not in ([], ["all"], ["tolerance"]):sys.exit(__doc__)
+        fixes(*sys.argv[2:]);sys.exit(0)
     if len(sys.argv) != 4:sys.exit(__doc__)
     main(*sys.argv[1:])

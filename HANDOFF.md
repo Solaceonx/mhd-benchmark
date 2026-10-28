@@ -127,14 +127,17 @@ Our figures (robustness column, context points), and a second movie on the test 
 (old `sweep_results/*-gizmo-*` moved away first): `test_diagnostics.py` for the 17 tests, the codes movies, the page
 builders, publish.
 
-**Order x solver study, 2026-10-28 (not yet sent):** the work-precision figures (`scripts/work_precision.py`, Our
+**Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our
 figures, unpublished) suggest much of AthenaK's and Athena++'s "best" gain on nonlinear tests is HLLD's, not PPM's;
 lyxia wants it tested in several codes. `sherlock_order/` gives AthenaK, Athena++ and Abel et al.'s kernels (Float32,
 4-cell tile, unedited kernels through the driver) all four PLM/PPM x HLL-family/HLLD pairs at one integrator, 13 tests,
 32-512, seed 42: 567 runs, about 66 GPU hours and 620 core-hours; pilots gate the arrays. Built and checked on the Mac
 (PTX of the four GLM pairs compiles, configs agree with the driver, the AthenaK/Athena++ inputs are right). Send and
-submit with the command in `sherlock_order/README.md`; fetch into `order_results/`; `work_precision.py` then prints
-each code's split (`factorial`). The figure of the split is not written yet.
+submitted 2026-10-28 (lyxia: "send it, full"): pilots order-glm 49982560, order-athenak 49982565, order-athenapp
+49982569; arrays 49982561 (glm, 5 tasks), 49982566 (athenak, 7), 49982571/74/75, 49982601/03/05/07/09 (athenapp, 1 to
+128 ranks), each waiting on its pilot. Follow with `status.sh` (README); if a pilot fails, cancel its array and find the
+cause before anything is resubmitted. Then fetch into `order_results/`; `work_precision.py` prints each code's split
+(`factorial`). The figure of the split is not written yet.
 
 **New codes, 2026-10-22:** lyxia asked for Eric Moseley's mini-ramses-ism (his RAMSES II, bitbucket ermoseley,
 `develop`) and GIZMO; FLASH dropped (its licence bars cloud AI tools from the code). Both bundles are ready, not yet

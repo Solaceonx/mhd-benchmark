@@ -1,0 +1,33 @@
+# -----------------------------------------------
+# abel: NVHPC mpicxx with OpenACC for the H100 (cc90); linux.mpicxx.acc.defs otherwise
+# Parallel version
+# -----------------------------------------------
+
+CC      = mpicxx
+
+DIAG_SUPPRESS_FLAGS = \
+    --diag_suppress=set_but_not_used \
+    --diag_suppress=code_is_unreachable \
+    --diag_suppress=initialization_not_reachable \
+    --diag_suppress=white_space_inside_splice \
+    --diag_suppress=declared_but_not_referenced \
+    --diag_suppress=implicit_return_from_non_void_function
+
+CFLAGS  = -c -acc  -std=c++17 -gpu=cc90,rdc,mem:managed -cudalib=nccl -Minline=1000 -O3 $(DIAG_SUPPRESS_FLAGS)
+
+LDFLAGS = -lm -acc -gpu=cc90,rdc,mem:managed -cudalib=nccl -lnccl -cudalib=nvtx3
+
+PARALLEL = TRUE
+USE_HDF5 = FALSE
+
+#######################################
+#    HDF5 library options
+#######################################
+
+ifeq ($(strip $(USE_HDF5)), TRUE)
+# sudo apt install libhdf5-mpi-dev #
+ HDF5_LIB = /usr/lib/x86_64-linux-gnu
+ INCLUDE_DIRS += -I/usr/include
+ INCLUDE_DIRS += -I/usr/include/hdf5/openmpi
+ LDFLAGS      += -L$(HDF5_LIB) -lhdf5_openmpi -lhdf5_openmpi_hl -lz -lpthread -ldl -lm
+endif

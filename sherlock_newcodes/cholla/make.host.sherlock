@@ -1,0 +1,15 @@
+#-- abel: Sherlock, H100 (sm_90): gcc 12.4, openmpi 4.1.6, cuda 12.4, hdf5 1.14.4 (modules). build.sh passes
+#   CUDA_ROOT, HDF5_ROOT and MPI_ROOT from the loaded modules on the make command line.
+CXX               = mpicxx
+CXXFLAGS_DEBUG    = -g -O0 -std=c++17
+CXXFLAGS_OPTIMIZE = -O3 -std=c++17
+GPUFLAGS_DEBUG    = -g -G -cudart shared -O0 -std=c++17 -ccbin=mpicxx
+GPUFLAGS_OPTIMIZE = -O3 -std=c++17 -ccbin=mpicxx
+CUDA_ARCH         = sm_90
+
+OMP_NUM_THREADS   = 1
+
+CUDA_ROOT        ?= /usr/local/cuda
+HDF5_ROOT        ?= /usr
+MPI_ROOT         ?= /usr
+GOOGLETEST_ROOT  := ${GOOGLETEST_ROOT}

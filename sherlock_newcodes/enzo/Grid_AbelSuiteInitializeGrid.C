@@ -10,8 +10,11 @@
 /            set-up only. Every cell, ghosts included, from the periodic global index of its centre.
 /
 ************************************************************************/
+// The suite's header and the standard ones first: Enzo's macros_and_parameters.h redefines int, which breaks
+// standard headers included after it.
 #include <cmath>
 #include <cstdlib>
+#include "abel_problems.hpp"
 
 #include "preincludes.h"
 #include "macros_and_parameters.h"
@@ -22,7 +25,6 @@
 #include "ExternalBoundary.h"
 #include "fortran.def"
 #include "Grid.h"
-#include "abel_problems.hpp"
 
 int FindField(int field, int farray[], int numfields);
 
@@ -60,7 +62,7 @@ int grid::AbelSuiteInitializeGrid()
   for (int d = 0; d < 3; d++)
     dx[d] = d < GridRank ? (GridRightEdge[d] - GridLeftEdge[d])/(GridDimension[d] - 2*NumberOfGhostZones) : 1.0;
   // periodic global index of local cell i along d (its centre); the lower face of that cell has the same index
-  auto cell = [&](int d, int i) {
+  auto cell = [&](int d, int i) -> int {
     if (d >= GridRank || (d == 2 && spec.planar)) return 0;
     const double x = GridLeftEdge[d] + (i - GridStartIndex[d] + 0.5)*dx[d] - DomainLeftEdge[d];
     const int q = static_cast<int>(std::floor(x*n));

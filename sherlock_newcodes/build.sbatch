@@ -1,5 +1,5 @@
 #!/bin/bash -l
-# Build the four grid codes (build.sh) on a CPU node: the GPU builds need the CUDA and NVHPC compilers, not a GPU.
+# Build the five codes (build.sh) on a CPU node: the GPU builds need the CUDA and NVHPC compilers, not a GPU.
 #SBATCH --job-name=newcodes-build
 #SBATCH --partition=normal,owners
 #SBATCH --requeue
@@ -13,4 +13,4 @@
 set -uo pipefail
 here="$SLURM_SUBMIT_DIR"
 export SWEEP_BUNDLE="${SWEEP_BUNDLE:-/scratch/users/lyxia/mhd-study/sherlock_sweep}"
-NEWCODES_BUILD_JOBS="$SLURM_CPUS_PER_TASK" bash "$here/build.sh" ${NEWCODES:-athenapk cholla pluto enzo}
+NEWCODES_BUILD_JOBS="$SLURM_CPUS_PER_TASK" bash "$here/build.sh" ${NEWCODES:-athenapk cholla pluto enzo phantom}

@@ -1,4 +1,4 @@
-"""AthenaPK, Cholla, gPLUTO and Enzo in the sweep's external-code driver.
+"""AthenaPK, Cholla, gPLUTO, Enzo and Phantom in the sweep's external-code driver.
 
     python3 newcodes_run.py CODE VARIANT CONFIG.toml N OUTDIR --exe PATH --mpi "srun -n K" --geometry plane|cube [--repeats 1] [--resume]
 
@@ -13,6 +13,8 @@ suite's state (N, N, Nz, 9: rho, momentum, total energy, cell-centred B, psi) at
   pluto      gPLUTO on the GPU (OpenACC): constrained transport or GLM, by build; planar tests in 2D; .dbl outputs
   enzo       Enzo on CPUs (MPI): Dedner cleaning (HydroMethod 4) or constrained transport (6); planar tests in 2D;
              HDF5 grids per output (hierarchy file read for their places)
+  phantom    SPH on CPUs (OpenMP): equal-mass particles on lattices pasted to the suite's density (setup_abel.f90 reads them),
+             each dump's particles (analysis_abel.f90) deposited on the grid as GIZMO's; planar tests on an 8-layer slab
 
 Every code starts from the suite's state through abel_problems.hpp (its own patch). Each code's executable is the
 build of the variant (build.sh): --exe names it. Native outputs are removed once converted (--keep-native keeps them).
@@ -315,16 +317,115 @@ def run_enzo(args, config, spec, settings, rundir, rep, outputs, resume=False):
     return rc, tail, perf, (read_enzo(d, args.n, rank, settings) for d in dumps)
 
 
+# ------------------------------------------------------------------------------ Phantom
+LAYERS = 8          # Phantom (3D only): particle layers of the periodic slab a planar test runs on
+HFACT = 1.2         # Phantom's hfact_default: h = hfact (m / rho)^(1/3)
+
+
+def phantom_particles(u, planar):
+    """Equal-mass particles for the suite's (n, n, nz, 9) state, as Phantom's own shock and rotor set-ups place them:
+    lattices of different spacing pasted together. Each cell takes the near-cubic lattice whose density is closest to
+    its own (k = round(n (rho / mean rho)^(1/3)) points per unit length in x and y, round(LAYERS k / n) layers in the
+    slab: as many particles as cells) and keeps that lattice's points inside it, so a uniform state is one lattice of a
+    particle per cell, and a
+    density is matched to steps of about 3/n (10 % at 32^2, 0.6 % at 512^2) with the lattice locally isotropic. The
+    particle mass makes the total mass exact. Values of the cell each particle lies in. Planar: the n x n plane times
+    a z-periodic slab of LAYERS/n. 3D: the uniform-density tests only (none of the suite's 3D tests is otherwise)."""
+    n = u.shape[0]
+    if planar:
+        rho = u[:, :, 0, 0].astype(float);thick = LAYERS/n
+        level = np.maximum(np.rint(n*np.cbrt(rho/rho.mean())).astype(int), 1)
+        pts = []
+        for k in np.unique(level):
+            g = (np.arange(k) + 0.5)/k;c = np.minimum((g*n).astype(int), n - 1)
+            a, b = np.nonzero(level[np.ix_(c, c)] == k)
+            if not len(a):continue
+            nzk = max(int(round(LAYERS*k/n)), 1);zl = (np.arange(nzk) + 0.5)*thick/nzk
+            pts.append(np.column_stack([np.repeat(g[a], nzk), np.repeat(g[b], nzk), np.tile(zl, len(a))]))
+        pos = np.concatenate(pts)
+        cell = np.minimum((pos[:, 0]*n).astype(int), n - 1)*n + np.minimum((pos[:, 1]*n).astype(int), n - 1)
+        state = u[:, :, 0, :].reshape(n*n, 9).astype(float)[cell];mass = rho.sum()/n**2*thick/len(pos)
+    else:
+        rho = u[..., 0].astype(float)
+        if rho.max() - rho.min() > 1e-12*rho.max():raise SystemExit("Phantom's 3D set-up here needs a uniform density")
+        g = (np.arange(n) + 0.5)/n;X, Y, Z = np.meshgrid(g, g, g, indexing="ij")
+        pos = np.stack([X.ravel(), Y.ravel(), Z.ravel()], 1);thick = 1.0
+        state = u.reshape(n**3, 9).astype(float);mass = rho.mean()/len(pos)
+    r = state[:, 0];v = state[:, 1:4]/r[:, None];b = state[:, 5:8]
+    e = (state[:, 4] - 0.5*(state[:, 1:4]**2).sum(1)/r - 0.5*(b**2).sum(1))/r
+    h = HFACT*(mass/r)**(1/3)
+    return pos, h, v, e, b, mass, thick
+
+
+def write_particles(path, pos, h, v, e, b, mass, thick, gamma, t_max, dt_max):
+    with open(path, "wb") as f:
+        np.array([len(pos)], dtype="<i8").tofile(f)
+        np.array([mass, 0.0, 1.0, 0.0, 1.0, 0.0, thick, gamma, t_max, dt_max], dtype="<f8").tofile(f)
+        np.concatenate([pos[:, 0], pos[:, 1], pos[:, 2], h, v[:, 0], v[:, 1], v[:, 2], e, b[:, 0], b[:, 1], b[:, 2]]).astype("<f8").tofile(f)
+
+
+def read_phantom(path, n, planar, thick):
+    """(time, (n, n, nz, 9)) of a dump's particles (analysis_abel.f90): mass, momentum, total energy and field times
+    volume of each particle deposited on the grid as GIZMO's (gizmo_run.deposit; the kernel's support is 2h) and
+    divided by the cell volume. psi = 0."""
+    sys.path.insert(0, str(SWEEP.parent/"sherlock_gizmo"))
+    import gizmo_run
+    with open(path, "rb") as f:
+        npart = int(np.fromfile(f, dtype="<i8", count=1)[0]);t, m = np.fromfile(f, dtype="<f8", count=2)
+        a = np.fromfile(f, dtype="<f8", count=12*npart).reshape(12, npart)
+    pos = a[0:3].T;h = np.abs(a[3]);rho = a[4];vel = a[5:8].T;e = a[8];b = a[9:12].T;mass = np.full(npart, m)
+    vol = mass/rho;nz = 1 if planar else n
+    ext = np.column_stack([mass, mass[:, None]*vel, mass*(e + .5*(vel**2).sum(1)) + .5*vol*(b**2).sum(1), vol[:, None]*b])
+    u = gizmo_run.deposit(pos if not planar else pos[:, :2], ext, n, nz, 2*h)*(n**3 if not planar else n**2/thick)
+    return float(t), np.concatenate([u, np.zeros(u.shape[:3] + (1,))], axis=-1)
+
+
+def run_phantom(args, config, spec, settings, rundir, rep, outputs, resume=False):
+    planar = args.geometry == "plane";n = args.n
+    exe = Path(args.exe).resolve();bindir = exe.parent              # --exe: bin/phantom; phantomsetup and phantomanalysis beside it
+    for f in list(rundir.glob("abel_0*")) + [rundir/"abel.in", rundir/"abel.particles"]:f.unlink(missing_ok=True)
+    prefix = str(spec)[:-len(".spec")] + "_state"
+    X.write_spec(args.config, n, prefix, args.seed if args.seed is not None else int(config.get("seeds", [42])[0]), state=True, plane=planar)
+    u0 = np.fromfile(prefix + ".state", dtype="<f4").reshape((n, n, 1 if planar else n, 9), order="F")
+    pos, h, v, e, b, mass, thick = phantom_particles(u0, planar)
+    t_end = float(config["t_end"]);dt_out = interval(config, outputs)
+    write_particles(rundir/"abel.particles", pos, h, v, e, b, mass, thick, X.gamma_of(config), t_end, dt_out)
+    env = dict(os.environ, OMP_NUM_THREADS=os.environ.get("SLURM_CPUS_PER_TASK", os.environ.get("SLURM_CPUS_ON_NODE", "8")))
+    with (rundir/"phantomsetup.log").open("w") as f:
+        subprocess.run([str(bindir/"phantomsetup"), "abel"], stdout=f, stderr=subprocess.STDOUT, cwd=rundir, env=env, input=b"\n"*20)
+    code, perf = run_code(shlex.split(args.mpi or "") + [exe, "abel.in"], rundir, rundir/"phantom.log", env=env, gpu=False)
+    perf.update(particles=len(pos), particle_mass=mass, slab_layers=LAYERS if planar else 0)
+    dumps = sorted(f for f in rundir.glob("abel_0*") if f.suffix == "" and f.name[6:].isdigit())
+    if dumps:
+        with (rundir/"phantomanalysis.log").open("w") as f:
+            subprocess.run([str(bindir/"phantomanalysis")] + [d.name for d in dumps], stdout=f, stderr=subprocess.STDOUT, cwd=rundir, env=env, input=b"\n"*20)
+    files = [d.with_name(d.name + ".abel") for d in dumps if d.with_name(d.name + ".abel").is_file()]
+    times = []
+    for f in files:
+        with open(f, "rb") as g:np.fromfile(g, dtype="<i8", count=1);times.append(float(np.fromfile(g, dtype="<f8", count=1)[0]))
+    keep = unique(list(zip(times, files)), lambda p: p[0], config, outputs)
+    text = (rundir/"phantom.log").read_text(errors="replace")
+    m = re.findall(r"nsteps\s*=\s*(\d+)", text)
+    found = [(t, int(m[-1]) if m else 0) for t, _ in keep]
+    rc, tail = finish(code, text, perf, found, targets_of(config, outputs), config, outputs)
+    return rc, tail, perf, ((t, found[-1][1] if found else 0, read_phantom(f, n, planar, thick)[1]) for t, f in keep)
+
+
 def remove_native(outdir):
     """After a finished run: drop each code's own outputs (converted); keep logs, inputs and commands."""
     for record in Path(outdir).glob("*_r*/run.toml"):
         if 'status = "complete"' not in record.read_text():continue
         run = record.parent
-        for f in list(run.glob("abel.cons.*.phdf")) + list(run.glob("data.*.dbl")):f.unlink(missing_ok=True)
+        for f in list(run.glob("abel.cons.*.phdf")) + list(run.glob("data.*.dbl")) + list(run.glob("abel_0*")) + [run/"abel.particles"]:
+            f.unlink(missing_ok=True)
         for d in [run/"output"] + list(run.glob("DD*")):shutil.rmtree(d, ignore_errors=True)
 
 
-X.RUNNERS.update(athenapk=run_athenapk, cholla=run_cholla, pluto=run_pluto, enzo=run_enzo)
+X.VARIANTS["phantom"] = {
+    "sph": dict(method="SPH (cubic spline, hfact 1.2), MHD with constrained hyperbolic/parabolic cleaning; Phantom's default "
+                "artificial viscosity and resistivity switches, individual timesteps; planar tests on a slab of 8 layers"),
+}
+X.RUNNERS.update(athenapk=run_athenapk, cholla=run_cholla, pluto=run_pluto, enzo=run_enzo, phantom=run_phantom)
 
 if __name__ == "__main__":
     positional = [a for a in sys.argv[1:] if not a.startswith("-")]

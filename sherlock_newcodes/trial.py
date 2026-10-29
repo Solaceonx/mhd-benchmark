@@ -4,7 +4,8 @@
 
 1. Starting states (--ic-only): Orszag-Tang, GEM and the oblique Alfven wave at 64^2 (planar) and the 3D field loop at
    32^3, against the suite's own Float32 state (tools/write_spec.jl --state): largest difference of each field over
-   that field's largest value. OK below 1e-5 (Float32 snapshots: about 1e-7).
+   that field's largest value. OK below 1e-5 (Float32 snapshots: about 1e-7). Phantom (particles deposited on the
+   grid): the mean difference over the field's mean size, OK below 0.2 (catches a misplaced axis or field).
 2. Orszag-Tang at 64^2 to t = 0.5, against AthenaK's (sweep, PPM/HLLD) at the same grid: L1 difference of the density
    over its mean. A set-up of another code differs by a few per cent; a misplaced axis or field by order one. OK below 0.1.
 Prints one line per check and exits 1 if any is not OK.
@@ -49,10 +50,13 @@ def main(code, variant, exe, mpi, outdir):
         ref = ref[:, :, 0, :] if planar else ref
         got = state(mine[0], n, planar);worst = []
         for q, name in enumerate(NAMES[:8]):
-            scale = max(float(np.abs(ref[..., q]).max()), 1e-30)
-            worst.append((float(np.abs(got[..., q] - ref[..., q]).max())/scale if np.abs(ref[..., q]).max() > 0 else float(np.abs(got[..., q]).max()), name))
-        w = max(worst);good = w[0] < 1e-5;ok &= good
-        print(f"   {test:16s} N={n}: {'OK' if good else 'NOT OK'}  starting state, largest difference {w[0]:.2e} ({w[1]})")
+            if code == "phantom":         # particles deposited on the grid: the mean difference over the field's mean size
+                scale = float(np.abs(ref[..., q]).mean());worst.append((float(np.abs(got[..., q] - ref[..., q]).mean())/scale if scale > 0 else 0.0, name))
+            else:
+                scale = max(float(np.abs(ref[..., q]).max()), 1e-30)
+                worst.append((float(np.abs(got[..., q] - ref[..., q]).max())/scale if np.abs(ref[..., q]).max() > 0 else float(np.abs(got[..., q]).max()), name))
+        w = max(worst);good = w[0] < (0.2 if code == "phantom" else 1e-5);ok &= good
+        print(f"   {test:16s} N={n}: {'OK' if good else 'NOT OK'}  starting state, largest {'mean ' if code == 'phantom' else ''}difference {w[0]:.2e} ({w[1]})")
     rd = out/"orszag_tang-N64";rc, tail = run(code, variant, exe, mpi, "orszag_tang", 64, rd, "plane", False)
     mine = sorted(rd.rglob("state_020.bin"));theirs = sorted((RESULTS/"orszag_tang-athenak-best-run-N64-s42/data").glob("athenak_best_r1/state_020.bin"))
     if rc or not mine:

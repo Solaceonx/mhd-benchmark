@@ -4,14 +4,15 @@
 #   cholla     Cholla, the two set-ups (builds/make.type.abel_plmc, _ppmc)      -> cholla/<set-up>/bin/cholla.abel_<..>.sherlock
 #   pluto      gPLUTO, OpenACC for the H100 (NVHPC), one build per set-up and dimension -> pluto/<set-up>-<2|3>d/pluto
 #   enzo       Enzo, MPI, double precision                                      -> enzo/build/bin/enzo (or the path printed)
+#   phantom    Phantom, OpenMP, MHD, periodic, our set-up and analysis             -> phantom/tree/bin/{phantom,phantomsetup,phantomanalysis}
 # Everything under $MHD_CODES/newcodes. A build is always remade from the sources; the sources are never changed.
 set -uo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 codes="${MHD_CODES:-${SCRATCH:?set MHD_CODES or SCRATCH}/mhd-codes-sweep}"; root="$codes/newcodes"; src="$root/src"; logs="$root/logs"
 header="${SWEEP_BUNDLE:?set SWEEP_BUNDLE to the deployed sweep bundle}/codes/common/abel_problems.hpp"
 jobs="${NEWCODES_BUILD_JOBS:-${SLURM_CPUS_PER_TASK:-8}}"; mkdir -p "$logs"
-fresh() {   # source directory -> a clean copy at the second argument (no .git)
-    rm -rf "$2" && mkdir -p "$2" && (cd "$1" && tar -cf - --exclude=.git .) | (cd "$2" && tar -xf -)
+fresh() {   # source directory -> a clean copy at the second argument, with its .git (Parthenon and Cholla record the commit)
+    rm -rf "$2" && mkdir -p "$(dirname "$2")" && cp -a "$1" "$2"
 }
 step() {    # name, file that proves it is done, command...
     local name="$1" done_file="$2"; shift 2; local t0=$SECONDS
@@ -19,9 +20,9 @@ step() {    # name, file that proves it is done, command...
     echo "BUILD FAILED: $name (end of $logs/$name.log)"; grep -n -i -E " error|error:|undefined reference|No such file|cannot find|not found" "$logs/$name.log" | head -n 12 | cut -c1-240
     tail -n 10 "$logs/$name.log" | cut -c1-240; return 1
 }
-cuda_mods="${NEWCODES_CUDA_MODULES:-devel gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0 cmake/3.31.4 hdf5/1.14.4}"
-nvhpc_mods="${NEWCODES_NVHPC_MODULES:-devel nvhpc/24.7 python/3.12.1}"
-cpu_mods="${NEWCODES_CPU_MODULES:-devel gcc/12.4.0 openmpi/4.1.6 cmake/3.31.4 hdf5/1.14.4}"
+cuda_mods="${NEWCODES_CUDA_MODULES:-devel system git/2.45.1 gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0 cmake/3.31.4 hdf5/1.14.4}"
+nvhpc_mods="${NEWCODES_NVHPC_MODULES:-devel system git/2.45.1 nvhpc/24.7 python/3.12.1}"
+cpu_mods="${NEWCODES_CPU_MODULES:-devel system git/2.45.1 gcc/12.4.0 openmpi/4.1.6 cmake/3.31.4 hdf5/1.14.4}"
 use() { module purge >/dev/null 2>&1; module load $1 >/dev/null 2>&1 || { echo "module load $1 failed"; module load $1; }; }
 prefix_of() { dirname "$(dirname "$(command -v "$1")")"; }
 
@@ -84,7 +85,9 @@ build_pluto_tree() {
 }
 build_pluto() {     # set-up, dimensions
     local w="$root/pluto/$1-$2d"
+    # setup.py --auto-update reads a pluto.ini: any will do (the runner writes each run's own)
     rm -rf "$w" && mkdir -p "$w" && cp "$here/pluto/init.cpp" "$header" "$w/" && pluto_defs "$1" "$2" > "$w/definitions.hpp" \
+    && cp "$root/pluto/tree/Test_Problems/MHD/Orszag_Tang/pluto_01.ini" "$w/pluto.ini" \
     && printf 'ARCH         = linux.sherlock.acc.defs\n' > "$w/makefile" \
     && (cd "$w" && PLUTO_DIR="$root/pluto/tree" python3 "$root/pluto/tree/setup.py" --auto-update --no-curses && make -j "$jobs")
 }
@@ -95,7 +98,13 @@ build_enzo() {
     && { exe="$(find "$root/enzo/build" "$root/enzo/tree/bin" -type f -name enzo -perm -u+x 2>/dev/null | head -n 1)"; [[ -n "$exe" ]] && ln -sf "$exe" "$root/enzo/enzo"; }
 }
 
-want=("$@"); [[ ${#want[@]} -gt 0 ]] || want=(athenapk cholla pluto enzo)
+build_phantom() {
+    local t="$root/phantom/tree" opts="SETUP=mhdrotor SETUPFILE=setup_abel.f90 ANALYSIS=analysis_abel.f90 SYSTEM=gfortran"
+    fresh "$src/phantom" "$t" && python3 "$here/phantom/patch_phantom.py" "$t" \
+    && (cd "$t" && make $opts -j "$jobs" && make setup $opts -j "$jobs" && make analysis $opts -j "$jobs")
+}
+
+want=("$@"); [[ ${#want[@]} -gt 0 ]] || want=(athenapk cholla pluto enzo phantom)
 [[ -d "$src/athenapk" && -d "$src/cholla" ]] || { echo "sources not found in $src (run fetch.sh on a login node)"; exit 2; }
 echo "== building under $root, $jobs at a time, $(date -u)"; bad=0
 for code in "${want[@]}"; do
@@ -105,6 +114,7 @@ for code in "${want[@]}"; do
         pluto) use "$nvhpc_mods"; step pluto-tree "$root/pluto/tree/Config/linux.sherlock.acc.defs" build_pluto_tree || { bad=1; continue; }
                for s in ct_matched ct_best glm_matched glm_best; do for d in 2 3; do step "pluto-$s-${d}d" "$root/pluto/$s-${d}d/pluto" build_pluto $s $d || bad=1; done; done ;;
         enzo) use "$cpu_mods"; step enzo "$root/enzo/enzo" build_enzo || bad=1 ;;
+        phantom) use "$cpu_mods"; step phantom "$root/phantom/tree/bin/phantomanalysis" build_phantom || bad=1 ;;
         *) echo "unknown code $code"; bad=1 ;;
     esac
 done

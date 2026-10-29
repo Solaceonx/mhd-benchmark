@@ -1,5 +1,6 @@
 #!/bin/bash -l
-# The new codes' trial (trial.py) on one H100: every set-up of AthenaPK, Cholla and gPLUTO, and Enzo's on 4 CPU ranks.
+# The new codes' trial (trial.py) on one H100: every set-up of AthenaPK, Cholla and gPLUTO; Enzo's on 4 CPU ranks and
+# Phantom on 8 OpenMP threads.
 # Ends with exit code 0 only if every check passed. Report: logs/trial_report.txt.
 #SBATCH --job-name=newcodes-trial
 #SBATCH --partition=gpu,owners
@@ -37,6 +38,7 @@ for v in ct_matched ct_best glm_matched glm_best; do
     check "$nvhpc_mods" pluto $v "$root/pluto/$v-2d/pluto" ""        # NVHPC's MPI, one rank, started directly
 done
 for v in dedner ct; do check "$cpu_mods" enzo $v "$root/enzo/enzo" "srun -n 4"; done
+SLURM_CPUS_PER_TASK=8 check "$cpu_mods" phantom sph "$root/phantom/tree/bin/phantom" ""      # OpenMP, 8 threads
 say ""
 if [[ $bad -eq 0 ]]; then say "== TRIAL PASSED $(date -u)"; exit 0; fi
 say "== TRIAL NOT CLEAN $(date -u)"; exit 1

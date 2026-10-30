@@ -9,6 +9,7 @@ here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$here"; mkdir -p logs 
 trial="${1:?usage: bash -l production.sh TRIAL CODE ...}"; shift
 dep=(); [[ "$trial" == none ]] || dep=(--dependency=afterok:"$trial")
 module load python/3.12.1 >/dev/null 2>&1
+py="${NEWCODES_VENV:-$HOME/.venvs/mhd-h5py}/bin/python3"; "$py" -c "import numpy" || { echo "no numpy in $py"; exit 1; }
 export SWEEP_BUNDLE="${SWEEP_BUNDLE:-/scratch/users/lyxia/mhd-study/sherlock_sweep}"
 submit() {      # label, tasks file, sbatch options...
     local label="$1" file="$2"; shift 2; local n; n=$(wc -l < "$file" | tr -d ' ')
@@ -19,12 +20,12 @@ submit() {      # label, tasks file, sbatch options...
 gpu=(--partition=gpu,owners --requeue -G 1 --constraint=GPU_SKU:H100_SXM5 --ntasks=1 --cpus-per-task=4 --mem=64G --time=12:00:00)
 for code in "$@"; do
     case $code in
-        athenapk|cholla) python3 tasks.py "$code" > "tasks/$code.txt" && submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
-        pluto) for d in ct glm; do python3 tasks.py pluto ${d}_matched ${d}_best > "tasks/pluto_$d.txt" && submit "pluto $d" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
-        enzo) NEWCODES_DIM=planar python3 tasks.py enzo > tasks/enzo_2d.txt && submit "enzo 2D" tasks/enzo_2d.txt --partition=normal,owners --requeue --ntasks=16 --mem-per-cpu=4G --time=24:00:00
-              NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 python3 tasks.py enzo > tasks/enzo_3d.txt && submit "enzo 3D to 256" tasks/enzo_3d.txt --partition=normal --ntasks=32 --mem-per-cpu=4G --time=24:00:00
-              NEWCODES_DIM=3d NEWCODES_GRIDS=512 python3 tasks.py enzo > tasks/enzo_3d_512.txt && submit "enzo 3D 512" tasks/enzo_3d_512.txt --partition=normal --ntasks=128 --mem-per-cpu=6G --time=48:00:00 ;;
-        phantom) python3 tasks.py phantom > tasks/phantom.txt && submit phantom tasks/phantom.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
+        athenapk|cholla) "$py" tasks.py "$code" > "tasks/$code.txt" && submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
+        pluto) for d in ct glm; do "$py" tasks.py pluto ${d}_matched ${d}_best > "tasks/pluto_$d.txt" && submit "pluto $d" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
+        enzo) NEWCODES_DIM=planar "$py" tasks.py enzo > tasks/enzo_2d.txt && submit "enzo 2D" tasks/enzo_2d.txt --partition=normal,owners --requeue --ntasks=16 --mem-per-cpu=4G --time=24:00:00
+              NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 "$py" tasks.py enzo > tasks/enzo_3d.txt && submit "enzo 3D to 256" tasks/enzo_3d.txt --partition=normal --ntasks=32 --mem-per-cpu=4G --time=24:00:00
+              NEWCODES_DIM=3d NEWCODES_GRIDS=512 "$py" tasks.py enzo > tasks/enzo_3d_512.txt && submit "enzo 3D 512" tasks/enzo_3d_512.txt --partition=normal --ntasks=128 --mem-per-cpu=6G --time=48:00:00 ;;
+        phantom) "$py" tasks.py phantom > tasks/phantom.txt && submit phantom tasks/phantom.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         *) echo "unknown code $code" ;;
     esac
 done

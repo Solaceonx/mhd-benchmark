@@ -14,14 +14,16 @@ export SWEEP_BUNDLE="${SWEEP_BUNDLE:-/scratch/users/lyxia/mhd-study/sherlock_swe
 submit() {      # label, tasks file, sbatch options...
     local label="$1" file="$2"; shift 2; local n; n=$(wc -l < "$file" | tr -d ' ')
     [[ $n -gt 0 ]] || return 0
-    local id; id="$(sbatch --parsable ${dep[@]+"${dep[@]}"} --array=1-"$n" --export=ALL,NEWCODES_TASKS="$here/$file" "$@" production.sbatch)" \
-        && echo "   $label: array ${id%%;*}, $n tasks" || echo "   $label: NOT SUBMITTED"
+    local g="${GROUP:-1}" k=$(( (n + ${GROUP:-1} - 1)/${GROUP:-1} ))
+    local id; id="$(sbatch --parsable ${dep[@]+"${dep[@]}"} --array=1-"$k" --export=ALL,NEWCODES_TASKS="$here/$file",NEWCODES_GROUP="$g" "$@" production.sbatch)" \
+        && echo "   $label: array ${id%%;*}, $k tasks of up to $g lines ($n lines)" || echo "   $label: NOT SUBMITTED"
 }
-gpu=(--partition=gpu,owners --requeue -G 1 --constraint=GPU_SKU:H100_SXM5 --ntasks=1 --cpus-per-task=4 --mem=64G --time=12:00:00)
+# GPU: five lines per task (Sherlock's gpu QOS takes 100 queued jobs per user, 16 GPUs at once)
+gpu=(--partition=gpu,owners --requeue -G 1 --constraint=GPU_SKU:H100_SXM5 --ntasks=1 --cpus-per-task=4 --mem=64G --time=24:00:00)
 for code in "$@"; do
     case $code in
-        athenapk|cholla) "$py" tasks.py "$code" > "tasks/$code.txt" && submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
-        pluto) for d in ct glm; do "$py" tasks.py pluto ${d}_matched ${d}_best > "tasks/pluto_$d.txt" && submit "pluto $d" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
+        athenapk|cholla) "$py" tasks.py "$code" > "tasks/$code.txt" && GROUP=5 submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
+        pluto) for d in ct glm; do "$py" tasks.py pluto ${d}_matched ${d}_best > "tasks/pluto_$d.txt" && GROUP=5 submit "pluto $d" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
         enzo) NEWCODES_DIM=planar "$py" tasks.py enzo > tasks/enzo_2d.txt && submit "enzo 2D" tasks/enzo_2d.txt --partition=normal,owners --requeue --ntasks=16 --mem-per-cpu=4G --time=24:00:00
               NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 "$py" tasks.py enzo > tasks/enzo_3d.txt && submit "enzo 3D to 256" tasks/enzo_3d.txt --partition=normal --ntasks=32 --mem-per-cpu=4G --time=24:00:00
               NEWCODES_DIM=3d NEWCODES_GRIDS=512 "$py" tasks.py enzo > tasks/enzo_3d_512.txt && submit "enzo 3D 512" tasks/enzo_3d_512.txt --partition=normal --ntasks=128 --mem-per-cpu=6G --time=48:00:00 ;;

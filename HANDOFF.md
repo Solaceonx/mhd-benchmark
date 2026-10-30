@@ -127,6 +127,16 @@ Our figures (robustness column, context points), and a second movie on the test 
 (old `sweep_results/*-gizmo-*` moved away first): `test_diagnostics.py` for the 17 tests, the codes movies, the page
 builders, publish.
 
+**Five new codes, 2026-10-29/30 (`sherlock_newcodes/`, README there):** lyxia: "do all of it and send it on sherlock".
+AthenaPK (GLM), Cholla (CT), gPLUTO (CT and GLM), Enzo (Dedner and CT), Phantom (SPH), each from the suite's state
+through abel_problems.hpp (Phantom: pasted equal-mass lattices, deposit as GIZMO's), steps landing on outputs.
+Built: AthenaPK, Cholla, Enzo; gPLUTO and Phantom rebuilding (job 50263286). Trials: A 50263604 (athenapk cholla
+enzo), B 50263606 (pluto phantom, after the build). Production chained afterok on its trial: athenapk 50263715,
+cholla 50263717, pluto ct 50263720 / glm 50263723 (11 tasks of 5 test lines each, one H100), enzo 2D 50263674, 3D to
+256 50263676, 3D 512 50263678, phantom 50263683 (3D to 256^3). Results: $SCRATCH/mhd-results-newcodes. If a trial
+fails, its production is cancelled by Slurm: read logs/trial_report_*.txt, fix, resubmit (production.sh TRIAL CODE).
+Site: nothing yet; add their labels to sweep_data / paper_common / test_diagnostics when fetched.
+
 **Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our
 figures, unpublished) suggest much of AthenaK's and Athena++'s "best" gain on nonlinear tests is HLLD's, not PPM's;
 lyxia wants it tested in several codes. `sherlock_order/` gives AthenaK, Athena++ and Abel et al.'s kernels (Float32,

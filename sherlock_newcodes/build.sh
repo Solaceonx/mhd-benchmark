@@ -89,7 +89,7 @@ build_pluto() {     # set-up, dimensions
     rm -rf "$w" && mkdir -p "$w" && cp "$here/pluto/init.cpp" "$header" "$w/" && pluto_defs "$1" "$2" > "$w/definitions.hpp" \
     && cp "$root/pluto/tree/Test_Problems/MHD/Orszag_Tang/pluto_01.ini" "$w/pluto.ini" \
     && printf 'ARCH         = linux.sherlock.acc.defs\n' > "$w/makefile" \
-    && (cd "$w" && PLUTO_DIR="$root/pluto/tree" python3 "$root/pluto/tree/setup.py" --auto-update --no-curses && make -j "$jobs")
+    && (cd "$w" && export PLUTO_DIR="$root/pluto/tree" && python3 "$PLUTO_DIR/setup.py" --auto-update --no-curses && make -j "$jobs")
 }
 build_enzo() {
     fresh "$src/enzo" "$root/enzo/tree" && python3 "$here/enzo/patch_enzo.py" "$root/enzo/tree" "$header" \
@@ -101,7 +101,7 @@ build_enzo() {
 build_phantom() {
     local t="$root/phantom/tree" opts="SETUP=mhdrotor SETUPFILE=setup_abel.f90 ANALYSIS=analysis_abel.f90 SYSTEM=gfortran"
     fresh "$src/phantom" "$t" && python3 "$here/phantom/patch_phantom.py" "$t" \
-    && (cd "$t" && make $opts -j "$jobs" && make setup $opts -j "$jobs" && make analysis $opts -j "$jobs")
+    && (cd "$t" && make $opts && make setup $opts && make analysis $opts)        # serial: its Fortran modules need order
 }
 
 want=("$@"); [[ ${#want[@]} -gt 0 ]] || want=(athenapk cholla pluto enzo phantom)

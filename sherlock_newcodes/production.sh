@@ -8,8 +8,8 @@ set -uo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$here"; mkdir -p logs tasks
 trial="${1:?usage: bash -l production.sh TRIAL CODE ...}"; shift
 dep=(); [[ "$trial" == none ]] || dep=(--dependency=afterok:"$trial")
-module load python/3.12.1 >/dev/null 2>&1
-py="${NEWCODES_VENV:-$HOME/.venvs/mhd-h5py}/bin/python3"; "$py" -c "import numpy" || { echo "no numpy in $py"; exit 1; }
+module load python/3.12.1 py-numpy/2.2.6_py312 >/dev/null 2>&1
+py=python3; "$py" -c "import numpy" || { echo "no numpy for $py (module py-numpy)"; exit 1; }
 export SWEEP_BUNDLE="${SWEEP_BUNDLE:-/scratch/users/lyxia/mhd-study/sherlock_sweep}"
 submit() {      # label, tasks file, sbatch options...
     local label="$1" file="$2"; shift 2; local n; n=$(wc -l < "$file" | tr -d ' ')

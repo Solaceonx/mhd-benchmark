@@ -38,11 +38,12 @@ build_cholla() {    # set-up
     fresh "$src/cholla" "$t" && python3 "$here/cholla/patch_cholla.py" "$t" "$header" \
     && (cd "$t" && make -j "$jobs" TYPE="abel_$1" MACHINE=sherlock CUDA_ROOT="$(prefix_of nvcc)" HDF5_ROOT="$(prefix_of h5pcc 2>/dev/null || prefix_of h5cc)" MPI_ROOT="$(prefix_of mpicxx)")
 }
-pluto_defs() {      # set-up, dimensions -> definitions.hpp
+pluto_defs() {      # set-up, dimensions -> definitions.hpp (ACC_INIT NO: our Init reads the spec file, so it runs on the host)
     local recon=LINEAR steps=RK2 divb=CONSTRAINED_TRANSPORT emf=UCT_HLL limiter="#define  LIMITER                        VANLEER_LIM"
     [[ $1 == *best ]] && { recon=PARABOLIC; steps=RK3; emf=UCT_HLLD; limiter=""; }
     [[ $1 == glm* ]] && divb=DIV_CLEANING
     cat <<DEFS
+#define  ACC_INIT                       NO
 #define  PHYSICS                        MHD
 #define  DIMENSIONS                     $2
 #define  GEOMETRY                       CARTESIAN

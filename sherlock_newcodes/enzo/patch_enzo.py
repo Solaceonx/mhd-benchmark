@@ -47,6 +47,9 @@ def main(root, header):
          "  // abel: a step that ended on the dump time, within round-off\n"
          "  if (MetaData.Time >= MetaData.TimeLastDataDump + MetaData.dtDataDump - 1e-10*MetaData.dtDataDump\n"
          "      && MetaData.dtDataDump > 0.0) {\n", "a step that ended on the dump time")
+    edit(src/"InitializeNew.C", "    MetaData.TimeLastDataDump = MetaData.Time - MetaData.dtDataDump*1.00001;\n",
+         "    // abel: the first dump due exactly now (the factor 1.00001 put every later dump 1e-5 of an interval early)\n"
+         "    MetaData.TimeLastDataDump = MetaData.Time - MetaData.dtDataDump;\n", "the first dump due exactly now")
     print(f"patched {root}")
 
 

@@ -1,5 +1,6 @@
 # -----------------------------------------------
 # abel: NVHPC mpicxx with OpenACC for the H100 (cc90); linux.mpicxx.acc.defs otherwise
+# abel: gPLUTO includes <filesystem>; NVHPC's default is the system's GCC 4.8, so point it at GCC 12's libstdc++
 # Parallel version
 # -----------------------------------------------
 
@@ -13,9 +14,11 @@ DIAG_SUPPRESS_FLAGS = \
     --diag_suppress=declared_but_not_referenced \
     --diag_suppress=implicit_return_from_non_void_function
 
-CFLAGS  = -c -acc  -std=c++17 -gpu=cc90,rdc,mem:managed -cudalib=nccl -Minline=1000 -O3 $(DIAG_SUPPRESS_FLAGS)
+GCC_TOOLCHAIN ?= /share/software/user/open/gcc/12.4.0
 
-LDFLAGS = -lm -acc -gpu=cc90,rdc,mem:managed -cudalib=nccl -lnccl -cudalib=nvtx3
+CFLAGS  = -c -acc  -std=c++17 --gcc-toolchain=$(GCC_TOOLCHAIN) -gpu=cc90,rdc,mem:managed -cudalib=nccl -Minline=1000 -O3 $(DIAG_SUPPRESS_FLAGS)
+
+LDFLAGS = --gcc-toolchain=$(GCC_TOOLCHAIN) -lm -acc -gpu=cc90,rdc,mem:managed -cudalib=nccl -lnccl -cudalib=nvtx3
 
 PARALLEL = TRUE
 USE_HDF5 = FALSE

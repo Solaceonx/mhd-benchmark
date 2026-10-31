@@ -114,7 +114,7 @@ for code in "${want[@]}"; do
         pluto) use "$nvhpc_mods"; step pluto-tree "$root/pluto/tree/Config/linux.sherlock.acc.defs" build_pluto_tree || { bad=1; continue; }
                for s in ct_matched ct_best glm_matched glm_best; do for d in 2 3; do step "pluto-$s-${d}d" "$root/pluto/$s-${d}d/pluto" build_pluto $s $d || bad=1; done; done ;;
         enzo) use "$cpu_mods"; step enzo "$root/enzo/enzo" build_enzo || bad=1 ;;
-        phantom) use "$cpu_mods"; step phantom "$root/phantom/tree/bin/phantomanalysis" build_phantom || bad=1 ;;
+        phantom) use "$cpu_mods binutils/2.38"; step phantom "$root/phantom/tree/bin/phantomanalysis" build_phantom || bad=1 ;;
         *) echo "unknown code $code"; bad=1 ;;
     esac
 done

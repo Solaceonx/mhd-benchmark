@@ -55,6 +55,8 @@ def run_mhdale(args, config, spec, settings, rundir, rep, outputs, resume=False)
     tol = 1e-6*float(config["t_end"])/(int(config["frames"]) - 1)
     out = rundir/"output";log = rundir/"mhdale.log";last = out/f"abel_frame_{len(targets) - 1:03d}.bin"
     finished = resume and last.is_file() and last.stat().st_size == n*n*9*8          # only the conversion was interrupted
+    by_hand = os.environ.get("MHDALE_STOPPED_BY_HAND", "")                           # a run we cancelled: record its frames and why, without running it
+    finished = finished or bool(by_hand)
     start = time.perf_counter();code = 0
     if not finished:
         shutil.rmtree(out, ignore_errors=True);out.mkdir(parents=True)
@@ -100,6 +102,10 @@ def run_mhdale(args, config, spec, settings, rundir, rep, outputs, resume=False)
         perf["mhdale_stopped"] = reason
         if steps:perf.update(mhdale_stopped_at_time=float(steps[-1][1]), mhdale_last_timestep=float(steps[-1][2]), mhdale_steps_printed=len(steps))
         tail = "MHD-ALE stopped itself" + (f" at t = {float(steps[-1][1]):g} (step {steps[-1][0]}, last timestep {float(steps[-1][2]):.3g})" if steps else " before its first step") + ": " + reason
+    if by_hand and not complete:
+        perf["mhdale_stopped"] = by_hand
+        if steps:perf.update(mhdale_stopped_at_time=float(steps[-1][1]), mhdale_last_timestep=float(steps[-1][2]), mhdale_steps_printed=len(steps))
+        tail = f"Cancelled at t = {float(steps[-1][1]):g} (step {steps[-1][0]}, last timestep {float(steps[-1][2]):.3g}): {by_hand}"
     rc = 0 if complete and code == 0 and not X.was_killed(code, tail) else (code or 1)
     return rc, tail, perf, frames()
 

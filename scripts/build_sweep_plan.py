@@ -48,7 +48,7 @@ ADDED = [("glm_fix_hll16", "GLM f16 fix", "GLM production kernel fixed (sweep-fi
          ("arepo_moving", "AREPO mov", "AREPO moving mesh, Powell / HLLD (planar tests)"),
          ("arepo_static", "AREPO stat", "AREPO static Cartesian mesh, Powell / HLLD (planar tests)"),
          ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass, Dedner + constrained-gradient MHD (planar tests)"),
-         ("mhdale_ale", "MHD-ALE", "MHD-ALE (Tom Abel's MFEM code), ALE remap")]
+         ("mhdale_ale", "MHD-ALE + fixes", "MHD-ALE + our fixes: Tom Abel's MFEM code (commit adde93b), ALE remap, with our divergence tolerance and fast-speed fixes")]
 # Codes being set up: a column each, empty until their runs are fetched.
 PLANNED = [("miniramses_matched", "mini-RAMSES m", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLL: ready to run"),
            ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: ready to run")]
@@ -564,7 +564,7 @@ def status_html(status, configs, families, family_of, driven=None, added=()):
             "<script>document.querySelectorAll('.glm-toggle').forEach(b=>b.addEventListener('click',()=>{const t=b.closest('table');"
             "t.classList.toggle('glm-closed');}))</script>"
             f'<p class="small">The GLM column holds Abel et al.\'s {len(GLM_GROUP)} GLM kernels (5 original, 4 fixed); open it for one column per kernel. '
-            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE and the fixed kernels ran after the sweep, outside its plan.</p>')
+            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE and the fixed kernels ran after the sweep, outside its plan. The MHD-ALE runs use commit adde93b of the code with two fixes of ours: the tolerance of its divergence check scales with the grid spacing, and its fast speed uses c<sub>s</sub>² + v<sub>A</sub>². GIZMO\'s particles are converted to the grid with its own partition of space, which conserves mass exactly.</p>')
 
     # ---- counts by method, with a part-to-whole bar (the numbers beside it are the table view)
     t = tally(dict(status, rows=every));tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}

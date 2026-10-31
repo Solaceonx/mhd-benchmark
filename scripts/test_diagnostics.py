@@ -64,7 +64,7 @@ def tint(color,amount=.55):
 
 
 def style(method):
-    if method=="mhdale_ale":return dict(color="#227c89",linestyle="-",marker="v",label="MHD-ALE")
+    if method=="mhdale_ale":return dict(color="#227c89",linestyle="-",marker="v",label="MHD-ALE + our fixes")
     v=pc.STYLE[method]
     name=(pc.plain(v[2]).replace("GLM","Abel GLM") if method.startswith("glm") else pc.plain(v[2])).replace("cₕ",r"$c_h$")
     if method in ("ct","ct_fix"):name="Abel CT prototype"+(", fixed" if method=="ct_fix" else "")
@@ -610,7 +610,7 @@ def section(test, figure_prefix=None, data_test=None):
     if methods:
         options="".join(f'<option value="{e(m)}">{e(style(m)["label"].replace("Abel ","").replace("$c_h$","cₕ"))}</option>' for m in methods if m in OURS)
         families=list(dict.fromkeys(m.split("_")[0] for m in methods if m not in OURS))
-        names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",gizmo="GIZMO",mhdale="MHD-ALE")
+        names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",gizmo="GIZMO",mhdale="MHD-ALE + our fixes")
         external="".join(f'<option value="{e(m)}">{e(names[m])}</option>' for m in families)
         parts.append('<div class="comparison-controls" hidden style="position:sticky;top:0;z-index:4;background:var(--paper);padding:8px 0"><div class="toolbar" style="flex-wrap:wrap;justify-content:flex-start;margin-bottom:6px">'
             '<label class="control-group">Abel kernel <select class="field-select" name="abel-kernel"><option value="">All kernels</option>'+options+'</select></label>'

@@ -130,10 +130,11 @@ builders, publish.
 **Five new codes, 2026-10-29/30 (`sherlock_newcodes/`, README there):** lyxia: "do all of it and send it on sherlock".
 AthenaPK (GLM), Cholla (CT), gPLUTO (CT and GLM), Enzo (Dedner and CT), Phantom (SPH), each from the suite's state
 through abel_problems.hpp (Phantom: pasted equal-mass lattices, deposit as GIZMO's), steps landing on outputs.
-Built: AthenaPK, Cholla, Enzo; gPLUTO and Phantom rebuilding (job 50263286). Trials: A 50263604 (athenapk cholla
-enzo), B 50263606 (pluto phantom, after the build). Production chained afterok on its trial: athenapk 50263715,
-cholla 50263717, pluto ct 50263720 / glm 50263723 (11 tasks of 5 test lines each, one H100), enzo 2D 50263674, 3D to
-256 50263676, 3D 512 50263678, phantom 50263683 (3D to 256^3). Results: $SCRATCH/mhd-results-newcodes. If a trial
+Built: AthenaPK, Cholla, Enzo. Build 50263286 failed (gPLUTO: NVHPC on GCC 4.8 has no <filesystem>; Phantom: system ar
+2.27), fixed, rebuild 50464456 (2026-10-31). Trials: 50263604 (athenapk cholla, also enzo; H100), enzo 50464457 (CPU),
+phantom 50464459 (CPU), pluto 50464460 (H100). Production afterok on its trial: athenapk 50263715, cholla 50263717 on
+50263604; enzo 2D 50263674, 3D to 256 50263676, 3D 512 50263678 on 50464457; phantom 50464519 (3D to 256^3) on 50464459;
+pluto ct 50464461 / glm 50464467 on 50464460. Results: $SCRATCH/mhd-results-newcodes. If a trial
 fails, its production is cancelled by Slurm: read logs/trial_report_*.txt, fix, resubmit (production.sh TRIAL CODE).
 Site: nothing yet; add their labels to sweep_data / paper_common / test_diagnostics when fetched.
 

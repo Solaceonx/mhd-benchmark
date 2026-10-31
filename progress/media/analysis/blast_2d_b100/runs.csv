@@ -529,10 +529,52 @@ arepo_static,AREPO static mesh,64,42,complete,True,0.01,9.088837327901274,1,Code
 arepo_static,AREPO static mesh,128,42,complete,True,0.01,14.084830514155328,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b100-arepo-static-run-N128-s42/data/arepo_static_r1,
 arepo_static,AREPO static mesh,256,42,complete,True,0.01,43.12278176401742,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b100-arepo-static-run-N256-s42/data/arepo_static_r1,
 arepo_static,AREPO static mesh,512,42,complete,True,0.01,183.24496233998798,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b100-arepo-static-run-N512-s42/data/arepo_static_r1,
-mhdale_ale,MHD-ALE,32,42,complete,True,0.01,59.15844624186866,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N32-s42/data/mhdale_ale_r1,
-mhdale_ale,MHD-ALE,64,42,complete,True,0.01,126.94597710995004,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N64-s42/data/mhdale_ale_r1,
-mhdale_ale,MHD-ALE,128,42,complete,True,0.01,558.437601066893,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N128-s42/data/mhdale_ale_r1,
-mhdale_ale,MHD-ALE,256,42,failed,False,0.0,,0,incomplete or invalid,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N256-s42/data/mhdale_ale_r1,"exit code 1; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
-MHD-ALE stopped itself at t = 0.000287118 (step 20, last timestep 1.51e-05): Mean-field potential decomposition failed its native flux check"
-mhdale_ale,MHD-ALE,512,42,failed,False,0.0,,0,incomplete or invalid,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N512-s42/data/mhdale_ale_r1,"exit code 1; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
-MHD-ALE stopped itself at t = 7.00915e-05 (step 10, last timestep 7.01e-06): Mean-field potential decomposition failed its native flux check"
+gizmo_mfm,GIZMO MFM,32,42,complete,True,0.010000000000000002,9.220093488693237e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/blast_2d_b100-gizmo-mfm-run-N32-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,64,42,complete,True,0.010000000000000002,9.359791874885559e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/blast_2d_b100-gizmo-mfm-run-N64-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,128,42,complete,True,0.010000000000000002,8.759088814258575e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/blast_2d_b100-gizmo-mfm-run-N128-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,256,42,complete,True,0.010000000000000002,9.08970832824707e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/blast_2d_b100-gizmo-mfm-run-N256-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,512,42,failed,False,0.006,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/blast_2d_b100-gizmo-mfm-run-N512-s42/data/gizmo_mfm_r1,"exit code 1; missing output times [0.007, 0.008, 0.009000000000000001, 0.01]
+Step limit reached (18432) at t = 0.0064375, timestep collapsing
+.000731665
+ accel_tot=368.632 accel_gravTree=0 accel_gravPM=0 accel_hydro=368.632 accel_rad=0 accel_turb=0 Pos_xyz=(0.782225|0.49902|0) Vel_xyz=(-0.0157842|-0.0235097|0)
+ KernelRadius=0.00493352 Density=0.997728 InternalEnergy=0 dtInternalEnergy=-5237.92 divV=16.5377 Pressure=0 Cs_Eff=0 vAlfven=28.0742 f_ion=1
+ csnd_for_signalspeed=5e-57 eps_forcesoftening=0.00493352 mass=3.8147e-06 type=0 condition_number=1 Nngb=4.47207
+ NVT=2.0075940528694942/-0.00019238808870304056/0 -0.00019238808870304056/2.0067874061527582/0 0/0/0
+
+
+ @ fflush 
+Predicting next timestep: 5.82077e-14
+
+Sync-Point 18432, Time: 0.006437500975152943, Systemstep: 5.82078e-14
+Occupied timebins: non-cells     cells       dt                 cumulative A D    avg-time  cpu-frac
+ X  bin=22               0      262144     0.000000000000           262144 < *        0.49    100.0%
+               ------------------------
+Total active:            0      262144    Sum:     262144
+
+Domain decomposition building... LevelToTimeBin[TakeLevel=0]=0  (presently allocated=29.0317 MB)
+ ..allocated 0.235344 MByte for top-level domain structure
+ ..using 0.831604 MB of temporary storage for domain decomposition... (presently allocated=30.0987 MB)
+ ..NTopNodes before=2689
+ ..NTopnodes after=2697
+ ..NTopleaves= 2360  NTopnodes=2697 (space for 3614)
+Balance: gravity work-load balance=1.00506   memory-balance=1.00507   hydro work-load balance=1.00507
+ ..iter=0 exchange of 0000000000 particles (ret=0)
+ ..domain decomposition done. (took 0.013628 sec)
+Begin Peano-Hilbert order...
+ ..Peano-Hilbert done
+ ..freed 0.0559692 MByte in top-level domain structure
+Start gravity force computation...
+Tree construction initiated (presently allocated=32.8039 MB)
+ ..Tree construction done.
+ ..gravity force computation done
+Start hydrodynamics computation...
+ ..Hmax exchange: 584 topleaves out of 2360
+ ..density & tree-update computation done...
+ ..gradient computation done.
+ ..hydro force computation done.
+Task with the maximum commited memory"
+mhdale_ale,MHD-ALE + our fixes,32,42,complete,True,0.01,19.203300658846274,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N32-s42/data/mhdale_ale_r1,
+mhdale_ale,MHD-ALE + our fixes,64,42,complete,True,0.01,42.42471367307007,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N64-s42/data/mhdale_ale_r1,
+mhdale_ale,MHD-ALE + our fixes,128,42,complete,True,0.01,155.9761122521013,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N128-s42/data/mhdale_ale_r1,
+mhdale_ale,MHD-ALE + our fixes,256,42,complete,True,0.01,871.2016869862564,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N256-s42/data/mhdale_ale_r1,
+mhdale_ale,MHD-ALE + our fixes,512,42,complete,True,0.01,2157.4444102197886,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b100-mhdale-ale-run-N512-s42/data/mhdale_ale_r1,

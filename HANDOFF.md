@@ -127,14 +127,21 @@ Our figures (robustness column, context points), and a second movie on the test 
 (old `sweep_results/*-gizmo-*` moved away first): `test_diagnostics.py` for the 17 tests, the codes movies, the page
 builders, publish.
 
+**Published 2026-10-31 (website commit 33d2ca6):** GIZMO's rerun (81 of 82; blast B = 100 at 512² stops at the step limit) with the
+codes movies, and MHD-ALE as "MHD-ALE + our fixes" (61 of 62, adde93b + two fixes; `$SCRATCH/mhd-results-mhdale-fix`). The older
+runs are in `sweep_results_superseded/`. Current sheet 512² was cancelled at t = 0.61 (job 50014956_3, recorded by
+`MHDALE_STOPPED_BY_HAND`): rho_min fell from 1 to 6e-8 and dt from 7.7e-4 to 1e-7, on a nearly uniform mesh. That near-empty cell
+with the corrected fast speed probably also explains the 3x more steps at 128² and 256²; not tested against the old formula.
+Also new on the site: Our figures' `order_tradeoff` and `work_precision` (from the existing sweep runs).
+
 **Five new codes, 2026-10-29/30 (`sherlock_newcodes/`, README there):** lyxia: "do all of it and send it on sherlock".
 AthenaPK (GLM), Cholla (CT), gPLUTO (CT and GLM), Enzo (Dedner and CT), Phantom (SPH), each from the suite's state
 through abel_problems.hpp (Phantom: pasted equal-mass lattices, deposit as GIZMO's), steps landing on outputs.
-Built: AthenaPK, Cholla, Enzo. Build 50263286 failed (gPLUTO: NVHPC on GCC 4.8 has no <filesystem>; Phantom: system ar
-2.27), fixed, rebuild 50464456 (2026-10-31). Trials: 50263604 (athenapk cholla, also enzo; H100), enzo 50464457 (CPU),
-phantom 50464459 (CPU), pluto 50464460 (H100). Production afterok on its trial: athenapk 50263715, cholla 50263717 on
-50263604; enzo 2D 50263674, 3D to 256 50263676, 3D 512 50263678 on 50464457; phantom 50464519 (3D to 256^3) on 50464459;
-pluto ct 50464461 / glm 50464467 on 50464460. Results: $SCRATCH/mhd-results-newcodes. If a trial
+Built: AthenaPK, Cholla, Phantom (needs binutils/2.38 for `ar`). Rebuild 50466275 (pluto enzo, 2026-10-31): gPLUTO on GCC 12's
+libstdc++ with ACC_INIT NO (our Init reads the spec on the host); Enzo's dumps on output times (InitializeNew's factor 1.00001
+offset them). Trials: athenapk+cholla 50466278 and pluto 50466294 (H100), enzo 50466279 and phantom 50466281 (CPU,
+`trial_cpu.sh`). Production afterok on its trial: athenapk 50466460, cholla 50466461, pluto ct 50466452 / glm 50466455,
+enzo 2D 50466444, 3D to 256 50466448, 3D 512 50466449, phantom 50466450 (3D to 256^3). Cancelling a trial cancels its production. Results: $SCRATCH/mhd-results-newcodes. If a trial
 fails, its production is cancelled by Slurm: read logs/trial_report_*.txt, fix, resubmit (production.sh TRIAL CODE).
 Site: nothing yet; add their labels to sweep_data / paper_common / test_diagnostics when fetched.
 

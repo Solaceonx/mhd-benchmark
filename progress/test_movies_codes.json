@@ -1,0 +1,376 @@
+{
+ "alfven": {
+  "fields": {
+   "density": "media/tests/alfven-codes-density.mp4",
+   "magnetic": "media/tests/alfven-codes-magnetic.mp4",
+   "vorticity": "media/tests/alfven-codes-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 1.0,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "alfven_oblique": {
+  "fields": {
+   "density": "media/tests/alfven_oblique-codes-density.mp4",
+   "magnetic": "media/tests/alfven_oblique-codes-magnetic.mp4",
+   "vorticity": "media/tests/alfven_oblique-codes-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 0.4472135954999579,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "blast_2d_b0": {
+  "fields": {
+   "density": "media/tests/blast_2d_b0-codes-density.mp4",
+   "magnetic": "media/tests/blast_2d_b0-codes-magnetic.mp4",
+   "vorticity": "media/tests/blast_2d_b0-codes-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.01,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "blast_2d_b100": {
+  "fields": {
+   "density": "media/tests/blast_2d_b100-codes-density.mp4",
+   "magnetic": "media/tests/blast_2d_b100-codes-magnetic.mp4",
+   "vorticity": "media/tests/blast_2d_b100-codes-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.01,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "blast_2d_b50": {
+  "fields": {
+   "density": "media/tests/blast_2d_b50-codes-density.mp4",
+   "magnetic": "media/tests/blast_2d_b50-codes-magnetic.mp4",
+   "vorticity": "media/tests/blast_2d_b50-codes-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.01,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "brio_wu": {
+  "fields": {
+   "density": "media/tests/brio_wu-codes-density.mp4",
+   "magnetic": "media/tests/brio_wu-codes-magnetic.mp4",
+   "vorticity": "media/tests/brio_wu-codes-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.05,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "brio_wu_rotated": {
+  "fields": {
+   "density": "media/tests/brio_wu_rotated-codes-density.mp4",
+   "magnetic": "media/tests/brio_wu_rotated-codes-magnetic.mp4",
+   "vorticity": "media/tests/brio_wu_rotated-codes-vorticity.mp4"
+  },
+  "frames": 11,
+  "tEnd": 0.035355339059327376,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "current_sheet": {
+  "fields": {
+   "density": "media/tests/current_sheet-codes-density.mp4",
+   "magnetic": "media/tests/current_sheet-codes-magnetic.mp4",
+   "vorticity": "media/tests/current_sheet-codes-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 2.5,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "entropy": {
+  "fields": {
+   "density": "media/tests/entropy-codes-density.mp4",
+   "magnetic": "media/tests/entropy-codes-magnetic.mp4",
+   "vorticity": "media/tests/entropy-codes-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 1.0,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "field_loop": {
+  "fields": {
+   "density": "media/tests/field_loop-codes-density.mp4",
+   "magnetic": "media/tests/field_loop-codes-magnetic.mp4",
+   "vorticity": "media/tests/field_loop-codes-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 2.0,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "field_loop_novz": {
+  "fields": {
+   "density": "media/tests/field_loop_novz-codes-density.mp4",
+   "magnetic": "media/tests/field_loop_novz-codes-magnetic.mp4",
+   "vorticity": "media/tests/field_loop_novz-codes-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 2.0,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "gem": {
+  "fields": {
+   "density": "media/tests/gem-codes-density.mp4",
+   "magnetic": "media/tests/gem-codes-magnetic.mp4",
+   "vorticity": "media/tests/gem-codes-vorticity.mp4"
+  },
+  "frames": 41,
+  "tEnd": 1.5625,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "kh_localized": {
+  "fields": {
+   "density": "media/tests/kh_localized-codes-density.mp4",
+   "magnetic": "media/tests/kh_localized-codes-magnetic.mp4",
+   "vorticity": "media/tests/kh_localized-codes-vorticity.mp4"
+  },
+  "frames": 31,
+  "tEnd": 3.0,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "kh_uniform": {
+  "fields": {
+   "density": "media/tests/kh_uniform-codes-density.mp4",
+   "magnetic": "media/tests/kh_uniform-codes-magnetic.mp4",
+   "vorticity": "media/tests/kh_uniform-codes-vorticity.mp4"
+  },
+  "frames": 31,
+  "tEnd": 3.0,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "orszag_tang": {
+  "fields": {
+   "density": "media/tests/orszag_tang-codes-density.mp4",
+   "magnetic": "media/tests/orszag_tang-codes-magnetic.mp4",
+   "vorticity": "media/tests/orszag_tang-codes-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 0.5,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "rotor": {
+  "fields": {
+   "density": "media/tests/rotor-codes-density.mp4",
+   "magnetic": "media/tests/rotor-codes-magnetic.mp4",
+   "vorticity": "media/tests/rotor-codes-vorticity.mp4"
+  },
+  "frames": 16,
+  "tEnd": 0.15,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ },
+ "uniform": {
+  "fields": {
+   "density": "media/tests/uniform-codes-density.mp4",
+   "magnetic": "media/tests/uniform-codes-magnetic.mp4",
+   "vorticity": "media/tests/uniform-codes-vorticity.mp4"
+  },
+  "frames": 21,
+  "tEnd": 0.1,
+  "grid": 128,
+  "truth": "none: the sweep's runs side by side",
+  "panels": [
+   "GLM (Abel et al.), tiled LLF",
+   "CT prototype",
+   "AthenaK PPM/HLLD/RK3",
+   "RAMSES HLLD",
+   "AREPO moving mesh, Powell/HLLD",
+   "GIZMO meshless finite mass"
+  ],
+  "midplane": false,
+  "adaptive": false,
+  "source": "sweep_results"
+ }
+}

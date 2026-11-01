@@ -137,11 +137,13 @@ Also new on the site: Our figures' `order_tradeoff` and `work_precision` (from t
 **Five new codes, 2026-10-29/30 (`sherlock_newcodes/`, README there):** lyxia: "do all of it and send it on sherlock".
 AthenaPK (GLM), Cholla (CT), gPLUTO (CT and GLM), Enzo (Dedner and CT), Phantom (SPH), each from the suite's state
 through abel_problems.hpp (Phantom: pasted equal-mass lattices, deposit as GIZMO's), steps landing on outputs.
-Built: AthenaPK, Cholla, Phantom (needs binutils/2.38 for `ar`). Rebuild 50466275 (pluto enzo, 2026-10-31): gPLUTO on GCC 12's
-libstdc++ with ACC_INIT NO (our Init reads the spec on the host); Enzo's dumps on output times (InitializeNew's factor 1.00001
-offset them). Trials: athenapk+cholla 50466278 and pluto 50466294 (H100), enzo 50466279 and phantom 50466281 (CPU,
-`trial_cpu.sh`). Production afterok on its trial: athenapk 50466460, cholla 50466461, pluto ct 50466452 / glm 50466455,
-enzo 2D 50466444, 3D to 256 50466448, 3D 512 50466449, phantom 50466450 (3D to 256^3). Cancelling a trial cancels its production. Results: $SCRATCH/mhd-results-newcodes. If a trial
+All five built (2026-11-01; Phantom needs binutils/2.38 for `ar`, gPLUTO GCC 12's libstdc++ and -DACC_INIT=0 in its defs, as setup.py
+rewrites definitions.hpp; Enzo's dumps fall on output times since InitializeNew's factor 1.00001 was removed). Keep one code per
+build job: a failure cancels the chain of everything behind it. Trials: athenapk+cholla 50466278, pluto 50676215 (H100), enzo
+50676241 (CPU, `trial_cpu.sh`). Production afterok on its trial: athenapk 50466460, cholla 50466461, pluto ct 50676218 / glm 50676222,
+enzo 2D 50676333, 3D to 256 50676334, 3D 512 50676336. Phantom's gate failed at 64² (density L1 0.18 against AthenaK best; every
+other code <= 0.07): job 50675628 runs Orszag-Tang 128² and 256² into the results folder. If the error converges, loosen the gate
+for SPH and `production.sh none phantom`; if not, look for a set-up bug. Cancelling a trial cancels its production. Results: $SCRATCH/mhd-results-newcodes. If a trial
 fails, its production is cancelled by Slurm: read logs/trial_report_*.txt, fix, resubmit (production.sh TRIAL CODE).
 Site: nothing yet; add their labels to sweep_data / paper_common / test_diagnostics when fetched.
 

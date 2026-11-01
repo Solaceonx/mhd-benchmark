@@ -405,7 +405,7 @@ def run_phantom(args, config, spec, settings, rundir, rep, outputs, resume=False
         with open(f, "rb") as g:np.fromfile(g, dtype="<i8", count=1);times.append(float(np.fromfile(g, dtype="<f8", count=1)[0]))
     keep = unique(list(zip(times, files)), lambda p: p[0], config, outputs)
     text = (rundir/"phantom.log").read_text(errors="replace")
-    m = re.findall(r"nsteps\s*=\s*(\d+)", text)
+    m = re.findall(r"Since code start:\s*(\d+) timesteps", text)
     found = [(t, int(m[-1]) if m else 0) for t, _ in keep]
     rc, tail = finish(code, text, perf, found, targets_of(config, outputs), config, outputs)
     return rc, tail, perf, ((t, found[-1][1] if found else 0, read_phantom(f, n, planar, thick)[1]) for t, f in keep)

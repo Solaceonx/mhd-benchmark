@@ -393,6 +393,9 @@ def run_phantom(args, config, spec, settings, rundir, rep, outputs, resume=False
     env = dict(os.environ, OMP_NUM_THREADS=os.environ.get("SLURM_CPUS_PER_TASK", os.environ.get("SLURM_CPUS_ON_NODE", "8")))
     with (rundir/"phantomsetup.log").open("w") as f:
         subprocess.run([str(bindir/"phantomsetup"), "abel"], stdout=f, stderr=subprocess.STDOUT, cwd=rundir, env=env, input=b"\n"*20)
+    # Phantom's default projection of div B at each dump interval takes 26 % of a smooth field's energy (Orszag-Tang, at every
+    # grid, independent of N): its hyperbolic cleaning alone, as in Price et al. 2018
+    infile = rundir/"abel.in";infile.write_text(re.sub(r"(use_divb_proj\s*=\s*)T", r"\1F", infile.read_text()))
     code, perf = run_code(shlex.split(args.mpi or "") + [exe, "abel.in"], rundir, rundir/"phantom.log", env=env, gpu=False)
     perf.update(particles=len(pos), particle_mass=mass, slab_layers=LAYERS if planar else 0)
     dumps = sorted(f for f in rundir.glob("abel_0*") if f.suffix == "" and f.name[6:].isdigit())
@@ -423,7 +426,7 @@ def remove_native(outdir):
 
 X.VARIANTS["phantom"] = {
     "sph": dict(method="SPH (cubic spline, hfact 1.2), MHD with constrained hyperbolic/parabolic cleaning; Phantom's default "
-                "artificial viscosity and resistivity switches, individual timesteps; planar tests on a slab of 8 layers"),
+                "artificial viscosity and resistivity switches, individual timesteps; div B projection off; planar tests on a slab of 8 layers"),
 }
 X.RUNNERS.update(athenapk=run_athenapk, cholla=run_cholla, pluto=run_pluto, enzo=run_enzo, phantom=run_phantom)
 

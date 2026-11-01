@@ -141,9 +141,11 @@ All five built (2026-11-01; Phantom needs binutils/2.38 for `ar`, gPLUTO GCC 12'
 rewrites definitions.hpp; Enzo's dumps fall on output times since InitializeNew's factor 1.00001 was removed). Keep one code per
 build job: a failure cancels the chain of everything behind it. Trials: athenapk+cholla 50466278, pluto 50676215 (H100), enzo
 50676241 (CPU, `trial_cpu.sh`). Production afterok on its trial: athenapk 50466460, cholla 50466461, pluto ct 50676218 / glm 50676222,
-enzo 2D 50676333, 3D to 256 50676334, 3D 512 50676336. Phantom's gate failed at 64² (density L1 0.18 against AthenaK best; every
-other code <= 0.07): job 50675628 runs Orszag-Tang 128² and 256² into the results folder. If the error converges, loosen the gate
-for SPH and `production.sh none phantom`; if not, look for a set-up bug. Cancelling a trial cancels its production. Results: $SCRATCH/mhd-results-newcodes. If a trial
+enzo 2D 50676333, 3D to 256 50676334, 3D 512 50676336. Phantom: its default `use_divb_proj` (new in the pinned commit) took 26 % of the magnetic energy at the first dump, at every grid,
+so Orszag-Tang did not converge (L1 0.19, 0.20, 0.21 at 64², 128², 256²). Switched off in `run_phantom`: 0.091, 0.061, 0.039 against
+AthenaK best 512², energy within 0.1 %. Without it the field loops stop at t = 0 on Phantom's stability check (`h|divb|/b`, B = 0 outside
+the loop); recorded as stopped. Its only way past is I_WILL_NOT_PUBLISH_CRAP=yes: lyxia's decision, not set. Production without a clean
+trial, by decision (`production.sh none phantom`): the trial's only failure is that check. Cancelling a trial cancels its production. Results: $SCRATCH/mhd-results-newcodes. If a trial
 fails, its production is cancelled by Slurm: read logs/trial_report_*.txt, fix, resubmit (production.sh TRIAL CODE).
 Site: nothing yet; add their labels to sweep_data / paper_common / test_diagnostics when fetched.
 

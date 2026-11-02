@@ -23,6 +23,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT/"progress"
 PAGES = [   # local name, published name, label in the navigation (in its order)
+    ("benchmark.html", "benchmark.html", "Benchmark"),
     ("paper-figures.html", "index.html", "Paper figures"),
     ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
     ("turbulence.html", "turbulence.html", "Turbulence"),

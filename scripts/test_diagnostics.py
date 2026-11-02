@@ -178,10 +178,10 @@ class Run:
     def ranks(self):
         launcher=self.environment.get("launcher","")
         match=re.search(r"(?:-n|--ntasks(?:=|\s))\s*(\d+)",launcher)
-        return int(match.group(1)) if match else self.planned.get("ranks") or None
+        return int(match.group(1)) if match else self.meta.get("ranks") or self.planned.get("ranks") or None     # record: GIZMO's own, Phantom's threads
 
     @property
-    def ranks_source(self):return "environment" if re.search(r"(?:-n|--ntasks(?:=|\s))\s*\d+",self.environment.get("launcher","")) else "plan"
+    def ranks_source(self):return "environment" if re.search(r"(?:-n|--ntasks(?:=|\s))\s*\d+",self.environment.get("launcher","")) else "record" if self.meta.get("ranks") else "plan"
 
 
 class Data:
@@ -589,7 +589,7 @@ def timing(data,run):
     for rep in range(1,repeats+1):
         p=run.path.parent/f"{run.method}_r{rep}/run.toml"
         if not p.is_file():continue
-        m=tomllib.loads(p.read_text())
+        m=data.sw.meta(run.test,run.method,run.n,run.seed,rep) or tomllib.loads(p.read_text())     # through sweep_data: GIZMO's own clock
         if m.get("status")!="complete" or m.get("timing_valid") is False:continue
         d=sd.read_csv(p.parent/"diagnostics.csv")
         if d and any(not np.isfinite(d[k]).all() for k in ("energy","mass") if k in d):continue

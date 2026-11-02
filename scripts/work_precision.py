@@ -9,9 +9,10 @@ a production cost at every grid,
     cost(N) = steps(N) * N^d / rate,
 
 steps(N): the steps the run took (each code's own timestep); N^d: the cells of the problem; rate: the set-up's
-cell-updates per second (its record's million_cell_steps_per_second, which counts the cells it computed: the GPU codes
-ran the planar tests on N^3 cells that are the same at every z) on the largest grid of that test it finished with a valid clock (not resumed), where
-start-up no longer counts. GPU: one H100; CPU: per core, and the cost is then given on 128 cores, assuming they scale
+cell-updates per second (its record's million_cell_steps_per_second) on its largest finished 3D run with a valid clock (not
+resumed; full_rate), per H100 or per core: a planar run leaves a GPU mostly idle, and Abel et al.'s kernels ran the planar
+tests on N^3 cells, so planar rates favoured them (before 2026-11-02 the rate was the test's own largest grid). Set-ups
+with no 3D runs (AREPO, GIZMO, MHD-ALE; CPUs) keep the test's largest grid. GPU: one H100; CPU: per core, and the cost is then given on 128 cores, assuming they scale
 perfectly, as the speed figure compares one H100 with 128 cores. So the cost is that of the problem at each code's
 full speed, as in a 3D production run; a 2D run this small would not reach that speed on a GPU.
 
@@ -21,6 +22,7 @@ moves from 32^2 to 64^2, where the structure is not yet resolved; a floor at the
 not reached). eps of a test: the error of AthenaK PLM/HLLE/RK2 (second order, the sweep's
 matched set-up) at 256^2, i.e. "what does it cost to be as good as a standard second-order code at 256^2".
 """
+import functools
 import json
 import re
 import sys
@@ -58,6 +60,34 @@ def ranks(resource):
     m = re.search(r"(\d+) CPU rank", resource or "");return int(m.group(1)) if m else None
 
 
+@functools.lru_cache(maxsize=None)
+def runs_of(test):
+    """The run table of a test's data.json (test_diagnostics.py): {(method, N, seed): row}."""
+    path = ANALYSIS/test/"data.json"
+    return {(r["method"], r["N"], r.get("seed", 42)): r for r in json.loads(path.read_text())["runs"]} if path.is_file() else {}
+
+
+@functools.lru_cache(maxsize=None)
+def full_rate(sw, method):
+    """(cell-updates per second of one H100, or of one core on CPUs, at full speed; where it was measured): the set-up's
+    largest finished 3D run with a valid clock, the median over the 3D tests at that grid. A planar run leaves a GPU mostly
+    idle (512^2 is a quarter of a million cells), and Abel et al.'s kernels ran the planar tests on N^3 cells, so a planar
+    rate would favour them. None when the set-up ran no 3D test (AREPO, GIZMO, MHD-ALE: planar tests only)."""
+    found = {}
+    for test, c in sw.configs.items():
+        if sd.plan.planar(c):continue
+        for (m, n, seed), r in runs_of(test).items():
+            meta = sw.meta(test, m, n, seed) or {}
+            if m != method or r["status"] != "complete" or not r.get("finite_complete") or meta.get("timing_valid") is False:continue
+            mcs = meta.get("million_cell_steps_per_second")
+            if not mcs:continue
+            devices = ranks(r.get("resource")) or int(meta.get("ranks") or 1)        # cores on CPUs; H100s (one or two)
+            found.setdefault(n, []).append((1e6*float(mcs)/devices, test))
+    if not found:return None
+    n = max(found);rates = sorted(found[n])
+    return rates[len(rates)//2][0], f"{rates[len(rates)//2][1]} {n}³"
+
+
 def curves(sw, test, kind):
     """{method: [(N, error, steps, cost seconds, unit), ...]} of the complete, finite runs of a test, seed 42."""
     path = ANALYSIS/test/"data.json"
@@ -80,10 +110,11 @@ def curves(sw, test, kind):
         p.sort(key=lambda x: x["N"])
         timed = [x for x in p if x["timed"]]                              # a resumed run's clock covers only its last part
         if not timed:continue
-        rate = timed[-1]["rate"]                                          # production rate: the largest grid finished
+        full = full_rate(sw, m)                                           # production rate: the largest 3D run finished
+        rate, where = full or (timed[-1]["rate"], f"{test} {timed[-1]['N']}² (no 3D runs)")
         d_ = 3 if test.endswith("_3d") else 2
         for x in p:x["cost"] = x["steps"]*x["N"]**d_/rate/(CORES if x["cpu"] else 1)
-        out[m] = dict(points=p, rate=rate, cpu=p[0]["cpu"])
+        out[m] = dict(points=p, rate=rate, cpu=p[0]["cpu"], rate_from=where)
     return out
 
 
@@ -152,7 +183,7 @@ def table(sw=None):
         for m, cur in c.items():
             hit = at_error(cur, eps)
             row["methods"][m] = dict(N=hit[0] if hit else None, cost=hit[1] if hit else None, at_most=bool(hit and hit[2]), order=order(cur),
-                                     rate=cur["rate"], cpu=cur["cpu"], points=[(x["N"], x["error"], x["cost"]) for x in cur["points"]])
+                                     rate=cur["rate"], rate_from=cur["rate_from"], cpu=cur["cpu"], points=[(x["N"], x["error"], x["cost"]) for x in cur["points"]])
         row["error_split"] = {name: error_factorial(row, cells) for name, cells in GRID}
         row["across"] = {pair: across(row, i) for i, pair in enumerate(("plm_hll", "ppm_hll", "plm_hlld", "ppm_hlld"))}
         rows[test] = row

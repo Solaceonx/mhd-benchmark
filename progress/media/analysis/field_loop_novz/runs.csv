@@ -168,11 +168,11 @@ arepo_static,AREPO static mesh,256,42,failed,False,0.8,,0,incomplete or invalid,
 AREPO stopped itself at t = 0.882913 (sync point 14677, last timestep 1.19e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not allowed"
 arepo_static,AREPO static mesh,512,42,failed,False,0.30000000000000004,,0,incomplete or invalid,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/field_loop_novz-arepo-static-run-N512-s42/data/arepo_static_r1,"exit code 1; missing output times [0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
 AREPO stopped itself at t = 0.39819 (sync point 12439, last timestep 1.19e-08): Code termination on task=0, function timebins_get_bin_and_do_validity_checks(), file src/time_integration/timestep.c, line 740: time-step of integer size 1 not allowed"
-gizmo_mfm,GIZMO MFM,32,42,complete,True,2.0000000000000004,1.0551884770393372e-06,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N32-s42/data/gizmo_mfm_r1,
-gizmo_mfm,GIZMO MFM,64,42,complete,True,2.0000000000000004,7.390044629573822e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N64-s42/data/gizmo_mfm_r1,
-gizmo_mfm,GIZMO MFM,128,42,complete,True,2.0000000000000004,9.390059858560562e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N128-s42/data/gizmo_mfm_r1,
-gizmo_mfm,GIZMO MFM,256,42,complete,True,2.0000000000000004,8.260831236839294e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N256-s42/data/gizmo_mfm_r1,
-gizmo_mfm,GIZMO MFM,512,42,complete,True,2.0000000000000004,9.359791874885559e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N512-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,32,42,complete,True,2.0000000000000004,17.26,1,GIZMO's own cpu.txt total (evolution and its output); all ranks,1 CPU ranks (record),fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N32-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,64,42,complete,True,2.0000000000000004,130.47,1,GIZMO's own cpu.txt total (evolution and its output); all ranks,1 CPU ranks (record),fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N64-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,128,42,complete,True,2.0000000000000004,311.71,1,GIZMO's own cpu.txt total (evolution and its output); all ranks,4 CPU ranks (record),fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N128-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,256,42,complete,True,2.0000000000000004,1284.64,1,GIZMO's own cpu.txt total (evolution and its output); all ranks,8 CPU ranks (record),fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N256-s42/data/gizmo_mfm_r1,
+gizmo_mfm,GIZMO MFM,512,42,complete,True,2.0000000000000004,5237.61,1,GIZMO's own cpu.txt total (evolution and its output); all ranks,16 CPU ranks (record),fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop_novz-gizmo-mfm-run-N512-s42/data/gizmo_mfm_r1,
 mhdale_ale,MHD-ALE + our fixes,32,42,complete,True,2.0,70.74920413643122,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/field_loop_novz-mhdale-ale-run-N32-s42/data/mhdale_ale_r1,
 mhdale_ale,MHD-ALE + our fixes,64,42,complete,True,2.0,142.35131895169616,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/field_loop_novz-mhdale-ale-run-N64-s42/data/mhdale_ale_r1,
 mhdale_ale,MHD-ALE + our fixes,128,42,complete,True,2.0,572.6124050486833,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/field_loop_novz-mhdale-ale-run-N128-s42/data/mhdale_ale_r1,
@@ -213,7 +213,7 @@ enzo_ct,Enzo CT,64,42,complete,True,2.0,41.20500475820154,1,Code-reported evolut
 enzo_ct,Enzo CT,128,42,complete,True,2.0,63.378213982097805,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop_novz-enzo-ct-run-N128-s42/data/enzo_ct_r1,
 enzo_ct,Enzo CT,256,42,complete,True,2.0,162.66281728073955,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop_novz-enzo-ct-run-N256-s42/data/enzo_ct_r1,
 enzo_ct,Enzo CT,512,42,complete,True,2.0,738.3509810781106,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop_novz-enzo-ct-run-N512-s42/data/enzo_ct_r1,
-phantom_sph,Phantom SPH,32,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N32-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+phantom_sph,Phantom SPH,32,42,failed,False,0.0,,0,incomplete or invalid,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N32-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
 er of particles =         8192
       gas:        8192 particles of mass   3.051758E-05
  
@@ -273,7 +273,7 @@ er of particles =         8192
 
  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
 "
-phantom_sph,Phantom SPH,64,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N64-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+phantom_sph,Phantom SPH,64,42,failed,False,0.0,,0,incomplete or invalid,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N64-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
 r of particles =        32768
       gas:       32768 particles of mass   3.814697E-06
  
@@ -333,7 +333,7 @@ r of particles =        32768
 
  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
 "
-phantom_sph,Phantom SPH,128,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N128-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+phantom_sph,Phantom SPH,128,42,failed,False,0.0,,0,incomplete or invalid,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N128-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
  of particles =       131072
       gas:      131072 particles of mass   4.768372E-07
  
@@ -393,7 +393,7 @@ phantom_sph,Phantom SPH,128,42,failed,False,0.0,,0,incomplete or invalid,CPU ran
 
  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
 "
-phantom_sph,Phantom SPH,256,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N256-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+phantom_sph,Phantom SPH,256,42,failed,False,0.0,,0,incomplete or invalid,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N256-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
  of particles =       524288
       gas:      524288 particles of mass   5.960464E-08
  
@@ -453,7 +453,7 @@ phantom_sph,Phantom SPH,256,42,failed,False,0.0,,0,incomplete or invalid,CPU ran
 
  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
 "
-phantom_sph,Phantom SPH,512,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N512-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+phantom_sph,Phantom SPH,512,42,failed,False,0.0,,0,incomplete or invalid,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop_novz-phantom-sph-run-N512-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
 of particles =      2097152
       gas:     2097152 particles of mass   7.450581E-09
  

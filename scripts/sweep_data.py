@@ -72,6 +72,12 @@ NEWCODES_RESULTS = Path(os.environ.get("MHD_NEWCODES_RESULTS", ROOT/"newcodes_re
 _spec = importlib.util.spec_from_file_location("newcode_tasks", ROOT/"sherlock_newcodes"/"tasks.py")
 NEWCODE_TASKS = importlib.util.module_from_spec(_spec);_spec.loader.exec_module(NEWCODE_TASKS)      # their planned runs
 FIELDS = ("rho", "mx", "my", "mz", "E", "Bx", "By", "Bz", "psi")
+# GIZMO's own clock per run: directory -> (steps, total seconds, ranks), from the last block of each run's output/cpu.txt:
+#   ssh sherlock 'cd $SCRATCH/mhd-results-gizmo2; for f in */data/gizmo_mfm_r1/output/cpu.txt; do tail -n 80 "$f" | awk ...'
+GIZMO_TIMES = {}
+if (RESULTS/"gizmo_cpu_totals.tsv").is_file():
+    for _line in (RESULTS/"gizmo_cpu_totals.tsv").read_text().splitlines():
+        _d, _s, _t, _c = _line.split("\t");GIZMO_TIMES[_d] = (int(_s), float(_t), int(_c))
 # A code's own stop in a record's error text (Cholla's div B limit, gPLUTO's QuitPLUTO, Phantom's and Enzo's fatal errors)
 STOP_TEXT = re.compile(r"The magnetic divergence|QuitPLUTO|FATAL ERROR|ENZO ERROR|ERROR_MESSAGE|does not fit|Nonphysical|Memory Sturated")
 
@@ -259,7 +265,16 @@ class Sweep:
     @functools.lru_cache(maxsize=None)
     def meta(self, test, label, n, seed=42, rep=1):
         p = self.path(test, label, n, "run.toml", seed, rep)
-        return tomllib.loads(p.read_text()) if p is not None and p.is_file() else None
+        m = tomllib.loads(p.read_text()) if p is not None and p.is_file() else None
+        if m is None:return None
+        # GIZMO's records were written by the job that converted its kept snapshots, with that job's clock (about 1 µs): the
+        # run's time is GIZMO's own (output/cpu.txt, last "total", collected into gizmo_cpu_totals.tsv), on its ranks
+        if label == "gizmo_mfm" and (t := GIZMO_TIMES.get(f"{test}-gizmo-mfm-run-N{n}-s{seed}")):
+            m.update(solve_seconds=t[1], wall_seconds=t[1], ranks=t[2], timing_valid=True,
+                     million_cell_steps_per_second=t[0]*n**(2 if m.get("planar", True) else 3)/t[1]/1e6,
+                     timing_scope="GIZMO's own cpu.txt total (evolution and its output); all ranks")
+        if label == "phantom_sph":m.setdefault("ranks", 32)        # one task of 32 OpenMP threads (sherlock_newcodes/production.sh)
+        return m
 
     @functools.lru_cache(maxsize=None)
     def diag(self, test, label, n, seed=42, name="diagnostics.csv"):

@@ -160,7 +160,9 @@ an extra dump past the end (tmax rounded in abel.in), fixed in `run_phantom`. En
 for memory on nodes where it had few CPUs, so 3D now runs on full nodes (`--ntasks-per-node=32`); the stopped tasks and the 512³ tasks not
 yet run are 50714480 and 50714486 (`production.sh none enzo-redo`); 50676336_5 and _8 keep running. Enzo CT's blast_3d_b50 64² and b100 256²
 stop themselves on NaN pressure (mhd_dt.F, dual energy off), which the driver took for a kill; `run_enzo` now records them as stops.
-Records moved aside: $SCRATCH/mhd-results-newcodes-superseded. Sherlock refuses job scripts that contain `sleep`.
+AthenaPK's planar 256² and 512² aborted at t = 0 (Kokkos team scratch does not fit blocks of 256: "could not find a valid execution
+configuration"); blocks are now 128 in 2D as in 3D, and the 50 runs are array 50745637 (`production.sh none athenapk-redo`). Cholla's trial
+passed (L1 0.031 PLMC, 0.024 PPMC). Records moved aside: $SCRATCH/mhd-results-newcodes-superseded. Sherlock refuses job scripts that contain `sleep`.
 Order study: gem 256² athenak_ppm_hlle reached t_end with frame 1.40625 of 41 missing, so it is marked failed; look at it when fetching.
 
 **Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our

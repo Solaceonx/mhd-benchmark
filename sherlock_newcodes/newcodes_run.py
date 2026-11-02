@@ -113,7 +113,8 @@ def finish(code, text, perf, found, targets, config, outputs):
 # ------------------------------------------------------------------------------ AthenaPK
 def athenapk_input(config, n, spec, settings, geometry, outputs):
     nz = 1 if geometry == "plane" else n
-    block = min(n, 512 if nz == 1 else 128)
+    # Blocks of 128: Kokkos' team scratch on the GPU, one line of cells per team, does not fit 256 ("could not find a valid execution configuration")
+    block = min(n, 128)
     t_end = float(config["t_end"])
     lines = ["<job>", "problem_id = abel_suite", "<problem/abel>", f"spec_file = {Path(spec).resolve()}",
              "<parthenon/job>", "problem_id = abel",

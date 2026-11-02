@@ -23,6 +23,8 @@ gpu=(--partition=gpu,owners --requeue -G 1 --constraint=GPU_SKU:H100_SXM5 --ntas
 for code in "$@"; do
     case $code in
         athenapk|cholla) "$py" tasks.py "$code" > "tasks/$code.txt" && LINES_PER_TASK=5 submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
+        # Lines of tasks/athenapk.txt with the grids that aborted on blocks of 256, written by hand
+        athenapk-redo) LINES_PER_TASK=5 submit "athenapk, again" tasks/athenapk_redo.txt "${gpu[@]}" ;;
         pluto) for d in ct glm; do "$py" tasks.py pluto ${d}_matched ${d}_best > "tasks/pluto_$d.txt" && LINES_PER_TASK=5 submit "pluto $d" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
         # Enzo's rank 0 holds the whole 3D grid while it starts (4 GB at 256^3, 8 times that at 512^3): full nodes, or the
         # node where it has few CPUs kills it for memory

@@ -17,9 +17,10 @@ DIAG_SUPPRESS_FLAGS = \
 GCC_TOOLCHAIN ?= /share/software/user/open/gcc/12.4.0
 
 # abel: our Init reads the spec file, so it runs on the host (definitions.hpp is rewritten by setup.py: set here)
-CFLAGS  = -c -acc  -std=c++17 --gcc-toolchain=$(GCC_TOOLCHAIN) -DACC_INIT=0 -gpu=cc90,rdc,mem:managed -cudalib=nccl -Minline=1000 -O3 $(DIAG_SUPPRESS_FLAGS)
+# abel: -tp=haswell: NVHPC's default tunes for the node that compiles, and the program then dies on older CPUs (illegal instruction)
+CFLAGS  = -c -acc  -std=c++17 --gcc-toolchain=$(GCC_TOOLCHAIN) -DACC_INIT=0 -tp=haswell -gpu=cc90,rdc,mem:managed -cudalib=nccl -Minline=1000 -O3 $(DIAG_SUPPRESS_FLAGS)
 
-LDFLAGS = --gcc-toolchain=$(GCC_TOOLCHAIN) -lm -acc -gpu=cc90,rdc,mem:managed -cudalib=nccl -lnccl -cudalib=nvtx3
+LDFLAGS = --gcc-toolchain=$(GCC_TOOLCHAIN) -tp=haswell -lm -acc -gpu=cc90,rdc,mem:managed -cudalib=nccl -lnccl -cudalib=nvtx3
 
 PARALLEL = TRUE
 USE_HDF5 = FALSE

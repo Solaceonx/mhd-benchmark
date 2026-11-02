@@ -38,7 +38,7 @@ for v in matched best; do check "$cuda_mods" athenapk $v "$root/athenapk/build/b
 for v in plmc ppmc; do check "$cuda_mods" cholla $v "$root/cholla/$v/bin/cholla.abel_$v.sherlock" "srun -n 1"; done
 for v in ct_matched ct_best glm_matched glm_best; do
     want pluto && for d in 2 3; do [[ -x "$root/pluto/$v-${d}d/pluto" ]] || { say "   NOT BUILT: pluto $v ${d}D"; bad=1; }; done
-    check "$nvhpc_mods" pluto $v "$root/pluto/$v-2d/pluto" ""        # NVHPC's MPI, one rank, started directly
+    check "$nvhpc_mods" pluto $v "$root/pluto/$v-2d/pluto" "srun -n 1"        # NVHPC's MPI, one rank: started directly it hangs in MPI_Init
 done
 for v in dedner ct; do check "$cpu_mods" enzo $v "$root/enzo/enzo" "srun -n 4"; done
 SLURM_CPUS_PER_TASK=8 check "$cpu_mods" phantom sph "$root/phantom/tree/bin/phantom" ""      # OpenMP, 8 threads

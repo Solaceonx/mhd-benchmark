@@ -151,8 +151,10 @@ Site: nothing yet; add their labels to sweep_data / paper_common / test_diagnost
 State 2026-11-02 (jobs replacing the ids above): AthenaPK passed (Orszag-Tang 64² L1 0.056 matched, 0.017 best), production 50714488. Cholla
 ran to the end but skipped its last output (outtime is a running sum, 0.5000000000000002 against tout = 0.5); `patch_cholla.py` fixes
 main.cpp; rebuilt 50714541, trial 50714547, production 50714599. Its and gPLUTO's builds target cc90 (H100) only, so their trials need an
-H100. gPLUTO's trial 50676215 hung for its whole 2 h on the first run with an empty log, and its production was cancelled; probe 50714422
-(logs/probe_pluto.sbatch on Sherlock) logs the OpenACC launches and a gdb backtrace; cause not known yet. Phantom 50678662: field loops
+H100. gPLUTO's trial 50676215 hung for its whole 2 h on the first run with an empty log, and its production was cancelled: an MPI build
+(its defs: PARALLEL = TRUE) started without a launcher hangs in MPI_Init, on H100 and CPU nodes alike, so it now runs under `srun -n 1`.
+That also showed an illegal instruction on older CPUs (NVHPC tunes for the build node), so the defs say -tp=haswell. Rebuilt 50720759, trial
+50720762, production ct 50720783, glm 50720786. Phantom 50678662: field loops
 stopped as expected; rotor 32² stops itself on momentum conservation at t = 0.14 of 0.15 (kept); brio_wu_rotated 32² was marked failed for
 an extra dump past the end (tmax rounded in abel.in), fixed in `run_phantom`. Enzo: rank 0 holds the whole 3D grid at start and was killed
 for memory on nodes where it had few CPUs, so 3D now runs on full nodes (`--ntasks-per-node=32`); the stopped tasks and the 512³ tasks not

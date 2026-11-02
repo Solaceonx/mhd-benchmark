@@ -160,6 +160,8 @@ def run_athenapk(args, config, spec, settings, rundir, rep, outputs, resume=Fals
     files = sorted(rundir.glob("abel.cons.*.phdf"));found = []
     for f in files:
         with h5py.File(f, "r") as h:found.append((float(h["Info"].attrs["Time"]), int(h["Info"].attrs["NCycle"])))
+    # Parthenon can write the last output twice: on the cadence and as abel.cons.final.phdf (sorted after it)
+    pairs = unique(list(zip(found, files)), lambda p: p[0][0], config, outputs);found = [p[0] for p in pairs];files = [p[1] for p in pairs]
     rc, tail = finish(code, text, perf, found, targets_of(config, outputs), config, outputs)
     return rc, tail, perf, (read_athenapk(f, args.n, nz) for f in files)
 
@@ -217,9 +219,9 @@ def run_cholla(args, config, spec, settings, rundir, rep, outputs, resume=False)
     code, perf = run_code(cmd, rundir, rundir/"cholla.log", env=spec_env(spec));perf["ranks"] = ranks
     text = (rundir/"cholla.log").read_text(errors="replace")
     # Cholla's own stops (its div B limit of 1e-9, a GPU error) end in chexit(-1), an MPI abort, and srun reports the
-    # rank killed: a result, not a lost job
+    # rank killed (on two ranks srun returns 137, the other rank's SIGKILL): a result, not a lost job
     stop = max(text.find("The magnetic divergence "), text.find("GPU_Error_Check: Failed"))
-    if stop >= 0:code, text = code or 1, text[:text.find("\n", stop) + 1]
+    if stop >= 0:code, text = 1, text[:text.find("\n", stop) + 1]
     import h5py
     files = sorted(out.rglob("*.h5.0"), key=lambda f: int(f.name.split(".")[0]));found = []
     for f in files:
@@ -272,8 +274,12 @@ def run_pluto(args, config, spec, settings, rundir, rep, outputs, resume=False):
     if exe.parent.name[-3:] in ("-2d", "-3d"):exe = exe.parent.parent/(exe.parent.name[:-3] + want)/exe.name
     cmd = shlex.split(args.mpi or "") + [exe, "-i", "pluto.ini"]
     code, perf = run_code(cmd, rundir, rundir/"pluto.log", env=spec_env(spec))
-    perf["executable_used"] = str(exe)
+    perf["executable_used"] = str(exe);perf["ranks"] = int(m.group(1)) if (m := re.search(r"-n\s*(\d+)", args.mpi or "")) else 1
     text = (rundir/"pluto.log").read_text(errors="replace")
+    # gPLUTO's own stops (QuitPLUTO(): "Memory Sturated!" when the grid does not fit the GPU, say) call MPI_Abort, and
+    # srun reports the rank killed: a result, not a lost job
+    stop = text.find("QuitPLUTO()")
+    if stop >= 0:code, text = 1, text[:text.find("\n", stop) + 1]
     rows = [l.split() for l in (rundir/"dbl.out").read_text().splitlines() if l.strip()] if (rundir/"dbl.out").is_file() else []
     # dbl.out prints the time to 7 digits (%12.6e), coarser than the driver's frame tolerance (1e-6 of the output interval):
     # the steps land on output times, so a time within the printed precision of one is that time

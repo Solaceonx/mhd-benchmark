@@ -21,6 +21,9 @@ submit() {      # label, tasks file, sbatch options...
 }
 # GPU: five lines per task (Sherlock's gpu QOS takes 100 queued jobs per user, 16 GPUs at once)
 gpu=(--partition=gpu,owners --requeue -G 1 --constraint=GPU_SKU:H100_SXM5 --ntasks=1 --cpus-per-task=4 --mem=64G --time=24:00:00)
+# Two H100s on one node, a rank each (3D 512^3 in Cholla and gPLUTO). The driver holds a 512^3 frame and its postprocessing
+# took 128 GB in one job, so 192
+gpu2=(--partition=gpu,owners --requeue -G 2 --constraint=GPU_SKU:H100_SXM5 --nodes=1 --ntasks=2 --cpus-per-task=4 --mem=192G --time=12:00:00)
 for code in "$@"; do
     case $code in
         athenapk|cholla) "$py" tasks.py "$code" > "tasks/$code.txt" && LINES_PER_TASK=5 submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
@@ -29,8 +32,15 @@ for code in "$@"; do
         # Lines of tasks/cholla.txt whose task stopped (Cholla's own stops were read as lost jobs), 3D grids to 256; and the
         # 3D tests at 512^3, about 100 GB: two H100s, a rank each
         cholla-redo) LINES_PER_TASK=5 submit "cholla, again" tasks/cholla_redo.txt "${gpu[@]}" ;;
-        cholla-512) LINES_PER_TASK=2 RETRY='does not fit\|illegal memory access' submit "cholla 3D 512 on two GPUs" tasks/cholla_512.txt --partition=gpu,owners --requeue -G 2 \
-                        --constraint=GPU_SKU:H100_SXM5 --nodes=1 --ntasks=2 --cpus-per-task=4 --mem=128G --time=12:00:00 ;;
+        cholla-512) LINES_PER_TASK=2 RETRY='does not fit\|illegal memory access' submit "cholla 3D 512 on two GPUs" tasks/cholla_512.txt "${gpu2[@]}" ;;
+        # The 512^3 runs whose stop on two ranks was read as a kill (srun returned 137)
+        cholla-512-redo) LINES_PER_TASK=1 submit "cholla 3D 512 on two GPUs, again" tasks/cholla_512_redo.txt "${gpu2[@]}" ;;
+        # 3D 512^3 does not fit one GPU in gPLUTO either ("Memory Sturated!", about 125 GB): its lines to 256 on one GPU (the
+        # tasks stopped at 512, and the lines after it never ran), and 512 on two
+        pluto-redo2) for d in ct glm; do LINES_PER_TASK=5 submit "pluto $d to 256" "tasks/pluto_${d}_redo.txt" "${gpu[@]}"; done ;;
+        pluto-512) LINES_PER_TASK=2 RETRY='Memory Sturated' submit "pluto 3D 512 on two GPUs" tasks/pluto_512.txt "${gpu2[@]}" ;;
+        # The lines that stopped on Parthenon's doubled last output
+        athenapk-redo2) LINES_PER_TASK=5 submit "athenapk, again (doubled last output)" tasks/athenapk_redo2.txt "${gpu[@]}" ;;
         # Every pluto line again: runs recorded before dbl.out's 7-digit times were snapped to the output times (resume skips the rest)
         pluto-redo) for d in ct glm; do LINES_PER_TASK=5 RETRY='missing output times' submit "pluto $d, again" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
         pluto) for d in ct glm; do "$py" tasks.py pluto ${d}_matched ${d}_best > "tasks/pluto_$d.txt" && LINES_PER_TASK=5 submit "pluto $d" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;

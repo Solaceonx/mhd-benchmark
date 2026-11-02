@@ -168,10 +168,17 @@ to two causes. (1) Cholla's own stops (div B above its fixed 1e-9 in `magnetic_d
 decay PPMC 256² at 1e37) end in an MPI abort that the driver read as a kill, so the task stopped; `run_cholla` now records them as stops.
 (2) 3D 512³ needs about 100 GB (13 GB at 256³) and Cholla does not check its allocations ("illegal memory access"); `run_cholla` now
 refuses it on one GPU ("does not fit"), and the 20 runs go to two H100s, a rank each (`production.sh ... cholla-512`, reader stitches
-the ranks' files by "offset"; check job 50755673, array 50755687). The other lines, 3D to 256³: array 50755684 (`cholla-redo`). gPLUTO:
+the ranks' files by "offset"; check job 50757078, array 50757080; the first check, 50755673, used a Python without h5py). The other lines, 3D to 256³: array 50755684 (`cholla-redo`). gPLUTO:
 dbl.out prints times to 7 digits, coarser than the frame tolerance, so runs with all outputs were marked "missing output times";
 `run_pluto` snaps them; `production.sh afterany:50720783:50720786 pluto-redo` (50755782, 50755786) moves those records aside and reruns
 them (NEWCODES_RETRY pattern in production.sbatch). Phantom's 14 failures are all its own stops (13 field loops, rotor 32²).
+Evening 2026-11-02: two Cholla ranks gave the one-GPU answer exactly (orszag_tang_3d 64³). Cholla: 31 PPMC runs stop on its div B
+check (blasts with field, decay, decay_supersonic, orszag_tang_3d 512³); PLMC runs them all. On two ranks srun returns 137, which the
+driver counts as a kill whatever the log says, so 5 PPMC 512³ stops left no record: the code is now set to 1 at a stop, array 50793471.
+gPLUTO stops at 3D 512³ ("Memory Sturated!": it quits below 8 % free GPU memory; 13–16 GB at 256³), and each task stopped there,
+so 123 runs per set-up never ran: 3D to 256 on one GPU (50793464, 50793467), 512 on two (check 50793435, array 50793444); its
+QuitPLUTO stops are now recorded. AthenaPK: Parthenon wrote the last output twice (cadence and final), the driver raised on the
+duplicate, and 10 lines (46 runs) never ran: `run_athenapk` drops it, array 50793469. Two-GPU jobs ask 192 GB (a 512³ job reached 128).
 Order study: gem 256² athenak_ppm_hlle reached t_end with frame 1.40625 of 41 missing, so it is marked failed; look at it when fetching.
 
 **Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our

@@ -5,12 +5,14 @@
 # 512^2 (9.4 MB). 3D states stay on Sherlock, their errors are in run.toml. Run it in a job, without -l (a login shell's
 # messages would corrupt the stream):
 #   sbatch --time=01:00:00 --wrap "bash pack_for_mac.sh > $SCRATCH/newcodes_for_mac.tgz"
+# `bash pack_for_mac.sh records`: the text files only (tens of MB, light enough for a login node): what the status grid reads.
 set -uo pipefail
 cd "${SCRATCH:-/scratch/users/$USER}" || exit 1
 set=mhd-results-newcodes
 {
     find "$set" -path '*/data/*' \( -name run.toml -o -name diagnostics.csv -o -name spectra.csv \) 2>/dev/null
     find "$set" -mindepth 3 -maxdepth 3 -path '*/data/*' \( -name environment.toml -o -name input.toml \) 2>/dev/null
+    [[ "${1:-}" == records ]] && exit 0
     for d in $(find "$set" -maxdepth 3 -type d -name '*_r1' -path '*/data/*' 2>/dev/null); do
         for f in "$d"/state_*.bin "$d"/slice_*.bin; do
             [[ -f "$f" && $(stat -c %s "$f") -le 2654208 ]] && echo "$f"

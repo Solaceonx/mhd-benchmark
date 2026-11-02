@@ -18,18 +18,23 @@ VARIANTS = {"athenapk": ["matched", "best"], "cholla": ["plmc", "ppmc"], "pluto"
 PHANTOM_3D_MAX = 256           # 512^3 would be 134 million particles
 
 
-def main(code, variants):
-    want_grids = {int(g) for g in os.environ.get("NEWCODES_GRIDS", "").split(",") if g}
-    dim = os.environ.get("NEWCODES_DIM", "")
+def runs(code, variants=(), want_grids=(), dim=""):
+    """(variant, test, seed, grids, geometry) of every planned run of a code; the site reads the plan from here too."""
+    sys.path.insert(0, str(SWEEP/"codes"));import external
     for v in variants or VARIANTS[code]:
         for test in TESTS:
-            sys.path.insert(0, str(SWEEP/"codes"));import external
             cfg = external.load_config(SWEEP/"configs"/f"{test}.toml");flat = external.planar(cfg)
             if (dim == "planar" and not flat) or (dim == "3d" and flat):continue
             grids = [g for g in cfg["grids"] if (not want_grids or g in want_grids) and not (code == "phantom" and not flat and g > PHANTOM_3D_MAX)]
             if not grids:continue
             for seed in cfg.get("seeds", [42]):
-                print(f"{code}|{v}|{test}|{seed}|{','.join(map(str, grids))}|{'plane' if flat else 'cube'}")
+                yield v, test, seed, grids, "plane" if flat else "cube"
+
+
+def main(code, variants):
+    want_grids = {int(g) for g in os.environ.get("NEWCODES_GRIDS", "").split(",") if g}
+    for v, test, seed, grids, geometry in runs(code, variants, want_grids, os.environ.get("NEWCODES_DIM", "")):
+        print(f"{code}|{v}|{test}|{seed}|{','.join(map(str, grids))}|{geometry}")
 
 
 if __name__ == "__main__":

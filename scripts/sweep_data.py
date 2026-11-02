@@ -15,6 +15,7 @@ Binary files are little-endian Float32 in Fortran order: (n, n, 9) for planar te
 rho, mx, my, mz, E, Bx, By, Bz, psi (psi is zero for codes without divergence cleaning).
 """
 import functools
+import importlib.util
 import json
 import os
 import re
@@ -68,6 +69,8 @@ ORDER_RESULTS = Path(os.environ.get("MHD_ORDER_RESULTS", ROOT/"order_results"/"m
 NEWCODES = ("athenapk_matched", "athenapk_best", "cholla_plmc", "cholla_ppmc", "pluto_ct_matched", "pluto_ct_best",
             "pluto_glm_matched", "pluto_glm_best", "enzo_dedner", "enzo_ct", "phantom_sph")
 NEWCODES_RESULTS = Path(os.environ.get("MHD_NEWCODES_RESULTS", ROOT/"newcodes_results"/"mhd-results-newcodes"))
+_spec = importlib.util.spec_from_file_location("newcode_tasks", ROOT/"sherlock_newcodes"/"tasks.py")
+NEWCODE_TASKS = importlib.util.module_from_spec(_spec);_spec.loader.exec_module(NEWCODE_TASKS)      # their planned runs
 FIELDS = ("rho", "mx", "my", "mz", "E", "Bx", "By", "Bz", "psi")
 # A code's own stop in a record's error text (Cholla's div B limit, gPLUTO's QuitPLUTO, Phantom's and Enzo's fatal errors)
 STOP_TEXT = re.compile(r"The magnetic divergence|QuitPLUTO|FATAL ERROR|ENZO ERROR|ERROR_MESSAGE|does not fit|Nonphysical|Memory Sturated")
@@ -178,6 +181,15 @@ class Sweep:
                         row["reached"] = float(meta.get("time_reached", 0.0));row["note"] = next((l.strip() for l in lines if STOP_TEXT.search(l)), lines[0])
                     if row["state"] == "stopped":row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None
                 getattr(self, code)[key] = row;self.rows[key] = row
+        # The new codes' planned runs with no fetched record: not finished (their plan is the task lists production.sh submits)
+        for code in NEWCODE_TASKS.VARIANTS:
+            for variant, test, seed, grids, _ in NEWCODE_TASKS.runs(code):
+                for n in grids:
+                    label = f"{code}_{variant}";key = (test, label, n, seed)
+                    if key in self.newcodes or test not in self.configs:continue
+                    d = NEWCODES_RESULTS/f"{test}-{code}-{variant}-run-N{n}-s{seed}"
+                    self.by[key] = dict(test=test, code="newcodes", variant=label, mode="run", n=n, seed=seed, extra=label, dir=str(d), key=d.name)
+                    self.newcodes[key] = self.rows[key] = dict(test=test, n=n, seed=seed, label=label, frac=None, state="open")
 
     # ---- the plan ----
     def frames(self, test):

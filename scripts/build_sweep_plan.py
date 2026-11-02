@@ -412,18 +412,24 @@ def newcodes_card():
         return note[:60] or "no message"
     items = []
     for code, name in (("athenapk", "AthenaPK"), ("cholla", "Cholla"), ("pluto", "gPLUTO"), ("enzo", "Enzo"), ("phantom", "Phantom")):
-        mine = [r for k, r in rows.items() if k[1].split("_")[0] == code and r["state"] != "open"]
+        mine = [r for k, r in rows.items() if k[1].split("_")[0] == code]
         if not mine:continue
-        done = sum(r["state"] == "done" for r in mine);reasons = collections.Counter(why(r.get("note", "")) for r in mine if r["state"] == "stopped")
-        text = f"<strong>{name}</strong>: {done} of {len(mine)} fetched runs reached the end"
-        if reasons:text += "; the others stopped on " + ", ".join(f"{e(w)} ({n})" for w, n in reasons.most_common())
+        done = sum(r["state"] == "done" for r in mine);todo = sum(r["state"] == "open" for r in mine)
+        reasons = collections.Counter(why(r.get("note", "")) for r in mine if r["state"] == "stopped")
+        text = f"<strong>{name}</strong>: {len(mine)} runs; {done} reached the end, {todo} still to run"
+        if reasons:text += f"; {sum(reasons.values())} stopped, on " + ", ".join(f"{e(w)} ({n})" for w, n in reasons.most_common())
         items.append(f"<li>{text}.</li>")
+    total = len(rows);ended = sum(r["state"] != "open" for r in rows.values())
+    stamp = sweep_data.NEWCODES_RESULTS.parent/"FETCHED"           # written by the fetch (sherlock_newcodes/README.md)
+    fetched = stamp.read_text().strip() if stamp.is_file() else "last"
     return ('<div class="card"><h3>Run after the sweep: five more codes</h3><p>AthenaPK (GLM, GPU), Cholla (CT, GPU), gPLUTO (CT and GLM, '
             'GPU), Enzo (Dedner and CT, CPUs) and Phantom (smoothed particles, CPUs) on every test at every grid and seed, from the suite\'s '
             'own starting state, through the sweep\'s driver (not in the plan or the tables above). 3D 512³ runs on two H100s in Cholla '
             'and gPLUTO: neither fits one.</p>'
-            f'<ul class="checks plain">{"".join(items)}</ul><p class="small">Counts are of the records fetched so far; runs still on '
-            'Sherlock are not in them.</p></div>')
+            f'<p><strong>{ended} of {total} runs have a result ({100*ended/total:.0f} %)</strong>: finished, or stopped by the code itself. '
+            'In the grid above, each column from AthenaPK to Phantom has a mark per grid: solid when finished, amber up to how far '
+            'it got when the code stopped, a dotted outline when still to run (queued or running on Sherlock).</p>'
+            f'<ul class="checks plain">{"".join(items)}</ul><p class="small">As of the records fetched {e(fetched)}.</p></div>')
 
 
 def driven_grid_rows(campaign, methods):

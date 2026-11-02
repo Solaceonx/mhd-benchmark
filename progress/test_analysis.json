@@ -20,7 +20,11 @@
      "vector": "media/analysis/entropy/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: exact cell-average entropy advection.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -110,7 +114,9 @@
      "vector": "media/analysis/entropy/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -118,7 +124,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/entropy/07-validity-matrix.png",
      "vector": "media/analysis/entropy/07-validity-matrix.svg",
-     "aspect": 1.0416666666666665,
+     "aspect": 0.9316770186335404,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -158,7 +164,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/entropy/08-runtime-1.png",
      "vector": "media/analysis/entropy/08-runtime-1.svg",
-     "aspect": 1.8465909090909092,
+     "aspect": 1.728723404255319,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -166,7 +172,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 185,
+   "records": 190,
    "methods": [
     "glm",
     "glm_hll16",
@@ -193,6 +199,10 @@
     "athenapk_best",
     "cholla_plmc",
     "cholla_ppmc",
+    "pluto_ct_matched",
+    "pluto_ct_best",
+    "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -220,7 +230,10 @@
      "vector": "media/analysis/kh_uniform/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 4096\u00b2 \u2192 128.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -318,7 +331,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/kh_uniform/07-validity-matrix.png",
      "vector": "media/analysis/kh_uniform/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.9316770186335404,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550"
@@ -396,7 +409,9 @@
     "cholla_plmc",
     "cholla_ppmc",
     "pluto_ct_matched",
+    "pluto_ct_best",
     "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -645,6 +660,9 @@
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 512\u00b3 \u2192 64.",
      "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data",
       "Enzo CT: no paired reference data"
      ]
     },
@@ -744,7 +762,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_3d_b50/07-validity-matrix.png",
      "vector": "media/analysis/blast_3d_b50/07-validity-matrix.svg",
-     "aspect": 1.1428571428571428,
+     "aspect": 1.0416666666666665,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
@@ -805,7 +823,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b50/08-runtime-1.png",
      "vector": "media/analysis/blast_3d_b50/08-runtime-1.svg",
-     "aspect": 1.911764705882353,
+     "aspect": 1.8465909090909092,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -813,7 +831,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 117,
+   "records": 121,
    "methods": [
     "glm",
     "glm_hll16",
@@ -837,6 +855,9 @@
     "cholla_plmc",
     "cholla_ppmc",
     "pluto_ct_matched",
+    "pluto_ct_best",
+    "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -864,7 +885,10 @@
      "vector": "media/analysis/uniform/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: exact uniform state.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -952,7 +976,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/uniform/07-validity-matrix.png",
      "vector": "media/analysis/uniform/07-validity-matrix.svg",
-     "aspect": 1.011804384485666,
+     "aspect": 0.9569377990430621,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -1027,7 +1051,9 @@
     "cholla_plmc",
     "cholla_ppmc",
     "pluto_ct_matched",
+    "pluto_ct_best",
     "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -1463,7 +1489,9 @@
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 4096\u00b2 \u2192 128.",
      "details": [
       "AthenaPK PLM/HLLE: no paired reference data",
-      "AthenaPK PPM/HLLD: no paired reference data"
+      "AthenaPK PPM/HLLD: no paired reference data",
+      "gPLUTO CT PLM/HLL: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data"
      ]
     },
     {
@@ -1554,7 +1582,9 @@
      "vector": "media/analysis/brio_wu/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -1562,7 +1592,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/brio_wu/07-validity-matrix.png",
      "vector": "media/analysis/brio_wu/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.9316770186335404,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550"
@@ -1604,7 +1634,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/brio_wu/08-runtime-1.png",
      "vector": "media/analysis/brio_wu/08-runtime-1.svg",
-     "aspect": 1.8465909090909092,
+     "aspect": 1.728723404255319,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1612,7 +1642,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 185,
+   "records": 190,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1639,7 +1669,9 @@
     "athenapk_best",
     "cholla_plmc",
     "cholla_ppmc",
+    "pluto_ct_matched",
     "pluto_ct_best",
+    "pluto_glm_matched",
     "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
@@ -1668,7 +1700,10 @@
      "vector": "media/analysis/brio_wu_rotated/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 4096\u00b2 \u2192 128.",
-     "details": []
+     "details": [
+      "gPLUTO CT PLM/HLL: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -1758,7 +1793,9 @@
      "vector": "media/analysis/brio_wu_rotated/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -1766,7 +1803,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/brio_wu_rotated/07-validity-matrix.png",
      "vector": "media/analysis/brio_wu_rotated/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.9316770186335404,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
@@ -1810,7 +1847,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/brio_wu_rotated/08-runtime-1.png",
      "vector": "media/analysis/brio_wu_rotated/08-runtime-1.svg",
-     "aspect": 1.625,
+     "aspect": 1.5330188679245282,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1818,7 +1855,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 195,
+   "records": 200,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1845,7 +1882,9 @@
     "athenapk_best",
     "cholla_plmc",
     "cholla_ppmc",
+    "pluto_ct_matched",
     "pluto_ct_best",
+    "pluto_glm_matched",
     "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
@@ -2295,7 +2334,10 @@
      "vector": "media/analysis/rotor/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 4096\u00b2 \u2192 128.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -2393,7 +2435,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/rotor/07-validity-matrix.png",
      "vector": "media/analysis/rotor/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.9316770186335404,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
@@ -2474,7 +2516,9 @@
     "cholla_plmc",
     "cholla_ppmc",
     "pluto_ct_matched",
+    "pluto_ct_best",
     "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -2502,7 +2546,10 @@
      "vector": "media/analysis/gem/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 4096\u00b2 \u2192 128.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -2600,7 +2647,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/gem/07-validity-matrix.png",
      "vector": "media/analysis/gem/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.9316770186335404,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
@@ -2684,7 +2731,9 @@
     "cholla_plmc",
     "cholla_ppmc",
     "pluto_ct_matched",
+    "pluto_ct_best",
     "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -2712,7 +2761,11 @@
      "vector": "media/analysis/field_loop/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: kinematic periodic-return target; weak Lorentz forces make this approximate.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -2802,7 +2855,9 @@
      "vector": "media/analysis/field_loop/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -2810,7 +2865,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop/07-validity-matrix.png",
      "vector": "media/analysis/field_loop/07-validity-matrix.svg",
-     "aspect": 1.073345259391771,
+     "aspect": 0.9569377990430621,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
@@ -2862,7 +2917,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop/08-runtime-1.png",
      "vector": "media/analysis/field_loop/08-runtime-1.svg",
-     "aspect": 1.911764705882353,
+     "aspect": 1.8465909090909092,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2870,7 +2925,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 135,
+   "records": 140,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2896,6 +2951,10 @@
     "athenapk_best",
     "cholla_plmc",
     "cholla_ppmc",
+    "pluto_ct_matched",
+    "pluto_ct_best",
+    "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -2923,7 +2982,11 @@
      "vector": "media/analysis/field_loop_novz/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: kinematic periodic-return target; weak Lorentz forces make this approximate.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -3013,7 +3076,9 @@
      "vector": "media/analysis/field_loop_novz/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -3021,7 +3086,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop_novz/07-validity-matrix.png",
      "vector": "media/analysis/field_loop_novz/07-validity-matrix.svg",
-     "aspect": 1.0416666666666665,
+     "aspect": 0.9316770186335404,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
@@ -3073,7 +3138,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop_novz/08-runtime-1.png",
      "vector": "media/analysis/field_loop_novz/08-runtime-1.svg",
-     "aspect": 1.911764705882353,
+     "aspect": 1.8465909090909092,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -3081,7 +3146,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 185,
+   "records": 190,
    "methods": [
     "glm",
     "glm_hll16",
@@ -3108,6 +3173,10 @@
     "athenapk_best",
     "cholla_plmc",
     "cholla_ppmc",
+    "pluto_ct_matched",
+    "pluto_ct_best",
+    "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -3137,7 +3206,8 @@
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: kinematic periodic-return target; weak Lorentz forces make this approximate.",
      "details": [
       "AthenaPK PLM/HLLE: no paired reference data",
-      "AthenaPK PPM/HLLD: no paired reference data"
+      "AthenaPK PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data"
      ]
     },
     {
@@ -3236,7 +3306,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop_3d/07-validity-matrix.png",
      "vector": "media/analysis/field_loop_3d/07-validity-matrix.svg",
-     "aspect": 1.1070110701107012,
+     "aspect": 1.0416666666666665,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
@@ -3294,7 +3364,7 @@
     "Only a few paired snapshots are local. Error points are sparse; a continuous history requires more matched reference snapshots.",
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 159,
+   "records": 163,
    "methods": [
     "glm",
     "glm_hll16",
@@ -3317,7 +3387,9 @@
     "athenapk_best",
     "cholla_plmc",
     "cholla_ppmc",
+    "pluto_ct_matched",
     "pluto_ct_best",
+    "pluto_glm_matched",
     "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
@@ -4209,7 +4281,11 @@
      "vector": "media/analysis/blast_3d_b100/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 512\u00b3 \u2192 64.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -4307,7 +4383,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_3d_b100/07-validity-matrix.png",
      "vector": "media/analysis/blast_3d_b100/07-validity-matrix.svg",
-     "aspect": 1.1428571428571428,
+     "aspect": 1.0416666666666665,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
@@ -4334,7 +4410,6 @@
       "Cholla PPMC N=128: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.9073e-06, the maximum allowed divergence = 1.0000e-09",
       "Cholla PPMC N=256: The magnetic divergence has exceeded the maximum allowed value. Divergence = 3.8147e-06, the maximum allowed divergence = 1.0000e-09",
       "Cholla PPMC N=512: The magnetic divergence has exceeded the maximum allowed value. Divergence = 8.8604e-06, the maximum allowed divergence = 1.0000e-09",
-      "gPLUTO CT PLM/HLL N=128: complete",
       "Enzo Dedner N=256: complete"
      ]
     },
@@ -4374,7 +4449,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b100/08-runtime-1.png",
      "vector": "media/analysis/blast_3d_b100/08-runtime-1.svg",
-     "aspect": 1.911764705882353,
+     "aspect": 1.728723404255319,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -4382,7 +4457,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 119,
+   "records": 124,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4406,6 +4481,9 @@
     "cholla_plmc",
     "cholla_ppmc",
     "pluto_ct_matched",
+    "pluto_ct_best",
+    "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -4433,7 +4511,10 @@
      "vector": "media/analysis/kh_localized/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 4096\u00b2 \u2192 128.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
+     ]
     },
     {
      "category": "02-convergence",
@@ -4531,7 +4612,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/kh_localized/07-validity-matrix.png",
      "vector": "media/analysis/kh_localized/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.9316770186335404,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
@@ -4610,7 +4691,9 @@
     "cholla_plmc",
     "cholla_ppmc",
     "pluto_ct_matched",
+    "pluto_ct_best",
     "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -4932,7 +5015,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 367,
+   "records": 378,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4990,7 +5073,9 @@
       "AthenaPK PLM/HLLE: no paired reference data",
       "AthenaPK PPM/HLLD: no paired reference data",
       "gPLUTO CT PLM/HLL: no paired reference data",
-      "gPLUTO GLM PLM/HLL: no paired reference data"
+      "gPLUTO CT PPM/HLLD: no paired reference data",
+      "gPLUTO GLM PLM/HLL: no paired reference data",
+      "gPLUTO GLM PPM/HLLD: no paired reference data"
      ]
     },
     {
@@ -5089,7 +5174,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/decay_supersonic/07-validity-matrix.png",
      "vector": "media/analysis/decay_supersonic/07-validity-matrix.svg",
-     "aspect": 1.1070110701107012,
+     "aspect": 1.0416666666666665,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=64:     @ Base ./client.jl:550",
@@ -5204,7 +5289,9 @@
     "cholla_plmc",
     "cholla_ppmc",
     "pluto_ct_matched",
+    "pluto_ct_best",
     "pluto_glm_matched",
+    "pluto_glm_best",
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph"
@@ -5542,6 +5629,6 @@
    ]
   }
  },
- "built_utc": "2026-11-02T18:36:00.606057+00:00",
+ "built_utc": "2026-11-02T23:24:20.504144+00:00",
  "synthetic": false
 }

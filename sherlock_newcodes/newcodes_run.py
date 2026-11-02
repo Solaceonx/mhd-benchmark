@@ -173,31 +173,60 @@ def cholla_input(config, n, settings, geometry, outputs):
     return "\n".join(lines) + "\n"
 
 
-def read_cholla(path, n):
+def read_cholla(paths, n):
+    """One output: the file of each rank (<index>.h5.<rank>), its part of the grid at "offset"."""
     import h5py
-    with h5py.File(path, "r") as f:
-        a = f.attrs;t = float(np.ravel(a["t"])[0]);steps = int(np.ravel(a["n_step"])[0]) if "n_step" in a else 0
-        g = lambda k: np.array(f[k], dtype=float)
-        rho = g("density");nz = rho.shape[2]
-        u = np.zeros((n, n, nz, 9))
-        u[..., 0] = rho;u[..., 1] = g("momentum_x");u[..., 2] = g("momentum_y");u[..., 3] = g("momentum_z");u[..., 4] = g("Energy")
-        bx, by, bz = g("magnetic_x"), g("magnetic_y"), g("magnetic_z")      # face fields: n+1 along their own axis, lower face first
-        u[..., 5] = 0.5*(bx[:-1] + bx[1:]);u[..., 6] = 0.5*(by[:, :-1] + by[:, 1:]);u[..., 7] = 0.5*(bz[:, :, :-1] + bz[:, :, 1:])
+    u = None
+    for path in paths:
+        with h5py.File(path, "r") as f:
+            a = f.attrs;t = float(np.ravel(a["t"])[0]);steps = int(np.ravel(a["n_step"])[0]) if "n_step" in a else 0
+            g = lambda k: np.array(f[k], dtype=float)
+            rho = g("density");o = [int(v) for v in np.ravel(a["offset"])] if "offset" in a else [0, 0, 0]
+            if u is None:u = np.zeros((n, n, int(np.ravel(a["dims"])[2]) if "dims" in a else rho.shape[2], 9))
+            lx, ly, lz = rho.shape;part = u[o[0]:o[0] + lx, o[1]:o[1] + ly, o[2]:o[2] + lz]
+            part[..., 0] = rho;part[..., 1] = g("momentum_x");part[..., 2] = g("momentum_y");part[..., 3] = g("momentum_z");part[..., 4] = g("Energy")
+            bx, by, bz = g("magnetic_x"), g("magnetic_y"), g("magnetic_z")      # face fields: one more along their own axis, lower face first
+            part[..., 5] = 0.5*(bx[:-1] + bx[1:]);part[..., 6] = 0.5*(by[:, :-1] + by[:, 1:]);part[..., 7] = 0.5*(bz[:, :, :-1] + bz[:, :, 1:])
     return t, steps, u
+
+
+# Cholla's GPU memory, ghost cells included: 13.06e9 bytes at 256^3 (264^3 cells with ghosts) on one H100, so 512^3 needs
+# about 100 GB and runs on two (srun -n 2: one rank and one GPU each, cudaSetDevice(rank % GPUs))
+CHOLLA_BYTES_PER_CELL = 710
+
+
+def gpu_bytes():
+    try:
+        q = subprocess.run(["nvidia-smi", "--query-gpu=memory.total", "--format=csv,noheader,nounits", "-i", "0"], capture_output=True, text=True, timeout=60)
+        return float(q.stdout.split()[0])*2**20
+    except (OSError, ValueError, IndexError, subprocess.SubprocessError):
+        return None
 
 
 def run_cholla(args, config, spec, settings, rundir, rep, outputs, resume=False):
     out = rundir/"output";shutil.rmtree(out, ignore_errors=True);out.mkdir(parents=True)
+    ranks = int(m.group(1)) if (m := re.search(r"-n\s*(\d+)", args.mpi or "")) else 1
+    nz = SLAB if args.geometry == "plane" else args.n
+    need, have = CHOLLA_BYTES_PER_CELL*(args.n + 8)**2*(nz + 8)/ranks, gpu_bytes()
+    if have and need > 0.95*have:
+        # Cholla does not check its allocations: it would start and stop on "an illegal memory access"
+        return 1, (f"does not fit: Cholla needs about {need/1e9:.0f} GB a GPU at N={args.n} on {ranks} rank(s), "
+                   f"and the GPU has {have/1e9:.0f} GB"), {"wall_seconds": 0.0, "ranks": ranks}, iter(())
     (rundir/"cholla.txt").write_text(cholla_input(config, args.n, settings, args.geometry, outputs))
     cmd = shlex.split(args.mpi or "") + [args.exe, "cholla.txt"]
-    code, perf = run_code(cmd, rundir, rundir/"cholla.log", env=spec_env(spec))
+    code, perf = run_code(cmd, rundir, rundir/"cholla.log", env=spec_env(spec));perf["ranks"] = ranks
     text = (rundir/"cholla.log").read_text(errors="replace")
+    # Cholla's own stops (its div B limit of 1e-9, a GPU error) end in chexit(-1), an MPI abort, and srun reports the
+    # rank killed: a result, not a lost job
+    stop = max(text.find("The magnetic divergence "), text.find("GPU_Error_Check: Failed"))
+    if stop >= 0:code, text = code or 1, text[:text.find("\n", stop) + 1]
     import h5py
     files = sorted(out.rglob("*.h5.0"), key=lambda f: int(f.name.split(".")[0]));found = []
     for f in files:
         with h5py.File(f, "r") as h:
             found.append((float(np.ravel(h.attrs["t"])[0]), int(np.ravel(h.attrs["n_step"])[0]) if "n_step" in h.attrs else 0))
     pairs = unique(list(zip(found, files)), lambda p: p[0][0], config, outputs);found = [p[0] for p in pairs];files = [p[1] for p in pairs]
+    files = [sorted(f.parent.glob(f.name[:-1] + "*"), key=lambda p: int(p.name.split(".")[-1])) for f in files]
     rc, tail = finish(code, text, perf, found, targets_of(config, outputs), config, outputs)
     plane = args.geometry == "plane"
     def frames():
@@ -246,6 +275,12 @@ def run_pluto(args, config, spec, settings, rundir, rep, outputs, resume=False):
     perf["executable_used"] = str(exe)
     text = (rundir/"pluto.log").read_text(errors="replace")
     rows = [l.split() for l in (rundir/"dbl.out").read_text().splitlines() if l.strip()] if (rundir/"dbl.out").is_file() else []
+    # dbl.out prints the time to 7 digits (%12.6e), coarser than the driver's frame tolerance (1e-6 of the output interval):
+    # the steps land on output times, so a time within the printed precision of one is that time
+    targets = targets_of(config, outputs)
+    for r in rows:
+        near = min(targets, key=lambda s: abs(s - float(r[1])))
+        if abs(near - float(r[1])) <= 6e-7*abs(near):r[1] = repr(near)
     rows = unique(rows, lambda r: float(r[1]), config, outputs)
     found = [(float(r[1]), int(r[3])) for r in rows]
     rc, tail = finish(code, text, perf, found, targets_of(config, outputs), config, outputs)

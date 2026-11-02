@@ -163,6 +163,15 @@ stop themselves on NaN pressure (mhd_dt.F, dual energy off), which the driver to
 AthenaPK's planar 256² and 512² aborted at t = 0 (Kokkos team scratch does not fit blocks of 256: "could not find a valid execution
 configuration"); blocks are now 128 in 2D as in 3D, and the 50 runs are array 50745637 (`production.sh none athenapk-redo`). Cholla's trial
 passed (L1 0.031 PLMC, 0.024 PPMC). Records moved aside: $SCRATCH/mhd-results-newcodes-superseded. Sherlock refuses job scripts that contain `sleep`.
+Later on 2026-11-02: gPLUTO's trial passed (Orszag-Tang 64² L1 0.048/0.013 CT, 0.055/0.015 GLM). Cholla production lost 9 of 11 tasks
+to two causes. (1) Cholla's own stops (div B above its fixed 1e-9 in `magnetic_divergence.cu`: blast_2d_b50 PPMC 32², decay PPMC 128² s44,
+decay PPMC 256² at 1e37) end in an MPI abort that the driver read as a kill, so the task stopped; `run_cholla` now records them as stops.
+(2) 3D 512³ needs about 100 GB (13 GB at 256³) and Cholla does not check its allocations ("illegal memory access"); `run_cholla` now
+refuses it on one GPU ("does not fit"), and the 20 runs go to two H100s, a rank each (`production.sh ... cholla-512`, reader stitches
+the ranks' files by "offset"; check job 50755673, array 50755687). The other lines, 3D to 256³: array 50755684 (`cholla-redo`). gPLUTO:
+dbl.out prints times to 7 digits, coarser than the frame tolerance, so runs with all outputs were marked "missing output times";
+`run_pluto` snaps them; `production.sh afterany:50720783:50720786 pluto-redo` (50755782, 50755786) moves those records aside and reruns
+them (NEWCODES_RETRY pattern in production.sbatch). Phantom's 14 failures are all its own stops (13 field loops, rotor 32²).
 Order study: gem 256² athenak_ppm_hlle reached t_end with frame 1.40625 of 41 missing, so it is marked failed; look at it when fetching.
 
 **Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our

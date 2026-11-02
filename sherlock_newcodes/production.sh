@@ -8,6 +8,7 @@ set -uo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$here"; mkdir -p logs tasks
 trial="${1:?usage: bash -l production.sh TRIAL CODE ...}"; shift
 dep=(); [[ "$trial" == none ]] || dep=(--dependency=afterok:"$trial")
+[[ "$trial" == after* ]] && dep=(--dependency="$trial")         # or a dependency as is: afterany:JOB, to start when an array ends
 module load python/3.12.1 py-numpy/2.2.6_py312 >/dev/null 2>&1
 py=python3; "$py" -c "import numpy" || { echo "no numpy for $py (module py-numpy)"; exit 1; }
 export SWEEP_BUNDLE="${SWEEP_BUNDLE:-/scratch/users/lyxia/mhd-study/sherlock_sweep}"
@@ -15,7 +16,7 @@ submit() {      # label, tasks file, sbatch options...
     local label="$1" file="$2"; shift 2; local n; n=$(wc -l < "$file" | tr -d ' ')
     [[ $n -gt 0 ]] || return 0
     local g="${LINES_PER_TASK:-1}"; local k=$(( (n + g - 1)/g ))
-    local id; id="$(sbatch --parsable ${dep[@]+"${dep[@]}"} --array=1-"$k" --export=ALL,NEWCODES_TASKS="$here/$file",NEWCODES_GROUP="$g" "$@" production.sbatch)" \
+    local id; id="$(sbatch --parsable ${dep[@]+"${dep[@]}"} --array=1-"$k" --export=ALL,NEWCODES_TASKS="$here/$file",NEWCODES_GROUP="$g",NEWCODES_RETRY="${RETRY:-0}" "$@" production.sbatch)" \
         && echo "   $label: array ${id%%;*}, $k tasks of up to $g lines ($n lines)" || echo "   $label: NOT SUBMITTED"
 }
 # GPU: five lines per task (Sherlock's gpu QOS takes 100 queued jobs per user, 16 GPUs at once)
@@ -25,6 +26,13 @@ for code in "$@"; do
         athenapk|cholla) "$py" tasks.py "$code" > "tasks/$code.txt" && LINES_PER_TASK=5 submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
         # Lines of tasks/athenapk.txt with the grids that aborted on blocks of 256, written by hand
         athenapk-redo) LINES_PER_TASK=5 submit "athenapk, again" tasks/athenapk_redo.txt "${gpu[@]}" ;;
+        # Lines of tasks/cholla.txt whose task stopped (Cholla's own stops were read as lost jobs), 3D grids to 256; and the
+        # 3D tests at 512^3, about 100 GB: two H100s, a rank each
+        cholla-redo) LINES_PER_TASK=5 submit "cholla, again" tasks/cholla_redo.txt "${gpu[@]}" ;;
+        cholla-512) LINES_PER_TASK=2 RETRY='does not fit\|illegal memory access' submit "cholla 3D 512 on two GPUs" tasks/cholla_512.txt --partition=gpu,owners --requeue -G 2 \
+                        --constraint=GPU_SKU:H100_SXM5 --nodes=1 --ntasks=2 --cpus-per-task=4 --mem=128G --time=12:00:00 ;;
+        # Every pluto line again: runs recorded before dbl.out's 7-digit times were snapped to the output times (resume skips the rest)
+        pluto-redo) for d in ct glm; do LINES_PER_TASK=5 RETRY='missing output times' submit "pluto $d, again" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
         pluto) for d in ct glm; do "$py" tasks.py pluto ${d}_matched ${d}_best > "tasks/pluto_$d.txt" && LINES_PER_TASK=5 submit "pluto $d" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
         # Enzo's rank 0 holds the whole 3D grid while it starts (4 GB at 256^3, 8 times that at 512^3): full nodes, or the
         # node where it has few CPUs kills it for memory

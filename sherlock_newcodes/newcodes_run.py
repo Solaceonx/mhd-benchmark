@@ -196,6 +196,7 @@ def run_cholla(args, config, spec, settings, rundir, rep, outputs, resume=False)
     for f in files:
         with h5py.File(f, "r") as h:
             found.append((float(np.ravel(h.attrs["t"])[0]), int(np.ravel(h.attrs["n_step"])[0]) if "n_step" in h.attrs else 0))
+    pairs = unique(list(zip(found, files)), lambda p: p[0][0], config, outputs);found = [p[0] for p in pairs];files = [p[1] for p in pairs]
     rc, tail = finish(code, text, perf, found, targets_of(config, outputs), config, outputs)
     plane = args.geometry == "plane"
     def frames():
@@ -312,6 +313,9 @@ def run_enzo(args, config, spec, settings, rundir, rep, outputs, resume=False):
     cmd = shlex.split(args.mpi or "") + [args.exe, "-d", "enzo.par"]
     code, perf = run_code(cmd, rundir, rundir/"enzo.log", env=spec_env(spec), gpu=False)
     text = (rundir/"enzo.log").read_text(errors="replace")
+    # Enzo's own stop (ERROR_MESSAGE: NaN pressure in mhd_dt.F, say) aborts MPI and srun reports the ranks killed: a result, not a lost job
+    stop = text.find("=== ENZO ERROR ===")
+    if stop >= 0:code, text = 1, text[:text.find("\n", stop) + 1]
     dumps = unique(enzo_dumps(rundir), lambda d: enzo_meta(d)[0], config, outputs);found = [enzo_meta(d) for d in dumps]
     rc, tail = finish(code, text, perf, found, targets_of(config, outputs), config, outputs)
     return rc, tail, perf, (read_enzo(d, args.n, rank, settings) for d in dumps)
@@ -406,7 +410,8 @@ def run_phantom(args, config, spec, settings, rundir, rep, outputs, resume=False
     times = []
     for f in files:
         with open(f, "rb") as g:np.fromfile(g, dtype="<i8", count=1);times.append(float(np.fromfile(g, dtype="<f8", count=1)[0]))
-    keep = unique(list(zip(times, files)), lambda p: p[0], config, outputs)
+    # tmax and dtmax are rounded in abel.in: the last dump can fall 1e-13 short of tmax, and Phantom then takes one more step and dumps past the end
+    keep = [p for p in unique(list(zip(times, files)), lambda p: p[0], config, outputs) if p[0] <= t_end + 1e-6*dt_out]
     text = (rundir/"phantom.log").read_text(errors="replace")
     m = re.findall(r"Since code start:\s*(\d+) timesteps", text)
     found = [(t, int(m[-1]) if m else 0) for t, _ in keep]

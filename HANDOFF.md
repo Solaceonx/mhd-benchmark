@@ -148,6 +148,18 @@ the loop); recorded as stopped. Its only way past is I_WILL_NOT_PUBLISH_CRAP=yes
 trial, by decision (`production.sh none phantom`): the trial's only failure is that check. Cancelling a trial cancels its production. Results: $SCRATCH/mhd-results-newcodes. If a trial
 fails, its production is cancelled by Slurm: read logs/trial_report_*.txt, fix, resubmit (production.sh TRIAL CODE).
 Site: nothing yet; add their labels to sweep_data / paper_common / test_diagnostics when fetched.
+State 2026-11-02 (jobs replacing the ids above): AthenaPK passed (Orszag-Tang 64² L1 0.056 matched, 0.017 best), production 50714488. Cholla
+ran to the end but skipped its last output (outtime is a running sum, 0.5000000000000002 against tout = 0.5); `patch_cholla.py` fixes
+main.cpp; rebuilt 50714541, trial 50714547, production 50714599. Its and gPLUTO's builds target cc90 (H100) only, so their trials need an
+H100. gPLUTO's trial 50676215 hung for its whole 2 h on the first run with an empty log, and its production was cancelled; probe 50714422
+(logs/probe_pluto.sbatch on Sherlock) logs the OpenACC launches and a gdb backtrace; cause not known yet. Phantom 50678662: field loops
+stopped as expected; rotor 32² stops itself on momentum conservation at t = 0.14 of 0.15 (kept); brio_wu_rotated 32² was marked failed for
+an extra dump past the end (tmax rounded in abel.in), fixed in `run_phantom`. Enzo: rank 0 holds the whole 3D grid at start and was killed
+for memory on nodes where it had few CPUs, so 3D now runs on full nodes (`--ntasks-per-node=32`); the stopped tasks and the 512³ tasks not
+yet run are 50714480 and 50714486 (`production.sh none enzo-redo`); 50676336_5 and _8 keep running. Enzo CT's blast_3d_b50 64² and b100 256²
+stop themselves on NaN pressure (mhd_dt.F, dual energy off), which the driver took for a kill; `run_enzo` now records them as stops.
+Records moved aside: $SCRATCH/mhd-results-newcodes-superseded. Sherlock refuses job scripts that contain `sleep`.
+Order study: gem 256² athenak_ppm_hlle reached t_end with frame 1.40625 of 41 missing, so it is marked failed; look at it when fetching.
 
 **Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our
 figures, unpublished) suggest much of AthenaK's and Athena++'s "best" gain on nonlinear tests is HLLD's, not PPM's;

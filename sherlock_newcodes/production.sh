@@ -24,9 +24,14 @@ for code in "$@"; do
     case $code in
         athenapk|cholla) "$py" tasks.py "$code" > "tasks/$code.txt" && LINES_PER_TASK=5 submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
         pluto) for d in ct glm; do "$py" tasks.py pluto ${d}_matched ${d}_best > "tasks/pluto_$d.txt" && LINES_PER_TASK=5 submit "pluto $d" "tasks/pluto_$d.txt" "${gpu[@]}"; done ;;
+        # Enzo's rank 0 holds the whole 3D grid while it starts (4 GB at 256^3, 8 times that at 512^3): full nodes, or the
+        # node where it has few CPUs kills it for memory
         enzo) NEWCODES_DIM=planar "$py" tasks.py enzo > tasks/enzo_2d.txt && submit "enzo 2D" tasks/enzo_2d.txt --partition=normal,owners --requeue --ntasks=16 --mem-per-cpu=4G --time=24:00:00
-              NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 "$py" tasks.py enzo > tasks/enzo_3d.txt && submit "enzo 3D to 256" tasks/enzo_3d.txt --partition=normal --ntasks=32 --mem-per-cpu=4G --time=24:00:00
-              NEWCODES_DIM=3d NEWCODES_GRIDS=512 "$py" tasks.py enzo > tasks/enzo_3d_512.txt && submit "enzo 3D 512" tasks/enzo_3d_512.txt --partition=normal --ntasks=128 --mem-per-cpu=6G --time=48:00:00 ;;
+              NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 "$py" tasks.py enzo > tasks/enzo_3d.txt && submit "enzo 3D to 256" tasks/enzo_3d.txt --partition=normal --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
+              NEWCODES_DIM=3d NEWCODES_GRIDS=512 "$py" tasks.py enzo > tasks/enzo_3d_512.txt && submit "enzo 3D 512" tasks/enzo_3d_512.txt --partition=normal --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
+        # The 3D tasks that stopped: tasks/enzo_3d_redo.txt and enzo_3d_512_redo.txt, lines of the two files above
+        enzo-redo) submit "enzo 3D to 256, again" tasks/enzo_3d_redo.txt --partition=normal --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
+              submit "enzo 3D 512, again" tasks/enzo_3d_512_redo.txt --partition=normal --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
         phantom) "$py" tasks.py phantom > tasks/phantom.txt && submit phantom tasks/phantom.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         *) echo "unknown code $code" ;;
     esac

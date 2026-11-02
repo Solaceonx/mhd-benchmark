@@ -7,7 +7,9 @@
    averages of rho, momentum and thermal + kinetic energy, and the face fields of the vector potential, as AthenaK's
    abel_suite.cpp. magnetic_x[id] is the field on the upper x face of cell id (Cholla's convention).
 2. The builds of our two set-ups (builds/make.type.abel_plmc, abel_ppmc) and of this machine (make.host.sherlock).
-Cholla already ends its steps on output times (main.cpp: next_scheduled_time); nothing else changes.
+3. main.cpp writes the last output. Cholla ends its steps on output times (next_scheduled_time), but compares the
+   time with outtime, a running sum of outstep: 20 x 0.025 gives 0.5000000000000002, the last step ends on tout = 0.5,
+   and the run finished with no last output.
 """
 import shutil
 import sys
@@ -82,6 +84,9 @@ def main(root, header):
          '  } else if (strcmp(P.init, "Riemann") == 0) {\n', 'strcmp(P.init, "Abel")')
     text = ic.read_text()
     if "void Grid3D::Abel_Suite()" not in text:ic.write_text(text.rstrip() + "\n" + DEFINITION)
+    edit(root/"src/main.cpp", "    if (G.H.t == outtime || G.H.Output_Now) {\n",
+         "    if (G.H.t == outtime || G.H.t == P.tout || G.H.Output_Now) {  // abel: outtime adds up outstep, so the last step can end on tout just short of it\n",
+         "G.H.t == P.tout")
     print(f"patched {root}")
 
 

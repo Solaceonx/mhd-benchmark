@@ -188,7 +188,9 @@ cholla-512-redo 50799213. gPLUTO two-rank check 50793435: identical to one GPU. 
 Site code: `sweep_data.NEWCODES` (rows from the records; `STOP_TEXT` picks a code's own stop message), `plot_style.FAMILY` (five
 validated hues), `paper_common.STYLE`, `test_diagnostics.groups` (a second panel per figure: the five codes, AthenaK PPM/HLLD in
 grey), the sweep page's columns and `newcodes_card`. When the rest is in: pack, fetch, `test_diagnostics.py`, `work_precision.py`,
-the page builders, publish.
+the page builders, publish. Status only (website commit 7293c6f shows every planned run, from `tasks.py runs()`, done, stopped
+or still to run): `ssh sherlock 'bash $SCRATCH/mhd-study/sherlock_newcodes/pack_for_mac.sh records' | tar -xzf - -C newcodes_results`,
+`date -u "+%Y-%m-%d %H:%M UTC" > newcodes_results/FETCHED`, then `build_sweep_plan.py` and publish.
 Order study: gem 256² athenak_ppm_hlle reached t_end with frame 1.40625 of 41 missing, so it is marked failed; look at it when fetching.
 
 **Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our

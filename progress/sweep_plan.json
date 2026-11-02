@@ -1,5 +1,5 @@
 {
- "built": "2026-10-14T23:33-07:00",
+ "built": "2026-11-02T10:36-08:00",
  "totals": {
   "gpu": {
    "central": 220.4776733757628,
@@ -68,9 +68,49 @@
     "unfinished": 0,
     "skipped": 0
    },
+   "glm_fix_hll16": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "glm_fct16": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "glm_fix_hlld": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "glm_fix_ppm": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
    "ct": {
     "planned": 140,
     "finished": 140,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "ct_fix": {
+    "planned": 0,
+    "finished": 0,
     "stopped": 0,
     "redo": 0,
     "unfinished": 0,
@@ -120,6 +160,142 @@
     "planned": 130,
     "finished": 121,
     "stopped": 9,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "arepo_moving": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "arepo_static": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "gizmo_mfm": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "mhdale_ale": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "athenapk_matched": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "athenapk_best": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "cholla_plmc": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "cholla_ppmc": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "pluto_ct_matched": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "pluto_ct_best": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "pluto_glm_matched": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "pluto_glm_best": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "enzo_dedner": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "enzo_ct": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "phantom_sph": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "miniramses_matched": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "miniramses_best": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
     "redo": 0,
     "unfinished": 0,
     "skipped": 0
@@ -194,7 +370,7 @@
    "cpu": 0.0
   }
  },
- "project_bytes": 75854684160,
+ "project_bytes": 93747064832,
  "accounting": {
   "query": {
    "fetched_at": "2026-10-15T05:00:21.885815+00:00",

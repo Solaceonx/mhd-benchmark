@@ -68,6 +68,10 @@ INK, MUTED, RULE, PANEL = "#202a2a", "#64716f", "#d9dedd", "#f3f5f4"       # as 
 # Hue = the code, on every page (checked for every pair under normal, protan and deutan vision: OKLab distance >= 15
 # and >= 8). AREPO's ochre was chosen the same way against the five others (18.7; 10.9 protan, 9.1 deutan).
 FAMILY = dict(ct="#eb6834", glm="#199e70", athenak="#2a78d6", ramses="#4a3aa7", athenapp="#a72a68", arepo="#7b5e1c", gizmo="#d4a017")
+# The five codes added after the sweep (sweep_data.NEWCODES) share their own panels, with AthenaK in the reference grey:
+# twelve hues on one set of axes cannot all be told apart. These five pass the dataviz validator on every pair (normal
+# vision 16.3, colour-blind 9.7); cholla's gold and phantom's pink are under 3:1 on white, so the legends name them.
+FAMILY.update(athenapk="#6250d6", cholla="#eda100", pluto="#b0479d", enzo="#7a8b00", phantom="#e87ba4")
 RUN = FAMILY["glm"]        # the green of Tom Abel's kernels: a run made with them
 REFERENCE = "#52514e"      # the grey of reference runs: the branch or code another is compared with
 COLUMN = {"glm": FAMILY["glm"], "ct": FAMILY["ct"], "truth": REFERENCE}     # the three columns of the first pages (progress/style.css)

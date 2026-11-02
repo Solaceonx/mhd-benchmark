@@ -62,7 +62,15 @@ ORDER_GLM = ("glm_fix_hll32", "glm_fix_ppm32", "glm_fix_ppm_hlld")
 ORDER = ORDER_GLM + ("athenak_plm_hlle_rk3", "athenak_ppm_hlle", "athenak_plm_hlld",
                      "athenapp_plm_hlle_rk3", "athenapp_ppm_hlle", "athenapp_plm_hlld")
 ORDER_RESULTS = Path(os.environ.get("MHD_ORDER_RESULTS", ROOT/"order_results"/"mhd-results-order"))
+# Five more codes (sherlock_newcodes/README.md): every sweep test at every grid and seed, run after the sweep through its
+# driver, one directory per run (<test>-<code>-<variant>-run-N<n>-s<seed>, part <code>_<variant>_r1), fetched into
+# newcodes_results/ (git-ignored) by sherlock_newcodes/pack_for_mac.sh. Outside the plan.
+NEWCODES = ("athenapk_matched", "athenapk_best", "cholla_plmc", "cholla_ppmc", "pluto_ct_matched", "pluto_ct_best",
+            "pluto_glm_matched", "pluto_glm_best", "enzo_dedner", "enzo_ct", "phantom_sph")
+NEWCODES_RESULTS = Path(os.environ.get("MHD_NEWCODES_RESULTS", ROOT/"newcodes_results"/"mhd-results-newcodes"))
 FIELDS = ("rho", "mx", "my", "mz", "E", "Bx", "By", "Bz", "psi")
+# A code's own stop in a record's error text (Cholla's div B limit, gPLUTO's QuitPLUTO, Phantom's and Enzo's fatal errors)
+STOP_TEXT = re.compile(r"The magnetic divergence|QuitPLUTO|FATAL ERROR|ENZO ERROR|ERROR_MESSAGE|does not fit|Nonphysical|Memory Sturated")
 
 # The binary files the paper figures read, per test: frames of the full state for every method (STATE: {grid: frames},
 # "end" = the last output), the same for the z-midplane slices of 3D tests (SLICE), and the grids at which the
@@ -146,10 +154,13 @@ class Sweep:
                                 row["note"] = m.get("arepo_stopped", "") if code == "arepo" else \
                                     next((l for l in lines if l.startswith("Step limit")), lines[0] if lines else "")
                         getattr(self, code)[key] = row;self.rows[key] = row
-        self.fixed, self.order = {}, {}                # (test, label, n, seed) -> status row, from the fetched records
-        for root, known, code in ((RERUN, FIXES, "fixed"), (ORDER_RESULTS, ORDER, "order")):
-            for d in sorted(root.glob("*-N*-s*-*")) if root.is_dir() else ():
+        self.fixed, self.order, self.newcodes = {}, {}, {}      # (test, label, n, seed) -> status row, from the fetched records
+        for root, known, code in ((RERUN, FIXES, "fixed"), (ORDER_RESULTS, ORDER, "order"), (NEWCODES_RESULTS, NEWCODES, "newcodes")):
+            for d in sorted(root.glob("*-N*-s*")) if root.is_dir() else ():
                 m = re.fullmatch(r"(.+)-N(\d+)-s(\d+)-(\w+)", d.name)
+                if code == "newcodes":           # <test>-<code>-<variant>-run-N<n>-s<seed>
+                    m = re.fullmatch(r"(.+)-([a-z]+)-(\w+)-run-N(\d+)-s(\d+)", d.name)
+                    m = m and (None, m[1], m[4], m[5], f"{m[2]}_{m[3]}")
                 if not m or m[4] not in known or m[1] not in self.configs:continue
                 test, n, seed, label = m[1], int(m[2]), int(m[3]), m[4];key = (test, label, n, seed)
                 # dir is absolute: self.results/dir is then the rerun's directory
@@ -163,7 +174,8 @@ class Sweep:
                     elif row["state"] == "done" and grew is not None:
                         row.update(state="stopped", reached=grew, note=f"field energy above 10 times AthenaK's after t = {grew:.3g}: ran to the end, not a result")
                     elif row["state"] == "stopped":
-                        row["reached"] = float(meta.get("time_reached", 0.0));row["note"] = meta.get("error", "").split("\n")[0]
+                        lines = meta.get("error", "").split("\n")      # the code's own stop message when there is one, else the first line
+                        row["reached"] = float(meta.get("time_reached", 0.0));row["note"] = next((l.strip() for l in lines if STOP_TEXT.search(l)), lines[0])
                     if row["state"] == "stopped":row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None
                 getattr(self, code)[key] = row;self.rows[key] = row
 
@@ -224,7 +236,7 @@ class Sweep:
     def recorded(self, test, label, n, seed=42, rep=1):
         """The export's record of a part (status, reached, frames, steps, ...), or None."""
         r = self.by.get((test, label, n, seed))
-        if r is not None and r["code"] in ("arepo", "gizmo", "fixed", "order"):          # not in the export: from the fetched record
+        if r is not None and r["code"] in ("arepo", "gizmo", "fixed", "order", "newcodes"):          # not in the export: from the fetched record
             m = self.meta(test, label, n, seed, rep);row = self.rows.get((test, label, n, seed), {})
             return None if m is None else dict(part=f"{label}_r{rep}", status=m.get("status"), frames=len(m.get("frames", [])),
                                                reached=row.get("reached", m.get("time_reached")), steps=m.get("steps"))

@@ -36,7 +36,11 @@ FIELDS=("density","magnetic")
 NORMS=("L1","L2","Linf")
 ALE_TESTS=re.search(r'^MHDALE_TESTS="([^"]+)"',(ROOT/"sherlock_mhdale/options.sh").read_text(),re.M).group(1).split()
 OURS=sd.GPU_METHODS+sd.FIXED+sd.ORDER_GLM
-METHODS=OURS+sd.EXTERNAL+sd.ORDER[len(sd.ORDER_GLM):]+sd.AREPO+sd.GIZMO+("mhdale_ale",)
+METHODS=OURS+sd.EXTERNAL+sd.ORDER[len(sd.ORDER_GLM):]+sd.AREPO+sd.GIZMO+("mhdale_ale",)+sd.NEWCODES
+# The five codes added after the sweep get their own panels (twelve hues cannot share axes), with this run in the
+# reference grey as the common yardstick; GREY holds it while those panels are drawn (groups).
+NEW_REFERENCE="athenak_best"
+GREY=set()
 # With the rerun fetched, an original that has a fixed version is drawn in a light tint of its colour, the fix in full.
 FADED=set(sd.FIXES.values()) if sd.RERUN.is_dir() else set()
 TITLES={"01-errors":"Error norms versus physical time", "02-convergence":"Error versus resolution",
@@ -68,12 +72,21 @@ def style(method):
     v=pc.STYLE[method]
     name=(pc.plain(v[2]).replace("GLM","Abel GLM") if method.startswith("glm") else pc.plain(v[2])).replace("cₕ",r"$c_h$")
     if method in ("ct","ct_fix"):name="Abel CT prototype"+(", fixed" if method=="ct_fix" else "")
+    if method in GREY:return dict(color=pc.REFERENCE_INK,linestyle=v[3],marker=v[4],label=name+" (reference)")
     if method in FADED:return dict(color=tint(FAMILY[v[0]]),linestyle=v[3],marker=v[4],label=name+" (original)")
     return dict(color=FAMILY[v[0]],linestyle=v[3],marker=v[4],label=name)
 
 
 def groups(methods):
-    return [("All codes on shared axes",list(methods))] if methods else []
+    """The panels of a figure: Abel et al. and the codes of the sweep on shared axes; then the five codes added after it,
+    with AthenaK PPM/HLLD in grey (GREY, while that panel is drawn)."""
+    old=[m for m in methods if m not in sd.NEWCODES];new=[m for m in methods if m in sd.NEWCODES]
+    out=[("All codes on shared axes" if not new else "Abel et al. and the codes of the sweep",old,False)] if old else []
+    if new:out.append(("Five more codes, AthenaK PPM/HLLD in grey",new+[NEW_REFERENCE]*(NEW_REFERENCE in methods),True))
+    for name,group,grey in out:
+        GREY.clear();GREY.update([NEW_REFERENCE] if grey else [])
+        yield name,group
+    GREY.clear()
 
 
 def identify(artist,method):
@@ -154,7 +167,7 @@ class Run:
                 <=1e-5*max(1,abs(self.diag["time"][-1])))
 
     @property
-    def gpu(self):return self.method in OURS or self.method.startswith("athenak")
+    def gpu(self):return self.method in OURS or self.method.startswith("athenak") or self.method.split("_")[0] in ("athenapk","cholla","pluto")
 
     @functools.cached_property
     def environment(self):
@@ -179,7 +192,7 @@ class Data:
             if method not in METHODS:continue
             path=self.sw.path(test,method,n,"run.toml",seed)
             if path and path.is_file():
-                meta=self.sw.meta(*key);row=self.sw.fixed.get(key) or self.sw.order.get(key)
+                meta=self.sw.meta(*key);row=self.sw.fixed.get(key) or self.sw.order.get(key) or self.sw.newcodes.get(key)
                 if row and row["state"]=="stopped" and meta.get("status")=="complete":   # ran to the end, not a result (sweep_data.blew_up)
                     meta=dict(meta,status="not a result",error=row["note"],result_until=row["reached"])
                 self.runs[key]=Run(test,method,n,seed,path.parent,meta,self.sw.diag(*key) or {},planned)
@@ -195,6 +208,7 @@ class Data:
     def methods(self,test):
         out=self.sw.labels(test,fixed=True)+[m for m in sd.AREPO if test in sd.AREPO_TESTS]+[m for m in sd.GIZMO if test in sd.GIZMO_TESTS]
         if test in ALE_TESTS:out.append("mhdale_ale")
+        out+=[m for m in sd.NEWCODES if self.sw.grids(test,m)]
         return list(dict.fromkeys(out))
 
     def select(self,test,n=None,seed=42,methods=None):
@@ -519,21 +533,22 @@ class Figures:
         # Matrix needs more left margin than line plots.
         self.save(fig,"07-validity","matrix","Seed 42 · all planned grids",
             "✓: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",reasons)
-        fig,axs=plt.subplots(1,3,figsize=(13,5.8))
-        for r in self.selected(self.methods):
-            d=r.diag;k=r.finite_count
-            if not k:continue
-            t=d["time"][:k]
-            # Abel's kernels diagnose their full N³ allocation even on planar
-            # tests. External planar codes diagnose an N²×1 state.
-            cells=r.n**(3 if r.method in OURS or not r.meta.get("planar") else 2)
-            for j,key in enumerate(("density_floor_cells","pressure_floor_cells","nonpositive_pressure_cells")):
-                if key in d:draw(axs[j],t,100*d[key][:k]/cells,r.method)
-        for ax,label in zip(axs,["Density-floor cells [%]","Pressure-floor cells [%]","Nonpositive-pressure cells [%]"]):
-            if not ax.lines:blank(ax,"This cell count is not in the fetched diagnostics.")
-            else:ax.set_xlabel("Physical time t");ax.set_ylabel(label)
-        self.save(fig,"07-validity","floors",f"N={self.n}, seed 42",
-            "Fractions use the actual measured domain: Abel GPU diagnostics count N³ cells, including planar tests; external planar diagnostics count N² cells. Floor observations are sampled counts, not every internal intervention. Nonfinite tails are omitted.")
+        for gi,(name,methods) in enumerate(groups(self.methods)):
+            fig,axs=plt.subplots(1,3,figsize=(13,5.8))
+            for r in self.selected(methods):
+                d=r.diag;k=r.finite_count
+                if not k:continue
+                t=d["time"][:k]
+                # Abel's kernels diagnose their full N³ allocation even on planar
+                # tests. External planar codes diagnose an N²×1 state.
+                cells=r.n**(3 if r.method in OURS or not r.meta.get("planar") else 2)
+                for j,key in enumerate(("density_floor_cells","pressure_floor_cells","nonpositive_pressure_cells")):
+                    if key in d:draw(axs[j],t,100*d[key][:k]/cells,r.method)
+            for ax,label in zip(axs,["Density-floor cells [%]","Pressure-floor cells [%]","Nonpositive-pressure cells [%]"]):
+                if not ax.lines:blank(ax,"This cell count is not in the fetched diagnostics.")
+                else:ax.set_xlabel("Physical time t");ax.set_ylabel(label)
+            self.save(fig,"07-validity","floors"+(f"-{gi}" if gi else ""),f"{name} · N={self.n}, seed 42",
+                "Fractions use the actual measured domain: Abel GPU diagnostics count N³ cells, including planar tests; external planar diagnostics count N² cells. Floor observations are sampled counts, not every internal intervention. Nonfinite tails are omitted.")
 
     def runtime(self):
         for gi,(name,methods) in enumerate(groups(self.methods)):
@@ -589,7 +604,7 @@ def table(data,test):
         sec,scope,reps=timing(data,r)
         rows.append(dict(method=r.method,label=style(r.method)["label"],N=r.n,seed=r.seed,status=r.meta.get("status"),
             finite_complete=r.completed,physical_time=r.meta.get("time_reached"),solver_seconds=sec,timing_repeats=reps,
-            timing_scope=scope,resource="1 H100" if r.gpu else (f"{r.ranks} CPU ranks ({r.ranks_source})" if r.ranks else "CPU ranks not fetched"),
+            timing_scope=scope,resource=f"{int(r.meta.get('ranks') or 1)} H100" if r.gpu else (f"{r.ranks} CPU ranks ({r.ranks_source})" if r.ranks else "CPU ranks not fetched"),
             precision=r.meta.get("precision"),cfl=r.meta.get("cfl",r.meta.get("settings",{}).get("cfl",r.meta.get("settings",{}).get("courant"))),
             source=str(r.path.relative_to(ROOT)) if r.path.is_relative_to(ROOT) else str(r.path),error=r.meta.get("error")))
     return rows
@@ -610,7 +625,8 @@ def section(test, figure_prefix=None, data_test=None):
     if methods:
         options="".join(f'<option value="{e(m)}">{e(style(m)["label"].replace("Abel ","").replace("$c_h$","cₕ"))}</option>' for m in methods if m in OURS)
         families=list(dict.fromkeys(m.split("_")[0] for m in methods if m not in OURS))
-        names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",gizmo="GIZMO",mhdale="MHD-ALE + our fixes")
+        names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",gizmo="GIZMO",mhdale="MHD-ALE + our fixes",
+                   athenapk="AthenaPK",cholla="Cholla",pluto="gPLUTO",enzo="Enzo",phantom="Phantom")
         external="".join(f'<option value="{e(m)}">{e(names[m])}</option>' for m in families)
         parts.append('<div class="comparison-controls" hidden style="position:sticky;top:0;z-index:4;background:var(--paper);padding:8px 0"><div class="toolbar" style="flex-wrap:wrap;justify-content:flex-start;margin-bottom:6px">'
             '<label class="control-group">Abel kernel <select class="field-select" name="abel-kernel"><option value="">All kernels</option>'+options+'</select></label>'

@@ -179,6 +179,16 @@ gPLUTO stops at 3D 512³ ("Memory Sturated!": it quits below 8 % free GPU memory
 so 123 runs per set-up never ran: 3D to 256 on one GPU (50793464, 50793467), 512 on two (check 50793435, array 50793444); its
 QuitPLUTO stops are now recorded. AthenaPK: Parthenon wrote the last output twice (cadence and final), the driver raised on the
 duplicate, and 10 lines (46 runs) never ran: `run_athenapk` drops it, array 50793469. Two-GPU jobs ask 192 GB (a 512³ job reached 128).
+Slurm then allotted 6 of the 8 CPUs, set SLURM_CPUS_PER_TASK=3 beside SLURM_TRES_PER_TASK=cpu=4, and srun refused to start (3 Cholla
+records, moved to `-superseded/srun-cpus`): production.sbatch unsets SLURM_TRES_PER_TASK; resubmitted pluto-512 50799204 and
+cholla-512-redo 50799213. gPLUTO two-rank check 50793435: identical to one GPU. Order study finished (9 x 63; GLM PPM 512 stops
+4, AthenaK gem 256² PPM/HLLE misses frame 1.40625 again on a rerun: an AthenaK result).
+**Published 2026-11-02 (website commit 65cc0bd):** the order study and the five codes as fetched (77 % of 1,420 runs). Data on the Mac:
+`order_results/`, `newcodes_results/` (git-ignored; `sherlock_newcodes/pack_for_mac.sh` in a job, then cat the tgz into tar).
+Site code: `sweep_data.NEWCODES` (rows from the records; `STOP_TEXT` picks a code's own stop message), `plot_style.FAMILY` (five
+validated hues), `paper_common.STYLE`, `test_diagnostics.groups` (a second panel per figure: the five codes, AthenaK PPM/HLLD in
+grey), the sweep page's columns and `newcodes_card`. When the rest is in: pack, fetch, `test_diagnostics.py`, `work_precision.py`,
+the page builders, publish.
 Order study: gem 256² athenak_ppm_hlle reached t_end with frame 1.40625 of 41 missing, so it is marked failed; look at it when fetching.
 
 **Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our

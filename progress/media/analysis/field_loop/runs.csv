@@ -130,3 +130,333 @@ gizmo_mfm,GIZMO MFM,64,42,complete,True,2.0000000000000004,5.913898348808289e-07
 gizmo_mfm,GIZMO MFM,128,42,complete,True,2.0000000000000004,7.012858986854553e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop-gizmo-mfm-run-N128-s42/data/gizmo_mfm_r1,
 gizmo_mfm,GIZMO MFM,256,42,complete,True,2.0000000000000004,6.407499313354492e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop-gizmo-mfm-run-N256-s42/data/gizmo_mfm_r1,
 gizmo_mfm,GIZMO MFM,512,42,complete,True,2.0000000000000004,7.60890543460846e-07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,0.2,sweep_results/field_loop-gizmo-mfm-run-N512-s42/data/gizmo_mfm_r1,
+athenapk_matched,AthenaPK PLM/HLLE,32,42,complete,True,2.0,4.167334198951721,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-matched-run-N32-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,64,42,complete,True,2.0,5.8984318296425045,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-matched-run-N64-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,128,42,complete,True,2.0,13.418977810069919,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-matched-run-N128-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,256,42,complete,True,2.0,26.854679476935416,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-matched-run-N256-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,512,42,complete,True,2.0,88.53385488921776,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-matched-run-N512-s42/data/athenapk_matched_r1,
+athenapk_best,AthenaPK PPM/HLLD,32,42,complete,True,2.0,5.650890719145536,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-best-run-N32-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,64,42,complete,True,2.0,10.038248915690929,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-best-run-N64-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,128,42,complete,True,2.0,39.835168306250125,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-best-run-N128-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,256,42,complete,True,2.0,79.32721869274974,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-best-run-N256-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,512,42,complete,True,2.0,189.7551275496371,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-athenapk-best-run-N512-s42/data/athenapk_best_r1,
+cholla_plmc,Cholla PLMC,32,42,complete,True,2.0,2.840983858797699,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-plmc-run-N32-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,64,42,complete,True,2.0,3.224421672988683,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-plmc-run-N64-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,128,42,complete,True,2.0,12.541718335822225,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-plmc-run-N128-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,256,42,complete,True,2.0,39.84220959292725,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-plmc-run-N256-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,512,42,complete,True,2.0,144.67005612375215,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-plmc-run-N512-s42/data/cholla_plmc_r1,
+cholla_ppmc,Cholla PPMC,32,42,complete,True,2.0,6.963538283947855,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-ppmc-run-N32-s42/data/cholla_ppmc_r1,
+cholla_ppmc,Cholla PPMC,64,42,complete,True,2.0,5.879713325295597,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-ppmc-run-N64-s42/data/cholla_ppmc_r1,
+cholla_ppmc,Cholla PPMC,128,42,complete,True,2.0,12.996303198859096,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-ppmc-run-N128-s42/data/cholla_ppmc_r1,
+cholla_ppmc,Cholla PPMC,256,42,complete,True,2.0,37.83396587707102,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-ppmc-run-N256-s42/data/cholla_ppmc_r1,
+cholla_ppmc,Cholla PPMC,512,42,complete,True,2.0,169.6983268558979,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-cholla-ppmc-run-N512-s42/data/cholla_ppmc_r1,
+enzo_dedner,Enzo Dedner,32,42,complete,True,2.0,28.78468693397008,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-dedner-run-N32-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,64,42,complete,True,2.0,28.3542923911009,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-dedner-run-N64-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,128,42,complete,True,2.0,41.727175971958786,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-dedner-run-N128-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,256,42,not a result,False,2.0,,0,incomplete or invalid,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-dedner-run-N256-s42/data/enzo_dedner_r1,"field energy above 10 times AthenaK's after t = 1.1: ran to the end, not a result"
+enzo_dedner,Enzo Dedner,512,42,not a result,False,2.0,,0,incomplete or invalid,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-dedner-run-N512-s42/data/enzo_dedner_r1,"field energy above 10 times AthenaK's after t = 0.6: ran to the end, not a result"
+enzo_ct,Enzo CT,32,42,complete,True,2.0,40.80924308532849,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-ct-run-N32-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,64,42,complete,True,2.0,42.452807527035475,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-ct-run-N64-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,128,42,complete,True,2.0,55.08434171881527,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-ct-run-N128-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,256,42,complete,True,2.0,161.266963662114,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-ct-run-N256-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,512,42,not a result,False,2.0,,0,incomplete or invalid,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/field_loop-enzo-ct-run-N512-s42/data/enzo_ct_r1,"field energy above 10 times AthenaK's after t = 1.6: ran to the end, not a result"
+phantom_sph,Phantom SPH,32,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop-phantom-sph-run-N32-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+er of particles =         8192
+      gas:        8192 particles of mass   3.051758E-05
+ 
+ Periodic boundaries: 
+  xmin =   0.0000     xmax =   1.0000    
+  ymin =   0.0000     ymax =   1.0000    
+  zmin =   0.0000     zmax =  0.25000    
+
+ Using M_4 cubic kernel
+       h =  1.20*[ 3.05E-05/rho]^(1/3); htol =  1.00E-04
+       Number of neighbours =   58
+
+ Magnetic fields are ON, evolving B/rho with cleaning
+ Dust is OFF
+ Cooling is OFF
+
+ Ideal gas equation of state: P = (gamma-1)*rho*u, gamma =   1.666667 gmw =   2.381000
+
+ Shock capturing w/Cullen & Dehnen switch    : alpha  =   0.000000 ->  1.000000
+ Shock resistivity, vsig=|vab x rab|   : alphaB =   1.000000
+ Shock conductivity w/Price 2008 switch      : alphau =   1.000000
+
+
+ --- code units --- 
+
+     Mass:  1.000E+00 g       Length:  1.000E+00 cm    Time:  1.000E+00 s
+  Density:  1.000E+00 g/cm^3  Energy:  1.000E+00 erg   En/m:  1.000E+00 erg/g
+ Velocity:  1.000E+00 cm/s    Bfield:  3.545E+00 G  opacity:  1.000E+00 cm^2/g
+        G:  6.672E-08              c:  2.998E+10       mu_0:  1.000E+00
+        a:  7.565E-15          kB/mH:  8.254E+07
+
+ Etot= 1.625E+00, Ekin= 1.250E+00, Etherm= 3.750E-01, Epot= 0.000E+00
+ Emag= 3.345E-08
+ Linm= 7.906E-01, Angm= 3.526E-01
+ Centre of Mass =  5.000E-01,  5.000E-01,  1.250E-01
+ density  (max)= 1.001E+00 (mean)= 1.001E+00 (max)= 1.001E+00 g/cm^3
+ alpha(max)= 7.176E-06
+ RMS Mach #= 2.449E+00
+ div B (max)= 8.190E-04, div B (mean)= 6.753E-05
+ h|div B|/B (max)= 5.140E-02, h|div B|/B (mean)= 2.878E-03
+
+
+
+
+-------->   TIME =    0.000    : full dump written to file abel_00000   <--------
+
+
+ input file abel.in written successfully
+
+ ---> DELETING temporary dump file abel_00000.tmp <---
+
+ t =  0.87118E-02 dt =  8.712E-03 (courant), np = 8192
+ t =  0.17424E-01 dt =  8.712E-03 (courant)
+
+ You can ignore this error and continue by setting the 
+ environment variable I_WILL_NOT_PUBLISH_CRAP=yes to continue
+
+ FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
+"
+phantom_sph,Phantom SPH,64,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop-phantom-sph-run-N64-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+r of particles =        32768
+      gas:       32768 particles of mass   3.814697E-06
+ 
+ Periodic boundaries: 
+  xmin =   0.0000     xmax =   1.0000    
+  ymin =   0.0000     ymax =   1.0000    
+  zmin =   0.0000     zmax =  0.12500    
+
+ Using M_4 cubic kernel
+       h =  1.20*[ 3.81E-06/rho]^(1/3); htol =  1.00E-04
+       Number of neighbours =   58
+
+ Magnetic fields are ON, evolving B/rho with cleaning
+ Dust is OFF
+ Cooling is OFF
+
+ Ideal gas equation of state: P = (gamma-1)*rho*u, gamma =   1.666667 gmw =   2.381000
+
+ Shock capturing w/Cullen & Dehnen switch    : alpha  =   0.000000 ->  1.000000
+ Shock resistivity, vsig=|vab x rab|   : alphaB =   1.000000
+ Shock conductivity w/Price 2008 switch      : alphau =   1.000000
+
+
+ --- code units --- 
+
+     Mass:  1.000E+00 g       Length:  1.000E+00 cm    Time:  1.000E+00 s
+  Density:  1.000E+00 g/cm^3  Energy:  1.000E+00 erg   En/m:  1.000E+00 erg/g
+ Velocity:  1.000E+00 cm/s    Bfield:  3.545E+00 G  opacity:  1.000E+00 cm^2/g
+        G:  6.672E-08              c:  2.998E+10       mu_0:  1.000E+00
+        a:  7.565E-15          kB/mH:  8.254E+07
+
+ Etot= 8.125E-01, Ekin= 6.250E-01, Etherm= 1.875E-01, Epot= 0.000E+00
+ Emag= 1.729E-08
+ Linm= 3.953E-01, Angm= 1.916E-01
+ Centre of Mass =  5.000E-01,  5.000E-01,  6.250E-02
+ density  (max)= 1.001E+00 (mean)= 1.001E+00 (max)= 1.001E+00 g/cm^3
+ alpha(max)= 7.176E-06
+ RMS Mach #= 2.449E+00
+ div B (max)= 1.638E-03, div B (mean)= 6.428E-05
+ h|div B|/B (max)= 7.191E-02, h|div B|/B (mean)= 1.653E-03
+
+
+
+
+-------->   TIME =    0.000    : full dump written to file abel_00000   <--------
+
+
+ input file abel.in written successfully
+
+ ---> DELETING temporary dump file abel_00000.tmp <---
+
+ t =  0.43559E-02 dt =  4.356E-03 (courant), np = 32768
+ t =  0.87118E-02 dt =  4.356E-03 (courant)
+
+ You can ignore this error and continue by setting the 
+ environment variable I_WILL_NOT_PUBLISH_CRAP=yes to continue
+
+ FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
+"
+phantom_sph,Phantom SPH,128,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop-phantom-sph-run-N128-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+ of particles =       131072
+      gas:      131072 particles of mass   4.768372E-07
+ 
+ Periodic boundaries: 
+  xmin =   0.0000     xmax =   1.0000    
+  ymin =   0.0000     ymax =   1.0000    
+  zmin =   0.0000     zmax =  0.62500E-01
+
+ Using M_4 cubic kernel
+       h =  1.20*[ 4.77E-07/rho]^(1/3); htol =  1.00E-04
+       Number of neighbours =   58
+
+ Magnetic fields are ON, evolving B/rho with cleaning
+ Dust is OFF
+ Cooling is OFF
+
+ Ideal gas equation of state: P = (gamma-1)*rho*u, gamma =   1.666667 gmw =   2.381000
+
+ Shock capturing w/Cullen & Dehnen switch    : alpha  =   0.000000 ->  1.000000
+ Shock resistivity, vsig=|vab x rab|   : alphaB =   1.000000
+ Shock conductivity w/Price 2008 switch      : alphau =   1.000000
+
+
+ --- code units --- 
+
+     Mass:  1.000E+00 g       Length:  1.000E+00 cm    Time:  1.000E+00 s
+  Density:  1.000E+00 g/cm^3  Energy:  1.000E+00 erg   En/m:  1.000E+00 erg/g
+ Velocity:  1.000E+00 cm/s    Bfield:  3.545E+00 G  opacity:  1.000E+00 cm^2/g
+        G:  6.672E-08              c:  2.998E+10       mu_0:  1.000E+00
+        a:  7.565E-15          kB/mH:  8.254E+07
+
+ Etot= 4.063E-01, Ekin= 3.125E-01, Etherm= 9.375E-02, Epot= 0.000E+00
+ Emag= 8.730E-09
+ Linm= 1.976E-01, Angm= 9.971E-02
+ Centre of Mass =  5.000E-01,  5.000E-01,  3.125E-02
+ density  (max)= 1.001E+00 (mean)= 1.001E+00 (max)= 1.001E+00 g/cm^3
+ alpha(max)= 7.176E-06
+ RMS Mach #= 2.449E+00
+ div B (max)= 3.359E-03, div B (mean)= 5.896E-05
+ h|div B|/B (max)= 9.189E-02, h|div B|/B (mean)= 9.068E-04
+
+
+
+
+-------->   TIME =    0.000    : full dump written to file abel_00000   <--------
+
+
+ input file abel.in written successfully
+
+ ---> DELETING temporary dump file abel_00000.tmp <---
+
+ t =  0.21780E-02 dt =  2.178E-03 (courant), np = 131072
+ t =  0.43559E-02 dt =  2.178E-03 (courant)
+
+ You can ignore this error and continue by setting the 
+ environment variable I_WILL_NOT_PUBLISH_CRAP=yes to continue
+
+ FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
+"
+phantom_sph,Phantom SPH,256,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop-phantom-sph-run-N256-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+ of particles =       524288
+      gas:      524288 particles of mass   5.960464E-08
+ 
+ Periodic boundaries: 
+  xmin =   0.0000     xmax =   1.0000    
+  ymin =   0.0000     ymax =   1.0000    
+  zmin =   0.0000     zmax =  0.31250E-01
+
+ Using M_4 cubic kernel
+       h =  1.20*[ 5.96E-08/rho]^(1/3); htol =  1.00E-04
+       Number of neighbours =   58
+
+ Magnetic fields are ON, evolving B/rho with cleaning
+ Dust is OFF
+ Cooling is OFF
+
+ Ideal gas equation of state: P = (gamma-1)*rho*u, gamma =   1.666667 gmw =   2.381000
+
+ Shock capturing w/Cullen & Dehnen switch    : alpha  =   0.000000 ->  1.000000
+ Shock resistivity, vsig=|vab x rab|   : alphaB =   1.000000
+ Shock conductivity w/Price 2008 switch      : alphau =   1.000000
+
+
+ --- code units --- 
+
+     Mass:  1.000E+00 g       Length:  1.000E+00 cm    Time:  1.000E+00 s
+  Density:  1.000E+00 g/cm^3  Energy:  1.000E+00 erg   En/m:  1.000E+00 erg/g
+ Velocity:  1.000E+00 cm/s    Bfield:  3.545E+00 G  opacity:  1.000E+00 cm^2/g
+        G:  6.672E-08              c:  2.998E+10       mu_0:  1.000E+00
+        a:  7.565E-15          kB/mH:  8.254E+07
+
+ Etot= 2.031E-01, Ekin= 1.563E-01, Etherm= 4.687E-02, Epot= 0.000E+00
+ Emag= 4.389E-09
+ Linm= 9.882E-02, Angm= 5.084E-02
+ Centre of Mass =  5.000E-01,  5.000E-01,  1.562E-02
+ density  (max)= 1.001E+00 (mean)= 1.001E+00 (max)= 1.001E+00 g/cm^3
+ alpha(max)= 7.176E-06
+ RMS Mach #= 2.449E+00
+ div B (max)= 7.037E-03, div B (mean)= 5.702E-05
+ h|div B|/B (max)= 1.436E-01, h|div B|/B (mean)= 4.495E-04
+
+
+
+
+-------->   TIME =    0.000    : full dump written to file abel_00000   <--------
+
+
+ input file abel.in written successfully
+
+ ---> DELETING temporary dump file abel_00000.tmp <---
+
+ t =  0.10890E-02 dt =  1.089E-03 (courant), np = 524288
+ t =  0.21780E-02 dt =  1.089E-03 (courant)
+
+ You can ignore this error and continue by setting the 
+ environment variable I_WILL_NOT_PUBLISH_CRAP=yes to continue
+
+ FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
+"
+phantom_sph,Phantom SPH,512,42,failed,False,0.0,,0,incomplete or invalid,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/field_loop-phantom-sph-run-N512-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0, 1.1, 1.2000000000000002, 1.3, 1.4000000000000001, 1.5, 1.6, 1.7000000000000002, 1.8, 1.9000000000000001, 2.0]
+of particles =      2097152
+      gas:     2097152 particles of mass   7.450581E-09
+ 
+ Periodic boundaries: 
+  xmin =   0.0000     xmax =   1.0000    
+  ymin =   0.0000     ymax =   1.0000    
+  zmin =   0.0000     zmax =  0.15625E-01
+
+ Using M_4 cubic kernel
+       h =  1.20*[ 7.45E-09/rho]^(1/3); htol =  1.00E-04
+       Number of neighbours =   58
+
+ Magnetic fields are ON, evolving B/rho with cleaning
+ Dust is OFF
+ Cooling is OFF
+
+ Ideal gas equation of state: P = (gamma-1)*rho*u, gamma =   1.666667 gmw =   2.381000
+
+ Shock capturing w/Cullen & Dehnen switch    : alpha  =   0.000000 ->  1.000000
+ Shock resistivity, vsig=|vab x rab|   : alphaB =   1.000000
+ Shock conductivity w/Price 2008 switch      : alphau =   1.000000
+
+
+ --- code units --- 
+
+     Mass:  1.000E+00 g       Length:  1.000E+00 cm    Time:  1.000E+00 s
+  Density:  1.000E+00 g/cm^3  Energy:  1.000E+00 erg   En/m:  1.000E+00 erg/g
+ Velocity:  1.000E+00 cm/s    Bfield:  3.545E+00 G  opacity:  1.000E+00 cm^2/g
+        G:  6.672E-08              c:  2.998E+10       mu_0:  1.000E+00
+        a:  7.565E-15          kB/mH:  8.254E+07
+
+ Etot= 1.016E-01, Ekin= 7.813E-02, Etherm= 2.344E-02, Epot= 0.000E+00
+ Emag= 2.201E-09
+ Linm= 4.941E-02, Angm= 2.566E-02
+ Centre of Mass =  5.000E-01,  5.000E-01,  7.812E-03
+ density  (max)= 1.001E+00 (mean)= 1.001E+00 (max)= 1.001E+00 g/cm^3
+ alpha(max)= 7.176E-06
+ RMS Mach #= 2.449E+00
+ div B (max)= 1.370E-02, div B (mean)= 5.569E-05
+ h|div B|/B (max)= 2.485E-01, h|div B|/B (mean)= 2.577E-04
+
+
+
+
+-------->   TIME =    0.000    : full dump written to file abel_00000   <--------
+
+
+ input file abel.in written successfully
+
+ ---> DELETING temporary dump file abel_00000.tmp <---
+
+ t =  0.54449E-03 dt =  5.445E-04 (courant), np = 2097152
+ t =  0.10890E-02 dt =  5.445E-04 (courant)
+
+ You can ignore this error and continue by setting the 
+ environment variable I_WILL_NOT_PUBLISH_CRAP=yes to continue
+
+ FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
+"

@@ -48,7 +48,19 @@ ADDED = [("glm_fix_hll16", "GLM f16 fix", "GLM production kernel fixed (sweep-fi
          ("arepo_moving", "AREPO mov", "AREPO moving mesh, Powell / HLLD (planar tests)"),
          ("arepo_static", "AREPO stat", "AREPO static Cartesian mesh, Powell / HLLD (planar tests)"),
          ("gizmo_mfm", "GIZMO MFM", "GIZMO meshless finite mass, Dedner + constrained-gradient MHD (planar tests)"),
-         ("mhdale_ale", "MHD-ALE + fixes", "MHD-ALE + our fixes: Tom Abel's MFEM code (commit adde93b), ALE remap, with our divergence tolerance and fast-speed fixes")]
+         ("mhdale_ale", "MHD-ALE + fixes", "MHD-ALE + our fixes: Tom Abel's MFEM code (commit adde93b), ALE remap, with our divergence tolerance and fast-speed fixes"),
+         # five more codes, every test at every grid and seed (sherlock_newcodes/README.md)
+         ("athenapk_matched", "AthenaPK m", "AthenaPK matched: PLM / HLLE / VL2, GLM cleaning (GPU)"),
+         ("athenapk_best", "AthenaPK b", "AthenaPK best: PPM / HLLD / RK3, GLM cleaning (GPU)"),
+         ("cholla_plmc", "Cholla PLMC", "Cholla: PLMC / HLLD / Van Leer, CT (GPU)"),
+         ("cholla_ppmc", "Cholla PPMC", "Cholla: PPMC / HLLD / Van Leer, CT (GPU)"),
+         ("pluto_ct_matched", "gPLUTO CT m", "gPLUTO matched: linear / HLL / RK2, CT (GPU)"),
+         ("pluto_ct_best", "gPLUTO CT b", "gPLUTO best: parabolic / HLLD / RK3, CT (GPU)"),
+         ("pluto_glm_matched", "gPLUTO GLM m", "gPLUTO matched: linear / HLL / RK2, GLM cleaning (GPU)"),
+         ("pluto_glm_best", "gPLUTO GLM b", "gPLUTO best: parabolic / HLLD / RK3, GLM cleaning (GPU)"),
+         ("enzo_dedner", "Enzo Dedner", "Enzo: Dedner cleaning (Wang & Abel 2009), PLM / HLL / RK2 (CPUs)"),
+         ("enzo_ct", "Enzo CT", "Enzo: CT (Collins et al. 2010), PLM / HLLD (CPUs)"),
+         ("phantom_sph", "Phantom", "Phantom: smoothed-particle MHD with divergence cleaning (CPUs)")]
 # Codes being set up: a column each, empty until their runs are fetched.
 PLANNED = [("miniramses_matched", "mini-RAMSES m", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLL: ready to run"),
            ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: ready to run")]
@@ -58,7 +70,8 @@ ALL_METHODS = [m for m in METHODS if m[0] in GLM_GROUP] + [m for m in ADDED if m
     [m for m in METHODS if m[0] == "ct"] + [m for m in ADDED if m[0] == "ct_fix"] + \
     [m for m in METHODS if m[0] not in GLM_GROUP and m[0] != "ct" and not m[0].endswith("reference")] + \
     [m for m in ADDED if m[0] not in GLM_GROUP and m[0] != "ct_fix"] + PLANNED + [m for m in METHODS if m[0].endswith("reference")]
-PLANAR_LABELS = ("ramses", "athenapp", "arepo", "mhdale", "miniramses", "gizmo")     # planar tests run as planes
+PLANAR_LABELS = ("ramses", "athenapp", "arepo", "mhdale", "miniramses", "gizmo",     # planar tests run as planes
+                 "athenapk", "cholla", "pluto", "enzo", "phantom")                  # (Cholla: on a slab N x N x 8)
 STATE_TEXT = dict(done="finished", stopped="stopped by the solver", redo="failed, to rerun", open="not finished",
                   unknown="finished or not: only the count is known", skipped="taken out of the sweep")
 COLUMNS = [("gpu", "glm", "GLM ×5", "the five GLM kernels (T. Abel)"), ("gpu", "ct", "CT", "CT prototype (T. Abel)"),
@@ -299,7 +312,7 @@ def added_rows():
     frac, note, detail) as the export's rows."""
     import sweep_data
     sw = sweep_data.Sweep();out = []
-    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()) + list(sw.gizmo.items()):
+    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()) + list(sw.gizmo.items()) + list(sw.newcodes.items()):
         test, label, n, seed = key;row = dict(test=test, label=label, n=n, seed=seed, state=r["state"], frac=r.get("frac"), note=r.get("note", ""))
         if r["state"] == "stopped":
             m = sw.meta(*key) or {}
@@ -381,6 +394,36 @@ def gizmo_card():
             f'<ul class="checks plain"><li>{text}.</li></ul><p class="small">The particles are put on the grid with each one spread over its own '
             'kernel, mass, momentum, energy and magnetic flux conserved exactly. GIZMO\'s other methods were left out at this commit: '
             'meshless finite volume and its regular grid fail from the first step, and pressure-SPH gains 60 % of its energy on Orszag–Tang.</p></div>')
+
+
+def newcodes_card():
+    """The five codes run after the sweep, outside its plan: a card with what their fetched records say (empty when none are here)."""
+    import collections
+    import sweep_data
+    rows = sweep_data.Sweep().newcodes
+    if not rows:return ""
+    def why(note):         # the code's own stop, in a few words
+        for text, words in (("magnetic divergence has exceeded", "its own div B limit (1e-9)"), ("h|divb|/b", "its own h|div B|/|B| check"),
+                            ("Conservation errors", "its own conservation check"), ("Memory Sturated", "too little GPU memory"),
+                            ("does not fit", "too little GPU memory"), ("not finite", "a state that is not finite"),
+                            ("ENZO ERROR", "its own error (NaN pressure)"), ("10 times AthenaK", "energy above 10 times AthenaK's"),
+                            ("missing output", "an output not written")):
+            if text in note:return words
+        return note[:60] or "no message"
+    items = []
+    for code, name in (("athenapk", "AthenaPK"), ("cholla", "Cholla"), ("pluto", "gPLUTO"), ("enzo", "Enzo"), ("phantom", "Phantom")):
+        mine = [r for k, r in rows.items() if k[1].split("_")[0] == code and r["state"] != "open"]
+        if not mine:continue
+        done = sum(r["state"] == "done" for r in mine);reasons = collections.Counter(why(r.get("note", "")) for r in mine if r["state"] == "stopped")
+        text = f"<strong>{name}</strong>: {done} of {len(mine)} fetched runs reached the end"
+        if reasons:text += "; the others stopped on " + ", ".join(f"{e(w)} ({n})" for w, n in reasons.most_common())
+        items.append(f"<li>{text}.</li>")
+    return ('<div class="card"><h3>Run after the sweep: five more codes</h3><p>AthenaPK (GLM, GPU), Cholla (CT, GPU), gPLUTO (CT and GLM, '
+            'GPU), Enzo (Dedner and CT, CPUs) and Phantom (smoothed particles, CPUs) on every test at every grid and seed, from the suite\'s '
+            'own starting state, through the sweep\'s driver (not in the plan or the tables above). 3D 512³ runs on two H100s in Cholla '
+            'and gPLUTO: neither fits one.</p>'
+            f'<ul class="checks plain">{"".join(items)}</ul><p class="small">Counts are of the records fetched so far; runs still on '
+            'Sherlock are not in them.</p></div>')
 
 
 def driven_grid_rows(campaign, methods):
@@ -564,7 +607,7 @@ def status_html(status, configs, families, family_of, driven=None, added=()):
             "<script>document.querySelectorAll('.glm-toggle').forEach(b=>b.addEventListener('click',()=>{const t=b.closest('table');"
             "t.classList.toggle('glm-closed');}))</script>"
             f'<p class="small">The GLM column holds Abel et al.\'s {len(GLM_GROUP)} GLM kernels (5 original, 4 fixed); open it for one column per kernel. '
-            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE and the fixed kernels ran after the sweep, outside its plan. The MHD-ALE runs use commit adde93b of the code with two fixes of ours: the tolerance of its divergence check scales with the grid spacing, and its fast speed uses c<sub>s</sub>² + v<sub>A</sub>². GIZMO\'s particles are converted to the grid with its own partition of space, which conserves mass exactly.</p>')
+            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE, the fixed kernels and the five codes from AthenaPK to Phantom ran after the sweep, outside its plan. The MHD-ALE runs use commit adde93b of the code with two fixes of ours: the tolerance of its divergence check scales with the grid spacing, and its fast speed uses c<sub>s</sub>² + v<sub>A</sub>². GIZMO\'s particles are converted to the grid with its own partition of space, which conserves mass exactly.</p>')
 
     # ---- counts by method, with a part-to-whole bar (the numbers beside it are the table view)
     t = tally(dict(status, rows=every));tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}
@@ -796,6 +839,7 @@ Only the original GLM kernel and CT run nearly everything; they are also the mos
 <div class="card"><h3>Still open</h3><ul class="checks plain">{sv["notes"] or "<li>Nothing: every planned run has a result.</li>"}</ul></div>
 {arepo_card()}
 {gizmo_card()}
+{newcodes_card()}
 {fixed_card()}
 
 <h2 class="section-title">The plan and its cost</h2>

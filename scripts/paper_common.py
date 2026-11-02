@@ -53,6 +53,18 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     "athenapp_plm_hlle_rk3": ("athenapp", "Athena++ PLM/HLLE/RK3", "Athena++ PLM/HLLE/RK3", (0, (1.5, 2.5)), "v"),
     "athenapp_ppm_hlle": ("athenapp", "Athena++ PPM/HLLE/RK3", "Athena++ PPM/HLLE", "-.", "D"),
     "athenapp_plm_hlld": ("athenapp", "Athena++ PLM/HLLD/RK3", "Athena++ PLM/HLLD", "--", "^"),
+    # five codes run after the sweep (sweep_data.NEWCODES): their own panels, a hue per code, matched dashed and best solid
+    "athenapk_matched": ("athenapk", "AthenaPK PLM/HLLE/VL2, GLM", "AthenaPK PLM/HLLE", (0, (4.5, 4.5)), "s"),
+    "athenapk_best": ("athenapk", "AthenaPK PPM/HLLD/RK3, GLM", "AthenaPK PPM/HLLD", "-", "o"),
+    "cholla_plmc": ("cholla", "Cholla PLMC/HLLD/VL, CT", "Cholla PLMC", (0, (4.5, 4.5)), "s"),
+    "cholla_ppmc": ("cholla", "Cholla PPMC/HLLD/VL, CT", "Cholla PPMC", "-", "o"),
+    "pluto_ct_matched": ("pluto", "gPLUTO linear/HLL/RK2, CT", "gPLUTO CT PLM/HLL", (0, (4.5, 4.5)), "s"),
+    "pluto_ct_best": ("pluto", "gPLUTO parabolic/HLLD/RK3, CT", "gPLUTO CT PPM/HLLD", "-", "o"),
+    "pluto_glm_matched": ("pluto", "gPLUTO linear/HLL/RK2, GLM", "gPLUTO GLM PLM/HLL", (0, (1, 1.5)), "x"),
+    "pluto_glm_best": ("pluto", "gPLUTO parabolic/HLLD/RK3, GLM", "gPLUTO GLM PPM/HLLD", "-.", "D"),
+    "enzo_dedner": ("enzo", "Enzo Dedner (Wang & Abel), PLM/HLL/RK2", "Enzo Dedner", (0, (4.5, 4.5)), "s"),
+    "enzo_ct": ("enzo", "Enzo CT (Collins et al.), PLM/HLLD", "Enzo CT", "-", "o"),
+    "phantom_sph": ("phantom", "Phantom SPMHD, divergence cleaning", "Phantom SPH", "-", "^"),
     "athenak_reference": ("reference", "AthenaK reference", "Reference", "-", ""),
     "athenapp_reference": ("reference", "Athena++ check", "Check", (0, (4, 2)), ""),
 }
@@ -62,6 +74,7 @@ GROUPS = (("gpu", "GLM kernels and CT prototype (T. Abel), H100", GPU), ("other"
 ALL = GPU + OTHER
 AREPO = ("arepo_moving", "arepo_static")      # run after the sweep on the planar tests (sherlock_arepo/); not part of ALL
 GIZMO = ("gizmo_mfm",)                        # the same (sherlock_gizmo/)
+NEWCODES = sweep_data.NEWCODES                 # five more codes, every test (sherlock_newcodes/); their own panels
 
 
 def color(method):

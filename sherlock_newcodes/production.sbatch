@@ -11,6 +11,9 @@ export MHD_RESULTS="${NEWCODES_RESULTS:-$SCRATCH/mhd-results-newcodes}"
 cd "$SWEEP_BUNDLE" && source jobs/common.sh && prepare_environment && prepare_codes || { echo "the sweep bundle's environment could not be set up"; exit 2; }
 venv="${NEWCODES_VENV:-$HOME/.venvs/mhd-h5py}"; source "$venv/bin/activate"
 root="$MHD_CODES/newcodes"; group="${NEWCODES_GROUP:-1}"         # lines of the tasks file per array task
+# Slurm can allot fewer CPUs than asked (6 of 8 for two GPUs and 192 GB): SLURM_CPUS_PER_TASK is then 3 and
+# SLURM_TRES_PER_TASK still cpu=4, and srun stops on the two ("cpus-per-task set by two different environment variables")
+unset SLURM_TRES_PER_TASK
 first=$(( (SLURM_ARRAY_TASK_ID - 1)*group + 1 )); last=$(( SLURM_ARRAY_TASK_ID*group ))
 loaded=""
 while IFS='|' read -r code variant test seed grids geometry; do

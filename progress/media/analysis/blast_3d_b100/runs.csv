@@ -631,3 +631,207 @@ athenapp_best,Athena++ PPM/HLLD,64,42,complete,True,0.01,22.7,5,Code-reported ev
 athenapp_best,Athena++ PPM/HLLD,128,42,complete,True,0.01,78.09,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_3d_b100-athenapp-best-run-N128-s42/data/athenapp_best_r1,
 athenapp_best,Athena++ PPM/HLLD,256,42,complete,True,0.01,1489.36,2,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_3d_b100-athenapp-best-run-N256-s42/data/athenapp_best_r1,
 athenapp_best,Athena++ PPM/HLLD,512,42,complete,True,0.01,,0,valid timing not recorded,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_3d_b100-athenapp-best-run-N512-s42/data/athenapp_best_r1,
+athenapk_matched,AthenaPK PLM/HLLE,32,42,complete,True,0.01,3.951801340095699,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-matched-run-N32-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,64,42,complete,True,0.01,10.41670454107225,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-matched-run-N64-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,128,42,complete,True,0.01,44.16757173696533,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-matched-run-N128-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,256,42,complete,True,0.01,336.29672359908,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-matched-run-N256-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,512,42,complete,True,0.01,2755.0895910379477,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-matched-run-N512-s42/data/athenapk_matched_r1,
+athenapk_best,AthenaPK PPM/HLLD,32,42,complete,True,0.01,17.256952519062907,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-best-run-N32-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,64,42,complete,True,0.01,29.88748212577775,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-best-run-N64-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,128,42,complete,True,0.01,111.90384501218796,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-best-run-N128-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,256,42,complete,True,0.01,480.5540498998016,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-best-run-N256-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,512,42,complete,True,0.01,4265.840906169731,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-athenapk-best-run-N512-s42/data/athenapk_best_r1,
+cholla_plmc,Cholla PLMC,32,42,complete,True,0.01,2.4855564567260444,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-plmc-run-N32-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,64,42,complete,True,0.01,5.2791309636086226,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-plmc-run-N64-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,128,42,complete,True,0.01,18.75055438419804,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-plmc-run-N128-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,256,42,complete,True,0.01,75.00027259299532,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-plmc-run-N256-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,512,42,complete,True,0.01,622.3539722301066,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-plmc-run-N512-s42/data/cholla_plmc_r1,
+cholla_ppmc,Cholla PPMC,32,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-ppmc-run-N32-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+Git Commit Hash = 191e59b063b4a4075738b0f016fd2203ab8b1523
+Macro Flags     = -DMPI_CHOLLA -DPRECISION=2 -DPPMC -DHLLD -DMHD -DVL -DDENSITY_FLOOR -DTEMPERATURE_FLOOR -DCPU_TIME -DOUTPUT -DHDF5  -DGIT_HASH=191e59b063b4a4075738b0f016fd2203ab8b1523
+Parameter values:  nx = 32, ny = 32, nz = 32, tout = 0.010000, init = Abel, boundaries = 1 1 1 1 1 1
+Output directory:  ./output/
+
+Creating Log File: run_output.log 
+
+nproc_x 1 nproc_y 1 nproc_z 1
+Allocating MPI communication buffers on GPU (nx = 40960, ny = 53760, nz = 70560).
+Local number of grid cells: 32 32 32 74088
+Setting initial conditions...
+Initial conditions set.
+
+Timing Functions is ON 
+Setting boundary conditions...
+Boundary conditions set.
+Dimensions of each cell: dx = 0.031250 dy = 0.031250 dz = 0.031250
+Ratio of specific heats gamma = 1.400000
+Nstep = 0  Simulation time = 0.000000
+Writing initial conditions to file...
+
+Saving Snapshot: 0 
+Global maximum magnetic divergence = 0.0000e+00
+Init  min:    1.4211  max:    1.4211  avg:    1.4211
+Starting calculations.
+Percentage of GPU memory used: 0.79%.0 GPU memory used 672202752, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    4.5500  max:    4.5500  avg:    4.5500   ms
+ Time Hydro               min:    4.6079  max:    4.6079  avg:    4.6079   ms
+ Time Boundaries          min:    0.0420  max:    0.0420  avg:    0.0420   ms
+ Time Total               min:    4.7412  max:    4.7412  avg:    4.7412   ms
+n_step: 1   sim time:  0.0002506   sim timestep: 2.5056e-04  timestep time =     4.748 ms   total time =    1.4283 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.2746e-07, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-ppmc-run-N64-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+Git Commit Hash = 191e59b063b4a4075738b0f016fd2203ab8b1523
+Macro Flags     = -DMPI_CHOLLA -DPRECISION=2 -DPPMC -DHLLD -DMHD -DVL -DDENSITY_FLOOR -DTEMPERATURE_FLOOR -DCPU_TIME -DOUTPUT -DHDF5  -DGIT_HASH=191e59b063b4a4075738b0f016fd2203ab8b1523
+Parameter values:  nx = 64, ny = 64, nz = 64, tout = 0.010000, init = Abel, boundaries = 1 1 1 1 1 1
+Output directory:  ./output/
+
+Creating Log File: run_output.log 
+
+nproc_x 1 nproc_y 1 nproc_z 1
+Allocating MPI communication buffers on GPU (nx = 163840, ny = 189440, nz = 219040).
+Local number of grid cells: 64 64 64 405224
+Setting initial conditions...
+Initial conditions set.
+
+Timing Functions is ON 
+Setting boundary conditions...
+Boundary conditions set.
+Dimensions of each cell: dx = 0.015625 dy = 0.015625 dz = 0.015625
+Ratio of specific heats gamma = 1.400000
+Nstep = 0  Simulation time = 0.000000
+Writing initial conditions to file...
+
+Saving Snapshot: 0 
+Global maximum magnetic divergence = 0.0000e+00
+Init  min:    2.2081  max:    2.2081  avg:    2.2081
+Starting calculations.
+Percentage of GPU memory used: 1.08%.0 GPU memory used 915472384, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    6.0229  max:    6.0229  avg:    6.0229   ms
+ Time Hydro               min:    6.0871  max:    6.0871  avg:    6.0871   ms
+ Time Boundaries          min:    0.0429  max:    0.0429  avg:    0.0429   ms
+ Time Total               min:    6.2292  max:    6.2292  avg:    6.2292   ms
+n_step: 1   sim time:  0.0001253   sim timestep: 1.2528e-04  timestep time =     6.237 ms   total time =    2.2168 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 2.4361e-07, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-ppmc-run-N128-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+Git Commit Hash = 191e59b063b4a4075738b0f016fd2203ab8b1523
+Macro Flags     = -DMPI_CHOLLA -DPRECISION=2 -DPPMC -DHLLD -DMHD -DVL -DDENSITY_FLOOR -DTEMPERATURE_FLOOR -DCPU_TIME -DOUTPUT -DHDF5  -DGIT_HASH=191e59b063b4a4075738b0f016fd2203ab8b1523
+Parameter values:  nx = 128, ny = 128, nz = 128, tout = 0.010000, init = Abel, boundaries = 1 1 1 1 1 1
+Output directory:  ./output/
+
+Creating Log File: run_output.log 
+
+nproc_x 1 nproc_y 1 nproc_z 1
+Allocating MPI communication buffers on GPU (nx = 655360, ny = 706560, nz = 761760).
+Local number of grid cells: 128 128 128 2628072
+Setting initial conditions...
+Initial conditions set.
+
+Timing Functions is ON 
+Setting boundary conditions...
+Boundary conditions set.
+Dimensions of each cell: dx = 0.007812 dy = 0.007812 dz = 0.007812
+Ratio of specific heats gamma = 1.400000
+Nstep = 0  Simulation time = 0.000000
+Writing initial conditions to file...
+
+Saving Snapshot: 0 
+Global maximum magnetic divergence = 0.0000e+00
+Init  min:    6.6611  max:    6.6611  avg:    6.6611
+Starting calculations.
+Percentage of GPU memory used: 2.89%.0 GPU memory used 2454781952, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   13.2458  max:   13.2458  avg:   13.2458   ms
+ Time Hydro               min:   13.3891  max:   13.3891  avg:   13.3891   ms
+ Time Boundaries          min:    0.0808  max:    0.0808  avg:    0.0808   ms
+ Time Total               min:   13.5720  max:   13.5720  avg:   13.5720   ms
+n_step: 1   sim time:  0.0000626   sim timestep: 6.2639e-05  timestep time =    13.582 ms   total time =    6.6771 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.9073e-06, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-ppmc-run-N256-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+Git Commit Hash = 191e59b063b4a4075738b0f016fd2203ab8b1523
+Macro Flags     = -DMPI_CHOLLA -DPRECISION=2 -DPPMC -DHLLD -DMHD -DVL -DDENSITY_FLOOR -DTEMPERATURE_FLOOR -DCPU_TIME -DOUTPUT -DHDF5  -DGIT_HASH=191e59b063b4a4075738b0f016fd2203ab8b1523
+Parameter values:  nx = 256, ny = 256, nz = 256, tout = 0.010000, init = Abel, boundaries = 1 1 1 1 1 1
+Output directory:  ./output/
+
+Creating Log File: run_output.log 
+
+nproc_x 1 nproc_y 1 nproc_z 1
+Allocating MPI communication buffers on GPU (nx = 2621440, ny = 2723840, nz = 2830240).
+Local number of grid cells: 256 256 256 18821096
+Setting initial conditions...
+Initial conditions set.
+
+Timing Functions is ON 
+Setting boundary conditions...
+Boundary conditions set.
+Dimensions of each cell: dx = 0.003906 dy = 0.003906 dz = 0.003906
+Ratio of specific heats gamma = 1.400000
+Nstep = 0  Simulation time = 0.000000
+Writing initial conditions to file...
+
+Saving Snapshot: 0 
+Global maximum magnetic divergence = 0.0000e+00
+Init  min:   11.6193  max:   11.6193  avg:   11.6193
+Starting calculations.
+Percentage of GPU memory used: 15.76%.0 GPU memory used 13380943872, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   66.4580  max:   66.4580  avg:   66.4580   ms
+ Time Hydro               min:   67.1649  max:   67.1649  avg:   67.1649   ms
+ Time Boundaries          min:    0.2670  max:    0.2670  avg:    0.2670   ms
+ Time Total               min:   67.5540  max:   67.5540  avg:   67.5540   ms
+n_step: 1   sim time:  0.0000313   sim timestep: 3.1320e-05  timestep time =    67.562 ms   total time =   11.6896 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 3.8147e-06, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,512,42,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-cholla-ppmc-run-N512-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+Git Commit Hash = 191e59b063b4a4075738b0f016fd2203ab8b1523
+Macro Flags     = -DMPI_CHOLLA -DPRECISION=2 -DPPMC -DHLLD -DMHD -DVL -DDENSITY_FLOOR -DTEMPERATURE_FLOOR -DCPU_TIME -DOUTPUT -DHDF5  -DGIT_HASH=191e59b063b4a4075738b0f016fd2203ab8b1523
+Parameter values:  nx = 512, ny = 512, nz = 512, tout = 0.010000, init = Abel, boundaries = 1 1 1 1 1 1
+Output directory:  ./output/
+
+Creating Log File: run_output.log 
+
+nproc_x 2 nproc_y 1 nproc_z 1
+Allocating MPI communication buffers on GPU (nx = 10485760, ny = 5447680, nz = 5554080).
+Local number of grid cells: 256 512 512 72480744
+Setting initial conditions...
+Initial conditions set.
+
+Timing Functions is ON 
+Setting boundary conditions...
+Boundary conditions set.
+Dimensions of each cell: dx = 0.001953 dy = 0.001953 dz = 0.001953
+Ratio of specific heats gamma = 1.400000
+Nstep = 0  Simulation time = 0.000000
+Writing initial conditions to file...
+
+Saving Snapshot: 0 
+Global maximum magnetic divergence = 0.0000e+00
+Init  min:   62.3907  max:   62.3908  avg:   62.3908
+Starting calculations.
+Percentage of GPU memory used: 58.19%.0 GPU memory used 49422598144, GPU total memory 84929216512
+ Time Hydro_Integrator    min:  251.0340  max:  252.0721  avg:  251.5531   ms
+ Time Hydro               min:  254.8959  max:  254.9169  avg:  254.9064   ms
+ Time Boundaries          min:   97.2080  max:   97.4560  avg:   97.3320   ms
+ Time Total               min:  352.5841  max:  352.7460  avg:  352.6651   ms
+n_step: 1   sim time:  0.0000157   sim timestep: 1.5660e-05  timestep time =   352.606 ms   total time =   62.7476 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 8.8604e-06, the maximum allowed divergence = 1.0000e-09
+"
+pluto_ct_matched,gPLUTO CT PLM/HLL,32,42,complete,True,0.01,9.403521589003503,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-pluto-ct_matched-run-N32-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,64,42,complete,True,0.01,17.21519455080852,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-pluto-ct_matched-run-N64-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,128,42,complete,False,0.01,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-pluto-ct_matched-run-N128-s42/data/pluto_ct_matched_r1,
+enzo_dedner,Enzo Dedner,32,42,complete,True,0.01,14.9607163220644,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-enzo-dedner-run-N32-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,64,42,complete,True,0.01,24.872299729846418,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-enzo-dedner-run-N64-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,128,42,complete,True,0.01,46.49935138132423,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-enzo-dedner-run-N128-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,256,42,complete,False,0.01,,0,incomplete or invalid,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-enzo-dedner-run-N256-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,512,42,complete,True,0.01,7454.572788958903,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-enzo-dedner-run-N512-s42/data/enzo_dedner_r1,
+enzo_ct,Enzo CT,32,42,complete,True,0.01,30.52537317899987,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-enzo-ct-run-N32-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,64,42,complete,True,0.01,33.958181951980805,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-enzo-ct-run-N64-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,128,42,complete,True,0.01,172.08249356001033,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_3d_b100-enzo-ct-run-N128-s42/data/enzo_ct_r1,
+phantom_sph,Phantom SPH,32,42,complete,True,0.010000000000000222,3.221776063553989,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/blast_3d_b100-phantom-sph-run-N32-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,64,42,complete,True,0.010000000000000222,88.74441138561815,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/blast_3d_b100-phantom-sph-run-N64-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,128,42,complete,True,0.010000000000000222,446.90760079119354,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/blast_3d_b100-phantom-sph-run-N128-s42/data/phantom_sph_r1,

@@ -330,6 +330,21 @@ ct_fix,"Abel CT prototype, fixed",64,42,complete,True,0.010000000000616183,0.288
 ct_fix,"Abel CT prototype, fixed",128,42,complete,True,0.010000000000104592,4.0377571869999995,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b50-N128-s42-ct_fix/data/ct_fix_r1,
 ct_fix,"Abel CT prototype, fixed",256,42,complete,True,0.010000000000161435,71.52014738300002,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b50-N256-s42-ct_fix/data/ct_fix_r1,
 ct_fix,"Abel CT prototype, fixed",512,42,complete,True,0.009999999999990905,1190.1201599629999,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,fix_results/mhd-results-rerun/blast_2d_b50-N512-s42-ct_fix/data/ct_fix_r1,
+glm_fix_hll32,Abel GLM f32 PLM/HLL,32,42,complete,True,0.010000000000218279,0.011677436,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N32-s42-glm_fix_hll32/data/glm_fix_hll32_r1,
+glm_fix_hll32,Abel GLM f32 PLM/HLL,64,42,complete,True,0.010000000000587761,0.06942650199999997,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N64-s42-glm_fix_hll32/data/glm_fix_hll32_r1,
+glm_fix_hll32,Abel GLM f32 PLM/HLL,128,42,complete,True,0.010000000000104592,0.8632602120000006,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N128-s42-glm_fix_hll32/data/glm_fix_hll32_r1,
+glm_fix_hll32,Abel GLM f32 PLM/HLL,256,42,complete,True,0.010000000000189857,13.644198480000014,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N256-s42-glm_fix_hll32/data/glm_fix_hll32_r1,
+glm_fix_hll32,Abel GLM f32 PLM/HLL,512,42,complete,True,0.009999999999930509,224.0323537379998,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N512-s42-glm_fix_hll32/data/glm_fix_hll32_r1,
+glm_fix_ppm32,Abel GLM f32 PPM/HLL,32,42,complete,True,0.010000000000218279,0.025723646000000003,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N32-s42-glm_fix_ppm32/data/glm_fix_ppm32_r1,
+glm_fix_ppm32,Abel GLM f32 PPM/HLL,64,42,complete,True,0.010000000000218279,0.2664835870000001,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N64-s42-glm_fix_ppm32/data/glm_fix_ppm32_r1,
+glm_fix_ppm32,Abel GLM f32 PPM/HLL,128,42,complete,True,0.009999999999990905,4.395059933999998,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N128-s42-glm_fix_ppm32/data/glm_fix_ppm32_r1,
+glm_fix_ppm32,Abel GLM f32 PPM/HLL,256,42,complete,True,0.009999999999934062,76.862616184,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N256-s42-glm_fix_ppm32/data/glm_fix_ppm32_r1,
+glm_fix_ppm32,Abel GLM f32 PPM/HLL,512,42,complete,True,0.009999999999962483,1387.3420924789998,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N512-s42-glm_fix_ppm32/data/glm_fix_ppm32_r1,
+glm_fix_ppm_hlld,Abel GLM f32 PPM/HLLD,32,42,complete,True,0.010000000000218279,0.02687696000000003,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N32-s42-glm_fix_ppm_hlld/data/glm_fix_ppm_hlld_r1,
+glm_fix_ppm_hlld,Abel GLM f32 PPM/HLLD,64,42,complete,True,0.010000000000445652,0.2816419879999998,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N64-s42-glm_fix_ppm_hlld/data/glm_fix_ppm_hlld_r1,
+glm_fix_ppm_hlld,Abel GLM f32 PPM/HLLD,128,42,complete,True,0.010000000000218279,4.400954307000007,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N128-s42-glm_fix_ppm_hlld/data/glm_fix_ppm_hlld_r1,
+glm_fix_ppm_hlld,Abel GLM f32 PPM/HLLD,256,42,complete,True,0.010000000000104592,72.86663327799995,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N256-s42-glm_fix_ppm_hlld/data/glm_fix_ppm_hlld_r1,
+glm_fix_ppm_hlld,Abel GLM f32 PPM/HLLD,512,42,complete,True,0.010000000000012221,1235.9400925270013,1,Synchronized elapsed host wall time. stepping excludes CFL; solve=stepping+CFL. evolution includes diagnostics/transfers/output. Startup and warmup separate.,1 H100,Float32 state and shared storage; original GLM contains @fastmath,0.25,order_results/mhd-results-order/blast_2d_b50-N512-s42-glm_fix_ppm_hlld/data/glm_fix_ppm_hlld_r1,
 athenak_matched,AthenaK PLM/HLLE,32,42,complete,True,0.01,0.08576188,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-athenak-matched-run-N32-s42/data/athenak_matched_r1,
 athenak_matched,AthenaK PLM/HLLE,64,42,complete,True,0.01,0.3407274,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-athenak-matched-run-N64-s42/data/athenak_matched_r1,
 athenak_matched,AthenaK PLM/HLLE,128,42,complete,True,0.01,2.564063,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-athenak-matched-run-N128-s42/data/athenak_matched_r1,
@@ -360,6 +375,36 @@ athenapp_best,Athena++ PPM/HLLD,64,42,complete,True,0.01,0.62,5,Code-reported ev
 athenapp_best,Athena++ PPM/HLLD,128,42,complete,True,0.01,3.31,5,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-athenapp-best-run-N128-s42/data/athenapp_best_r1,
 athenapp_best,Athena++ PPM/HLLD,256,42,complete,True,0.01,13.899999999999999,3,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-athenapp-best-run-N256-s42/data/athenapp_best_r1,
 athenapp_best,Athena++ PPM/HLLD,512,42,complete,True,0.01,47.769999999999996,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-athenapp-best-run-N512-s42/data/athenapp_best_r1,
+athenak_plm_hlle_rk3,AthenaK PLM/HLLE/RK3,32,42,complete,True,0.01,0.1656408,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N32-s42-athenak_plm_hlle_rk3/data/athenak_plm_hlle_rk3_r1,
+athenak_plm_hlle_rk3,AthenaK PLM/HLLE/RK3,64,42,complete,True,0.01,7.471012,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N64-s42-athenak_plm_hlle_rk3/data/athenak_plm_hlle_rk3_r1,
+athenak_plm_hlle_rk3,AthenaK PLM/HLLE/RK3,128,42,complete,True,0.01,11.11191,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N128-s42-athenak_plm_hlle_rk3/data/athenak_plm_hlle_rk3_r1,
+athenak_plm_hlle_rk3,AthenaK PLM/HLLE/RK3,256,42,complete,True,0.01,57.5109,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N256-s42-athenak_plm_hlle_rk3/data/athenak_plm_hlle_rk3_r1,
+athenak_plm_hlle_rk3,AthenaK PLM/HLLE/RK3,512,42,complete,True,0.01,767.3939,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N512-s42-athenak_plm_hlle_rk3/data/athenak_plm_hlle_rk3_r1,
+athenak_ppm_hlle,AthenaK PPM/HLLE,32,42,complete,True,0.01,0.1988483,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N32-s42-athenak_ppm_hlle/data/athenak_ppm_hlle_r1,
+athenak_ppm_hlle,AthenaK PPM/HLLE,64,42,complete,True,0.01,9.627588,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N64-s42-athenak_ppm_hlle/data/athenak_ppm_hlle_r1,
+athenak_ppm_hlle,AthenaK PPM/HLLE,128,42,complete,True,0.01,6.140768,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N128-s42-athenak_ppm_hlle/data/athenak_ppm_hlle_r1,
+athenak_ppm_hlle,AthenaK PPM/HLLE,256,42,complete,True,0.01,68.18507,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N256-s42-athenak_ppm_hlle/data/athenak_ppm_hlle_r1,
+athenak_ppm_hlle,AthenaK PPM/HLLE,512,42,complete,True,0.01,811.9118,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N512-s42-athenak_ppm_hlle/data/athenak_ppm_hlle_r1,
+athenak_plm_hlld,AthenaK PLM/HLLD,32,42,complete,True,0.01,0.1561885,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N32-s42-athenak_plm_hlld/data/athenak_plm_hlld_r1,
+athenak_plm_hlld,AthenaK PLM/HLLD,64,42,complete,True,0.01,0.7058616,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N64-s42-athenak_plm_hlld/data/athenak_plm_hlld_r1,
+athenak_plm_hlld,AthenaK PLM/HLLD,128,42,complete,True,0.01,10.84512,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N128-s42-athenak_plm_hlld/data/athenak_plm_hlld_r1,
+athenak_plm_hlld,AthenaK PLM/HLLD,256,42,complete,True,0.01,79.75179,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N256-s42-athenak_plm_hlld/data/athenak_plm_hlld_r1,
+athenak_plm_hlld,AthenaK PLM/HLLD,512,42,complete,True,0.01,750.3148,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N512-s42-athenak_plm_hlld/data/athenak_plm_hlld_r1,
+athenapp_plm_hlle_rk3,Athena++ PLM/HLLE/RK3,32,42,complete,True,0.01,0.21,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N32-s42-athenapp_plm_hlle_rk3/data/athenapp_plm_hlle_rk3_r1,
+athenapp_plm_hlle_rk3,Athena++ PLM/HLLE/RK3,64,42,complete,True,0.01,0.32999999999999996,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N64-s42-athenapp_plm_hlle_rk3/data/athenapp_plm_hlle_rk3_r1,
+athenapp_plm_hlle_rk3,Athena++ PLM/HLLE/RK3,128,42,complete,True,0.01,0.8199999999999998,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N128-s42-athenapp_plm_hlle_rk3/data/athenapp_plm_hlle_rk3_r1,
+athenapp_plm_hlle_rk3,Athena++ PLM/HLLE/RK3,256,42,complete,True,0.01,6.11,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N256-s42-athenapp_plm_hlle_rk3/data/athenapp_plm_hlle_rk3_r1,
+athenapp_plm_hlle_rk3,Athena++ PLM/HLLE/RK3,512,42,complete,True,0.01,29.21,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N512-s42-athenapp_plm_hlle_rk3/data/athenapp_plm_hlle_rk3_r1,
+athenapp_ppm_hlle,Athena++ PPM/HLLE,32,42,complete,True,0.01,0.38,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N32-s42-athenapp_ppm_hlle/data/athenapp_ppm_hlle_r1,
+athenapp_ppm_hlle,Athena++ PPM/HLLE,64,42,complete,True,0.01,0.6500000000000001,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N64-s42-athenapp_ppm_hlle/data/athenapp_ppm_hlle_r1,
+athenapp_ppm_hlle,Athena++ PPM/HLLE,128,42,complete,True,0.01,2.07,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N128-s42-athenapp_ppm_hlle/data/athenapp_ppm_hlle_r1,
+athenapp_ppm_hlle,Athena++ PPM/HLLE,256,42,complete,True,0.01,14.780000000000001,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N256-s42-athenapp_ppm_hlle/data/athenapp_ppm_hlle_r1,
+athenapp_ppm_hlle,Athena++ PPM/HLLE,512,42,complete,True,0.01,61.190000000000005,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N512-s42-athenapp_ppm_hlle/data/athenapp_ppm_hlle_r1,
+athenapp_plm_hlld,Athena++ PLM/HLLD,32,42,complete,True,0.01,0.23999999999999996,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N32-s42-athenapp_plm_hlld/data/athenapp_plm_hlld_r1,
+athenapp_plm_hlld,Athena++ PLM/HLLD,64,42,complete,True,0.01,0.35,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N64-s42-athenapp_plm_hlld/data/athenapp_plm_hlld_r1,
+athenapp_plm_hlld,Athena++ PLM/HLLD,128,42,complete,True,0.01,1.000001,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N128-s42-athenapp_plm_hlld/data/athenapp_plm_hlld_r1,
+athenapp_plm_hlld,Athena++ PLM/HLLD,256,42,complete,True,0.01,7.420000000000001,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N256-s42-athenapp_plm_hlld/data/athenapp_plm_hlld_r1,
+athenapp_plm_hlld,Athena++ PLM/HLLD,512,42,complete,True,0.01,33.25,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,order_results/mhd-results-order/blast_2d_b50-N512-s42-athenapp_plm_hlld/data/athenapp_plm_hlld_r1,
 arepo_moving,AREPO moving mesh,32,42,complete,True,0.01,5.180032244999893,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-arepo-moving-run-N32-s42/data/arepo_moving_r1,
 arepo_moving,AREPO moving mesh,64,42,complete,True,0.01,12.090395911014639,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-arepo-moving-run-N64-s42/data/arepo_moving_r1,
 arepo_moving,AREPO moving mesh,128,42,complete,True,0.01,48.14952340698801,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,4 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/blast_2d_b50-arepo-moving-run-N128-s42/data/arepo_moving_r1,
@@ -380,3 +425,232 @@ mhdale_ale,MHD-ALE + our fixes,64,42,complete,True,0.01,34.571783129824325,1,Cod
 mhdale_ale,MHD-ALE + our fixes,128,42,complete,True,0.01,140.0459493130911,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,8 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b50-mhdale-ale-run-N128-s42/data/mhdale_ale_r1,
 mhdale_ale,MHD-ALE + our fixes,256,42,complete,True,0.01,771.667481707409,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b50-mhdale-ale-run-N256-s42/data/mhdale_ale_r1,
 mhdale_ale,MHD-ALE + our fixes,512,42,complete,True,0.01,1798.9929203670472,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.5,sweep_results/blast_2d_b50-mhdale-ale-run-N512-s42/data/mhdale_ale_r1,
+athenapk_matched,AthenaPK PLM/HLLE,32,42,complete,True,0.01,2.6286588348448277,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-matched-run-N32-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,64,42,complete,True,0.01,3.1026759250089526,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-matched-run-N64-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,128,42,complete,True,0.01,5.170835024677217,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-matched-run-N128-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,256,42,complete,True,0.01,5.284275139681995,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-matched-run-N256-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,512,42,complete,True,0.01,18.106814335566014,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-matched-run-N512-s42/data/athenapk_matched_r1,
+athenapk_best,AthenaPK PPM/HLLD,32,42,complete,True,0.01,10.041255332063884,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-best-run-N32-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,64,42,complete,True,0.01,18.725538256112486,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-best-run-N64-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,128,42,complete,True,0.01,54.24516356084496,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-best-run-N128-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,256,42,complete,True,0.01,41.365547786001116,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-best-run-N256-s42/data/athenapk_best_r1,
+athenapk_best,AthenaPK PPM/HLLD,512,42,complete,True,0.01,41.267468706704676,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-athenapk-best-run-N512-s42/data/athenapk_best_r1,
+cholla_plmc,Cholla PLMC,32,42,complete,True,0.01,2.3356247670017183,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-plmc-run-N32-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,64,42,complete,True,0.01,2.350099943112582,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-plmc-run-N64-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,128,42,complete,True,0.01,4.457171925809234,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-plmc-run-N128-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,256,42,complete,True,0.01,8.553288638126105,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-plmc-run-N256-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,512,42,complete,True,0.01,28.658868918195367,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-plmc-run-N512-s42/data/cholla_plmc_r1,
+cholla_ppmc,Cholla PPMC,32,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-ppmc-run-N32-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+t = Abel, boundaries = 1 1 1 1 1 1
+Output directory:  ./output/
+
+Creating Log File: run_output.log 
+
+  File exists, appending values: run_output.log 
+
+nproc_x 1 nproc_y 1 nproc_z 1
+Allocating MPI communication buffers on GPU (nx = 10240, ny = 13440, nz = 70560).
+Local number of grid cells: 32 32 8 31752
+Setting initial conditions...
+Initial conditions set.
+
+Timing Functions is ON 
+Setting boundary conditions...
+Boundary conditions set.
+Dimensions of each cell: dx = 0.031250 dy = 0.031250 dz = 0.031250
+Ratio of specific heats gamma = 1.400000
+Nstep = 0  Simulation time = 0.000000
+Writing initial conditions to file...
+
+Saving Snapshot: 0 
+Global maximum magnetic divergence = 0.0000e+00
+Init  min:    1.4105  max:    1.4105  avg:    1.4105
+Starting calculations.
+Percentage of GPU memory used: 0.75%.0 GPU memory used 640745472, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    3.9690  max:    3.9690  avg:    3.9690   ms
+ Time Hydro               min:    4.0250  max:    4.0250  avg:    4.0250   ms
+ Time Boundaries          min:    0.0401  max:    0.0401  avg:    0.0401   ms
+ Time Total               min:    4.1571  max:    4.1571  avg:    4.1571   ms
+n_step: 1   sim time:  0.0002506   sim timestep: 2.5056e-04  timestep time =     4.164 ms   total time =    1.4170 s
+
+Global maximum magnetic divergence = 4.8850e-14
+Percentage of GPU memory used: 0.75%.0 GPU memory used 640745472, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    0.2680  max:    0.2680  avg:    0.2680   ms
+ Time Hydro               min:    0.3071  max:    0.3071  avg:    0.3071   ms
+ Time Boundaries          min:    0.0370  max:    0.0370  avg:    0.0370   ms
+ Time Total               min:    0.3672  max:    0.3672  avg:    0.3672   ms
+n_step: 2   sim time:  0.0004892   sim timestep: 2.3860e-04  timestep time =     0.372 ms   total time =    1.4174 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.8626e-09, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-ppmc-run-N64-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+  4.8420  avg:    4.8420   ms
+n_step: 1   sim time:  0.0001253   sim timestep: 1.2528e-04  timestep time =     4.850 ms   total time =    1.4068 s
+
+Global maximum magnetic divergence = 1.0747e-13
+Percentage of GPU memory used: 0.83%.0 GPU memory used 701562880, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    0.4480  max:    0.4480  avg:    0.4480   ms
+ Time Hydro               min:    0.4871  max:    0.4871  avg:    0.4871   ms
+ Time Boundaries          min:    0.0372  max:    0.0372  avg:    0.0372   ms
+ Time Total               min:    0.5469  max:    0.5469  avg:    0.5469   ms
+n_step: 2   sim time:  0.0002432   sim timestep: 1.1792e-04  timestep time =     0.552 ms   total time =    1.4074 s
+
+Global maximum magnetic divergence = 1.7408e-13
+Percentage of GPU memory used: 0.83%.0 GPU memory used 701562880, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    0.4482  max:    0.4482  avg:    0.4482   ms
+ Time Hydro               min:    0.4890  max:    0.4890  avg:    0.4890   ms
+ Time Boundaries          min:    0.0370  max:    0.0370  avg:    0.0370   ms
+ Time Total               min:    0.5460  max:    0.5460  avg:    0.5460   ms
+n_step: 3   sim time:  0.0003532   sim timestep: 1.1003e-04  timestep time =     0.550 ms   total time =    1.4080 s
+
+Global maximum magnetic divergence = 2.0783e-13
+Percentage of GPU memory used: 0.83%.0 GPU memory used 701562880, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    0.4480  max:    0.4480  avg:    0.4480   ms
+ Time Hydro               min:    0.4880  max:    0.4880  avg:    0.4880   ms
+ Time Boundaries          min:    0.0372  max:    0.0372  avg:    0.0372   ms
+ Time Total               min:    0.5460  max:    0.5460  avg:    0.5460   ms
+n_step: 4   sim time:  0.0004572   sim timestep: 1.0398e-04  timestep time =     0.551 ms   total time =    1.4086 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 8.9407e-08, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-ppmc-run-N128-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+  5.4991  avg:    5.4991   ms
+n_step: 1   sim time:  0.0000626   sim timestep: 6.2639e-05  timestep time =     5.506 ms   total time =    1.6973 s
+
+Global maximum magnetic divergence = 2.2315e-13
+Percentage of GPU memory used: 1.04%.0 GPU memory used 886112256, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.1301  max:    1.1301  avg:    1.1301   ms
+ Time Hydro               min:    1.1740  max:    1.1740  avg:    1.1740   ms
+ Time Boundaries          min:    0.0389  max:    0.0389  avg:    0.0389   ms
+ Time Total               min:    1.2360  max:    1.2360  avg:    1.2360   ms
+n_step: 2   sim time:  0.0001216   sim timestep: 5.9005e-05  timestep time =     1.241 ms   total time =    1.6986 s
+
+Global maximum magnetic divergence = 3.9613e-13
+Percentage of GPU memory used: 1.04%.0 GPU memory used 886112256, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.1239  max:    1.1239  avg:    1.1239   ms
+ Time Hydro               min:    1.1680  max:    1.1680  avg:    1.1680   ms
+ Time Boundaries          min:    0.0391  max:    0.0391  avg:    0.0391   ms
+ Time Total               min:    1.2279  max:    1.2279  avg:    1.2279   ms
+n_step: 3   sim time:  0.0001768   sim timestep: 5.5113e-05  timestep time =     1.232 ms   total time =    1.6998 s
+
+Global maximum magnetic divergence = 5.6843e-13
+Percentage of GPU memory used: 1.04%.0 GPU memory used 886112256, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.1289  max:    1.1289  avg:    1.1289   ms
+ Time Hydro               min:    1.1740  max:    1.1740  avg:    1.1740   ms
+ Time Boundaries          min:    0.0401  max:    0.0401  avg:    0.0401   ms
+ Time Total               min:    1.2329  max:    1.2329  avg:    1.2329   ms
+n_step: 4   sim time:  0.0002288   sim timestep: 5.2037e-05  timestep time =     1.237 ms   total time =    1.7011 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.4156e-07, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-ppmc-run-N256-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+56, ny = 256, nz = 8, tout = 0.010000, init = Abel, boundaries = 1 1 1 1 1 1
+Output directory:  ./output/
+
+Creating Log File: run_output.log 
+
+nproc_x 1 nproc_y 1 nproc_z 1
+Allocating MPI communication buffers on GPU (nx = 81920, ny = 85120, nz = 2830240).
+Local number of grid cells: 256 256 8 1273608
+Setting initial conditions...
+Initial conditions set.
+
+Timing Functions is ON 
+Setting boundary conditions...
+Boundary conditions set.
+Dimensions of each cell: dx = 0.003906 dy = 0.003906 dz = 0.003906
+Ratio of specific heats gamma = 1.400000
+Nstep = 0  Simulation time = 0.000000
+Writing initial conditions to file...
+
+Saving Snapshot: 0 
+Global maximum magnetic divergence = 0.0000e+00
+Init  min:    2.5596  max:    2.5596  avg:    2.5596
+Starting calculations.
+Percentage of GPU memory used: 1.85%.0 GPU memory used 1573978112, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    8.0318  max:    8.0318  avg:    8.0318   ms
+ Time Hydro               min:    8.1110  max:    8.1110  avg:    8.1110   ms
+ Time Boundaries          min:    0.0770  max:    0.0770  avg:    0.0770   ms
+ Time Total               min:    8.2991  max:    8.2991  avg:    8.2991   ms
+n_step: 1   sim time:  0.0000313   sim timestep: 3.1320e-05  timestep time =     8.308 ms   total time =    2.5703 s
+
+Global maximum magnetic divergence = 4.4054e-13
+Percentage of GPU memory used: 1.85%.0 GPU memory used 1573978112, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    3.7220  max:    3.7220  avg:    3.7220   ms
+ Time Hydro               min:    3.7851  max:    3.7851  avg:    3.7851   ms
+ Time Boundaries          min:    0.0710  max:    0.0710  avg:    0.0710   ms
+ Time Total               min:    3.8860  max:    3.8860  avg:    3.8860   ms
+n_step: 2   sim time:  0.0000607   sim timestep: 2.9377e-05  timestep time =     3.892 ms   total time =    2.5743 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 7.4506e-09, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-cholla-ppmc-run-N512-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009000000000000001, 0.01]
+Git Commit Hash = 191e59b063b4a4075738b0f016fd2203ab8b1523
+Macro Flags     = -DMPI_CHOLLA -DPRECISION=2 -DPPMC -DHLLD -DMHD -DVL -DDENSITY_FLOOR -DTEMPERATURE_FLOOR -DCPU_TIME -DOUTPUT -DHDF5  -DGIT_HASH=191e59b063b4a4075738b0f016fd2203ab8b1523
+Parameter values:  nx = 512, ny = 512, nz = 8, tout = 0.010000, init = Abel, boundaries = 1 1 1 1 1 1
+Output directory:  ./output/
+
+Creating Log File: run_output.log 
+
+nproc_x 1 nproc_y 1 nproc_z 1
+Allocating MPI communication buffers on GPU (nx = 163840, ny = 167040, nz = 10899360).
+Local number of grid cells: 512 512 8 4904712
+Setting initial conditions...
+Initial conditions set.
+
+Timing Functions is ON 
+Setting boundary conditions...
+Boundary conditions set.
+Dimensions of each cell: dx = 0.001953 dy = 0.001953 dz = 0.001953
+Ratio of specific heats gamma = 1.400000
+Nstep = 0  Simulation time = 0.000000
+Writing initial conditions to file...
+
+Saving Snapshot: 0 
+Global maximum magnetic divergence = 0.0000e+00
+Init  min:    7.1487  max:    7.1487  avg:    7.1487
+Starting calculations.
+Percentage of GPU memory used: 4.97%.0 GPU memory used 4224778240, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   19.1259  max:   19.1259  avg:   19.1259   ms
+ Time Hydro               min:   19.2831  max:   19.2831  avg:   19.2831   ms
+ Time Boundaries          min:    0.1750  max:    0.1750  avg:    0.1750   ms
+ Time Total               min:   19.5909  max:   19.5909  avg:   19.5909   ms
+n_step: 1   sim time:  0.0000157   sim timestep: 1.5660e-05  timestep time =    19.600 ms   total time =    7.1708 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 9.5367e-07, the maximum allowed divergence = 1.0000e-09
+"
+pluto_ct_matched,gPLUTO CT PLM/HLL,32,42,complete,True,0.01,8.448318179231137,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_matched-run-N32-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,64,42,complete,True,0.01,9.781953713390976,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_matched-run-N64-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,128,42,complete,True,0.01,15.040359066799283,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_matched-run-N128-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,256,42,complete,True,0.01,11.967083380091935,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_matched-run-N256-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,512,42,complete,True,0.01,18.97344734100625,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_matched-run-N512-s42/data/pluto_ct_matched_r1,
+pluto_ct_best,gPLUTO CT PPM/HLLD,32,42,complete,True,0.01,9.273683194071054,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_best-run-N32-s42/data/pluto_ct_best_r1,
+pluto_ct_best,gPLUTO CT PPM/HLLD,64,42,complete,True,0.01,19.02536317333579,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_best-run-N64-s42/data/pluto_ct_best_r1,
+pluto_ct_best,gPLUTO CT PPM/HLLD,128,42,complete,True,0.01,13.126783166080713,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_best-run-N128-s42/data/pluto_ct_best_r1,
+pluto_ct_best,gPLUTO CT PPM/HLLD,256,42,complete,True,0.01,17.911447640042752,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_best-run-N256-s42/data/pluto_ct_best_r1,
+pluto_ct_best,gPLUTO CT PPM/HLLD,512,42,complete,True,0.01,19.074900838080794,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-ct_best-run-N512-s42/data/pluto_ct_best_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,32,42,complete,True,0.01,12.419461537152529,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_matched-run-N32-s42/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,64,42,complete,True,0.01,10.381032903911546,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_matched-run-N64-s42/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,128,42,complete,True,0.01,11.211905477102846,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_matched-run-N128-s42/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,256,42,complete,True,0.01,21.776151651050895,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_matched-run-N256-s42/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,512,42,complete,True,0.01,17.447838729945943,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_matched-run-N512-s42/data/pluto_glm_matched_r1,
+pluto_glm_best,gPLUTO GLM PPM/HLLD,32,42,complete,True,0.01,8.345097204204649,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_best-run-N32-s42/data/pluto_glm_best_r1,
+pluto_glm_best,gPLUTO GLM PPM/HLLD,64,42,complete,True,0.01,9.071028840728104,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_best-run-N64-s42/data/pluto_glm_best_r1,
+pluto_glm_best,gPLUTO GLM PPM/HLLD,128,42,complete,True,0.01,9.285433978307992,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_best-run-N128-s42/data/pluto_glm_best_r1,
+pluto_glm_best,gPLUTO GLM PPM/HLLD,256,42,complete,True,0.01,14.648944387212396,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_best-run-N256-s42/data/pluto_glm_best_r1,
+pluto_glm_best,gPLUTO GLM PPM/HLLD,512,42,complete,True,0.01,14.938671602867544,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-pluto-glm_best-run-N512-s42/data/pluto_glm_best_r1,
+enzo_dedner,Enzo Dedner,32,42,complete,True,0.01,11.02268589520827,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-dedner-run-N32-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,64,42,complete,True,0.01,7.816509089898318,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-dedner-run-N64-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,128,42,complete,True,0.01,15.512010884936899,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-dedner-run-N128-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,256,42,complete,True,0.01,17.93628678098321,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-dedner-run-N256-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,512,42,complete,True,0.01,43.17354806885123,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-dedner-run-N512-s42/data/enzo_dedner_r1,
+enzo_ct,Enzo CT,32,42,complete,True,0.01,14.68838481605053,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-ct-run-N32-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,64,42,complete,True,0.01,6.879564238712192,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-ct-run-N64-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,128,42,complete,True,0.01,9.486011362168938,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-ct-run-N128-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,256,42,complete,True,0.01,22.472265446092933,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-ct-run-N256-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,512,42,complete,True,0.01,85.17314888490364,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,16 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/blast_2d_b50-enzo-ct-run-N512-s42/data/enzo_ct_r1,
+phantom_sph,Phantom SPH,32,42,complete,True,0.010000000000000222,37.40606320463121,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/blast_2d_b50-phantom-sph-run-N32-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,64,42,complete,True,0.010000000000000222,34.02091262117028,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/blast_2d_b50-phantom-sph-run-N64-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,128,42,complete,True,0.010000000000000222,83.32789310067892,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/blast_2d_b50-phantom-sph-run-N128-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,256,42,complete,True,0.010000000000000222,426.7665555253625,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/blast_2d_b50-phantom-sph-run-N256-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,512,42,complete,True,0.010000000000000222,1793.346490778029,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/blast_2d_b50-phantom-sph-run-N512-s42/data/phantom_sph_r1,

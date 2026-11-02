@@ -2013,3 +2013,213 @@ athenapp_best,Athena++ PPM/HLLD,256,42,complete,False,0.2,,0,incomplete or inval
 athenapp_best,Athena++ PPM/HLLD,256,43,complete,False,0.2,,0,incomplete or invalid,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N256-s43/data/athenapp_best_r1,
 athenapp_best,Athena++ PPM/HLLD,512,42,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s42/data/athenapp_best_r1,
 athenapp_best,Athena++ PPM/HLLD,512,43,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s43/data/athenapp_best_r1,
+cholla_plmc,Cholla PLMC,64,42,complete,True,0.19999999999999998,4.462260656058788,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N64-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,64,43,complete,True,0.19999999999999998,9.389456996694207,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N64-s43/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,128,42,complete,True,0.19999999999999998,21.646907990798354,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N128-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,128,43,complete,True,0.19999999999999998,22.914787540677935,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N128-s43/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,256,42,complete,True,0.19999999999999998,182.02266144007444,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N256-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,256,43,complete,True,0.19999999999999998,168.15840408718213,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N256-s43/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,512,42,complete,True,0.19999999999999998,1594.476162101142,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N512-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,512,43,complete,True,0.19999999999999998,1439.561509844847,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N512-s43/data/cholla_plmc_r1,
+cholla_ppmc,Cholla PPMC,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N64-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+3490  avg:    1.3490   ms
+n_step: 57   sim time:  0.0153213   sim timestep: 1.7293e-04  timestep time =     1.353 ms   total time =    2.2563 s
+
+Global maximum magnetic divergence = 2.0961e-13
+Percentage of GPU memory used: 1.08%.0 GPU memory used 915472384, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.2441  max:    1.2441  avg:    1.2441   ms
+ Time Hydro               min:    1.2929  max:    1.2929  avg:    1.2929   ms
+ Time Boundaries          min:    0.0389  max:    0.0389  avg:    0.0389   ms
+ Time Total               min:    1.3530  max:    1.3530  avg:    1.3530   ms
+n_step: 58   sim time:  0.0155138   sim timestep: 1.9253e-04  timestep time =     1.358 ms   total time =    2.2577 s
+
+Global maximum magnetic divergence = 2.2737e-13
+Percentage of GPU memory used: 1.08%.0 GPU memory used 915472384, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.2422  max:    1.2422  avg:    1.2422   ms
+ Time Hydro               min:    1.2920  max:    1.2920  avg:    1.2920   ms
+ Time Boundaries          min:    0.0379  max:    0.0379  avg:    0.0379   ms
+ Time Total               min:    1.3511  max:    1.3511  avg:    1.3511   ms
+n_step: 59   sim time:  0.0156130   sim timestep: 9.9184e-05  timestep time =     1.356 ms   total time =    2.2591 s
+
+Global maximum magnetic divergence = 2.3093e-13
+Percentage of GPU memory used: 1.08%.0 GPU memory used 915472384, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.2441  max:    1.2441  avg:    1.2441   ms
+ Time Hydro               min:    1.2951  max:    1.2951  avg:    1.2951   ms
+ Time Boundaries          min:    0.0381  max:    0.0381  avg:    0.0381   ms
+ Time Total               min:    1.3540  max:    1.3540  avg:    1.3540   ms
+n_step: 60   sim time:  0.0156316   sim timestep: 1.8633e-05  timestep time =     1.359 ms   total time =    2.2605 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 7.4506e-09, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,64,43,failed,False,0.02,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N64-s43/data/cholla_ppmc_r1,"exit code 255; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+  avg:    1.3940   ms
+n_step: 148   sim time:  0.0246176   sim timestep: 8.3800e-05  timestep time =     1.464 ms   total time =    6.4084 s
+
+Global maximum magnetic divergence = 1.7906e-12
+Percentage of GPU memory used: 1.08%.0 GPU memory used 915472384, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.2650  max:    1.2650  avg:    1.2650   ms
+ Time Hydro               min:    1.3161  max:    1.3161  avg:    1.3161   ms
+ Time Boundaries          min:    0.0389  max:    0.0389  avg:    0.0389   ms
+ Time Total               min:    1.3990  max:    1.3990  avg:    1.3990   ms
+n_step: 149   sim time:  0.0246394   sim timestep: 2.1840e-05  timestep time =     1.468 ms   total time =    6.4100 s
+
+Global maximum magnetic divergence = 1.7621e-12
+Percentage of GPU memory used: 1.08%.0 GPU memory used 915472384, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.2670  max:    1.2670  avg:    1.2670   ms
+ Time Hydro               min:    1.3170  max:    1.3170  avg:    1.3170   ms
+ Time Boundaries          min:    0.0381  max:    0.0381  avg:    0.0381   ms
+ Time Total               min:    1.3969  max:    1.3969  avg:    1.3969   ms
+n_step: 150   sim time:  0.0246528   sim timestep: 1.3397e-05  timestep time =     1.466 ms   total time =    6.4115 s
+
+Global maximum magnetic divergence = 1.7621e-12
+Percentage of GPU memory used: 1.08%.0 GPU memory used 915472384, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    1.2751  max:    1.2751  avg:    1.2751   ms
+ Time Hydro               min:    1.3270  max:    1.3270  avg:    1.3270   ms
+ Time Boundaries          min:    0.0391  max:    0.0391  avg:    0.0391   ms
+ Time Total               min:    1.4060  max:    1.4060  avg:    1.4060   ms
+n_step: 151   sim time:  0.0246586   sim timestep: 5.8572e-06  timestep time =     1.475 ms   total time =    6.4130 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.8626e-09, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N128-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+vg:    7.3850   ms
+n_step: 155   sim time:  0.0159574   sim timestep: 2.0868e-05  timestep time =     7.391 ms   total time =    5.7167 s
+
+Global maximum magnetic divergence = 1.9327e-12
+Percentage of GPU memory used: 2.89%.0 GPU memory used 2454781952, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    7.1411  max:    7.1411  avg:    7.1411   ms
+ Time Hydro               min:    7.2720  max:    7.2720  avg:    7.2720   ms
+ Time Boundaries          min:    0.0768  max:    0.0768  avg:    0.0768   ms
+ Time Total               min:    7.3760  max:    7.3760  avg:    7.3760   ms
+n_step: 156   sim time:  0.0159960   sim timestep: 3.8632e-05  timestep time =     7.381 ms   total time =    5.7241 s
+
+Global maximum magnetic divergence = 2.1032e-12
+Percentage of GPU memory used: 2.89%.0 GPU memory used 2454781952, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    7.1480  max:    7.1480  avg:    7.1480   ms
+ Time Hydro               min:    7.2770  max:    7.2770  avg:    7.2770   ms
+ Time Boundaries          min:    0.0782  max:    0.0782  avg:    0.0782   ms
+ Time Total               min:    7.3841  max:    7.3841  avg:    7.3841   ms
+n_step: 157   sim time:  0.0160707   sim timestep: 7.4699e-05  timestep time =     7.389 ms   total time =    5.7316 s
+
+Global maximum magnetic divergence = 2.3306e-12
+Percentage of GPU memory used: 2.89%.0 GPU memory used 2454781952, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    7.1528  max:    7.1528  avg:    7.1528   ms
+ Time Hydro               min:    7.2842  max:    7.2842  avg:    7.2842   ms
+ Time Boundaries          min:    0.0780  max:    0.0780  avg:    0.0780   ms
+ Time Total               min:    7.3900  max:    7.3900  avg:    7.3900   ms
+n_step: 158   sim time:  0.0162071   sim timestep: 1.3631e-04  timestep time =     7.395 ms   total time =    5.7390 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 3.8147e-06, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,128,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N128-s43/data/cholla_ppmc_r1,"exit code 255; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+vg:    7.3800   ms
+n_step: 147   sim time:  0.0180343   sim timestep: 5.5846e-05  timestep time =     7.385 ms   total time =    4.3980 s
+
+Global maximum magnetic divergence = 2.7853e-12
+Percentage of GPU memory used: 2.89%.0 GPU memory used 2454781952, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    7.1502  max:    7.1502  avg:    7.1502   ms
+ Time Hydro               min:    7.2789  max:    7.2789  avg:    7.2789   ms
+ Time Boundaries          min:    0.0770  max:    0.0770  avg:    0.0770   ms
+ Time Total               min:    7.3771  max:    7.3771  avg:    7.3771   ms
+n_step: 148   sim time:  0.0180687   sim timestep: 3.4396e-05  timestep time =     7.382 ms   total time =    4.4055 s
+
+Global maximum magnetic divergence = 2.8422e-12
+Percentage of GPU memory used: 2.89%.0 GPU memory used 2454781952, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    7.1511  max:    7.1511  avg:    7.1511   ms
+ Time Hydro               min:    7.2801  max:    7.2801  avg:    7.2801   ms
+ Time Boundaries          min:    0.0761  max:    0.0761  avg:    0.0761   ms
+ Time Total               min:    7.3791  max:    7.3791  avg:    7.3791   ms
+n_step: 149   sim time:  0.0180845   sim timestep: 1.5713e-05  timestep time =     7.384 ms   total time =    4.4129 s
+
+Global maximum magnetic divergence = 3.0695e-12
+Percentage of GPU memory used: 2.89%.0 GPU memory used 2454781952, GPU total memory 84929216512
+ Time Hydro_Integrator    min:    7.1621  max:    7.1621  avg:    7.1621   ms
+ Time Hydro               min:    7.2899  max:    7.2899  avg:    7.2899   ms
+ Time Boundaries          min:    0.0761  max:    0.0761  avg:    0.0761   ms
+ Time Total               min:    7.3869  max:    7.3869  avg:    7.3869   ms
+n_step: 150   sim time:  0.0180888   sim timestep: 4.3026e-06  timestep time =     7.392 ms   total time =    4.4204 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.4901e-08, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N256-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+50.4251   ms
+n_step: 241   sim time:  0.0145463   sim timestep: 1.0743e-05  timestep time =    50.431 ms   total time =   25.2997 s
+
+Global maximum magnetic divergence = 7.7307e-12
+Percentage of GPU memory used: 15.76%.0 GPU memory used 13380943872, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   49.4430  max:   49.4430  avg:   49.4430   ms
+ Time Hydro               min:   50.1201  max:   50.1201  avg:   50.1201   ms
+ Time Boundaries          min:    0.2639  max:    0.2639  avg:    0.2639   ms
+ Time Total               min:   50.4160  max:   50.4160  avg:   50.4160   ms
+n_step: 242   sim time:  0.0145584   sim timestep: 1.2064e-05  timestep time =    50.422 ms   total time =   25.3503 s
+
+Global maximum magnetic divergence = 7.7307e-12
+Percentage of GPU memory used: 15.76%.0 GPU memory used 13380943872, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   49.4950  max:   49.4950  avg:   49.4950   ms
+ Time Hydro               min:   50.1769  max:   50.1769  avg:   50.1769   ms
+ Time Boundaries          min:    0.2620  max:    0.2620  avg:    0.2620   ms
+ Time Total               min:   50.4670  max:   50.4670  avg:   50.4670   ms
+n_step: 243   sim time:  0.0145710   sim timestep: 1.2663e-05  timestep time =    50.472 ms   total time =   25.4011 s
+
+Global maximum magnetic divergence = 8.1855e-12
+Percentage of GPU memory used: 15.76%.0 GPU memory used 13380943872, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   49.4540  max:   49.4540  avg:   49.4540   ms
+ Time Hydro               min:   50.1339  max:   50.1339  avg:   50.1339   ms
+ Time Boundaries          min:    0.2639  max:    0.2639  avg:    0.2639   ms
+ Time Total               min:   50.9851  max:   50.9851  avg:   50.9851   ms
+n_step: 244   sim time:  0.0145834   sim timestep: 1.2335e-05  timestep time =    50.993 ms   total time =   25.4523 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 4.7684e-07, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,256,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N256-s43/data/cholla_ppmc_r1,"exit code 255; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+50.7619   ms
+n_step: 273   sim time:  0.0172057   sim timestep: 2.6534e-05  timestep time =    50.768 ms   total time =   26.6350 s
+
+Global maximum magnetic divergence = 1.2733e-11
+Percentage of GPU memory used: 15.76%.0 GPU memory used 13380943872, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   49.7890  max:   49.7890  avg:   49.7890   ms
+ Time Hydro               min:   50.4630  max:   50.4630  avg:   50.4630   ms
+ Time Boundaries          min:    0.2639  max:    0.2639  avg:    0.2639   ms
+ Time Total               min:   50.7619  max:   50.7619  avg:   50.7619   ms
+n_step: 274   sim time:  0.0172247   sim timestep: 1.8987e-05  timestep time =    50.768 ms   total time =   26.6860 s
+
+Global maximum magnetic divergence = 1.2960e-11
+Percentage of GPU memory used: 15.76%.0 GPU memory used 13380943872, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   49.7689  max:   49.7689  avg:   49.7689   ms
+ Time Hydro               min:   50.4448  max:   50.4448  avg:   50.4448   ms
+ Time Boundaries          min:    0.2651  max:    0.2651  avg:    0.2651   ms
+ Time Total               min:   50.7438  max:   50.7438  avg:   50.7438   ms
+n_step: 275   sim time:  0.0172353   sim timestep: 1.0637e-05  timestep time =    50.749 ms   total time =   26.7370 s
+
+Global maximum magnetic divergence = 1.3756e-11
+Percentage of GPU memory used: 15.76%.0 GPU memory used 13380943872, GPU total memory 84929216512
+ Time Hydro_Integrator    min:   49.7911  max:   49.7911  avg:   49.7911   ms
+ Time Hydro               min:   50.4689  max:   50.4689  avg:   50.4689   ms
+ Time Boundaries          min:    0.2639  max:    0.2639  avg:    0.2639   ms
+ Time Total               min:   50.7669  max:   50.7669  avg:   50.7669   ms
+n_step: 276   sim time:  0.0172410   sim timestep: 5.6718e-06  timestep time =    50.773 ms   total time =   26.7880 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 4.7684e-07, the maximum allowed divergence = 1.0000e-09
+"
+pluto_ct_matched,gPLUTO CT PLM/HLL,64,43,complete,True,0.2,15.75324323028326,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N64-s43/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,128,43,complete,True,0.2,32.4853498050943,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N128-s43/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,256,43,complete,True,0.2,255.35943005001172,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N256-s43/data/pluto_ct_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,64,43,complete,True,0.2,18.06650253199041,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N64-s43/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,128,43,complete,True,0.2,22.78921994380653,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N128-s43/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,256,43,complete,True,0.2,194.56219571642578,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N256-s43/data/pluto_glm_matched_r1,
+enzo_dedner,Enzo Dedner,64,42,complete,True,0.2,37.93438107898692,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N64-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,64,43,complete,True,0.2,54.514316021988634,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N64-s43/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,128,42,complete,True,0.2,200.7562994750042,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N128-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,128,43,complete,True,0.2,204.5912971200014,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N128-s43/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,256,42,complete,True,0.2,3359.4317623529932,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N256-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,256,43,complete,True,0.2,3364.599693713011,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N256-s43/data/enzo_dedner_r1,
+enzo_ct,Enzo CT,64,42,complete,True,0.2,89.37822929117829,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N64-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,64,43,complete,True,0.2,77.7824896555394,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N64-s43/data/enzo_ct_r1,
+enzo_ct,Enzo CT,128,42,complete,True,0.2,947.6367078749463,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N128-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,128,43,complete,True,0.2,495.0063017131761,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N128-s43/data/enzo_ct_r1,
+enzo_ct,Enzo CT,256,42,complete,True,0.2,12288.583078101277,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N256-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,256,43,complete,True,0.2,6684.146170844324,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N256-s43/data/enzo_ct_r1,
+phantom_sph,Phantom SPH,64,42,complete,True,0.20000000000000023,1632.0628357725218,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N64-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,64,43,complete,True,0.20000000000000023,1098.5715212747455,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N64-s43/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,128,42,complete,True,0.20000000000000023,6876.848647893872,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N128-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,128,43,complete,True,0.20000000000000023,6123.913947090972,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,CPU ranks not fetched,fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N128-s43/data/phantom_sph_r1,

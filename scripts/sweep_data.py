@@ -69,6 +69,10 @@ ORDER_RESULTS = Path(os.environ.get("MHD_ORDER_RESULTS", ROOT/"order_results"/"m
 NEWCODES = ("athenapk_matched", "athenapk_best", "cholla_plmc", "cholla_ppmc", "pluto_ct_matched", "pluto_ct_best",
             "pluto_glm_matched", "pluto_glm_best", "enzo_dedner", "enzo_ct", "phantom_sph")
 NEWCODES_RESULTS = Path(os.environ.get("MHD_NEWCODES_RESULTS", ROOT/"newcodes_results"/"mhd-results-newcodes"))
+NEWCODE_CLOCKS = {}            # (run directory, part) -> (seconds, timer): each code's own clock (sherlock_newcodes/code_clocks.py)
+if (NEWCODES_RESULTS.parent/"code_clocks.tsv").is_file():
+    for _line in (NEWCODES_RESULTS.parent/"code_clocks.tsv").read_text().splitlines():
+        _d, _p, _s, _t = _line.split("\t");NEWCODE_CLOCKS[(_d, _p)] = (float(_s), _t)
 _spec = importlib.util.spec_from_file_location("newcode_tasks", ROOT/"sherlock_newcodes"/"tasks.py")
 NEWCODE_TASKS = importlib.util.module_from_spec(_spec);_spec.loader.exec_module(NEWCODE_TASKS)      # their planned runs
 FIELDS = ("rho", "mx", "my", "mz", "E", "Bx", "By", "Bz", "psi")
@@ -274,6 +278,12 @@ class Sweep:
                      million_cell_steps_per_second=t[0]*n**(2 if m.get("planar", True) else 3)/t[1]/1e6,
                      timing_scope="GIZMO's own cpu.txt total (evolution and its output); all ranks")
         if label == "phantom_sph":m.setdefault("ranks", 32)        # one task of 32 OpenMP threads (sherlock_newcodes/production.sh)
+        # The five new codes' records before 2026-11-03 hold srun's wall time, start-up included (up to 20 times the run on
+        # small grids): their own clock instead (sherlock_newcodes/code_clocks.py -> newcodes_results/code_clocks.tsv)
+        if label in NEWCODES and not m.get("code_timer") and (c := NEWCODE_CLOCKS.get((Path(self.by[(test, label, n, seed)]["dir"]).name, f"{label}_r{rep}"))):
+            cells = n**(3 if m.get("geometry") == "cube" else 2)
+            m.update(solve_seconds=c[0], code_seconds=c[0], code_timer=c[1], million_cell_steps_per_second=cells*m.get("steps", 0)/c[0]/1e6 if c[0] > 0 else None,
+                     timing_scope=f"Code-reported: {c[1]}; wall_seconds includes startup")
         return m
 
     @functools.lru_cache(maxsize=None)

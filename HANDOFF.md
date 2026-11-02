@@ -191,6 +191,17 @@ grey), the sweep page's columns and `newcodes_card`. When the rest is in: pack, 
 the page builders, publish. Status only (website commit 7293c6f shows every planned run, from `tasks.py runs()`, done, stopped
 or still to run): `ssh sherlock 'bash $SCRATCH/mhd-study/sherlock_newcodes/pack_for_mac.sh records' | tar -xzf - -C newcodes_results`,
 `date -u "+%Y-%m-%d %H:%M UTC" > newcodes_results/FETCHED`, then `build_sweep_plan.py` and publish.
+**Data audit 2026-11-03 (lyxia: "focus on getting all the data right").** (1) GIZMO's records hold the 1 µs clock of the job
+that converted its snapshots: its own time is in each run's output/cpu.txt; `sweep_results/gizmo_cpu_totals.tsv` (steps, last
+"total", CPUs) is applied by `sweep_data.meta`. (2) The new codes' records held srun's wall time, start-up included (gPLUTO
+brio_wu 32²: 456 s against 18 s of computing; AthenaPK 32²: 20 s against 6.5 s), under a label saying code-reported:
+`newcodes_run.py` now reads each code's own clock (CODE_TIMERS); older records via `code_clocks.py` →
+`newcodes_results/code_clocks.tsv` (rerun it after the last runs, then fetch). (3) Time to accuracy now takes each set-up's
+speed from its largest 3D run, per H100 or per core (`work_precision.full_rate`): planar rates had favoured Abel et al.'s
+kernels, which compute planar tests on N³ cells. (4) Checked as real, not ours: AthenaPK PPM/HLLD on decay goes NaN at
+t 0.125–0.25 on every grid and seed (whole domain; its matched set-up and AthenaK's PPM/HLLD run the same start fine); Enzo
+Dedner's field-loop energy grows ×850,000 by t = 2 (start energies agree across codes, so not units). Still to fetch:
+final states of runs finished after 2026-11-02 (missing_snapshots.txt).
 Order study: gem 256² athenak_ppm_hlle reached t_end with frame 1.40625 of 41 missing, so it is marked failed; look at it when fetching.
 
 **Order x solver study, 2026-10-28 (submitted 2026-10-28):** the work-precision figures (`scripts/work_precision.py`, Our

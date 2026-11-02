@@ -79,6 +79,20 @@ def run_code(cmd, rundir, log, env=None, gpu=True):
     return code, perf
 
 
+# Each code's own clock, as the sweep's codes report theirs (the driver's solve_seconds is code_seconds when there is one): the
+# start-up of srun, the GPU and the libraries does not count. code_clocks.py reads the same from the logs of older runs.
+CODE_TIMERS = dict(athenapk=(r"walltime used = ([\d.eE+-]+)", "Parthenon driver walltime (with its output)"),
+                   cholla=(r"total time =\s*([\d.eE+-]+) s", "Cholla's total time of the steps"),
+                   pluto=(r"Elapsed time \(compute\)\s+([\d.eE+-]+)", "gPLUTO compute time (without its output)"),
+                   enzo=(r"Wallclock\s*=\s*([\d.eE+-]+)", "Enzo wall clock at the end (with its output)"),
+                   phantom=(r"Total wall time:\s*(?:[^\n(]*\(=\s*)?([\d.eE+-]+)\s*s", "Phantom total wall time (with its set-up and output)"))      # "36.66 s" or "4 min, 35.13 s (= 2.7513E+02s)"
+
+
+def code_clock(code, text, perf):
+    m = re.findall(CODE_TIMERS[code][0], text)
+    if m:perf["code_seconds"] = float(m[-1]);perf["code_timer"] = CODE_TIMERS[code][1]
+
+
 def spec_env(spec):
     return dict(os.environ, ABEL_SPEC=str(Path(spec).resolve()))
 
@@ -154,6 +168,7 @@ def run_athenapk(args, config, spec, settings, rundir, rep, outputs, resume=Fals
     cmd = shlex.split(args.mpi or "") + [args.exe, "-i", "athenapk.in"]
     code, perf = run_code(cmd, rundir, rundir/"athenapk.log")
     text = (rundir/"athenapk.log").read_text(errors="replace")
+    code_clock("athenapk", text, perf)
     m = re.findall(r"zone-cycles/wallsecond\s*=\s*([\d.eE+-]+)", text)
     if m:perf["zone_cycles_per_second"] = float(m[-1])
     import h5py
@@ -218,6 +233,7 @@ def run_cholla(args, config, spec, settings, rundir, rep, outputs, resume=False)
     cmd = shlex.split(args.mpi or "") + [args.exe, "cholla.txt"]
     code, perf = run_code(cmd, rundir, rundir/"cholla.log", env=spec_env(spec));perf["ranks"] = ranks
     text = (rundir/"cholla.log").read_text(errors="replace")
+    code_clock("cholla", text, perf)
     # Cholla's own stops (its div B limit of 1e-9, a GPU error) end in chexit(-1), an MPI abort, and srun reports the
     # rank killed (on two ranks srun returns 137, the other rank's SIGKILL): a result, not a lost job
     stop = max(text.find("The magnetic divergence "), text.find("GPU_Error_Check: Failed"))
@@ -276,6 +292,8 @@ def run_pluto(args, config, spec, settings, rundir, rep, outputs, resume=False):
     code, perf = run_code(cmd, rundir, rundir/"pluto.log", env=spec_env(spec))
     perf["executable_used"] = str(exe);perf["ranks"] = int(m.group(1)) if (m := re.search(r"-n\s*(\d+)", args.mpi or "")) else 1
     text = (rundir/"pluto.log").read_text(errors="replace")
+    log0 = rundir/"pluto.0.log"           # gPLUTO writes its timing to its own log
+    code_clock("pluto", log0.read_text(errors="replace") if log0.is_file() else text, perf)
     # gPLUTO's own stops (QuitPLUTO(): "Memory Sturated!" when the grid does not fit the GPU, say) call MPI_Abort, and
     # srun reports the rank killed: a result, not a lost job
     stop = text.find("QuitPLUTO()")
@@ -355,6 +373,7 @@ def run_enzo(args, config, spec, settings, rundir, rep, outputs, resume=False):
     cmd = shlex.split(args.mpi or "") + [args.exe, "-d", "enzo.par"]
     code, perf = run_code(cmd, rundir, rundir/"enzo.log", env=spec_env(spec), gpu=False)
     text = (rundir/"enzo.log").read_text(errors="replace")
+    code_clock("enzo", text, perf)
     # Enzo's own stop (ERROR_MESSAGE: NaN pressure in mhd_dt.F, say) aborts MPI and srun reports the ranks killed: a result, not a lost job
     stop = text.find("=== ENZO ERROR ===")
     if stop >= 0:code, text = 1, text[:text.find("\n", stop) + 1]
@@ -455,6 +474,7 @@ def run_phantom(args, config, spec, settings, rundir, rep, outputs, resume=False
     # tmax and dtmax are rounded in abel.in: the last dump can fall 1e-13 short of tmax, and Phantom then takes one more step and dumps past the end
     keep = [p for p in unique(list(zip(times, files)), lambda p: p[0], config, outputs) if p[0] <= t_end + 1e-6*dt_out]
     text = (rundir/"phantom.log").read_text(errors="replace")
+    code_clock("phantom", text, perf)
     m = re.findall(r"Since code start:\s*(\d+) timesteps", text)
     found = [(t, int(m[-1]) if m else 0) for t, _ in keep]
     rc, tail = finish(code, text, perf, found, targets_of(config, outputs), config, outputs)

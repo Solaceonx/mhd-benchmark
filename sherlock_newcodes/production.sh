@@ -59,8 +59,9 @@ for code in "$@"; do
               NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 "$py" tasks.py enzo > tasks/enzo_3d.txt && submit "enzo 3D to 256" tasks/enzo_3d.txt --partition=normal --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
               NEWCODES_DIM=3d NEWCODES_GRIDS=512 "$py" tasks.py enzo > tasks/enzo_3d_512.txt && submit "enzo 3D 512" tasks/enzo_3d_512.txt --partition=normal --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
         # The 3D tasks that stopped: tasks/enzo_3d_redo.txt and enzo_3d_512_redo.txt, lines of the two files above
-        enzo-redo) submit "enzo 3D to 256, again" tasks/enzo_3d_redo.txt --partition=normal --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
-              submit "enzo 3D 512, again" tasks/enzo_3d_512_redo.txt --partition=normal --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
+        # (also owners, requeued: they waited two days in normal behind our fair share, and a run takes 1-3.4 hours)
+        enzo-redo) submit "enzo 3D to 256, again" tasks/enzo_3d_redo.txt --partition=normal,owners --requeue --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
+              submit "enzo 3D 512, again" tasks/enzo_3d_512_redo.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
         phantom) "$py" tasks.py phantom > tasks/phantom.txt && submit phantom tasks/phantom.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         *) echo "unknown code $code" ;;
     esac

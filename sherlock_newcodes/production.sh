@@ -43,6 +43,9 @@ for code in "$@"; do
         # each read as a kill and the task's later lines (entropy, field_loop) never ran. The best set-ups' lines again.
         pluto-best-redo) LINES_PER_TASK=4 submit "pluto best, again" tasks/pluto_best_redo.txt "${gpu[@]}"
               LINES_PER_TASK=1 submit "pluto best 3D 512 on two GPUs, again" tasks/pluto_best_512_redo.txt "${gpu2[@]}" ;;
+        # On two ranks the stop is in the stopping rank's log (pluto.1.log): its first line, read as a kill
+        pluto-best-512-again) sed -n 1p tasks/pluto_best_512_redo.txt > tasks/pluto_best_512_again.txt
+              submit "pluto best 3D 512 on two GPUs, the first line again" tasks/pluto_best_512_again.txt "${gpu2[@]}" ;;
         # Phantom's 3D 256^3 runs: phantomsetup allocated 5.2 million particles (now --maxp)
         phantom-256) submit "phantom 3D 256" tasks/phantom_256.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         # The lines that stopped on Parthenon's doubled last output

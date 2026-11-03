@@ -296,9 +296,12 @@ def run_pluto(args, config, spec, settings, rundir, rep, outputs, resume=False):
     own = log0.read_text(errors="replace") if log0.is_file() else text
     code_clock("pluto", own, perf)
     # gPLUTO's own stops (QuitPLUTO(): "Memory Sturated!" when the grid does not fit the GPU, "from ConsToPrim3D()" on cells it
-    # cannot invert) call MPI_Abort, and srun reports the rank killed: a result, not a lost job. Its log, up to the stop, is the record.
-    stop = own.find("QuitPLUTO()")
-    if stop >= 0:code, text = 1, own[:own.find("\n", stop) + 1]
+    # cannot invert) call MPI_Abort, and srun reports the rank killed: a result, not a lost job. The stopping rank writes it to
+    # its own log (pluto.<rank>.log), which, up to the stop, is the record.
+    for log in sorted(rundir.glob("pluto.*.log"), key=lambda p: p.name != "pluto.0.log"):
+        mine = log.read_text(errors="replace");stop = mine.find("QuitPLUTO()")
+        if stop >= 0:
+            code, text = 1, (f"{log.name}:\n" if log != log0 else "") + mine[:mine.find("\n", stop) + 1];break
     rows = [l.split() for l in (rundir/"dbl.out").read_text().splitlines() if l.strip()] if (rundir/"dbl.out").is_file() else []
     # dbl.out prints the time to 7 digits (%12.6e), coarser than the driver's frame tolerance (1e-6 of the output interval):
     # the steps land on output times, so a time within the printed precision of one is that time

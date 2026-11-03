@@ -39,6 +39,12 @@ for code in "$@"; do
         # tasks stopped at 512, and the lines after it never ran), and 512 on two
         pluto-redo2) for d in ct glm; do LINES_PER_TASK=5 submit "pluto $d to 256" "tasks/pluto_${d}_redo.txt" "${gpu[@]}"; done ;;
         pluto-512) LINES_PER_TASK=2 RETRY='Memory Sturated' submit "pluto 3D 512 on two GPUs" tasks/pluto_512.txt "${gpu2[@]}" ;;
+        # gPLUTO writes its stops (QuitPLUTO from ConsToPrim3D on decay_supersonic) to pluto.0.log, which run_pluto did not read:
+        # each read as a kill and the task's later lines (entropy, field_loop) never ran. The best set-ups' lines again.
+        pluto-best-redo) LINES_PER_TASK=4 submit "pluto best, again" tasks/pluto_best_redo.txt "${gpu[@]}"
+              LINES_PER_TASK=1 submit "pluto best 3D 512 on two GPUs, again" tasks/pluto_best_512_redo.txt "${gpu2[@]}" ;;
+        # Phantom's 3D 256^3 runs: phantomsetup allocated 5.2 million particles (now --maxp)
+        phantom-256) submit "phantom 3D 256" tasks/phantom_256.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         # The lines that stopped on Parthenon's doubled last output
         athenapk-redo2) LINES_PER_TASK=5 submit "athenapk, again (doubled last output)" tasks/athenapk_redo2.txt "${gpu[@]}" ;;
         # Every pluto line again: runs recorded before dbl.out's 7-digit times were snapped to the output times (resume skips the rest)

@@ -292,12 +292,13 @@ def run_pluto(args, config, spec, settings, rundir, rep, outputs, resume=False):
     code, perf = run_code(cmd, rundir, rundir/"pluto.log", env=spec_env(spec))
     perf["executable_used"] = str(exe);perf["ranks"] = int(m.group(1)) if (m := re.search(r"-n\s*(\d+)", args.mpi or "")) else 1
     text = (rundir/"pluto.log").read_text(errors="replace")
-    log0 = rundir/"pluto.0.log"           # gPLUTO writes its timing to its own log
-    code_clock("pluto", log0.read_text(errors="replace") if log0.is_file() else text, perf)
-    # gPLUTO's own stops (QuitPLUTO(): "Memory Sturated!" when the grid does not fit the GPU, say) call MPI_Abort, and
-    # srun reports the rank killed: a result, not a lost job
-    stop = text.find("QuitPLUTO()")
-    if stop >= 0:code, text = 1, text[:text.find("\n", stop) + 1]
+    log0 = rundir/"pluto.0.log"           # gPLUTO writes its timing and its stops to its own log, not to srun's output
+    own = log0.read_text(errors="replace") if log0.is_file() else text
+    code_clock("pluto", own, perf)
+    # gPLUTO's own stops (QuitPLUTO(): "Memory Sturated!" when the grid does not fit the GPU, "from ConsToPrim3D()" on cells it
+    # cannot invert) call MPI_Abort, and srun reports the rank killed: a result, not a lost job. Its log, up to the stop, is the record.
+    stop = own.find("QuitPLUTO()")
+    if stop >= 0:code, text = 1, own[:own.find("\n", stop) + 1]
     rows = [l.split() for l in (rundir/"dbl.out").read_text().splitlines() if l.strip()] if (rundir/"dbl.out").is_file() else []
     # dbl.out prints the time to 7 digits (%12.6e), coarser than the driver's frame tolerance (1e-6 of the output interval):
     # the steps land on output times, so a time within the printed precision of one is that time
@@ -457,7 +458,8 @@ def run_phantom(args, config, spec, settings, rundir, rep, outputs, resume=False
     write_particles(rundir/"abel.particles", pos, h, v, e, b, mass, thick, X.gamma_of(config), t_end, dt_out)
     env = dict(os.environ, OMP_NUM_THREADS=os.environ.get("SLURM_CPUS_PER_TASK", os.environ.get("SLURM_CPUS_ON_NODE", "8")))
     with (rundir/"phantomsetup.log").open("w") as f:
-        subprocess.run([str(bindir/"phantomsetup"), "abel"], stdout=f, stderr=subprocess.STDOUT, cwd=rundir, env=env, input=b"\n"*20)
+        # --maxp: phantomsetup allocates for 5.2 million particles unless told (256^3 is 16.8 million: "more particles than maxp")
+        subprocess.run([str(bindir/"phantomsetup"), "abel", f"--maxp={len(pos)}"], stdout=f, stderr=subprocess.STDOUT, cwd=rundir, env=env, input=b"\n"*20)
     # Phantom's default projection of div B at each dump interval takes 26 % of a smooth field's energy (Orszag-Tang, at every
     # grid, independent of N): its hyperbolic cleaning alone, as in Price et al. 2018
     infile = rundir/"abel.in";infile.write_text(re.sub(r"(use_divb_proj\s*=\s*)T", r"\1F", infile.read_text()))

@@ -5,7 +5,8 @@
 1. Time to a given accuracy: the time each set-up needs for its error at the end to fall to that of a standard second-order
    code (AthenaK PLM/HLLE/RK2) at 256^2, on one H100 or 128 CPU cores (work_precision.py: cost model and interpolation).
 2. Order against resolution: the error's slope between the two finest grids a set-up finished.
-Both come from progress/media/analysis/work_precision.json; nothing here is measured anew.
+3. Speed: each set-up's cell updates per second (the rate of the cost model in 1), beside its time to the accuracy.
+All come from progress/media/analysis/work_precision.json; nothing here is measured anew.
 """
 import html
 import json
@@ -77,6 +78,27 @@ def full_name(m):
     return ("Abel et al. " if pc.STYLE[m][0] in ("glm", "ct") else "") + name(m)
 
 
+def precision(m):
+    """The arithmetic of a set-up (CODES gives it per code): Abel et al.'s f16 kernels compute in Float16."""
+    if pc.STYLE[m][0] not in ("glm", "ct"):return "fp64"
+    return "Float16" if m.endswith("16") else "Float32"
+
+
+def speed(rows, tests, m):
+    """(cell updates per second, where measured): one H100, or 128 cores at the speed per core of a CPU code (perfect
+    scaling, as the cost model). The rate is the set-up's largest 3D run (work_precision.full_rate), the same on every
+    test; set-ups with no 3D run (AREPO, GIZMO) have each test's largest grid: their median over the tests."""
+    x = [rows[t]["methods"][m] for t in tests if m in rows[t]["methods"]]
+    if not x:return None
+    cores = 128 if x[0]["cpu"] else 1
+    if "³" in x[0]["rate_from"]:return x[0]["rate"]*cores, x[0]["rate_from"], x[0]["cpu"]
+    return statistics.median(r["rate"] for r in x)*cores, f"its planar runs (median of {len(x)} tests at their largest grid)", x[0]["cpu"]
+
+
+def mcell(rate):
+    r = rate/1e6;return f"{r:,.0f}" if r >= 10 else f"{r:.2g}"
+
+
 def build():
     rows = json.loads(DATA.read_text())
     tests = [t for _, ts in JOBS for t in ts if t in rows]
@@ -117,10 +139,46 @@ def build():
         return (f'<div class="matrix-scroll"><table class="bench"><thead><tr><th></th>{head}<th></th></tr><tr><th>set-up</th>{sub}'
                 f'<th>{extra_head}</th></tr></thead><tbody>{"".join(body)}</tbody></table></div>')
 
-    def overall_time(m):
+    def relative(m):
+        """(median, over the tests it reached, of its time to the accuracy over the fastest set-up's; tests reached; tests finished)"""
         rs = [rows[t]["methods"][m]["cost"]/fastest[t] for t in tests if (rows[t]["methods"].get(m) or {}).get("cost")]
-        ran = sum(m in rows[t]["methods"] for t in tests)
-        return f'<td class="num" title="median over the tests it reached; reached {len(rs)} of the {ran} it finished">{statistics.median(rs):.2g}× · {len(rs)}/{ran}</td>' if rs else f'<td class="num">0/{ran}</td>'
+        return (statistics.median(rs) if rs else None), len(rs), sum(m in rows[t]["methods"] for t in tests)
+
+    def overall_time(m):
+        med, n, ran = relative(m)
+        return f'<td class="num" title="median over the tests it reached; reached {n} of the {ran} it finished">{times(med)} · {n}/{ran}</td>' if med else f'<td class="num">0/{ran}</td>'
+
+    def bars(cpu):
+        """One bar per set-up: its cell updates per second, codes in the order of their fastest set-up; beside it the
+        median time to the accuracy of section 1. Hue: the code; hatching: the precision. GPU and CPU on one scale: section
+        1 sets one H100 against 128 cores."""
+        every = [s for m in methods if (s := speed(rows, tests, m))]
+        got = {m: s for m in methods if (s := speed(rows, tests, m)) and s[2] == cpu}
+        if not got:return ""
+        top = max(s[0] for s in every)
+        fams = sorted({pc.STYLE[m][0] for m in got}, key=lambda f: -max(got[m][0] for m in got if pc.STYLE[m][0] == f))
+        out = [f'<div class="speed-row speed-head"><span>set-up</span><span>million cell updates per second, {"128 cores" if cpu else "one H100"}</span>'
+               f'<span></span><span title="section 1: median over the tests it reached of the time to the accuracy over the fastest set-up\'s; tests reached of those finished">time to accuracy</span></div>']
+        for f in fams:
+            for m in sorted((m for m in got if pc.STYLE[m][0] == f), key=lambda m: -got[m][0]):
+                rate, where, _ = got[m];med, n, ran = relative(m);p = precision(m)
+                tip = (f"{full_name(m)}: {mcell(rate)} million cell updates per second on {'128 cores (per core × 128)' if cpu else 'one H100'}, {p}; "
+                       f"measured on {where}. Time to the accuracy: " + (f"{times(med)} the fastest (median), reached {n} of {ran} tests" if med else f"reached none of {ran} tests"))
+                acc = f'{times(med)}<small>{n}/{ran}</small>' if med else f'—<small>0/{ran}</small>'
+                out.append(f'<div class="speed-row" title="{e(tip)}"><span class="speed-name">{e(full_name(m))}</span><span class="speed-track">'
+                           f'<i class="speed-bar pat-{p.lower()}" style="width:{100*rate/top:.1f}%;--c:{pc.color(m)}"></i></span>'
+                           f'<span class="speed-num">{mcell(rate)}</span><span class="speed-acc">{acc}</span></div>')
+        return f'<div class="speed">{"".join(out)}</div>'
+
+    def contrast():
+        """The set-up with the most cell updates per second against the one with the least median time to the accuracy
+        (of those that reached at least three quarters of the tests they finished)."""
+        rate = {m: s[0] for m in methods if (s := speed(rows, tests, m))};rel = {m: relative(m) for m in rate}
+        a = max(rate, key=rate.get);ok = [m for m, (med, n, ran) in rel.items() if med and n >= .75*ran]
+        b = min(ok, key=lambda m: rel[m][0]) if ok else None
+        if not b or b == a:return ""
+        return (f"{e(full_name(a))} makes the most cell updates per second, {rate[a]/rate[b]:.2g}× as many as {e(full_name(b))}; yet "
+                f"{e(full_name(b))} reaches the accuracy in the least time (a median {times(rel[b][0])} the fastest on each test, against {times(rel[a][0])}).")
 
     def overall_order(m):
         smooth = [rows[t]["methods"][m]["order"] for t in JOBS[0][1] if t in rows and (rows[t]["methods"].get(m) or {}).get("order") is not None]
@@ -140,7 +198,17 @@ def build():
              '.bench td small{display:block;font-size:.7rem;opacity:.85}.bench th.setup{text-align:left;font-weight:500}.bench th.job{border-bottom:2px solid #202a2a}'
              '.bench td.na{color:#9aa5a0;background:#f3f5f4}.bench td.miss{color:#64716f;background:#f3f5f4;font-style:italic}.bench a{text-decoration:none}'
              '.bench tr.family-row th{text-align:left;background:#e9edeb;padding-top:8px}.bench td.num{background:#fff;color:#202a2a}'
-             '.key{display:inline-block;width:14px;height:12px;vertical-align:middle;margin:0 3px 0 10px;border-radius:2px}</style>')
+             '.key{display:inline-block;width:14px;height:12px;vertical-align:middle;margin:0 3px 0 10px;border-radius:2px}'
+             '.speed{display:grid;gap:2px;margin-top:12px}.speed-row{display:grid;grid-template-columns:minmax(8rem,17rem) minmax(4rem,1fr) 4rem 5.5rem;'
+             'align-items:center;column-gap:10px;font-size:11px;color:#202a2a;padding:2px 4px;border-radius:3px}.speed-row:hover{background:#f3f5f4}'
+             '.speed-head{font-size:10px;color:#64716f}.speed-head:hover{background:none}.speed-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
+             '.speed-bar{display:block;height:12px;min-width:2px;border-radius:0 3px 3px 0}.pat-fp64{background:var(--c)}'
+             '.pat-float32{background:repeating-linear-gradient(135deg,transparent 0 3px,rgba(255,255,255,.65) 3px 5px),var(--c)}'
+             '.pat-float16{background:repeating-linear-gradient(135deg,transparent 0 3px,rgba(255,255,255,.65) 3px 5px),repeating-linear-gradient(45deg,transparent 0 3px,rgba(255,255,255,.65) 3px 5px),var(--c)}'
+             '.speed-num,.speed-acc{font:11px ui-monospace,monospace;text-align:right;white-space:nowrap}.speed-acc small{color:#64716f;margin-left:4px;font-size:10px}'
+             '.speed-group{margin-top:16px!important;font-weight:600;color:#202a2a!important}'
+             '.swatch{display:inline-block;width:16px;height:11px;border-radius:2px;vertical-align:-1px;margin:0 4px 0 10px}'
+             '@media(max-width:640px){.speed-row{grid-template-columns:minmax(3rem,1fr) 3.5rem 5rem}.speed-name{grid-column:1/-1}.speed-head span:first-child{display:none}}</style>')
     key_time = "".join(f'<i class="key" style="background:{ratio_colour(r)[0]}"></i>{r:g}×' for r in (1, 3, 10, 30, 100))
     key_order = "".join(f'<i class="key" style="background:{order_colour(o)[0]}"></i>{o:g}' for o in (0.5, 1, 1.5, 2, 3))
     fetched = (ROOT/"newcodes_results"/"FETCHED").read_text().strip() if (ROOT/"newcodes_results"/"FETCHED").is_file() else ""
@@ -164,6 +232,18 @@ smooth waves; on shocks and other discontinuities every scheme falls to about 1 
 the test's error-against-resolution figure.</p>
 <p class="small">Shade: {key_order} · —: the error did not fall between the two finest grids.</p>
 {table(cell_order, "mean on smooth waves", overall_order)}</article>
+<article class="card" id="speed"><h3>3 · Speed: cell updates per second</h3>
+<p>The speed behind the times of section 1: how many cells a set-up advances by one step each second, on its largest finished 3D run (the
+median over the 3D tests at that grid, by the code's own clock), on one H100; a set-up on two GPUs is counted per GPU. CPU codes: their speed
+per core times 128, assuming perfect scaling, as in section 1; AREPO and GIZMO ran no 3D test, so theirs is from their planar runs. Beside each
+bar: the set-up's time to the accuracy, from section 1 (median × the fastest, and the tests it reached of those it finished). GPU and CPU
+bars share one scale.</p>
+<p>A fast cell update is not a fast answer: a step does different work in each set-up (reconstruction, Riemann solver, stages per step), the
+steps are of different length, and each cell buys a different accuracy. {contrast()}</p>
+<p class="small">Hue: the code · <i class="swatch pat-fp64" style="--c:#64716f"></i>fp64 <i class="swatch pat-float32" style="--c:#64716f"></i>Float32
+<i class="swatch pat-float16" style="--c:#64716f"></i>Float16 arithmetic (Float32 state) · hover a row for the run it was measured on.</p>
+<p class="speed-group">GPU codes, one H100</p>{bars(False)}
+<p class="speed-group">CPU codes, 128 cores</p>{bars(True)}</article>
 <article class="card"><h3>How this is measured</h3><ul class="checks plain">
 <li>Every code starts from the suite's own initial state and writes the same outputs; the error is against the exact solution or a 4096² reference run.</li>
 <li>Each code runs a <em>matched</em> set-up (second order, an HLL-type solver, as close to Abel et al.'s kernels as it allows) and a <em>best</em> one (its strongest standard choice).</li>

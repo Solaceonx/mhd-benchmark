@@ -116,7 +116,9 @@ divides the field and the magnetic energy by the particle volume it received (`r
 uniform field), mass identical, total energy 0.04 % lower. The 81 complete records (with all their snapshots) went to
 `$SCRATCH/mhd-results-gizmo2-superseded/deposit-by-cell-volume`, and one 1-CPU job ran the 17 tasks of `gizmo.sbatch`
 from `sherlock_gizmo_convert` with `--resume`, which converts a finished run's snapshots without running GIZMO. The failed
-blast_2d_b100 512² keeps the old conversion (its frames before the stop).
+blast_2d_b100 512² keeps the old conversion (its frames before the stop). It ended with 81 complete and that one stop,
+fetched to the Mac 2026-11-04: GIZMO's Alfvén-wave error at 512² went from 1.16e-3 to 1.02e-3 (oblique 1.14e-3 to
+1.00e-3); the floor that is left is GIZMO's own.
 
 Fetch it (on the Mac, after moving the old `sweep_results/*-gizmo-*` out of the way):
 

@@ -194,8 +194,10 @@ grey), the sweep page's columns and `newcodes_card`. When the rest is in: pack, 
 `self_convergence.py`, the page builders, publish. `scripts/self_convergence.py` (lyxia's to-do, 2026-11-04): each set-up against
 its own finest grid, the differences between grids, Richardson extrapolation, beside the truth error; planar tests only (the
 3D states are not fetched: a job on Sherlock would do 3D); figures `09-self-*` per test, not yet on a page. It found
-GIZMO's field 0.05 % strong on the grid (our conversion): reconverted in job 51022717 (`sherlock_gizmo/README.md`); fetch
-`mhd-results-gizmo2` again when it ends, then rerun the analysis scripts. Status only (website commit 7293c6f shows every planned run, from `tasks.py runs()`, done, stopped
+GIZMO's field 0.05 % strong on the grid (our conversion): reconverted in job 51022717 (`sherlock_gizmo/README.md`), 81
+complete + the known blast_2d_b100 512² stop, fetched 2026-11-04 (old records in
+`sweep_results_superseded/gizmo-deposit-by-cell-volume`; `gizmo_cpu_totals.tsv` still holds the clocks); its Alfvén floor
+fell 12 % (1.16e-3 → 1.02e-3 at 512²), the rest of it is GIZMO's own. Status only (website commit 7293c6f shows every planned run, from `tasks.py runs()`, done, stopped
 or still to run): `ssh sherlock 'bash $SCRATCH/mhd-study/sherlock_newcodes/pack_for_mac.sh records' | tar -xzf - -C newcodes_results`,
 `date -u "+%Y-%m-%d %H:%M UTC" > newcodes_results/FETCHED`, then `build_sweep_plan.py` and publish.
 **Data audit 2026-11-03 (lyxia: "focus on getting all the data right").** (1) GIZMO's records hold the 1 µs clock of the job

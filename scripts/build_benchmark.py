@@ -99,11 +99,45 @@ def mcell(rate):
     r = rate/1e6;return f"{r:,.0f}" if r >= 10 else f"{r:.2g}"
 
 
-def build():
-    rows = json.loads(DATA.read_text())
+def setups(rows):
+    """The page's tests (in the order of JOBS), its set-ups (in the order of CODES) and the least time to the accuracy on each test."""
     tests = [t for _, ts in JOBS for t in ts if t in rows]
     methods = [m for fam, *_ in CODES for m in pc.STYLE if pc.STYLE[m][0] == fam and any(m in rows[t]["methods"] for t in tests)]
     fastest = {t: min((x["cost"] for x in rows[t]["methods"].values() if x.get("cost")), default=None) for t in tests}
+    return tests, methods, fastest
+
+
+def best(rows, methods, fastest):
+    """Per job: (job, its tests, the three set-ups with the least time to the accuracy over all of them, as the geometric
+    mean of the time over the fastest's, and how many set-ups reached the accuracy on every one of them)."""
+    out = []
+    for job, ts in JOBS:
+        ts = [t for t in ts if t in rows];score = {}
+        for m in methods:
+            rs = [rows[t]["methods"][m]["cost"]/fastest[t] for t in ts if (rows[t]["methods"].get(m) or {}).get("cost")]
+            if len(rs) == len(ts):score[m] = math.exp(sum(map(math.log, rs))/len(rs))
+        out.append((job, ts, sorted(score.items(), key=lambda kv: kv[1])[:3], len(score)))
+    return out
+
+
+def time_ratio(rows, tests, fastest, m):
+    """(median, over the tests it reached, of its time to the accuracy over the fastest set-up's; tests reached; tests finished)"""
+    rs = [rows[t]["methods"][m]["cost"]/fastest[t] for t in tests if (rows[t]["methods"].get(m) or {}).get("cost")]
+    return (statistics.median(rs) if rs else None), len(rs), sum(m in rows[t]["methods"] for t in tests)
+
+
+def extremes(rows, tests, methods, fastest):
+    """(the set-up with the most cell updates per second, the one with the least median time to the accuracy of those that
+    reached at least three quarters of the tests they finished, {set-up: speed}, {set-up: time_ratio}); None if one is both."""
+    rate = {m: s[0] for m in methods if (s := speed(rows, tests, m))};rel = {m: time_ratio(rows, tests, fastest, m) for m in rate}
+    a = max(rate, key=rate.get);ok = [m for m, (med, n, ran) in rel.items() if med and n >= .75*ran]
+    b = min(ok, key=lambda m: rel[m][0]) if ok else None
+    return (a, b, rate, rel) if b and b != a else None
+
+
+def build():
+    rows = json.loads(DATA.read_text())
+    tests, methods, fastest = setups(rows)
 
     def cell_time(t, m):
         x = rows[t]["methods"].get(m)
@@ -140,9 +174,7 @@ def build():
                 f'<th>{extra_head}</th></tr></thead><tbody>{"".join(body)}</tbody></table></div>')
 
     def relative(m):
-        """(median, over the tests it reached, of its time to the accuracy over the fastest set-up's; tests reached; tests finished)"""
-        rs = [rows[t]["methods"][m]["cost"]/fastest[t] for t in tests if (rows[t]["methods"].get(m) or {}).get("cost")]
-        return (statistics.median(rs) if rs else None), len(rs), sum(m in rows[t]["methods"] for t in tests)
+        return time_ratio(rows, tests, fastest, m)
 
     def overall_time(m):
         med, n, ran = relative(m)
@@ -171,12 +203,9 @@ def build():
         return f'<div class="speed">{"".join(out)}</div>'
 
     def contrast():
-        """The set-up with the most cell updates per second against the one with the least median time to the accuracy
-        (of those that reached at least three quarters of the tests they finished)."""
-        rate = {m: s[0] for m in methods if (s := speed(rows, tests, m))};rel = {m: relative(m) for m in rate}
-        a = max(rate, key=rate.get);ok = [m for m, (med, n, ran) in rel.items() if med and n >= .75*ran]
-        b = min(ok, key=lambda m: rel[m][0]) if ok else None
-        if not b or b == a:return ""
+        x = extremes(rows, tests, methods, fastest)
+        if not x:return ""
+        a, b, rate, rel = x
         return (f"{e(full_name(a))} makes the most cell updates per second, {rate[a]/rate[b]:.2g}× as many as {e(full_name(b))}; yet "
                 f"{e(full_name(b))} reaches the accuracy in the least time (a median {times(rel[b][0])} the fastest on each test, against {times(rel[a][0])}).")
 
@@ -184,15 +213,9 @@ def build():
         smooth = [rows[t]["methods"][m]["order"] for t in JOBS[0][1] if t in rows and (rows[t]["methods"].get(m) or {}).get("order") is not None]
         return f'<td class="num" title="mean over the smooth-wave tests">{statistics.mean(smooth):.2f}</td>' if smooth else '<td class="num">—</td>'
 
-    best = []
-    for job, ts in JOBS:
-        ts = [t for t in ts if t in rows];score = {}
-        for m in methods:
-            rs = [rows[t]["methods"][m]["cost"]/fastest[t] for t in ts if (rows[t]["methods"].get(m) or {}).get("cost")]
-            if len(rs) == len(ts):score[m] = math.exp(sum(map(math.log, rs))/len(rs))
-        top = sorted(score.items(), key=lambda kv: kv[1])[:3]
-        best.append(f'<li><strong>{e(job)}</strong> ({", ".join(t.replace("_", " ") for t in ts)}): ' +
-                    ", ".join(f"{e(full_name(m))} ({times(s)})" for m, s in top) + f'; {len(score)} of {len(methods)} set-ups reached the accuracy on every one.</li>')
+    tops = [f'<li><strong>{e(job)}</strong> ({", ".join(t.replace("_", " ") for t in ts)}): ' +
+            ", ".join(f"{e(full_name(m))} ({times(s)})" for m, s in top) + f'; {n} of {len(methods)} set-ups reached the accuracy on every one.</li>'
+            for job, ts, top, n in best(rows, methods, fastest)]
 
     style = ('<style>.bench{border-collapse:collapse;font-size:.82rem}.bench th,.bench td{padding:4px 6px;border:1px solid #fff;text-align:center;white-space:nowrap}'
              '.bench td small{display:block;font-size:.7rem;opacity:.85}.bench th.setup{text-align:left;font-weight:500}.bench th.job{border-bottom:2px solid #202a2a}'
@@ -216,7 +239,7 @@ def build():
 <div class="page-heading"><div><div class="eyebrow"><span>{PAGE["number"]} · Benchmark</span><span class="badge">{len(methods)} set-ups · {len(tests)} tests</span></div>
 <h1>Which code is good at what</h1><p>Twelve codes on the same tests, from the same starting states, measured the same way. Two questions per test:
 how long a set-up takes to reach a given accuracy, and how fast its error falls as the grid is refined.</p></div></div>
-<article class="card"><h3>Best at each job: least time to the accuracy</h3><ul class="checks plain">{"".join(best)}</ul>
+<article class="card"><h3>Best at each job: least time to the accuracy</h3><ul class="checks plain">{"".join(tops)}</ul>
 <p class="small">Geometric mean, over the job's tests, of the time relative to the fastest set-up on each test; only set-ups that reached the accuracy on all of them.</p></article>
 <article class="card" id="time"><h3>1 · Time to a given accuracy</h3>
 <p>For each test, the error to reach is that of a standard second-order code, AthenaK PLM/HLLE/RK2, at 256² (its value is in each column's tooltip).

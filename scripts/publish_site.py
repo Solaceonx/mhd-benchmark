@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT/"progress"
 PAGES = [   # local name, published name, label in the navigation (in its order)
     ("benchmark.html", "benchmark.html", "Benchmark"),
+    ("weekly.html", "weekly.html", "Weekly progress"),
     ("paper-figures.html", "index.html", "Paper figures"),
     ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
     ("turbulence.html", "turbulence.html", "Turbulence"),
@@ -120,7 +121,7 @@ def check(out):
                 bad.append(f'{f.name}: main navigation differs from the shared page list')
         text = re.sub(r'''https?://[^\s"'<>]+''', '', text)  # External pages are not local assets.
         bad += [f"{f.name}: {x}" for x in set(LOCAL.findall(text))]
-        pages = {*NAMES.values(), "research.html", *(q.name for q in out.glob("test-*.html"))}
+        pages = {*NAMES.values(), "research.html", *(q.name for q in [*out.glob("test-*.html"), *out.glob("week-*.html")])}
         if f.name != "data.js":bad += [f"{f.name}: {x}" for x in set(re.findall(r'[a-z0-9-]+\.html(?![A-Za-z])', text)) if x not in pages]
         for rel in set(re.findall(r'(?:files|media)/[A-Za-z0-9_.\-/]+\.[A-Za-z0-9]+', text)):
             if not (out/rel).is_file():bad.append(f"{f.name}: {rel} does not exist")
@@ -136,6 +137,7 @@ def main(argv):
     out.mkdir();wanted = set()
     for src, dst, _ in PAGES:(out/dst).write_text(rewrite((SITE/src).read_text(), src, wanted))
     for page in sorted(SITE.glob("test-*.html")):(out/page.name).write_text(rewrite(page.read_text(), page.name, wanted))      # one a test, reached from tests.html
+    for page in sorted(SITE.glob("week-*.html")):(out/page.name).write_text(rewrite(page.read_text(), page.name, wanted))      # one a week, reached from weekly.html
     # the script and data of the interactive pages, without the GPU suite
     app = (SITE/"app.js").read_text();gpu_link = "+links([['GPU test suite','gpu-suite.html']])"
     if app.count(gpu_link) != 1:sys.exit("app.js: the link to the GPU suite has changed; adjust publish_site.py")

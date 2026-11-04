@@ -22,7 +22,6 @@
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: exact cell-average entropy advection.",
      "details": [
       "gPLUTO CT PPM/HLLD: no paired reference data",
-      "gPLUTO GLM PLM/HLL: no paired reference data",
       "gPLUTO GLM PPM/HLLD: no paired reference data"
      ]
     },
@@ -115,7 +114,8 @@
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": [
-      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid",
+      "gPLUTO GLM PLM/HLL: plane state not fetched or invalid"
      ]
     },
     {
@@ -164,7 +164,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/entropy/08-runtime-1.png",
      "vector": "media/analysis/entropy/08-runtime-1.svg",
-     "aspect": 1.728723404255319,
+     "aspect": 1.625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -172,7 +172,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 190,
+   "records": 195,
    "methods": [
     "glm",
     "glm_hll16",
@@ -323,7 +323,10 @@
      "vector": "media/analysis/kh_uniform/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: plane state not fetched or invalid",
+      "gPLUTO GLM PPM/HLLD: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -373,7 +376,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/kh_uniform/08-runtime-1.png",
      "vector": "media/analysis/kh_uniform/08-runtime-1.svg",
-     "aspect": 1.625,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -381,7 +384,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 155,
+   "records": 164,
    "methods": [
     "glm",
     "glm_hll16",
@@ -784,7 +787,9 @@
       "Cholla PPMC N=64: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.2800e+02, the maximum allowed divergence = 1.0000e-09",
       "Cholla PPMC N=128: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.7881e-07, the maximum allowed divergence = 1.0000e-09",
       "Cholla PPMC N=256: The magnetic divergence has exceeded the maximum allowed value. Divergence = 9.5367e-07, the maximum allowed divergence = 1.0000e-09",
-      "Cholla PPMC N=512: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.9073e-06, the maximum allowed divergence = 1.0000e-09"
+      "Cholla PPMC N=512: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.9073e-06, the maximum allowed divergence = 1.0000e-09",
+      "Enzo CT N=256: === ENZO ERROR ===   /scratch/users/lyxia/mhd-codes-sweep/newcodes/enzo/tree/src/enzo/mhd_dt.F: 148   node 21",
+      "Enzo CT N=512: === ENZO ERROR ===   /scratch/users/lyxia/mhd-codes-sweep/newcodes/enzo/tree/src/enzo/mhd_dt.F: 148   node 71"
      ]
     },
     {
@@ -823,7 +828,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b50/08-runtime-1.png",
      "vector": "media/analysis/blast_3d_b50/08-runtime-1.svg",
-     "aspect": 1.8465909090909092,
+     "aspect": 1.5330188679245282,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -831,7 +836,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 121,
+   "records": 138,
    "methods": [
     "glm",
     "glm_hll16",
@@ -885,10 +890,7 @@
      "vector": "media/analysis/uniform/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: exact uniform state.",
-     "details": [
-      "gPLUTO CT PPM/HLLD: no paired reference data",
-      "gPLUTO GLM PPM/HLLD: no paired reference data"
-     ]
+     "details": []
     },
     {
      "category": "02-convergence",
@@ -1016,7 +1018,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/uniform/08-runtime-1.png",
      "vector": "media/analysis/uniform/08-runtime-1.svg",
-     "aspect": 1.625,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1024,7 +1026,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 145,
+   "records": 155,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1488,8 +1490,6 @@
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 4096\u00b2 \u2192 128.",
      "details": [
-      "AthenaPK PLM/HLLE: no paired reference data",
-      "AthenaPK PPM/HLLD: no paired reference data",
       "gPLUTO CT PLM/HLL: no paired reference data",
       "gPLUTO GLM PLM/HLL: no paired reference data"
      ]
@@ -1583,7 +1583,8 @@
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": [
-      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid",
+      "gPLUTO GLM PLM/HLL: plane state not fetched or invalid"
      ]
     },
     {
@@ -1634,7 +1635,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/brio_wu/08-runtime-1.png",
      "vector": "media/analysis/brio_wu/08-runtime-1.svg",
-     "aspect": 1.728723404255319,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1642,7 +1643,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 190,
+   "records": 205,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1794,7 +1795,8 @@
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
      "details": [
-      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid",
+      "gPLUTO GLM PLM/HLL: plane state not fetched or invalid"
      ]
     },
     {
@@ -1847,7 +1849,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/brio_wu_rotated/08-runtime-1.png",
      "vector": "media/analysis/brio_wu_rotated/08-runtime-1.svg",
-     "aspect": 1.5330188679245282,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1855,7 +1857,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 200,
+   "records": 205,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2122,10 +2124,7 @@
      "vector": "media/analysis/orszag_tang_3d/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 512\u00b3 \u2192 64.",
-     "details": [
-      "AthenaPK PLM/HLLE: no paired reference data",
-      "AthenaPK PPM/HLLD: no paired reference data"
-     ]
+     "details": []
     },
     {
      "category": "02-convergence",
@@ -2233,7 +2232,8 @@
       "RAMSES HLL N=512: srun: error: Timed out waiting for job step to complete",
       "RAMSES HLLD N=512: srun: Force Terminated StepId=46205697.0",
       "Athena++ PPM/HLLD N=512: complete",
-      "Cholla PPMC N=512: The magnetic divergence has exceeded the maximum allowed value. Divergence = 7.4506e-09, the maximum allowed divergence = 1.0000e-09"
+      "Cholla PPMC N=512: The magnetic divergence has exceeded the maximum allowed value. Divergence = 7.4506e-09, the maximum allowed divergence = 1.0000e-09",
+      "Phantom SPH N=256:  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac"
      ]
     },
     {
@@ -2272,7 +2272,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/orszag_tang_3d/08-runtime-1.png",
      "vector": "media/analysis/orszag_tang_3d/08-runtime-1.svg",
-     "aspect": 1.625,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2280,7 +2280,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 122,
+   "records": 138,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2427,7 +2427,10 @@
      "vector": "media/analysis/rotor/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: plane state not fetched or invalid",
+      "gPLUTO GLM PPM/HLLD: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -2480,7 +2483,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/rotor/08-runtime-1.png",
      "vector": "media/analysis/rotor/08-runtime-1.svg",
-     "aspect": 1.625,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2488,7 +2491,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 195,
+   "records": 205,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2639,7 +2642,10 @@
      "vector": "media/analysis/gem/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 64 (restricted spectrum). Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: plane state not fetched or invalid",
+      "gPLUTO GLM PPM/HLLD: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -2695,7 +2701,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/gem/08-runtime-1.png",
      "vector": "media/analysis/gem/08-runtime-1.svg",
-     "aspect": 1.625,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2703,7 +2709,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 156,
+   "records": 164,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2763,7 +2769,6 @@
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: kinematic periodic-return target; weak Lorentz forces make this approximate.",
      "details": [
       "gPLUTO CT PPM/HLLD: no paired reference data",
-      "gPLUTO GLM PLM/HLL: no paired reference data",
       "gPLUTO GLM PPM/HLLD: no paired reference data"
      ]
     },
@@ -2856,7 +2861,8 @@
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": [
-      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid",
+      "gPLUTO GLM PLM/HLL: plane state not fetched or invalid"
      ]
     },
     {
@@ -2917,7 +2923,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop/08-runtime-1.png",
      "vector": "media/analysis/field_loop/08-runtime-1.svg",
-     "aspect": 1.8465909090909092,
+     "aspect": 1.728723404255319,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2925,7 +2931,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 140,
+   "records": 145,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2982,11 +2988,7 @@
      "vector": "media/analysis/field_loop_novz/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: kinematic periodic-return target; weak Lorentz forces make this approximate.",
-     "details": [
-      "gPLUTO CT PPM/HLLD: no paired reference data",
-      "gPLUTO GLM PLM/HLL: no paired reference data",
-      "gPLUTO GLM PPM/HLLD: no paired reference data"
-     ]
+     "details": []
     },
     {
      "category": "02-convergence",
@@ -3077,7 +3079,10 @@
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. No independent reference spectrum at the selected time. Late chaotic flows need statistical interpretation.",
      "details": [
-      "gPLUTO CT PLM/HLL: plane state not fetched or invalid"
+      "gPLUTO CT PLM/HLL: plane state not fetched or invalid",
+      "gPLUTO CT PPM/HLLD: plane state not fetched or invalid",
+      "gPLUTO GLM PLM/HLL: plane state not fetched or invalid",
+      "gPLUTO GLM PPM/HLLD: plane state not fetched or invalid"
      ]
     },
     {
@@ -3138,7 +3143,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop_novz/08-runtime-1.png",
      "vector": "media/analysis/field_loop_novz/08-runtime-1.svg",
-     "aspect": 1.8465909090909092,
+     "aspect": 1.5330188679245282,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -3146,7 +3151,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 190,
+   "records": 205,
    "methods": [
     "glm",
     "glm_hll16",
@@ -3204,11 +3209,7 @@
      "vector": "media/analysis/field_loop_3d/01-errors-1.svg",
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: kinematic periodic-return target; weak Lorentz forces make this approximate.",
-     "details": [
-      "AthenaPK PLM/HLLE: no paired reference data",
-      "AthenaPK PPM/HLLD: no paired reference data",
-      "gPLUTO GLM PLM/HLL: no paired reference data"
-     ]
+     "details": []
     },
     {
      "category": "02-convergence",
@@ -3314,9 +3315,11 @@
       "RAMSES HLL N=512: srun: error: sh04-10n14: tasks 104-111: Killed",
       "Enzo Dedner N=128: field energy above 10 times AthenaK's after t = 1: ran to the end, not a result",
       "Enzo Dedner N=256: field energy above 10 times AthenaK's after t = 0.5: ran to the end, not a result",
+      "Enzo Dedner N=512: field energy above 10 times AthenaK's after t = 0.3: ran to the end, not a result",
       "Phantom SPH N=32:  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac",
       "Phantom SPH N=64:  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac",
-      "Phantom SPH N=128:  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac"
+      "Phantom SPH N=128:  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac",
+      "Phantom SPH N=256:  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac"
      ]
     },
     {
@@ -3355,7 +3358,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop_3d/08-runtime-1.png",
      "vector": "media/analysis/field_loop_3d/08-runtime-1.svg",
-     "aspect": 1.911764705882353,
+     "aspect": 1.625,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -3364,7 +3367,7 @@
     "Only a few paired snapshots are local. Error points are sparse; a continuous history requires more matched reference snapshots.",
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 163,
+   "records": 183,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4227,7 +4230,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 132,
+   "records": 139,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4410,7 +4413,8 @@
       "Cholla PPMC N=128: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.9073e-06, the maximum allowed divergence = 1.0000e-09",
       "Cholla PPMC N=256: The magnetic divergence has exceeded the maximum allowed value. Divergence = 3.8147e-06, the maximum allowed divergence = 1.0000e-09",
       "Cholla PPMC N=512: The magnetic divergence has exceeded the maximum allowed value. Divergence = 8.8604e-06, the maximum allowed divergence = 1.0000e-09",
-      "Enzo Dedner N=256: complete"
+      "Enzo CT N=256: === ENZO ERROR ===   /scratch/users/lyxia/mhd-codes-sweep/newcodes/enzo/tree/src/enzo/mhd_dt.F: 148   node 11",
+      "Enzo CT N=512: === ENZO ERROR ===   /scratch/users/lyxia/mhd-codes-sweep/newcodes/enzo/tree/src/enzo/mhd_dt.F: 148   node 59"
      ]
     },
     {
@@ -4449,7 +4453,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b100/08-runtime-1.png",
      "vector": "media/analysis/blast_3d_b100/08-runtime-1.svg",
-     "aspect": 1.728723404255319,
+     "aspect": 1.5330188679245282,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -4457,7 +4461,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 124,
+   "records": 139,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4604,7 +4608,10 @@
      "vector": "media/analysis/kh_localized/06-spectra-1.svg",
      "aspect": 1.625,
      "caption": "Left: normalized variance per logarithmic interval of k, k E(k) divided by the total, where E(k) is the shell-summed power (round(|k|) bins, mean excluded); k E(k) is 4\u03c0k\u00b3P(k) in 3D and 2\u03c0k\u00b2P(k) in 2D, and each curve has area 1 over ln k, so the plot shows where the variance sits. Right: ratio of the unnormalized power to the reference. For 3D, recorded full-volume spectra are used; 2D spectra come from actual plane states. Small reference power is excluded from ratios. AthenaK 4096\u00b2 \u2192 128 (restricted spectrum). Late chaotic flows need statistical interpretation.",
-     "details": []
+     "details": [
+      "gPLUTO CT PPM/HLLD: plane state not fetched or invalid",
+      "gPLUTO GLM PPM/HLLD: plane state not fetched or invalid"
+     ]
     },
     {
      "category": "07-validity",
@@ -4655,7 +4662,7 @@
      "group": "Five more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/kh_localized/08-runtime-1.png",
      "vector": "media/analysis/kh_localized/08-runtime-1.svg",
-     "aspect": 1.625,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -4663,7 +4670,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 120,
+   "records": 128,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4968,7 +4975,8 @@
       "AthenaPK PPM/HLLD N=64: state not finite after t = 0.125; recorded as complete",
       "AthenaPK PPM/HLLD N=256: state not finite after t = 0.25; recorded as complete",
       "AthenaPK PPM/HLLD N=512: state not finite after t = 0.125; recorded as complete",
-      "Cholla PPMC N=256: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.0634e+37, the maximum allowed divergence = 1.0000e-09"
+      "Cholla PPMC N=256: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.0634e+37, the maximum allowed divergence = 1.0000e-09",
+      "Cholla PPMC N=512: The magnetic divergence has exceeded the maximum allowed value. Divergence = 1.4901e-08, the maximum allowed divergence = 1.0000e-09"
      ]
     },
     {
@@ -5015,7 +5023,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 378,
+   "records": 413,
    "methods": [
     "glm",
     "glm_hll16",
@@ -5070,7 +5078,6 @@
      "aspect": 1.625,
      "caption": "Relative L1, L2, and Linf use the matching reference norm; zero-field blasts use absolute magnetic error. Magnetic error is a vector difference. Markers are outputs, not a complete history when sparse. Symlog retains zero with a linear band at least 10^-5 of the panel peak, so roundoff does not stretch the scale. Reference: AthenaK 512\u00b3 \u2192 64.",
      "details": [
-      "AthenaPK PLM/HLLE: no paired reference data",
       "AthenaPK PPM/HLLD: no paired reference data",
       "gPLUTO CT PLM/HLL: no paired reference data",
       "gPLUTO CT PPM/HLLD: no paired reference data",
@@ -5216,9 +5223,17 @@
       "Athena++ PPM/HLLD N=128: complete",
       "Athena++ PPM/HLLD N=256: complete",
       "Athena++ PPM/HLLD N=512: complete",
+      "AthenaPK PPM/HLLD N=64: state not finite after t = 0.02; recorded as complete",
+      "AthenaPK PPM/HLLD N=128: state not finite after t = 0; recorded as complete",
+      "AthenaPK PPM/HLLD N=256: state not finite after t = 0; recorded as complete",
+      "AthenaPK PPM/HLLD N=512: state not finite after t = 0; recorded as complete",
       "Cholla PPMC N=64: The magnetic divergence has exceeded the maximum allowed value. Divergence = 7.4506e-09, the maximum allowed divergence = 1.0000e-09",
       "Cholla PPMC N=128: The magnetic divergence has exceeded the maximum allowed value. Divergence = 3.8147e-06, the maximum allowed divergence = 1.0000e-09",
-      "Cholla PPMC N=256: The magnetic divergence has exceeded the maximum allowed value. Divergence = 4.7684e-07, the maximum allowed divergence = 1.0000e-09"
+      "Cholla PPMC N=256: The magnetic divergence has exceeded the maximum allowed value. Divergence = 4.7684e-07, the maximum allowed divergence = 1.0000e-09",
+      "Cholla PPMC N=512: The magnetic divergence has exceeded the maximum allowed value. Divergence = 3.8147e-06, the maximum allowed divergence = 1.0000e-09",
+      "gPLUTO CT PPM/HLLD N=512: ! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]",
+      "gPLUTO GLM PPM/HLLD N=512: ! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]",
+      "Phantom SPH N=256:  FATAL ERROR! maketree: number of nodes exceeds array dimensions, increase ncellsmax and recompile  = 33554432"
      ]
     },
     {
@@ -5265,7 +5280,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 164,
+   "records": 197,
    "methods": [
     "glm",
     "glm_hll16",
@@ -5629,6 +5644,6 @@
    ]
   }
  },
- "built_utc": "2026-11-02T23:37:18.438476+00:00",
+ "built_utc": "2026-11-04T09:39:59.562651+00:00",
  "synthetic": false
 }

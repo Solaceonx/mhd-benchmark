@@ -2013,14 +2013,30 @@ athenapp_best,Athena++ PPM/HLLD,256,42,complete,False,0.2,,0,incomplete or inval
 athenapp_best,Athena++ PPM/HLLD,256,43,complete,False,0.2,,0,incomplete or invalid,64 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N256-s43/data/athenapp_best_r1,
 athenapp_best,Athena++ PPM/HLLD,512,42,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s42/data/athenapp_best_r1,
 athenapp_best,Athena++ PPM/HLLD,512,43,complete,False,0.2,,0,incomplete or invalid,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,sweep_results/decay_supersonic-athenapp-best-run-N512-s43/data/athenapp_best_r1,
-cholla_plmc,Cholla PLMC,64,42,complete,True,0.19999999999999998,4.462260656058788,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N64-s42/data/cholla_plmc_r1,
-cholla_plmc,Cholla PLMC,64,43,complete,True,0.19999999999999998,9.389456996694207,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N64-s43/data/cholla_plmc_r1,
-cholla_plmc,Cholla PLMC,128,42,complete,True,0.19999999999999998,21.646907990798354,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N128-s42/data/cholla_plmc_r1,
-cholla_plmc,Cholla PLMC,128,43,complete,True,0.19999999999999998,22.914787540677935,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N128-s43/data/cholla_plmc_r1,
-cholla_plmc,Cholla PLMC,256,42,complete,True,0.19999999999999998,182.02266144007444,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N256-s42/data/cholla_plmc_r1,
-cholla_plmc,Cholla PLMC,256,43,complete,True,0.19999999999999998,168.15840408718213,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N256-s43/data/cholla_plmc_r1,
-cholla_plmc,Cholla PLMC,512,42,complete,True,0.19999999999999998,1594.476162101142,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N512-s42/data/cholla_plmc_r1,
-cholla_plmc,Cholla PLMC,512,43,complete,True,0.19999999999999998,1439.561509844847,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N512-s43/data/cholla_plmc_r1,
+athenapk_matched,AthenaPK PLM/HLLE,64,42,complete,True,0.19999999999999998,13.4,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-matched-run-N64-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,64,43,complete,True,0.19999999999999998,15.2,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-matched-run-N64-s43/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,128,42,complete,True,0.19999999999999998,91.5,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-matched-run-N128-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,128,43,complete,True,0.19999999999999998,87.2,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-matched-run-N128-s43/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,256,42,complete,True,0.19999999999999998,687.0,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-matched-run-N256-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,256,43,complete,True,0.19999999999999998,568.0,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-matched-run-N256-s43/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,512,42,complete,True,0.19999999999999998,7640.0,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-matched-run-N512-s42/data/athenapk_matched_r1,
+athenapk_matched,AthenaPK PLM/HLLE,512,43,complete,True,0.19999999999999998,5340.0,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-matched-run-N512-s43/data/athenapk_matched_r1,
+athenapk_best,AthenaPK PPM/HLLD,64,42,not a result,False,0.19999999999999998,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-best-run-N64-s42/data/athenapk_best_r1,state not finite after t = 0.02; recorded as complete
+athenapk_best,AthenaPK PPM/HLLD,64,43,not a result,False,0.19999999999999998,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-best-run-N64-s43/data/athenapk_best_r1,state not finite after t = 0.02; recorded as complete
+athenapk_best,AthenaPK PPM/HLLD,128,42,not a result,False,0.19999999999999998,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-best-run-N128-s42/data/athenapk_best_r1,state not finite after t = 0; recorded as complete
+athenapk_best,AthenaPK PPM/HLLD,128,43,not a result,False,0.19999999999999998,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-best-run-N128-s43/data/athenapk_best_r1,state not finite after t = 0.02; recorded as complete
+athenapk_best,AthenaPK PPM/HLLD,256,42,not a result,False,0.19999999999999998,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-best-run-N256-s42/data/athenapk_best_r1,state not finite after t = 0; recorded as complete
+athenapk_best,AthenaPK PPM/HLLD,256,43,not a result,False,0.19999999999999998,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-best-run-N256-s43/data/athenapk_best_r1,state not finite after t = 0.02; recorded as complete
+athenapk_best,AthenaPK PPM/HLLD,512,42,not a result,False,0.19999999999999998,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-best-run-N512-s42/data/athenapk_best_r1,state not finite after t = 0; recorded as complete
+athenapk_best,AthenaPK PPM/HLLD,512,43,not a result,False,0.19999999999999998,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-athenapk-best-run-N512-s43/data/athenapk_best_r1,state not finite after t = 0; recorded as complete
+cholla_plmc,Cholla PLMC,64,42,complete,True,0.19999999999999998,3.4265,1,Code-reported: Cholla's total time of the steps; wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N64-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,64,43,complete,True,0.19999999999999998,8.3765,1,Code-reported: Cholla's total time of the steps; wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N64-s43/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,128,42,complete,True,0.19999999999999998,20.1303,1,Code-reported: Cholla's total time of the steps; wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N128-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,128,43,complete,True,0.19999999999999998,19.4393,1,Code-reported: Cholla's total time of the steps; wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N128-s43/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,256,42,complete,True,0.19999999999999998,177.9178,1,Code-reported: Cholla's total time of the steps; wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N256-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,256,43,complete,True,0.19999999999999998,160.6176,1,Code-reported: Cholla's total time of the steps; wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N256-s43/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,512,42,complete,True,0.19999999999999998,1572.0494,1,Code-reported: Cholla's total time of the steps; wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N512-s42/data/cholla_plmc_r1,
+cholla_plmc,Cholla PLMC,512,43,complete,True,0.19999999999999998,1423.7576,1,Code-reported: Cholla's total time of the steps; wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-plmc-run-N512-s43/data/cholla_plmc_r1,
 cholla_ppmc,Cholla PPMC,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N64-s42/data/cholla_ppmc_r1,"exit code 255; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
 3490  avg:    1.3490   ms
 n_step: 57   sim time:  0.0153213   sim timestep: 1.7293e-04  timestep time =     1.353 ms   total time =    2.2563 s
@@ -2201,25 +2217,220 @@ n_step: 276   sim time:  0.0172410   sim timestep: 5.6718e-06  timestep time =  
 
 The magnetic divergence has exceeded the maximum allowed value. Divergence = 4.7684e-07, the maximum allowed divergence = 1.0000e-09
 "
-pluto_ct_matched,gPLUTO CT PLM/HLL,64,43,complete,True,0.2,15.75324323028326,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N64-s43/data/pluto_ct_matched_r1,
-pluto_ct_matched,gPLUTO CT PLM/HLL,128,43,complete,True,0.2,32.4853498050943,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N128-s43/data/pluto_ct_matched_r1,
-pluto_ct_matched,gPLUTO CT PLM/HLL,256,43,complete,True,0.2,255.35943005001172,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N256-s43/data/pluto_ct_matched_r1,
-pluto_glm_matched,gPLUTO GLM PLM/HLL,64,43,complete,True,0.2,18.06650253199041,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N64-s43/data/pluto_glm_matched_r1,
-pluto_glm_matched,gPLUTO GLM PLM/HLL,128,43,complete,True,0.2,22.78921994380653,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N128-s43/data/pluto_glm_matched_r1,
-pluto_glm_matched,gPLUTO GLM PLM/HLL,256,43,complete,True,0.2,194.56219571642578,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N256-s43/data/pluto_glm_matched_r1,
-enzo_dedner,Enzo Dedner,64,42,complete,True,0.2,37.93438107898692,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N64-s42/data/enzo_dedner_r1,
-enzo_dedner,Enzo Dedner,64,43,complete,True,0.2,54.514316021988634,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N64-s43/data/enzo_dedner_r1,
-enzo_dedner,Enzo Dedner,128,42,complete,True,0.2,200.7562994750042,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N128-s42/data/enzo_dedner_r1,
-enzo_dedner,Enzo Dedner,128,43,complete,True,0.2,204.5912971200014,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N128-s43/data/enzo_dedner_r1,
-enzo_dedner,Enzo Dedner,256,42,complete,True,0.2,3359.4317623529932,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N256-s42/data/enzo_dedner_r1,
-enzo_dedner,Enzo Dedner,256,43,complete,True,0.2,3364.599693713011,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N256-s43/data/enzo_dedner_r1,
-enzo_ct,Enzo CT,64,42,complete,True,0.2,89.37822929117829,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N64-s42/data/enzo_ct_r1,
-enzo_ct,Enzo CT,64,43,complete,True,0.2,77.7824896555394,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N64-s43/data/enzo_ct_r1,
-enzo_ct,Enzo CT,128,42,complete,True,0.2,947.6367078749463,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N128-s42/data/enzo_ct_r1,
-enzo_ct,Enzo CT,128,43,complete,True,0.2,495.0063017131761,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N128-s43/data/enzo_ct_r1,
-enzo_ct,Enzo CT,256,42,complete,True,0.2,12288.583078101277,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N256-s42/data/enzo_ct_r1,
-enzo_ct,Enzo CT,256,43,complete,True,0.2,6684.146170844324,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N256-s43/data/enzo_ct_r1,
-phantom_sph,Phantom SPH,64,42,complete,True,0.20000000000000023,1632.0628357725218,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N64-s42/data/phantom_sph_r1,
-phantom_sph,Phantom SPH,64,43,complete,True,0.20000000000000023,1098.5715212747455,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N64-s43/data/phantom_sph_r1,
-phantom_sph,Phantom SPH,128,42,complete,True,0.20000000000000023,6876.848647893872,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N128-s42/data/phantom_sph_r1,
-phantom_sph,Phantom SPH,128,43,complete,True,0.20000000000000023,6123.913947090972,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N128-s43/data/phantom_sph_r1,
+cholla_ppmc,Cholla PPMC,512,42,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N512-s42/data/cholla_ppmc_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+27.7850   ms
+n_step: 416   sim time:  0.0143736   sim timestep: 3.3984e-05  timestep time =   227.797 ms   total time =  144.8223 s
+
+Global maximum magnetic divergence = 1.8190e-11
+Percentage of GPU memory used: 58.19%.0 GPU memory used 49422598144, GPU total memory 84929216512
+ Time Hydro_Integrator    min:  195.2469  max:  196.3151  avg:  195.7810   ms
+ Time Hydro               min:  199.0111  max:  199.0271  avg:  199.0191   ms
+ Time Boundaries          min:   28.4500  max:   28.7158  avg:   28.5829   ms
+ Time Total               min:  227.8121  max:  227.8159  avg:  227.8140   ms
+n_step: 417   sim time:  0.0143983   sim timestep: 2.4698e-05  timestep time =   227.827 ms   total time =  145.0510 s
+
+Global maximum magnetic divergence = 2.0009e-11
+Percentage of GPU memory used: 58.19%.0 GPU memory used 49422598144, GPU total memory 84929216512
+ Time Hydro_Integrator    min:  194.9718  max:  196.2409  avg:  195.6064   ms
+ Time Hydro               min:  198.9400  max:  198.9560  avg:  198.9480   ms
+ Time Boundaries          min:   28.4321  max:   28.7080  avg:   28.5701   ms
+ Time Total               min:  227.7300  max:  227.7350  avg:  227.7325   ms
+n_step: 418   sim time:  0.0144054   sim timestep: 7.0561e-06  timestep time =   227.746 ms   total time =  145.2796 s
+
+Global maximum magnetic divergence = 2.1828e-11
+Percentage of GPU memory used: 58.19%.0 GPU memory used 49422598144, GPU total memory 84929216512
+ Time Hydro_Integrator    min:  194.7989  max:  196.1849  avg:  195.4919   ms
+ Time Hydro               min:  198.9160  max:  198.9388  avg:  198.9274   ms
+ Time Boundaries          min:   65.9442  max:   66.2081  avg:   66.0762   ms
+ Time Total               min:  265.2209  max:  265.2240  avg:  265.2224   ms
+n_step: 419   sim time:  0.0144069   sim timestep: 1.5105e-06  timestep time =   265.233 ms   total time =  145.5456 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 3.8147e-06, the maximum allowed divergence = 1.0000e-09
+"
+cholla_ppmc,Cholla PPMC,512,43,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-cholla-ppmc-run-N512-s43/data/cholla_ppmc_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+26.5855   ms
+n_step: 591   sim time:  0.0181473   sim timestep: 3.0420e-05  timestep time =   226.599 ms   total time =  187.0761 s
+
+Global maximum magnetic divergence = 4.9113e-11
+Percentage of GPU memory used: 58.19%.0 GPU memory used 49423908864, GPU total memory 84929216512
+ Time Hydro_Integrator    min:  194.2089  max:  197.0859  avg:  195.6474   ms
+ Time Hydro               min:  199.6782  max:  199.7001  avg:  199.6891   ms
+ Time Boundaries          min:   26.7320  max:   26.8240  avg:   26.7780   ms
+ Time Total               min:  226.6002  max:  226.6049  avg:  226.6026   ms
+n_step: 592   sim time:  0.0181749   sim timestep: 2.7564e-05  timestep time =   226.616 ms   total time =  187.3036 s
+
+Global maximum magnetic divergence = 5.0022e-11
+Percentage of GPU memory used: 58.19%.0 GPU memory used 49423908864, GPU total memory 84929216512
+ Time Hydro_Integrator    min:  194.2511  max:  196.7411  avg:  195.4961   ms
+ Time Hydro               min:  199.3339  max:  199.3489  avg:  199.3414   ms
+ Time Boundaries          min:   26.5660  max:   26.8269  avg:   26.6964   ms
+ Time Total               min:  226.2511  max:  226.2568  avg:  226.2540   ms
+n_step: 593   sim time:  0.0181766   sim timestep: 1.7100e-06  timestep time =   226.267 ms   total time =  187.5307 s
+
+Global maximum magnetic divergence = 5.0932e-11
+Percentage of GPU memory used: 58.19%.0 GPU memory used 49423908864, GPU total memory 84929216512
+ Time Hydro_Integrator    min:  194.2232  max:  196.9800  avg:  195.6016   ms
+ Time Hydro               min:  199.5511  max:  199.5709  avg:  199.5610   ms
+ Time Boundaries          min:   26.9370  max:   27.1969  avg:   27.0669   ms
+ Time Total               min:  226.8462  max:  226.8541  avg:  226.8502   ms
+n_step: 594   sim time:  0.0181800   sim timestep: 3.4379e-06  timestep time =   226.864 ms   total time =  187.7584 s
+
+The magnetic divergence has exceeded the maximum allowed value. Divergence = 2.0981e-05, the maximum allowed divergence = 1.0000e-09
+"
+pluto_ct_matched,gPLUTO CT PLM/HLL,64,42,complete,True,0.2,14.8182,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N64-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,64,43,complete,True,0.2,9.941,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N64-s43/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,128,42,complete,True,0.2,22.8475,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N128-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,128,43,complete,True,0.2,26.1188,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N128-s43/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,256,42,complete,True,0.2,241.0899,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N256-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,256,43,complete,True,0.2,233.1748,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N256-s43/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,512,42,complete,True,0.2,2596.418507307768,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N512-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,512,43,complete,True,0.2,2321.1,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N512-s43/data/pluto_ct_matched_r1,
+pluto_ct_best,gPLUTO CT PPM/HLLD,512,42,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N512-s42/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ed errors [step: 317; t = 1.4578e-02; g_intStage = 1]
+! 756 cells reported errors [step: 318; t = 1.4629e-02; g_intStage = 1]
+! 794 cells reported errors [step: 319; t = 1.4681e-02; g_intStage = 1]
+! 785 cells reported errors [step: 320; t = 1.4732e-02; g_intStage = 1]
+! 836 cells reported errors [step: 321; t = 1.4782e-02; g_intStage = 1]
+! 859 cells reported errors [step: 322; t = 1.4833e-02; g_intStage = 1]
+! 867 cells reported errors [step: 323; t = 1.4884e-02; g_intStage = 1]
+! 888 cells reported errors [step: 324; t = 1.4934e-02; g_intStage = 1]
+! 961 cells reported errors [step: 325; t = 1.4984e-02; g_intStage = 1]
+! 953 cells reported errors [step: 326; t = 1.5035e-02; g_intStage = 1]
+! 988 cells reported errors [step: 327; t = 1.5085e-02; g_intStage = 1]
+! 991 cells reported errors [step: 328; t = 1.5135e-02; g_intStage = 1]
+! 999 cells reported errors [step: 329; t = 1.5185e-02; g_intStage = 1]
+! 1003 cells reported errors [step: 330; t = 1.5235e-02; g_intStage = 1]
+! 1055 cells reported errors [step: 331; t = 1.5284e-02; g_intStage = 1]
+! 1069 cells reported errors [step: 332; t = 1.5334e-02; g_intStage = 1]
+! 1071 cells reported errors [step: 333; t = 1.5384e-02; g_intStage = 1]
+! 1105 cells reported errors [step: 334; t = 1.5433e-02; g_intStage = 1]
+! 1086 cells reported errors [step: 335; t = 1.5483e-02; g_intStage = 1]
+! 1078 cells reported errors [step: 336; t = 1.5532e-02; g_intStage = 1]
+! 1067 cells reported errors [step: 337; t = 1.5580e-02; g_intStage = 1]
+! 999 cells reported errors [step: 338; t = 1.5629e-02; g_intStage = 1]
+! 967 cells reported errors [step: 339; t = 1.5677e-02; g_intStage = 1]
+! 987 cells reported errors [step: 340; t = 1.5724e-02; g_intStage = 1]
+! 806 cells reported errors [step: 341; t = 1.5771e-02; g_intStage = 1]
+! 720 cells reported errors [step: 342; t = 1.5818e-02; g_intStage = 1]
+! 879 cells reported errors [step: 343; t = 1.5864e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_ct_best,gPLUTO CT PPM/HLLD,512,43,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N512-s43/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+pluto.1.log:
+! 6 cells reported errors [step: 329; t = 1.6614e-02; g_intStage = 1]
+! 19 cells reported errors [step: 330; t = 1.6669e-02; g_intStage = 1]
+! 18 cells reported errors [step: 331; t = 1.6725e-02; g_intStage = 1]
+! 14 cells reported errors [step: 332; t = 1.6779e-02; g_intStage = 1]
+! 15 cells reported errors [step: 333; t = 1.6831e-02; g_intStage = 1]
+! 22 cells reported errors [step: 334; t = 1.6882e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_glm_matched,gPLUTO GLM PLM/HLL,64,42,complete,True,0.2,7.365,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N64-s42/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,64,43,complete,True,0.2,13.3516,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N64-s43/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,128,42,complete,True,0.2,19.887,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N128-s42/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,128,43,complete,True,0.2,18.1563,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N128-s43/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,256,42,complete,True,0.2,174.6845,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N256-s42/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,256,43,complete,True,0.2,178.0364,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N256-s43/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,512,42,complete,True,0.2,1596.5,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N512-s42/data/pluto_glm_matched_r1,
+pluto_glm_matched,gPLUTO GLM PLM/HLL,512,43,complete,True,0.2,1606.1,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N512-s43/data/pluto_glm_matched_r1,
+pluto_glm_best,gPLUTO GLM PPM/HLLD,512,42,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N512-s42/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+[step: 315; t = 1.4476e-02; g_intStage = 1]
+! 742 cells reported errors [step: 316; t = 1.4527e-02; g_intStage = 1]
+! 783 cells reported errors [step: 317; t = 1.4578e-02; g_intStage = 1]
+! 836 cells reported errors [step: 318; t = 1.4629e-02; g_intStage = 1]
+! 859 cells reported errors [step: 319; t = 1.4680e-02; g_intStage = 1]
+! 894 cells reported errors [step: 320; t = 1.4730e-02; g_intStage = 1]
+! 963 cells reported errors [step: 321; t = 1.4781e-02; g_intStage = 1]
+! 969 cells reported errors [step: 322; t = 1.4831e-02; g_intStage = 1]
+! 980 cells reported errors [step: 323; t = 1.4882e-02; g_intStage = 1]
+! 1025 cells reported errors [step: 324; t = 1.4932e-02; g_intStage = 1]
+! 1056 cells reported errors [step: 325; t = 1.4982e-02; g_intStage = 1]
+! 1072 cells reported errors [step: 326; t = 1.5031e-02; g_intStage = 1]
+! 1061 cells reported errors [step: 327; t = 1.5081e-02; g_intStage = 1]
+! 1059 cells reported errors [step: 328; t = 1.5131e-02; g_intStage = 1]
+! 1092 cells reported errors [step: 329; t = 1.5180e-02; g_intStage = 1]
+! 1084 cells reported errors [step: 330; t = 1.5230e-02; g_intStage = 1]
+! 1148 cells reported errors [step: 331; t = 1.5279e-02; g_intStage = 1]
+! 1164 cells reported errors [step: 332; t = 1.5328e-02; g_intStage = 1]
+! 1192 cells reported errors [step: 333; t = 1.5377e-02; g_intStage = 1]
+! 1220 cells reported errors [step: 334; t = 1.5426e-02; g_intStage = 1]
+! 1250 cells reported errors [step: 335; t = 1.5475e-02; g_intStage = 1]
+! 1275 cells reported errors [step: 336; t = 1.5524e-02; g_intStage = 1]
+! 1298 cells reported errors [step: 337; t = 1.5573e-02; g_intStage = 1]
+! 1361 cells reported errors [step: 338; t = 1.5622e-02; g_intStage = 1]
+! 1366 cells reported errors [step: 339; t = 1.5671e-02; g_intStage = 1]
+! 1397 cells reported errors [step: 340; t = 1.5720e-02; g_intStage = 1]
+! 1542 cells reported errors [step: 341; t = 1.5769e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_glm_best,gPLUTO GLM PPM/HLLD,512,43,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N512-s43/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+pluto.1.log:
+! 3 cells reported errors [step: 328; t = 1.6558e-02; g_intStage = 1]
+! 15 cells reported errors [step: 329; t = 1.6614e-02; g_intStage = 1]
+! 31 cells reported errors [step: 330; t = 1.6670e-02; g_intStage = 1]
+! 59 cells reported errors [step: 331; t = 1.6726e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010111]
+"
+enzo_dedner,Enzo Dedner,64,42,complete,True,0.2,35.047686,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N64-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,64,43,complete,True,0.2,49.013226,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N64-s43/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,128,42,complete,True,0.2,196.382412,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N128-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,128,43,complete,True,0.2,195.16018,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N128-s43/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,256,42,complete,True,0.2,3336.557907,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N256-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,256,43,complete,True,0.2,3337.075534,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N256-s43/data/enzo_dedner_r1,
+enzo_ct,Enzo CT,64,42,complete,True,0.2,79.057436,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N64-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,64,43,complete,True,0.2,75.926736,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N64-s43/data/enzo_ct_r1,
+enzo_ct,Enzo CT,128,42,complete,True,0.2,937.664497,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N128-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,128,43,complete,True,0.2,489.05075,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N128-s43/data/enzo_ct_r1,
+enzo_ct,Enzo CT,256,42,complete,True,0.2,12247.560584,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N256-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,256,43,complete,True,0.2,6655.62585,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N256-s43/data/enzo_ct_r1,
+phantom_sph,Phantom SPH,64,42,complete,True,0.20000000000000023,1628.1,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N64-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,64,43,complete,True,0.20000000000000023,1091.7,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N64-s43/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,128,42,complete,True,0.20000000000000023,6870.6,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N128-s42/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,128,43,complete,True,0.20000000000000023,6119.0,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N128-s43/data/phantom_sph_r1,
+phantom_sph,Phantom SPH,256,42,failed,False,0.020000000000000222,,0,incomplete or invalid,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N256-s42/data/phantom_sph_r1,"exit code 1; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+  0.34724E-01 dt =  9.481E-06 (courant)
+ t =  0.34733E-01 dt =  9.227E-06 (courant)
+ t =  0.34742E-01 dt =  9.292E-06 (courant)
+ t =  0.34752E-01 dt =  9.233E-06 (courant)
+ t =  0.34761E-01 dt =  9.138E-06 (courant)
+ t =  0.34770E-01 dt =  8.952E-06 (courant)
+ t =  0.34779E-01 dt =  9.037E-06 (courant)
+ t =  0.34788E-01 dt =  9.031E-06 (courant)
+ t =  0.34797E-01 dt =  9.129E-06 (courant)
+ t =  0.34806E-01 dt =  9.232E-06 (courant)
+ t =  0.34815E-01 dt =  9.127E-06 (courant)
+ t =  0.34825E-01 dt =  9.081E-06 (courant)
+ t =  0.34834E-01 dt =  9.200E-06 (courant)
+ t =  0.34843E-01 dt =  9.330E-06 (courant)
+ t =  0.34852E-01 dt =  9.049E-06 (courant)
+ t =  0.34861E-01 dt =  9.132E-06 (courant)
+ t =  0.34870E-01 dt =  9.225E-06 (courant)
+ t =  0.34880E-01 dt =  9.327E-06 (courant)
+ t =  0.34889E-01 dt =  9.440E-06 (courant)
+ t =  0.34898E-01 dt =  9.192E-06 (courant)
+ t =  0.34908E-01 dt =  9.310E-06 (courant)
+ t =  0.34917E-01 dt =  9.432E-06 (courant)
+ t =  0.34926E-01 dt =  9.541E-06 (courant)
+ t =  0.34936E-01 dt =  9.269E-06 (courant)
+ t =  0.34945E-01 dt =  9.328E-06 (courant)
+ t =  0.34954E-01 dt =  9.087E-06 (courant)
+ t =  0.34963E-01 dt =  9.164E-06 (courant)
+ t =  0.34973E-01 dt =  9.250E-06 (courant)
+ t =  0.34982E-01 dt =  9.266E-06 (courant)
+ t =  0.34991E-01 dt =  9.045E-06 (courant)
+ t =  0.35000E-01 dt =  9.154E-06 (courant)
+ t =  0.35009E-01 dt =  9.274E-06 (courant)
+ t =  0.35019E-01 dt =  9.381E-06 (courant)
+ t =  0.35028E-01 dt =  9.347E-06 (courant)
+ t =  0.35037E-01 dt =  9.481E-06 (courant)
+ t =  0.35047E-01 dt =  9.398E-06 (courant)
+ t =  0.35056E-01 dt =  9.297E-06 (courant)
+ t =  0.35066E-01 dt =  9.399E-06 (courant)
+ t =  0.35075E-01 dt =  9.325E-06 (courant)
+ t =  0.35084E-01 dt =  9.422E-06 (courant)
+ t =  0.35094E-01 dt =  9.118E-06 (courant)
+ t =  0.35103E-01 dt =  9.203E-06 (courant)
+ t =  0.35112E-01 dt =  9.036E-06 (courant)
+
+ FATAL ERROR! maketree: number of nodes exceeds array dimensions, increase ncellsmax and recompile  = 33554432
+"

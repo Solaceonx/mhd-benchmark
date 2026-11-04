@@ -108,6 +108,16 @@ while GIZMO's own runs and snapshots are fine. The fixed runner went to a copy o
 (`--resume`) and runs any other. Checked on Orszag–Tang 64² at t = 0.5 against AthenaK 4096² averaged to 64²: density
 L1 error 0.076 with this deposit, 0.152 with cloud-in-cell (AthenaK PLM/HLLE 0.073, PPM/HLLD 0.039); mass exact.
 
+**Reconverted 2026-11-04 (job 51022717):** the field on the grid was uniformly 0.05 % too strong at every grid (the
+particle volumes, mass / density, add up to 1.0005 of the box on GIZMO's starting lattice, and the field was divided by
+the cell volume), a floor under GIZMO's error on the smooth waves found by `scripts/self_convergence.py`. Each cell now
+divides the field and the magnetic energy by the particle volume it received (`read_snapshot`); tested on alfven 64² and
+128² and entropy 64² against the exact reference: the initial field error 5.0e-4 → 6.0e-5 at 128² (2e-16 for entropy's
+uniform field), mass identical, total energy 0.04 % lower. The 81 complete records (with all their snapshots) went to
+`$SCRATCH/mhd-results-gizmo2-superseded/deposit-by-cell-volume`, and one 1-CPU job ran the 17 tasks of `gizmo.sbatch`
+from `sherlock_gizmo_convert` with `--resume`, which converts a finished run's snapshots without running GIZMO. The failed
+blast_2d_b100 512² keeps the old conversion (its frames before the stop).
+
 Fetch it (on the Mac, after moving the old `sweep_results/*-gizmo-*` out of the way):
 
 ```bash

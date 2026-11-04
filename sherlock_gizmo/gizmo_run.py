@@ -24,8 +24,9 @@ stop file once the last snapshot is written.
 
 Snapshots to our (N, N, Nz, 9) cell state: each particle's mass, momentum, total energy and field times its volume
 (mass / density) are shared among the cell centres inside its kernel, by its part of each in GIZMO's own partition of
-space, and divided by the cell volume (deposit), so the grid holds exactly the particles' mass, momentum, energy and
-magnetic flux, and a uniform state stays uniform however the particles are arranged. psi = 0. (Until 2026-10-27:
+space (deposit); mass, momentum and the gas's energy are divided by the cell volume, so the grid holds exactly the
+particles' mass, momentum and energy, the field and the magnetic energy by the particle volume each cell received (the
+particle volumes do not tile the box exactly), so a uniform state stays uniform however the particles are arranged. psi = 0. (Until 2026-10-27:
 cloud-in-cell, which left cells of thin gas empty and striped the density where the particles were disordered.)
 """
 import math
@@ -180,8 +181,8 @@ def deposit(pos, ext, n, nz, hsml, stats=None):
 
 def read_snapshot(path, n, nz, record=None):
     """(time, (n, n, nz, 9) cell state) of a GIZMO snapshot; conserved variables, B in our units, psi = 0.
-    Each particle's mass, momentum, total energy and field times volume are deposited (deposit) and divided by the cell
-    volume, so the grid holds exactly the particles' mass, momentum, energy and magnetic flux.
+    Each particle's mass, momentum, gas energy, field times volume, magnetic energy and volume are deposited (deposit);
+    the first three divided by the cell volume (exactly conservative), field and magnetic energy by the volume received.
     record: a dict that receives GIZMO's own divergence of B for this snapshot, where the snapshot has it."""
     import h5py
     with h5py.File(path, "r") as s:
@@ -195,9 +196,15 @@ def read_snapshot(path, n, nz, record=None):
             record.update(time=t, particles=len(rho), div_rms=math.sqrt(float((vol*div**2).sum()/vol.sum())), b_rms=brms,
                           normalized_div_rms=math.sqrt(float((vol*(div*size)**2).sum()/vol.sum()))/brms if brms > 0 else 0.0,
                           smallest_cell=float(size.min()), largest_cell=float(size.max()))
+    # The field is the particles' field averaged over their volumes (mass / density, GIZMO's). Those do not tile the box:
+    # on GIZMO's starting lattice they add up to 1.0005 of it, so the field divided by the cell volume came out uniformly
+    # 0.05 % too strong at every grid, a floor under the error of the smooth waves (self_convergence.py, 2026-11-04).
+    # Each cell divides the field and the magnetic energy by the particle volume it received; mass, momentum and the
+    # gas's energy are deposited exactly, as before.
     vol = mass/rho
-    ext = np.column_stack([mass, mass[:, None]*vel, mass*(e + .5*(vel**2).sum(1)) + .5*vol*(b**2).sum(1), vol[:, None]*b])
-    stats = {};u = deposit(pos, ext, n, nz, hsml, stats)*n**(3 if nz > 1 else 2)
+    ext = np.column_stack([mass, mass[:, None]*vel, mass*(e + .5*(vel**2).sum(1)), vol[:, None]*b, .5*vol*(b**2).sum(1), vol])
+    stats = {};d = deposit(pos, ext, n, nz, hsml, stats);v = d[..., 9:10]
+    u = np.concatenate([d[..., :5]*n**(3 if nz > 1 else 2), d[..., 5:8]/v], axis=-1);u[..., 4] += d[..., 8]/v[..., 0]
     if record is not None:record["gap_cells"] = stats["gap_cells"]
     return t, np.concatenate([u, np.zeros(u.shape[:3] + (1,))], axis=-1)
 

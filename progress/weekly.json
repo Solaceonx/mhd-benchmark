@@ -2,11 +2,11 @@
  "2026-11-04": {
   "first": "2026-10-28",
   "last": "2026-11-04",
-  "title": "Five more codes, a benchmark, and convergence without a truth",
+  "title": "Progress, 28 October – 4 November 2026",
   "summary": [
-   "Five more codes (AthenaPK, Cholla, gPLUTO, Enzo, Phantom) on every test: 1,376 of 1,420 runs finished.",
-   "A benchmark page: time to a given accuracy, order of accuracy and speed for 40 set-ups on 14 tests.",
-   "Convergence without a truth (own finest grid, grid differences, Richardson), which found a bug in our GIZMO conversion."
+   "AthenaPK, Cholla, gPLUTO, Enzo and Phantom on every test: 1,376 of 1,420 runs finished.",
+   "Time to a given accuracy, order and speed for 40 set-ups on 14 tests.",
+   "Convergence measured without the exact solution; a bug in our GIZMO conversion found and fixed."
   ]
  }
 }

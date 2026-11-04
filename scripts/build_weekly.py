@@ -21,6 +21,8 @@ import build_benchmark as bb  # noqa: E402
 import paper_common as pc  # noqa: E402
 import sweep_data as sd  # noqa: E402
 import work_precision as wp  # noqa: E402
+import matplotlib.pyplot as plt  # noqa: E402  (paper_common set the backend)
+from matplotlib.lines import Line2D  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT/"progress"
@@ -56,8 +58,8 @@ def gain(x):
     return "–" if x is None else f"{x:.2g}× faster" if x >= 1 else f"{1/x:.2g}× slower"
 
 
-def card(no, headline, lede, *body):
-    return f'<article class="card week-card"><h3><span class="no">{no:02d}</span>{headline}</h3><p class="lede">{lede}</p>{"".join(body)}</article>'
+def card(no, title, *body):
+    return f'<article class="card week-card"><h3><span class="no">{no:02d}</span>{e(title)}</h3>{"".join(body)}</article>'
 
 
 def bullets(items):
@@ -105,25 +107,93 @@ def self_rows(sc):
     return out
 
 
+def save(fig, week, name):
+    """A figure of a week's page, PNG and SVG, in progress/media/weekly/WEEK/; returns the PNG's address on the site."""
+    out = SITE/"media"/"weekly"/week;out.mkdir(parents=True, exist_ok=True)
+    for ext in ("png", "svg"):fig.savefig(out/f"{name}.{ext}", dpi=200, bbox_inches="tight")
+    plt.close(fig);return f"media/weekly/{week}/{name}.png"
+
+
+def speed_figure(week, rows, tests, methods, fastest, labels):
+    """Each set-up's cell updates per second against its median time to the accuracy (× the fastest set-up on each test).
+    Hue: the code; filled: a GPU code (one H100), open: a CPU code (128 cores)."""
+    pc.apply_plot_style();plt.rcParams.update({"font.size": 9})
+    fig, ax = plt.subplots(figsize=(8.4, 5.0));names = {f: n for f, n, _, _ in bb.CODES};seen = {}
+    for m in methods:
+        s = bb.speed(rows, tests, m);med = bb.time_ratio(rows, tests, fastest, m)[0]
+        if not s or not med:continue
+        c = pc.color(m);seen.setdefault(pc.STYLE[m][0], c)
+        ax.scatter(s[0]/1e6, med, s=36, facecolor="none" if s[2] else c, edgecolor=c, lw=1.3, zorder=3)
+        if m in labels:     # to the left of the point when the offset is negative; a leader line when far from it
+            (text, (dx, dy)) = labels[m]
+            ax.annotate(text, (s[0]/1e6, med), xytext=(dx, dy), textcoords="offset points", fontsize=8, color=pc.INK, ha="right" if dx < 0 else "left",
+                        va="center", arrowprops=dict(arrowstyle="-", color=pc.MUTED, lw=.6, shrinkA=1, shrinkB=4) if abs(dy) > 12 else None)
+    ax.set_xscale("log");ax.set_yscale("log");pc.style_axes(ax)
+    ax.set_xlabel("Speed: million cell updates per second (GPU codes on one H100, CPU codes on 128 cores)")
+    ax.set_ylabel("Time to the accuracy: median × the fastest (1 = fastest)")
+    ax.text(.99, .98, "faster per cell →\n↓ less time to the accuracy", transform=ax.transAxes, ha="right", va="top", fontsize=8, color=pc.MUTED)
+    hs = [Line2D([], [], ls="", marker="o", color=c, label=names[f]) for f, c in seen.items()]
+    hs += [Line2D([], [], ls="", marker="o", color=pc.MUTED, label="filled: GPU"), Line2D([], [], ls="", marker="o", mfc="none", color=pc.MUTED, label="open: CPU")]
+    ax.legend(handles=hs, fontsize=8, frameon=False, loc="upper left", bbox_to_anchor=(1.01, 1))
+    return save(fig, week, "speed_vs_accuracy")
+
+
+def convergence_figure(week, sc, show):
+    """Alfvén wave and Orszag-Tang: a few set-ups' error against the true solution (solid) and against their own finest
+    grid (dashed)."""
+    pc.apply_plot_style();plt.rcParams.update({"font.size": 9})
+    fig, axs = plt.subplots(1, 2, figsize=(10.4, 4.2))
+    for ax, (test, title) in zip(axs, (("alfven", "Alfvén wave (smooth)"), ("orszag_tang", "Orszag–Tang (shocks)"))):
+        for m in show:
+            r = sc[test]["methods"].get(m)
+            if not r:continue
+            for key, ls in (("truth", "-"), ("own", "--")):
+                pts = sorted((int(n), 100*v) for n, v in r[key].items() if v)
+                if pts:ax.plot(*zip(*pts), ls=ls, marker=pc.STYLE[m][4] if key == "truth" else "", ms=4, lw=1.4, color=pc.color(m))
+        ax.set_xscale("log", base=2);ax.set_yscale("log");pc.style_axes(ax);ax.set_title(title, loc="left", fontsize=10)
+        ax.set_xlabel("cells per side, N");ax.set_ylabel(f"{sc[test]['kind']} error, relative L1 [%]")
+    hs = [Line2D([], [], color=pc.color(m), marker=pc.STYLE[m][4], ms=4, label=label) for m, label in show.items()]
+    hs += [Line2D([], [], color=pc.MUTED, label="against the true solution"), Line2D([], [], color=pc.MUTED, ls="--", label="against its own finest grid (512²)")]
+    fig.legend(handles=hs, ncol=3, fontsize=8, frameon=False, loc="lower center", bbox_to_anchor=(.5, -.12))
+    return save(fig, week, "convergence_own_vs_truth")
+
+
 def week_2026_11_04():
+    week = "2026-11-04"
     sw = sd.Sweep();rows = json.loads(bb.DATA.read_text());tests, methods, fastest = bb.setups(rows)
     sc = json.loads((ANALYSIS/"self_convergence.json").read_text())
     fam = lambda key: pc.STYLE[key[1]][0]
     new = collections.Counter((fam(k), r["state"]) for k, r in sw.newcodes.items())
+    by_setup = collections.Counter((k[1], r["state"]) for k, r in sw.newcodes.items())
     total = lambda c, fams: {s: sum(n for (f, s2), n in c.items() if f in fams and s2 == s) for s in ("done", "stopped", "open")}
     nc = total(new, NEWCODES);planned = sum(nc.values());finished = nc["done"] + nc["stopped"]
     order = collections.Counter(r["state"] for r in sw.order.values());giz = collections.Counter(r["state"] for r in sw.gizmo.values())
     where = {f: w for f, _, w, _ in bb.CODES};names = {f: n for f, n, _, _ in bb.CODES}
 
-    # 1. the five codes: runs by state
-    code_rows = [(f"{e(names[f])} <span class='small'>· {where[f]}</span>", *(new.get((f, s), 0) for s in ("done", "stopped", "open"))) for f in NEWCODES]
-    code_rows.append(("<strong>All five</strong>", *(f"<strong>{nc[s]}</strong>" for s in ("done", "stopped", "open"))))
+    def accuracy(m):
+        """time to the accuracy (median × the fastest, tests reached of those finished), order on the smooth waves, speed"""
+        med, n, ran = bb.time_ratio(rows, tests, fastest, m)
+        smooth = [rows[t]["methods"][m]["order"] for t in bb.JOBS[0][1] if t in rows and (rows[t]["methods"].get(m) or {}).get("order") is not None]
+        s = bb.speed(rows, tests, m)
+        return (f"{bb.times(med)} <span class='small'>({n}/{ran})</span>" if med else f"– ({n}/{ran})",
+                f"{statistics.mean(smooth):.2f}" if smooth else "–", bb.mcell(s[0]) if s else "–")
 
-    # 2. speed against time to accuracy; the Orszag-Tang example
+    # 1. the five codes, set-up by set-up, with AthenaK PPM/HLLD for comparison
+    new_setups = [m for m in methods if pc.STYLE[m][0] in NEWCODES]
+    setup_rows = [(e(bb.name(m)), where[pc.STYLE[m][0]], by_setup.get((m, "done"), 0), by_setup.get((m, "stopped"), 0), by_setup.get((m, "open"), 0), *accuracy(m))
+                  for m in new_setups]
+    setup_rows.append(("<em>for comparison: AthenaK PPM/HLLD/RK3</em>", "GPU", "", "", "", *accuracy("athenak_best")))
+
+    # 2. speed against time to accuracy; the best per job; the Orszag-Tang example
     a, b, rate, rel = bb.extremes(rows, tests, methods, fastest)
+    speed_png = speed_figure(week, rows, tests, methods, fastest, {
+        "glm": ("Abel GLM LLF (original)", (-20, 34)), "glm_hlld": ("Abel GLM HLLD, f16/HLL", (-4, -30)), "ct": ("Abel CT prototype", (-8, 0)),
+        "cholla_ppmc": ("Cholla PPMC", (8, 0)), "athenak_best": ("AthenaK PPM/HLLD", (8, 0)), "athenak_matched": ("AthenaK PLM/HLLE", (-8, 6)),
+        "athenapk_best": ("AthenaPK PPM/HLLD", (-8, 0)), "gizmo_mfm": ("GIZMO", (8, 0)), "phantom_sph": ("Phantom", (8, 0))})
+    job_rows = [(e(job), *(f"{e(bb.full_name(m))} <span class='small'>({bb.times(s)})</span>" for m, s in top), f"{n} of {len(methods)}")
+                for job, _, top, n in bb.best(rows, methods, fastest)]
     ot = rows["orszag_tang"]["methods"];ex = [m for m in ("glm", "glm_fix_hlld", "cholla_ppmc") if (ot.get(m) or {}).get("cost")]
     ex_rows = [(e(bb.full_name(m)), f"{ot[m]['N']:.0f}²", bb.mcell(ot[m]["rate"]), bb.seconds(ot[m]["cost"])) for m in ex]
-    jobs = [f"<strong>{e(job)}</strong>: " + ", ".join(f"{e(bb.full_name(m))} ({bb.times(s)})" for m, s in top) for job, _, top, _ in bb.best(rows, methods, fastest)]
 
     # 3. the order x solver study: medians over the tests of the time to the accuracy, each change alone and both
     split_rows = []
@@ -132,88 +202,105 @@ def week_2026_11_04():
         if not g:continue
         med = lambda k: statistics.median(x[k] for x in g)
         sp = [bb.speed(rows, tests, c) for c in cells[:2]]
-        cost = f"{sp[0][0]/sp[1][0]:.2g}×" if all(sp) else "–"
-        split_rows.append((e(name), gain(med("order_hll")), gain(med("solver_plm")), gain(med("both")), cost, len(g)))
+        split_rows.append((e(name), gain(med("order_hll")), gain(med("solver_plm")), gain(med("both")), f"{sp[0][0]/sp[1][0]:.2g}×" if all(sp) else "–", len(g)))
 
-    # 4. self-convergence; 5. the data audit's numbers
+    # 4. convergence without the true solution; 5. the corrections' numbers
     n_self = sum(len(v["methods"]) for v in sc.values());selfc = self_rows(sc)
     under = lambda row: f"{100*(1 - float(row[1])):.0f} %" if row[1] != "–" else "–"
-    giz_alf = (sc.get("alfven") or {}).get("methods", {}).get("gizmo_mfm", {}).get("truth", {})
+    conv_png = convergence_figure(week, sc, {"glm_fix_hlld": "Abel et al. GLM HLLD, fixed", "athenak_best": "AthenaK PPM/HLLD/RK3",
+                                             "ramses_best": "RAMSES HLLD", "gizmo_mfm": "GIZMO MFM"})
+    giz_alf = (sc.get("alfven") or {}).get("methods", {}).get("gizmo_mfm", {})
     arepo = (sc.get("field_loop_novz") or {}).get("methods", {}).get("arepo_static", {}).get("truth", {})
-    open_by = {f: new.get((f, "open"), 0) for f in NEWCODES if new.get((f, "open"))}
+    fixes = [("The new codes' run times were srun's wall clock, start-up included",
+              "gPLUTO Brio–Wu 32²: 456 s recorded, 18 s of it computing", "Each record now has the code's own clock"),
+             ("Speeds were taken from the planar runs", "A planar run leaves a GPU mostly idle; Abel et al.'s kernels run the planar tests on N³ cells, "
+              "so they were favoured", "Each set-up's speed from its largest finished 3D run"),
+             ("Our GIZMO conversion divided the field by the cell volume", "GIZMO's particle volumes add up to 1.0005 of the box, so the field on "
+              "the grid was 0.05 % too strong at every grid", f"Divided by the particle volume each cell receives; all {giz['done']} complete runs "
+              f"reconverted: Alfvén-wave error at 512² from 1.16×10⁻³ to {pc.sci(giz_alf.get('truth', {}).get('512', float('nan')), 2)}"),
+             ("A code's stop on the second of two GPUs was read as a lost job (gPLUTO, Cholla)", "No record, and the task's later runs not started",
+              "The stop is read from every rank's log and recorded with the code's reason"),
+             ("AREPO's static mesh finishes the field loop", f"Its field error is {arepo.get('64', 0):.0f}× the field at 64², {arepo.get('128', 0):.0f}× at 128²",
+              "Flagged; not yet marked invalid")]
+    open_rows = [(e(names[f]), where[f], new.get((f, "open"), 0)) for f in NEWCODES if new.get((f, "open"))]
 
-    summary = [f"Five more codes (AthenaPK, Cholla, gPLUTO, Enzo, Phantom) on every test: {finished:,} of {planned:,} runs finished.",
-               f"A benchmark page: time to a given accuracy, order of accuracy and speed for {len(methods)} set-ups on {len(tests)} tests.",
-               "Convergence without a truth (own finest grid, grid differences, Richardson), which found a bug in our GIZMO conversion."]
+    title = "Progress, 28 October – 4 November 2026"
+    summary = [f"AthenaPK, Cholla, gPLUTO, Enzo and Phantom on every test: {finished:,} of {planned:,} runs finished.",
+               f"Time to a given accuracy, order and speed for {len(methods)} set-ups on {len(tests)} tests.",
+               "Convergence measured without the exact solution; a bug in our GIZMO conversion found and fixed."]
     body = f'''{STYLE}
-<div class="page-heading"><div><div class="eyebrow"><span>W · Weekly progress</span><span class="badge">{span("2026-10-28", "2026-11-04")}</span><a href="weekly.html">All weeks</a></div>
-<h1>Five more codes, a benchmark, and convergence without a truth</h1>
-<p>The week in five parts: the codes added to the suite, the benchmark of which code is good at what, the study of what higher order and a
-better Riemann solver buy, measuring convergence without the true solution, and what we corrected in our own data.</p>
-{stats([(f"{finished:,} / {planned:,}", "runs of the five new codes finished"), (f"{order['done']} / {sum(order.values())}", "runs of the order × solver study complete"),
-        (f"{len(methods)} × {len(tests)}", "set-ups × tests on the benchmark"), (f"{n_self}", "set-up × test convergence analyses without a truth")])}</div></div>
-{card(1, "Five more codes run the whole suite",
-      "AthenaPK, Cholla and gPLUTO on H100s, Enzo and Phantom on CPUs: each a matched set-up (second order, an HLL-type solver) and its best "
-      "one, from the suite's own starting states, on every test and grid.",
-      table(("code", "complete", "stopped", "still to run"), code_rows),
-      bullets(["A <em>stopped</em> run is the code's own stop or a non-finite state, recorded with the code's reason: e.g. Cholla stops itself "
-               "when div B passes its fixed limit, and AthenaPK PPM/HLLD turns non-finite on the decay test on every grid and seed.",
-               "Phantom's own divergence projection removed 26 % of the magnetic energy by the first output, so it runs without it; its stability "
-               "check stops the field loops, and we keep that check on.",
-               "3D at 512³ does not fit one H100 in Cholla or gPLUTO: those runs use two."]),
+<div class="page-heading"><div><div class="eyebrow"><span>W · Weekly progress</span><span class="badge">{span("2026-10-28", week)}</span><a href="weekly.html">All weeks</a></div>
+<h1>{e(title)}</h1></div></div>
+{stats([(f"{finished:,} / {planned:,}", "runs of the five new codes finished"), (f"{order['done']} / {sum(order.values())}", "runs of the PLM/PPM × HLL/HLLD study complete"),
+        (f"{len(methods)} × {len(tests)}", "set-ups × tests on the Benchmark page"), (f"{n_self}", "set-up × test convergence checks without the exact solution")])}
+{card(1, "New codes: AthenaPK, Cholla, gPLUTO, Enzo and Phantom",
+      table(("set-up", "", "complete", "stopped", "still to run", "time to accuracy", "order, smooth waves", "M cell updates / s"), setup_rows),
+      f"<p>Five more codes now run the whole suite from the same starting states as the others: AthenaPK, Cholla and gPLUTO on H100s, Enzo and "
+      f"Phantom on CPUs, each with a <em>matched</em> set-up (second order, an HLL-type solver) and its <em>best</em> one. {finished:,} of their "
+      f"{planned:,} runs have finished.</p>"
+      "<p><strong>How to read it.</strong> <em>Stopped</em>: the code stopped itself or its state turned non-finite; each is recorded with the "
+      "code's own reason. <em>Time to accuracy</em>: how long the set-up takes to reach a fixed error, as a multiple of the fastest set-up on each "
+      "test, median over the tests it reached (in brackets: tests reached of those it finished; section 2 explains the measure). <em>Order</em>: "
+      "how fast the error falls with resolution on the smooth-wave tests (2 for a second-order scheme).</p>"
+      "<p><strong>What stands out.</strong> Cholla PPMC and AthenaPK PPM/HLLD are among the fastest of all to the accuracy. Most stops are the "
+      "codes' own checks: Cholla stops when div B passes a fixed limit; AthenaPK PPM/HLLD turns non-finite on the decay test on every grid and seed; "
+      "Phantom's stability check stops the field loops (its own divergence projection removed 26 % of the magnetic energy by the first output, so "
+      "it runs without it). Cholla and gPLUTO need two H100s for 3D at 512³.</p>",
       more("sweep-plan.html", "Every run's state on the Sweep page"))}
-{card(2, "Which code is good at what: the Benchmark page",
-      "For every test, the time each set-up needs to reach the error a standard second-order code has at 256², and the order its error falls "
-      "with resolution; new this week, its speed in cell updates per second beside that time.",
-      "<p>Least time to the accuracy, per job (× the fastest on each test):</p>", bullets(jobs),
-      f"<p>Speed per cell is not speed to an answer. {e(bb.full_name(a))} makes the most cell updates per second, {rate[a]/rate[b]:.2g}× as many as "
-      f"{e(bb.full_name(b))}, yet {e(bb.full_name(b))} reaches the accuracy in the least time (median {bb.times(rel[b][0])} the fastest, against "
-      f"{bb.times(rel[a][0])}). A more diffusive solver needs a finer grid, and in 2D the work grows as the grid's cube (cells × steps). Orszag–Tang:</p>",
-      table(("set-up", "grid needed", "million cell updates / s", "time on one H100"), ex_rows),
-      more("benchmark.html", "The Benchmark page"))}
-{card(3, "What higher order and a better solver buy",
-      "The order × solver study: PLM and PPM, each with an HLL-type and the HLLD Riemann solver, in AthenaK, Athena++ and Abel et al.'s kernels "
-      f"({order['done']} complete runs). The time to the same accuracy, median over the tests:",
+{card(2, "Time to a given accuracy, and speed per cell",
+      figure(speed_png, "Each point a set-up: its speed against its median time to the accuracy over the tests."),
+      f"<p><strong>How it is measured.</strong> For each test we fix a target error: the error AthenaK PLM/HLLE/RK2, a standard second-order "
+      f"set-up, has at 256². For each set-up we find the grid on which its error falls to that target (interpolated between the grids it ran), and "
+      f"the time it needs there: its steps times the cells, divided by its speed (cell updates per second on its largest 3D run, on one H100 or 128 "
+      f"cores). The time is then divided by that of the fastest set-up on the test; the plot shows the median over the {len(tests)} tests.</p>"
+      f"<p><strong>What it shows.</strong> Speed per cell does not decide the time to an answer. {e(bb.full_name(a))} makes the most cell updates "
+      f"per second, {rate[a]/rate[b]:.2g}× as many as {e(bb.full_name(b))}, but needs {bb.times(rel[a][0])} the fastest time against "
+      f"{bb.times(rel[b][0])} for {e(bb.full_name(b))}. A more diffusive scheme needs a finer grid for the same error, and in 2D the work grows as "
+      f"the cube of the grid (cells × steps). On Orszag–Tang:</p>",
+      table(("set-up", "grid needed", "M cell updates / s", "time on one H100"), ex_rows),
+      "<p>The least time to the accuracy, per kind of test (× the fastest on each test, geometric mean over the kind's tests; only set-ups that "
+      "reached the accuracy on all of them):</p>",
+      table(("tests", "first", "second", "third", "reached all"), job_rows),
+      more("benchmark.html", "Every set-up and test on the Benchmark page"))}
+{card(3, "Higher order and a better Riemann solver: PLM vs PPM, HLL vs HLLD",
       table(("code", "PLM → PPM", "HLL → HLLD", "both", "PPM's cost per cell update", "tests"), split_rows),
-      bullets(["In AthenaK and Athena++ PPM pays: the coarser grid it needs more than covers its cost per cell (on the smooth waves Athena++ "
-               "PPM converges at about fourth order).",
-               "In Abel et al.'s kernels PPM is several times slower per cell update than PLM, so it does not pay on most tests; HLLD does."]),
-      figure("media/ours/order_tradeoff.png", "Each change's time to the same error (a) and the cells per side it needs (b), test by test.", "our-figures.html"),
+      f"<p><strong>What was run.</strong> In AthenaK, Athena++ and Abel et al.'s kernels, all four pairs of reconstruction (PLM, piecewise linear; "
+      f"PPM, piecewise parabolic) and Riemann solver (an HLL-type one, or HLLD), at one time integrator: {order['done']} complete runs.</p>"
+      "<p><strong>How to read it.</strong> Each entry is how much faster the set-up reaches the target error of section 2 after the change, "
+      "median over the tests: PPM in place of PLM (with the HLL-type solver), HLLD in place of HLL (with PLM), and both. The last but one column is "
+      "how much more a cell update costs with PPM than with PLM.</p>"
+      "<p><strong>What it shows.</strong> In AthenaK and Athena++ PPM pays: the coarser grid it needs more than covers its cost per cell (on the "
+      "smooth waves Athena++ PPM converges at about fourth order). In Abel et al.'s kernels a PPM cell update costs several times a PLM one, so PPM "
+      "does not pay on most tests; HLLD does, in every code. The figure shows each test.</p>",
+      figure("media/ours/order_tradeoff.png", "(a) Each change's time to the same error, test by test (right of 1: the change is faster); (b) the "
+             "cells per side it saves.", "our-figures.html"),
       more("our-figures.html", "Our figures page"))}
-{card(4, "Convergence without a truth",
-      "Each set-up against its own finest grid, the differences between successive grids, and Richardson extrapolation, set beside its error "
-      f"against the true solution, for the {len(sc)} planar tests (scripts/self_convergence.py). Medians over the set-ups:",
-      table(("tests", "own finest ÷ true error", "order from differences", "order against truth", "Richardson estimate ÷ true error", "Richardson gain"), selfc),
-      bullets([f"Against its own finest grid a set-up looks better than it is: its error seems {under(selfc[0])} smaller on smooth waves, "
-               f"{under(selfc[1])} with shocks, {under(selfc[2])} on Kelvin–Helmholtz and the current sheet.",
-               f"Grid differences give the true order on smooth waves. On Kelvin–Helmholtz and the current sheet the differences shrink at order "
-               f"{selfc[2][2]} while the error against the truth barely falls (order {selfc[2][3]}): the grids agree with each other, not with the truth.",
-               "Richardson extrapolation estimates the error well on smooth waves, but does not bring the answer nearer the truth: the limiters "
-               "change the error's pattern from grid to grid.",
-               "An own-grid reference hides a code that converges to the wrong answer: GIZMO's Alfvén-wave error stops falling at about 0.1 %, "
-               "and AREPO's static mesh on the field loop agrees with itself while its field blows up."]),
-      figure("media/analysis/alfven/09-self-0.png", "Alfvén wave: against the truth (top left) GIZMO's error (gold) is flat from 64²; against its own "
-             "finest grid (top right) it seems to converge.", "test-alfven.html"),
-      more("test-alfven.html", "The Alfvén-wave test page"))}
-{card(5, "Getting the data right",
-      "An audit of our own records and conversions before the final rebuild.",
-      bullets(["The new codes' records held srun's wall time, start-up included (gPLUTO Brio–Wu 32²: 456 s, of which 18 s computing): every "
-               "record now has the code's own clock.",
-               "Speeds are taken from each set-up's largest 3D run: a planar run leaves a GPU mostly idle, and Abel et al.'s kernels run the "
-               "planar tests on N³ cells, so planar speeds favoured them.",
-               "Our GIZMO conversion made the field on the grid 0.05 % too strong (it divided by the cell volume, but GIZMO's particle volumes "
-               f"add up to 1.0005 of the box). Fixed, and all {giz['done']} complete runs reconverted from GIZMO's snapshots: its Alfvén-wave error "
-               f"at 512² went from 1.16×10⁻³ to {pc.sci(giz_alf.get('512', float('nan')), 2)}; the floor that is left is GIZMO's own.",
-               "A stop on the second of two GPUs was read as a lost job (gPLUTO, Cholla): now the code's own stop and reason.",
-               f"AREPO's static mesh on the field loop finishes, but its field error is {arepo.get('64', 0):.0f}× the field at 64² and "
-               f"{arepo.get('128', 0):.0f}× at 128²: flagged, not yet marked invalid."]))}
-{card(6, "Still running, and next",
-      "On Sherlock as of this page: " + (", ".join(f"{e(names[f])} {n} runs" for f, n in open_by.items()) or "nothing") + ".",
-      bullets(["Then: the last fetch, every analysis and page rebuilt, and the site published.",
-               "Convergence without a truth in 3D: the 3D states are too large to fetch, so a job on Sherlock.",
-               "Whether to mark the AREPO static field loop invalid."]))}'''
-    return dict(first="2026-10-28", last="2026-11-04", title="Five more codes, a benchmark, and convergence without a truth", summary=summary, html=body)
-
+{card(4, "Convergence measured without the exact solution",
+      figure(conv_png, "Solid: the error against the true solution. Dashed: against the set-up's own 512² run, averaged to each grid (so up to 256²)."),
+      f"<p><strong>Why.</strong> In a real problem the true solution is unknown, and convergence is judged from the runs themselves. We tried three "
+      f"ways on the {len(sc)} planar tests and compared each with the true error, which is known there (the exact solution, or AthenaK at 4096²): "
+      "(1) the set-up's own finest grid as the reference; (2) the difference between grid N and 2N, whose fall with N gives the order; (3) Richardson "
+      "extrapolation, which combines the three finest grids, assuming the error falls as N<sup>−p</sup>, into an estimate of the converged answer.</p>",
+      table(("tests", "own finest ÷ true error", "order from differences", "order against truth", "Richardson estimate ÷ true error",
+             "Richardson gain"), selfc),
+      f"<p><strong>What it shows.</strong> Against its own finest grid a set-up looks better than it is: its error seems {under(selfc[0])} smaller "
+      f"on smooth waves, {under(selfc[1])} with shocks, {under(selfc[2])} on Kelvin–Helmholtz and the current sheet. Grid differences give the true "
+      f"order on smooth waves; on Kelvin–Helmholtz and the current sheet they shrink at order {selfc[2][2]} while the true error barely falls (order "
+      f"{selfc[2][3]}): the grids agree with each other, not with the truth. Richardson's estimate of the error is good on smooth waves (ratio "
+      f"{selfc[0][4]}), but its extrapolated answer is no nearer the truth than the finest grid (gain {selfc[0][5]}; below 1 with shocks): the "
+      "limiters change the error's pattern from grid to grid. In the figure, GIZMO's true error on the Alfvén wave stops falling at 64² (about "
+      "0.1 %), while against its own finest grid it seems to converge: an own-grid reference cannot see a code converging to a wrong answer.</p>",
+      more("test-alfven.html", "All set-ups on the Alfvén-wave test page"))}
+{card(5, "Corrections to our data",
+      table(("what was wrong", "effect", "fix"), fixes),
+      "<p>Found in an audit of our own records and conversions before the final rebuild. The GIZMO error was found by the convergence checks of "
+      "section 4: every grid of GIZMO's had the same error floor, which its own-grid comparison could not show.</p>")}
+{card(6, "Runs still going, and next steps",
+      table(("code", "", "runs still to run"), open_rows),
+      bullets(["When they are in: the last fetch, every analysis and page rebuilt, and the site published again.",
+               "The convergence checks of section 4 in 3D (the 3D states are too large to fetch: a job on Sherlock).",
+               "Decide whether to mark AREPO's static field loop invalid."]))}'''
+    return dict(first="2026-10-28", last=week, title=title, summary=summary, html=body)
 
 WEEKS = {"2026-11-04": week_2026_11_04}
 

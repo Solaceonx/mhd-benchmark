@@ -21,6 +21,8 @@ import build_benchmark as bb  # noqa: E402
 import paper_common as pc  # noqa: E402
 import sweep_data as sd  # noqa: E402
 import work_precision as wp  # noqa: E402
+from build_test_pages import TITLES  # noqa: E402
+import numpy as np  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402  (paper_common set the backend)
 from matplotlib.lines import Line2D  # noqa: E402
 
@@ -45,7 +47,11 @@ STYLE = ('<style>.week-stats{display:grid;grid-template-columns:repeat(auto-fit,
          '.week-figure{margin:14px 0 0}.week-figure img{display:block;width:100%;max-width:1100px;border:1px solid #edf0e9;border-radius:4px}'
          '.week-figure figcaption{font-size:11px;color:#64716f;margin-top:6px;line-height:1.6}.week-more{font-size:12px;margin-top:12px!important}'
          '.week-list{list-style:none;padding:0;margin:0}.week-list li{padding:16px 0;border-top:1px solid #edf0e9}.week-list li:first-child{border-top:0}'
-         '.week-list h3{margin:0 0 4px}.week-list .when{font:11px ui-monospace,monospace;color:#64716f}</style>')
+         '.week-list h3{margin:0 0 4px}.week-list .when{font:11px ui-monospace,monospace;color:#64716f}'
+         '.wpt{margin-top:14px}.wpt-tabs{display:grid;gap:6px}.wpt-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}'
+         '.wpt-group span{font-size:10px;color:#64716f;min-width:11rem}.wpt-group button{font:12px var(--font);padding:4px 10px;border:1px solid #d9dedd;'
+         'border-radius:999px;background:#fff;color:#202a2a;cursor:pointer}.wpt-group button[aria-pressed="true"]{background:#202a2a;color:#fff;'
+         'border-color:#202a2a}@media(max-width:640px){.wpt-group span{min-width:100%}}</style>')
 
 
 def span(first, last):
@@ -138,6 +144,59 @@ def speed_figure(week, rows, tests, methods, fastest, labels):
     return save(fig, week, "speed_vs_accuracy")
 
 
+def test_speed_figure(week, rows, t):
+    """One test: each set-up's cell updates per second against its time to the test's target error, in seconds on one H100
+    or 128 cores. Set-ups that finished the test but reached the target on no grid sit in a band above; the three fastest
+    are numbered. Returns (image, [(set-up, seconds)] of the fastest three)."""
+    pc.apply_plot_style();plt.rcParams.update({"font.size": 9})
+    fig, ax = plt.subplots(figsize=(8.4, 4.6));names = {f: n for f, n, _, _ in bb.CODES};seen = {}
+    pts = [(m, s[0]/1e6, x.get("cost"), s[2], x.get("at_most")) for m, x in rows[t]["methods"].items()
+           if m in pc.STYLE and (s := bb.speed(rows, [t], m))]
+    hit = sorted((p for p in pts if p[2]), key=lambda p: p[2]);miss = [p for p in pts if not p[2]]
+    lo, hi = min(p[2] for p in hit), max(p[2] for p in hit);band = hi*6
+    for m, x, y, cpu, at_most in hit + [(m, x, band, cpu, False) for m, x, _, cpu, _ in miss]:
+        c = pc.color(m);seen.setdefault(pc.STYLE[m][0], c)
+        ax.scatter(x, y, s=34, marker="v" if at_most else "o", facecolor="none" if cpu else c, edgecolor=c, lw=1.3, zorder=3)
+    ax.set_xscale("log");ax.set_yscale("log");ax.set_ylim(lo/3, band*2.5);pc.style_axes(ax)
+    top = math.floor(math.log10(band/2.4));ticks = [10.0**k for k in range(math.ceil(math.log10(lo/3)), top + 1)]
+    ax.set_yticks(ticks + ([band] if miss else []), [f"$10^{{{round(math.log10(v))}}}$" for v in ticks] + ([f"not reached ({len(miss)})"] if miss else []))
+    if miss:ax.axhline(band/2.4, color=pc.RULE, lw=.8, zorder=1)
+    # the three fastest numbered, each number on the side of its point farthest from the other points and numbers
+    xy = ax.transData.transform([(p[1], p[2] if p[2] else band) for p in pts]);px = fig.dpi/72;taken = list(xy)
+    for i, (m, x, y, *_) in enumerate(hit[:3], 1):
+        at = ax.transData.transform((x, y))
+        sides = [(dx, dy) for dx in (-9, 0, 9) for dy in (-9, 0, 9) if dx or dy]
+        dx, dy = max(sides, key=lambda d: min(math.dist(at + px*np.array(d), q) for q in taken))
+        ax.annotate(str(i), (x, y), xytext=(dx, dy), textcoords="offset points", fontsize=8, fontweight="bold", color=pc.INK, ha="center", va="center")
+        taken.append(at + px*np.array((dx, dy)))
+    eps = rows[t]["eps"]
+    ax.set_title(f"{TITLES.get(t, t)}: time to a {rows[t]['kind']} error of {100*eps:.2g} %", loc="left", fontsize=10)
+    ax.set_xlabel("Speed: million cell updates per second (GPU codes on one H100, CPU codes on 128 cores)")
+    ax.set_ylabel("Time to the target error [s]")
+    hs = [Line2D([], [], ls="", marker="o", color=seen[f], label=n) for f, n, _, _ in bb.CODES if f in seen]
+    hs += [Line2D([], [], ls="", marker="o", color=pc.MUTED, label="filled: GPU"), Line2D([], [], ls="", marker="o", mfc="none", color=pc.MUTED, label="open: CPU")]
+    if any(p[4] for p in hit):hs.append(Line2D([], [], ls="", marker="v", color=pc.MUTED, label="at most: below it on its coarsest grid"))
+    ax.legend(handles=hs, fontsize=8, frameon=False, loc="upper left", bbox_to_anchor=(1.01, 1))
+    return save(fig, week, f"speed_vs_accuracy_{t}"), [(m, y) for m, _, y, *_ in hit[:3]]
+
+
+def test_switcher(figs):
+    """The per-test figures behind a row of buttons, a kind of test per row; without script every figure shows."""
+    by = {t: (src, top) for t, src, top in figs};groups = []
+    for job, ts in bb.JOBS:
+        ts = [t for t in ts if t in by]
+        if ts:groups.append(f'<div class="wpt-group"><span>{e(job)}</span>' + "".join(
+            f'<button type="button" data-t="{t}" aria-pressed="false">{e(TITLES.get(t, t))}</button>' for t in ts) + "</div>")
+    panels = "".join(f'<figure class="week-figure wpt-panel" data-t="{t}"><img src="{src}" alt="{e(TITLES.get(t, t))}: speed against time to the '
+                     f'target error" loading="lazy"><figcaption>Fastest to the target: ' + "; ".join(
+                         f"{i}. {e(bb.full_name(m))}, {bb.seconds(y)}" for i, (m, y) in enumerate(top, 1)) +
+                     f' · <a href="{bb.test_page(t)}#analysis-03-cost">the test\'s page</a></figcaption></figure>' for t, src, top in figs)
+    script = ('<script>(()=>{const w=document.currentScript.parentElement,b=[...w.querySelectorAll("button")],p=[...w.querySelectorAll(".wpt-panel")];'
+              'const show=t=>{p.forEach(x=>x.hidden=x.dataset.t!==t);b.forEach(x=>x.setAttribute("aria-pressed",x.dataset.t===t))};'
+              'b.forEach(x=>x.addEventListener("click",()=>show(x.dataset.t)));show(b[0].dataset.t)})()</script>')
+    return f'<div class="wpt"><div class="wpt-tabs">{"".join(groups)}</div>{panels}{script}</div>'
+
+
 def convergence_figure(week, sc, show):
     """Alfvén wave and Orszag-Tang: a few set-ups' error against the true solution (solid) and against their own finest
     grid (dashed)."""
@@ -190,6 +249,8 @@ def week_2026_11_04():
         "glm": ("Abel GLM LLF (original)", (-20, 34)), "glm_hlld": ("Abel GLM HLLD, f16/HLL", (-4, -30)), "ct": ("Abel CT prototype", (-8, 0)),
         "cholla_ppmc": ("Cholla PPMC", (8, 0)), "athenak_best": ("AthenaK PPM/HLLD", (8, 0)), "athenak_matched": ("AthenaK PLM/HLLE", (-8, 6)),
         "athenapk_best": ("AthenaPK PPM/HLLD", (-8, 0)), "gizmo_mfm": ("GIZMO", (8, 0)), "phantom_sph": ("Phantom", (8, 0))})
+    per_test = [(t, *test_speed_figure(week, rows, t)) for t in tests]
+    planar_only = sorted({names[pc.STYLE[m][0]] for m in methods if (s := bb.speed(rows, tests, m)) and "³" not in s[1]})
     job_rows = [(e(job), *(f"{e(bb.full_name(m))} <span class='small'>({bb.times(s)})</span>" for m, s in top), f"{n} of {len(methods)}")
                 for job, _, top, n in bb.best(rows, methods, fastest)]
     ot = rows["orszag_tang"]["methods"];ex = [m for m in ("glm", "glm_fix_hlld", "cholla_ppmc") if (ot.get(m) or {}).get("cost")]
@@ -248,7 +309,8 @@ def week_2026_11_04():
       "it runs without it). Cholla and gPLUTO need two H100s for 3D at 512³.</p>",
       more("sweep-plan.html", "Every run's state on the Sweep page"))}
 {card(2, "Time to a given accuracy, and speed per cell",
-      figure(speed_png, "Each point a set-up: its speed against its median time to the accuracy over the tests."),
+      figure(speed_png, f"All {len(tests)} tests together. Each point is a set-up: its speed against its median time to the accuracy over the tests "
+             "(× the fastest set-up on each test, so 1 = the fastest)."),
       f"<p><strong>How it is measured.</strong> For each test we fix a target error: the error AthenaK PLM/HLLE/RK2, a standard second-order "
       f"set-up, has at 256². For each set-up we find the grid on which its error falls to that target (interpolated between the grids it ran), and "
       f"the time it needs there: its steps times the cells, divided by its speed (cell updates per second on its largest 3D run, on one H100 or 128 "
@@ -261,6 +323,10 @@ def week_2026_11_04():
       "<p>The least time to the accuracy, per kind of test (× the fastest on each test, geometric mean over the kind's tests; only set-ups that "
       "reached the accuracy on all of them):</p>",
       table(("tests", "first", "second", "third", "reached all"), job_rows),
+      f"<p><strong>Test by test.</strong> The same plot for each test, with the time in seconds to that test's target error. Speeds are the same "
+      f"on every test except for codes with no 3D run ({", ".join(planar_only)}), so mostly the points move up and down: the order of the set-ups changes from test "
+      "to test. Set-ups that finished a test but reached its target on none of their grids are in the band at the top.</p>",
+      test_switcher(per_test),
       more("benchmark.html", "Every set-up and test on the Benchmark page"))}
 {card(3, "Higher order and a better Riemann solver: PLM vs PPM, HLL vs HLLD",
       table(("code", "PLM → PPM", "HLL → HLLD", "both", "PPM's cost per cell update", "tests"), split_rows),

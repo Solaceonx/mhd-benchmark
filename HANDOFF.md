@@ -200,6 +200,11 @@ complete + the known blast_2d_b100 512² stop, fetched 2026-11-04 (old records i
 fell 12 % (1.16e-3 → 1.02e-3 at 512²), the rest of it is GIZMO's own. Status only (website commit 7293c6f shows every planned run, from `tasks.py runs()`, done, stopped
 or still to run): `ssh sherlock 'bash $SCRATCH/mhd-study/sherlock_newcodes/pack_for_mac.sh records' | tar -xzf - -C newcodes_results`,
 `date -u "+%Y-%m-%d %H:%M UTC" > newcodes_results/FETCHED`, then `build_sweep_plan.py` and publish.
+**State 2026-11-04 19:07 UTC (records fetched):** of 1,420 runs 1,306 done, 107 stopped, 7 open, all Enzo 512³ (array 50938990
+tasks 11–16 and 51009445, four nodes each, 2-day limit). gPLUTO has ended: its `ct_best` and `glm_best` (PARABOLIC/RK3/HLLD)
+stop on decay_supersonic at every grid and seed (`QuitPLUTO(): from ConsToPrim3D()`, t = 0.014–0.017 of 0.2, before the
+first output, so time_reached = 0); the matched set-ups finish. 50929983_1 (FAILED in sacct) was a requeued resume of the
+line 50938871 recorded. When the Enzo jobs end: `logs/failed_runs.py`, `code_clocks.py`, full pack and fetch, then the steps under "When the rest is in" above.
 **Data audit 2026-11-03 (lyxia: "focus on getting all the data right").** (1) GIZMO's records hold the 1 µs clock of the job
 that converted its snapshots: its own time is in each run's output/cpu.txt; `sweep_results/gizmo_cpu_totals.tsv` (steps, last
 "total", CPUs) is applied by `sweep_data.meta`. (2) The new codes' records held srun's wall time, start-up included (gPLUTO

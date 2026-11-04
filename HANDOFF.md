@@ -160,7 +160,8 @@ an extra dump past the end (tmax rounded in abel.in), fixed in `run_phantom`. En
 for memory on nodes where it had few CPUs, so 3D now runs on full nodes (`--ntasks-per-node=32`); the stopped tasks and the 512³ tasks not
 yet run are 50938989 and 50938990 (`production.sh none enzo-redo`, normal or owners since 2026-11-03: they waited two days in
 normal behind our fair share, 0.07); 50676336_5 and _8 keep running. gPLUTO on two ranks writes its stop to the stopping rank's log
-(pluto.1.log), now read; the line it lost is 50938871. Enzo CT's blast_3d_b50 64² and b100 256²
+(pluto.1.log), now read; the line it lost is 50938871. Enzo decay_supersonic dedner 512³ s43 finished in 50676336_8, whose driver
+was then killed for memory (25 GB on a node with few ranks) before writing the record: again on full nodes, 51009445. Enzo CT's blast_3d_b50 64² and b100 256²
 stop themselves on NaN pressure (mhd_dt.F, dual energy off), which the driver took for a kill; `run_enzo` now records them as stops.
 AthenaPK's planar 256² and 512² aborted at t = 0 (Kokkos team scratch does not fit blocks of 256: "could not find a valid execution
 configuration"); blocks are now 128 in 2D as in 3D, and the 50 runs are array 50745637 (`production.sh none athenapk-redo`). Cholla's trial

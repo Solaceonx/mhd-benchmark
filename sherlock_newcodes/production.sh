@@ -62,6 +62,10 @@ for code in "$@"; do
         # (also owners, requeued: they waited two days in normal behind our fair share, and a run takes 1-3.4 hours)
         enzo-redo) submit "enzo 3D to 256, again" tasks/enzo_3d_redo.txt --partition=normal,owners --requeue --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
               submit "enzo 3D 512, again" tasks/enzo_3d_512_redo.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
+        # decay_supersonic dedner 512^3 seed 43 ended, then its driver was killed for memory (25 GB on a node with few of the
+        # 128 ranks, 50676336_8) before it wrote the record: on full nodes, again
+        enzo-512-again) grep "^enzo|dedner|decay_supersonic|43|512|" tasks/enzo_3d_512.txt > tasks/enzo_3d_512_again.txt
+              submit "enzo 3D 512, the run killed in postprocessing" tasks/enzo_3d_512_again.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
         phantom) "$py" tasks.py phantom > tasks/phantom.txt && submit phantom tasks/phantom.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         *) echo "unknown code $code" ;;
     esac

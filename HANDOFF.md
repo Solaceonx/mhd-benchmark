@@ -200,11 +200,14 @@ complete + the known blast_2d_b100 512² stop, fetched 2026-11-04 (old records i
 fell 12 % (1.16e-3 → 1.02e-3 at 512²), the rest of it is GIZMO's own. Status only (website commit 7293c6f shows every planned run, from `tasks.py runs()`, done, stopped
 or still to run): `ssh sherlock 'bash $SCRATCH/mhd-study/sherlock_newcodes/pack_for_mac.sh records' | tar -xzf - -C newcodes_results`,
 `date -u "+%Y-%m-%d %H:%M UTC" > newcodes_results/FETCHED`, then `build_sweep_plan.py` and publish.
-**State 2026-11-04 19:07 UTC (records fetched):** of 1,420 runs 1,306 done, 107 stopped, 7 open, all Enzo 512³ (array 50938990
-tasks 11–16 and 51009445, four nodes each, 2-day limit). gPLUTO has ended: its `ct_best` and `glm_best` (PARABOLIC/RK3/HLLD)
+**Final state, fetched 2026-11-08 09:57 UTC:** every one of the 1,420 runs has ended, 1,313 done and 107 stopped. The
+last Enzo 512³ runs (array 50938990 tasks 11–16, 51009445) completed 2026-11-05 to 11-07; `logs/failed_runs.py` finds no Enzo
+failure; `code_clocks.tsv` rerun (1,382 lines) and copied; full pack (job 51537450, 4.5 GB) fetched; `test_diagnostics.py`,
+`work_precision.py`, `self_convergence.py` and the page builders rerun; published (website commit b859430). gPLUTO has ended: its `ct_best` and `glm_best` (PARABOLIC/RK3/HLLD)
 stop on decay_supersonic at every grid and seed (`QuitPLUTO(): from ConsToPrim3D()`, t = 0.014–0.017 of 0.2, before the
 first output, so time_reached = 0); the matched set-ups finish. 50929983_1 (FAILED in sacct) was a requeued resume of the
-line 50938871 recorded. When the Enzo jobs end: `logs/failed_runs.py`, `code_clocks.py`, full pack and fetch, then the steps under "When the rest is in" above.
+line 50938871 recorded. Still open, lyxia's calls: shock flattening for gPLUTO's best set-ups; whether AREPO's static
+field loop (error 247 % → 37,333 % with grid) is marked invalid; the section 4 convergence checks in 3D (a Sherlock job).
 **Data audit 2026-11-03 (lyxia: "focus on getting all the data right").** (1) GIZMO's records hold the 1 µs clock of the job
 that converted its snapshots: its own time is in each run's output/cpu.txt; `sweep_results/gizmo_cpu_totals.tsv` (steps, last
 "total", CPUs) is applied by `sweep_data.meta`. (2) The new codes' records held srun's wall time, start-up included (gPLUTO

@@ -2283,8 +2283,324 @@ pluto_ct_matched,gPLUTO CT PLM/HLL,128,42,complete,True,0.2,22.8475,1,Code-repor
 pluto_ct_matched,gPLUTO CT PLM/HLL,128,43,complete,True,0.2,26.1188,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N128-s43/data/pluto_ct_matched_r1,
 pluto_ct_matched,gPLUTO CT PLM/HLL,256,42,complete,True,0.2,241.0899,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N256-s42/data/pluto_ct_matched_r1,
 pluto_ct_matched,gPLUTO CT PLM/HLL,256,43,complete,True,0.2,233.1748,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N256-s43/data/pluto_ct_matched_r1,
-pluto_ct_matched,gPLUTO CT PLM/HLL,512,42,complete,True,0.2,2596.418507307768,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N512-s42/data/pluto_ct_matched_r1,
+pluto_ct_matched,gPLUTO CT PLM/HLL,512,42,complete,True,0.2,2449.5,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N512-s42/data/pluto_ct_matched_r1,
 pluto_ct_matched,gPLUTO CT PLM/HLL,512,43,complete,True,0.2,2321.1,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_matched-run-N512-s43/data/pluto_ct_matched_r1,
+pluto_ct_best,gPLUTO CT PPM/HLLD,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N64-s42/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+g       -1.0  -1
+  | log              1000
+  | analysis  -1.0  -1
+  | [Particles]
+  | Nparticles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+  X2: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+  X3: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+  X2: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+  X3: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 1.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  Max(MACH) =  15.551174
+  Max(vc)   =  1.000002e+00   1.227805e+01   1.327936e+01   1.512920e+01   2.579938e-05   1.179005e-05   3.000129e-01  9.901015e-01
+  Min(vc)   =  9.999960e-01  -1.525463e+01  -1.106349e+01  -1.547400e+01  -3.320668e-05  -1.700976e-05   2.999870e-01  9.900950e-01
+! 1 cells reported errors [step: 87; t = 1.3868e-02; g_intStage = 1]
+! 4 cells reported errors [step: 88; t = 1.4277e-02; g_intStage = 1]
+! 7 cells reported errors [step: 89; t = 1.4686e-02; g_intStage = 1]
+! 14 cells reported errors [step: 90; t = 1.5088e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_ct_best,gPLUTO CT PPM/HLLD,64,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N64-s43/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+| dbl        0.02  -1   single_file
+  | flt       -1.0  -1   single_file
+  | vtk       -1.0  -1   single_file
+  | dbl.h5    -1.0  -1
+  | flt.h5    -1.0  -1
+  | tab       -1.0  -1
+  | ppm       -1.0  -1
+  | png       -1.0  -1
+  | log              1000
+  | analysis  -1.0  -1
+  | [Particles]
+  | Nparticles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+  X2: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+  X3: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+  X2: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+  X3: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 0.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  Max(MACH) =  17.046978
+  Max(vc)   =  1.000003e+00   1.377694e+01   1.109527e+01   1.696238e+01   2.161155e-05   1.383251e-05   3.000218e-01  9.901019e-01
+  Min(vc)   =  9.999963e-01  -1.448443e+01  -1.287922e+01  -1.517577e+01  -2.191678e-05  -1.341537e-05   2.999782e-01  9.900954e-01
+! 5 cells reported errors [step: 91; t = 1.6533e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_ct_best,gPLUTO CT PPM/HLLD,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N128-s42/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+cles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+  X2: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+  X3: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+  X2: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+  X3: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 1.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  Max(MACH) =  15.560156
+  Max(vc)   =  1.000002e+00   1.227733e+01   1.329675e+01   1.515047e+01   2.583836e-05   1.179433e-05   3.000130e-01  9.901005e-01
+  Min(vc)   =  9.999982e-01  -1.526907e+01  -1.107043e+01  -1.548293e+01  -3.321458e-05  -1.703654e-05   2.999870e-01  9.900972e-01
+! 5 cells reported errors [step: 114; t = 1.3922e-02; g_intStage = 1]
+! 10 cells reported errors [step: 115; t = 1.4126e-02; g_intStage = 1]
+! 23 cells reported errors [step: 116; t = 1.4331e-02; g_intStage = 1]
+! 25 cells reported errors [step: 116; t = 1.4331e-02; g_intStage = 2]
+! 36 cells reported errors [step: 117; t = 1.4535e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_ct_best,gPLUTO CT PPM/HLLD,128,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N128-s43/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+2  -1   single_file
+  | flt       -1.0  -1   single_file
+  | vtk       -1.0  -1   single_file
+  | dbl.h5    -1.0  -1
+  | flt.h5    -1.0  -1
+  | tab       -1.0  -1
+  | ppm       -1.0  -1
+  | png       -1.0  -1
+  | log              1000
+  | analysis  -1.0  -1
+  | [Particles]
+  | Nparticles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+  X2: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+  X3: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+  X2: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+  X3: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 1.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  Max(MACH) =  17.054871
+  Max(vc)   =  1.000001e+00   1.378255e+01   1.109864e+01   1.697023e+01   2.164201e-05   1.385166e-05   3.000218e-01  9.901003e-01
+  Min(vc)   =  9.999980e-01  -1.449826e+01  -1.288008e+01  -1.519543e+01  -2.194247e-05  -1.341760e-05   2.999782e-01  9.900970e-01
+! 1 cells reported errors [step: 120; t = 1.6391e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_ct_best,gPLUTO CT PPM/HLLD,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N256-s42/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+  X2: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+  X3: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+  X2: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+  X3: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 2.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  Max(MACH) =  15.558567
+  Max(vc)   =  1.000001e+00   1.228071e+01   1.329807e+01   1.515519e+01   2.584601e-05   1.179874e-05   3.000130e-01  9.900997e-01
+  Min(vc)   =  9.999990e-01  -1.526818e+01  -1.107090e+01  -1.548135e+01  -3.322722e-05  -1.704278e-05   2.999870e-01  9.900980e-01
+! 8 cells reported errors [step: 173; t = 1.3720e-02; g_intStage = 1]
+! 16 cells reported errors [step: 174; t = 1.3823e-02; g_intStage = 1]
+! 38 cells reported errors [step: 175; t = 1.3925e-02; g_intStage = 1]
+! 64 cells reported errors [step: 176; t = 1.4027e-02; g_intStage = 1]
+! 65 cells reported errors [step: 176; t = 1.4027e-02; g_intStage = 2]
+! 87 cells reported errors [step: 177; t = 1.4129e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_ct_best,gPLUTO CT PPM/HLLD,256,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N256-s43/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+-1.0  -1   single_file
+  | dbl.h5    -1.0  -1
+  | flt.h5    -1.0  -1
+  | tab       -1.0  -1
+  | ppm       -1.0  -1
+  | png       -1.0  -1
+  | log              1000
+  | analysis  -1.0  -1
+  | [Particles]
+  | Nparticles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+  X2: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+  X3: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+  X2: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+  X3: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 2.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  Max(MACH) =  17.057691
+  Max(vc)   =  1.000001e+00   1.378518e+01   1.109819e+01   1.697304e+01   2.164444e-05   1.385526e-05   3.000218e-01  9.900997e-01
+  Min(vc)   =  9.999991e-01  -1.450046e+01  -1.288150e+01  -1.519941e+01  -2.194944e-05  -1.342079e-05   2.999782e-01  9.900981e-01
+! 1 cells reported errors [step: 186; t = 1.6401e-02; g_intStage = 1]
+! 10 cells reported errors [step: 187; t = 1.6513e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
 pluto_ct_best,gPLUTO CT PPM/HLLD,512,42,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-ct_best-run-N512-s42/data/pluto_ct_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
 ed errors [step: 317; t = 1.4578e-02; g_intStage = 1]
 ! 756 cells reported errors [step: 318; t = 1.4629e-02; g_intStage = 1]
@@ -2333,6 +2649,316 @@ pluto_glm_matched,gPLUTO GLM PLM/HLL,256,42,complete,True,0.2,174.6845,1,Code-re
 pluto_glm_matched,gPLUTO GLM PLM/HLL,256,43,complete,True,0.2,178.0364,1,Code-reported: gPLUTO compute time (without its output); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N256-s43/data/pluto_glm_matched_r1,
 pluto_glm_matched,gPLUTO GLM PLM/HLL,512,42,complete,True,0.2,1596.5,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N512-s42/data/pluto_glm_matched_r1,
 pluto_glm_matched,gPLUTO GLM PLM/HLL,512,43,complete,True,0.2,1606.1,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_matched-run-N512-s43/data/pluto_glm_matched_r1,
+pluto_glm_best,gPLUTO GLM PPM/HLLD,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N64-s42/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+alysis  -1.0  -1
+  | [Particles]
+  | Nparticles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+  X2: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+  X3: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+  X2: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+  X3: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 0.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  glm_ch = 11.465425
+  Max(MACH) =  15.551174
+  Max(vc)   =  1.000002e+00   1.227805e+01   1.327936e+01   1.512920e+01   2.580805e-05   1.179664e-05   3.000129e-01  9.901015e-01  1.705631e-08
+  Min(vc)   =  9.999960e-01  -1.525463e+01  -1.106349e+01  -1.547400e+01  -3.321488e-05  -1.701551e-05   2.999871e-01  9.900950e-01 -1.834946e-08
+! 1 cells reported errors [step: 87; t = 1.3868e-02; g_intStage = 1]
+! 4 cells reported errors [step: 88; t = 1.4277e-02; g_intStage = 1]
+! 7 cells reported errors [step: 89; t = 1.4686e-02; g_intStage = 1]
+! 14 cells reported errors [step: 90; t = 1.5089e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_glm_best,gPLUTO GLM PPM/HLLD,64,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N64-s43/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ -1.0  -1   single_file
+  | vtk       -1.0  -1   single_file
+  | dbl.h5    -1.0  -1
+  | flt.h5    -1.0  -1
+  | tab       -1.0  -1
+  | ppm       -1.0  -1
+  | png       -1.0  -1
+  | log              1000
+  | analysis  -1.0  -1
+  | [Particles]
+  | Nparticles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+  X2: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+  X3: [   0.0000,   1.0000], 64 cells (3 ghosts); gbeg, gend = [3, 66]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+  X2: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+  X3: [   0.0000,   1.0000], 64 cells; lbeg, lend = [3, 66]; beg, end = [3, 66]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 0.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  glm_ch = 10.456889
+  Max(MACH) =  17.046978
+  Max(vc)   =  1.000003e+00   1.377694e+01   1.109527e+01   1.696238e+01   2.162173e-05   1.383902e-05   3.000218e-01  9.901019e-01  1.452081e-08
+  Min(vc)   =  9.999963e-01  -1.448443e+01  -1.287922e+01  -1.517577e+01  -2.192870e-05  -1.342097e-05   2.999782e-01  9.900954e-01 -1.550078e-08
+! 5 cells reported errors [step: 91; t = 1.6533e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_glm_best,gPLUTO GLM PPM/HLLD,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N128-s42/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+  X2: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+  X3: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+  X2: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+  X3: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 0.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  glm_ch = 11.477992
+  Max(MACH) =  15.560156
+  Max(vc)   =  1.000002e+00   1.227733e+01   1.329675e+01   1.515047e+01   2.584055e-05   1.179540e-05   3.000130e-01  9.901005e-01  1.749377e-08
+  Min(vc)   =  9.999982e-01  -1.526907e+01  -1.107043e+01  -1.548293e+01  -3.321666e-05  -1.703796e-05   2.999870e-01  9.900972e-01 -2.025098e-08
+! 6 cells reported errors [step: 114; t = 1.3922e-02; g_intStage = 1]
+! 10 cells reported errors [step: 115; t = 1.4126e-02; g_intStage = 1]
+! 25 cells reported errors [step: 116; t = 1.4331e-02; g_intStage = 1]
+! 27 cells reported errors [step: 116; t = 1.4331e-02; g_intStage = 2]
+! 38 cells reported errors [step: 117; t = 1.4535e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_glm_best,gPLUTO GLM PPM/HLLD,128,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N128-s43/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+le_file
+  | vtk       -1.0  -1   single_file
+  | dbl.h5    -1.0  -1
+  | flt.h5    -1.0  -1
+  | tab       -1.0  -1
+  | ppm       -1.0  -1
+  | png       -1.0  -1
+  | log              1000
+  | analysis  -1.0  -1
+  | [Particles]
+  | Nparticles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+  X2: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+  X3: [   0.0000,   1.0000], 128 cells (3 ghosts); gbeg, gend = [3, 130]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+  X2: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+  X3: [   0.0000,   1.0000], 128 cells; lbeg, lend = [3, 130]; beg, end = [3, 130]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 0.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  glm_ch = 10.466860
+  Max(MACH) =  17.054871
+  Max(vc)   =  1.000001e+00   1.378255e+01   1.109864e+01   1.697023e+01   2.164456e-05   1.385329e-05   3.000218e-01  9.901003e-01  1.462494e-08
+  Min(vc)   =  9.999980e-01  -1.449826e+01  -1.288008e+01  -1.519543e+01  -2.194297e-05  -1.341902e-05   2.999782e-01  9.900970e-01 -1.601026e-08
+! 1 cells reported errors [step: 120; t = 1.6391e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_glm_best,gPLUTO GLM PPM/HLLD,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N256-s42/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+  X2: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+  X3: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+  X2: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+  X3: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 2.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  glm_ch = 11.478845
+  Max(MACH) =  15.558567
+  Max(vc)   =  1.000001e+00   1.228071e+01   1.329807e+01   1.515519e+01   2.584655e-05   1.179901e-05   3.000130e-01  9.900997e-01  1.852525e-08
+  Min(vc)   =  9.999990e-01  -1.526818e+01  -1.107090e+01  -1.548135e+01  -3.322773e-05  -1.704314e-05   2.999870e-01  9.900980e-01 -1.921845e-08
+! 11 cells reported errors [step: 173; t = 1.3721e-02; g_intStage = 1]
+! 20 cells reported errors [step: 174; t = 1.3823e-02; g_intStage = 1]
+! 45 cells reported errors [step: 175; t = 1.3925e-02; g_intStage = 1]
+! 69 cells reported errors [step: 176; t = 1.4027e-02; g_intStage = 1]
+! 70 cells reported errors [step: 176; t = 1.4027e-02; g_intStage = 2]
+! 96 cells reported errors [step: 177; t = 1.4129e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010101]
+"
+pluto_glm_best,gPLUTO GLM PPM/HLLD,256,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N256-s43/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ [Particles]
+  | Nparticles          -1     1
+  | particles_dbl        -1.0  -1
+  | particles_flt       -1.0  -1
+  | particles_vtk       -1.0  -1
+  | particles_tab       -1.0  -1
+  | [Parameters]
+  +---------------------------------------------------------
+> nprocs: 1
+
+> Generating grid...
+
+  Global grid:
+  X1: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+  X2: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+  X3: [   0.0000,   1.0000], 256 cells (3 ghosts); gbeg, gend = [3, 258]
+
+  Local grid:
+  X1: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+  X2: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+  X3: [   0.0000,   1.0000], 256 cells; lbeg, lend = [3, 258]; beg, end = [3, 258]
+
+> Memory allocation
+> Assigning initial conditions (Startup) ...
+> Normalization Units:
+
+  [Density]:      1.673e-24 (gr/cm^3), 1.000e+00 (1/cm^3)
+  [Pressure]:     1.503e-03 (dyne/cm^2)
+  [Velocity]:     2.998e+10 (cm/s)
+  [Length]:       1.496e+13 (cm)
+  [Temperature]:  1.081e+13 X (p/rho*mu) (K)
+  [Time]:         4.990e+02 (sec), 1.582e-05 (yrs) 
+  [Mag Field]:    1.374e-01 (Gauss)
+ 
+> Writing file #0 (dbl) to disk...
+  [ 3.00 sec ]
+
+> Starting computation
+> nstep = 0; t = 0.000000e+00; dt = 1.000000e-06;    0.0 %
+  glm_ch = 10.468392
+  Max(MACH) =  17.057691
+  Max(vc)   =  1.000001e+00   1.378518e+01   1.109819e+01   1.697304e+01   2.164508e-05   1.385566e-05   3.000218e-01  9.900997e-01  1.452235e-08
+  Min(vc)   =  9.999991e-01  -1.450046e+01  -1.288150e+01  -1.519941e+01  -2.194215e-05  -1.342114e-05   2.999782e-01  9.900981e-01 -1.608703e-08
+! 1 cells reported errors [step: 186; t = 1.6401e-02; g_intStage = 1]
+! 8 cells reported errors [step: 187; t = 1.6513e-02; g_intStage = 1]
+! 10 cells reported errors [step: 187; t = 1.6513e-02; g_intStage = 2]
+! 10 cells reported errors [step: 188; t = 1.6625e-02; g_intStage = 1]
+! QuitPLUTO(): from ConsToPrim3D() [exit code = 1000000000010111]
+"
 pluto_glm_best,gPLUTO GLM PPM/HLLD,512,42,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-pluto-glm_best-run-N512-s42/data/pluto_glm_best_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
 [step: 315; t = 1.4476e-02; g_intStage = 1]
 ! 742 cells reported errors [step: 316; t = 1.4527e-02; g_intStage = 1]
@@ -2377,12 +3003,16 @@ enzo_dedner,Enzo Dedner,128,42,complete,True,0.2,196.382412,1,Code-reported: Enz
 enzo_dedner,Enzo Dedner,128,43,complete,True,0.2,195.16018,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N128-s43/data/enzo_dedner_r1,
 enzo_dedner,Enzo Dedner,256,42,complete,True,0.2,3336.557907,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N256-s42/data/enzo_dedner_r1,
 enzo_dedner,Enzo Dedner,256,43,complete,True,0.2,3337.075534,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N256-s43/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,512,42,complete,True,0.2,22206.954026,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N512-s42/data/enzo_dedner_r1,
+enzo_dedner,Enzo Dedner,512,43,complete,True,0.2,19640.307946,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-dedner-run-N512-s43/data/enzo_dedner_r1,
 enzo_ct,Enzo CT,64,42,complete,True,0.2,79.057436,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N64-s42/data/enzo_ct_r1,
 enzo_ct,Enzo CT,64,43,complete,True,0.2,75.926736,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N64-s43/data/enzo_ct_r1,
 enzo_ct,Enzo CT,128,42,complete,True,0.2,937.664497,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N128-s42/data/enzo_ct_r1,
 enzo_ct,Enzo CT,128,43,complete,True,0.2,489.05075,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N128-s43/data/enzo_ct_r1,
 enzo_ct,Enzo CT,256,42,complete,True,0.2,12247.560584,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N256-s42/data/enzo_ct_r1,
 enzo_ct,Enzo CT,256,43,complete,True,0.2,6655.62585,1,Code-reported: Enzo wall clock at the end (with its output); wall_seconds includes startup,32 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N256-s43/data/enzo_ct_r1,
+enzo_ct,Enzo CT,512,42,complete,True,0.2,90205.032891,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N512-s42/data/enzo_ct_r1,
+enzo_ct,Enzo CT,512,43,complete,True,0.2,113068.787237,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,128 CPU ranks (environment),fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-enzo-ct-run-N512-s43/data/enzo_ct_r1,
 phantom_sph,Phantom SPH,64,42,complete,True,0.20000000000000023,1628.1,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N64-s42/data/phantom_sph_r1,
 phantom_sph,Phantom SPH,64,43,complete,True,0.20000000000000023,1091.7,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N64-s43/data/phantom_sph_r1,
 phantom_sph,Phantom SPH,128,42,complete,True,0.20000000000000023,6870.6,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N128-s42/data/phantom_sph_r1,
@@ -2433,4 +3063,52 @@ phantom_sph,Phantom SPH,256,42,failed,False,0.020000000000000222,,0,incomplete o
  t =  0.35112E-01 dt =  9.036E-06 (courant)
 
  FATAL ERROR! maketree: number of nodes exceeds array dimensions, increase ncellsmax and recompile  = 33554432
+"
+phantom_sph,Phantom SPH,256,43,failed,False,0.04000000000000022,,0,incomplete or invalid,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/decay_supersonic-phantom-sph-run-N256-s43/data/phantom_sph_r1,"exit code 1; missing output times [0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+9909E-01 dt =  1.339E-05 (courant)
+ t =  0.49922E-01 dt =  1.340E-05 (courant)
+ t =  0.49935E-01 dt =  1.354E-05 (courant)
+ t =  0.49949E-01 dt =  1.370E-05 (courant)
+ t =  0.49963E-01 dt =  1.366E-05 (courant)
+ t =  0.49976E-01 dt =  1.292E-05 (courant)
+ t =  0.49989E-01 dt =  1.311E-05 (courant)
+ t =  0.50002E-01 dt =  1.281E-05 (courant)
+ t =  0.50015E-01 dt =  1.301E-05 (courant)
+ t =  0.50028E-01 dt =  1.323E-05 (courant)
+ t =  0.50041E-01 dt =  1.288E-05 (courant)
+ t =  0.50054E-01 dt =  1.281E-05 (courant)
+ t =  0.50067E-01 dt =  1.253E-05 (courant)
+ t =  0.50079E-01 dt =  1.268E-05 (courant)
+ t =  0.50092E-01 dt =  1.285E-05 (courant)
+ t =  0.50105E-01 dt =  1.290E-05 (courant)
+ t =  0.50118E-01 dt =  1.310E-05 (courant)
+ t =  0.50131E-01 dt =  1.264E-05 (courant)
+ t =  0.50144E-01 dt =  1.276E-05 (courant)
+ t =  0.50156E-01 dt =  1.268E-05 (courant)
+ t =  0.50169E-01 dt =  1.290E-05 (courant)
+ t =  0.50182E-01 dt =  1.314E-05 (courant)
+ t =  0.50195E-01 dt =  1.314E-05 (courant)
+ t =  0.50208E-01 dt =  1.302E-05 (courant)
+ t =  0.50221E-01 dt =  1.328E-05 (courant)
+ t =  0.50235E-01 dt =  1.356E-05 (courant)
+ t =  0.50248E-01 dt =  1.337E-05 (courant)
+ t =  0.50262E-01 dt =  1.359E-05 (courant)
+ t =  0.50275E-01 dt =  1.356E-05 (courant)
+ t =  0.50289E-01 dt =  1.359E-05 (courant)
+ t =  0.50302E-01 dt =  1.340E-05 (courant)
+ t =  0.50316E-01 dt =  1.331E-05 (courant)
+ t =  0.50329E-01 dt =  1.346E-05 (courant)
+ t =  0.50342E-01 dt =  1.362E-05 (courant)
+ t =  0.50356E-01 dt =  1.320E-05 (courant)
+ t =  0.50369E-01 dt =  1.337E-05 (courant)
+ t =  0.50383E-01 dt =  1.356E-05 (courant)
+ t =  0.50396E-01 dt =  1.334E-05 (courant)
+ t =  0.50410E-01 dt =  1.354E-05 (courant)
+ t =  0.50423E-01 dt =  1.377E-05 (courant)
+ t =  0.50437E-01 dt =  1.401E-05 (courant)
+
+ You can ignore this error and continue by setting the 
+ environment variable I_WILL_NOT_PUBLISH_CRAP=yes to continue
+
+ FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
 "

@@ -341,6 +341,7 @@ def week_2026_11_04():
              ("AREPO's static mesh finishes the field loop", f"Its field error is {arepo.get('64', 0):.0f}× the field at 64², {arepo.get('128', 0):.0f}× at 128²",
               "Flagged; not yet marked invalid")]
     open_rows = [(e(names[f]), where[f], new.get((f, "open"), 0)) for f in NEWCODES if new.get((f, "open"))]
+    fetched = (sd.NEWCODES_RESULTS.parent/"FETCHED").read_text().strip()
 
     title = "Progress, 28 October – 4 November 2026"
     summary = [f"AthenaPK, Cholla, gPLUTO, Enzo and Phantom on every test: {finished:,} of {planned:,} runs finished.",
@@ -426,9 +427,10 @@ def week_2026_11_04():
       table(("what was wrong", "effect", "fix"), fixes),
       "<p>Found in an audit of our own records and conversions before the final rebuild. The GIZMO error was found by the convergence checks of "
       "section 4: every grid of GIZMO's had the same error floor, which its own-grid comparison could not show.</p>")}
-{card(6, "Runs still going, and next steps",
-      table(("code", "", "runs still to run"), open_rows),
-      bullets(["When they are in: the last fetch, every analysis and page rebuilt, and the site published again.",
+{card(6, "Runs still going, and next steps" if open_rows else "Next steps", table(("code", "", "runs still to run"), open_rows) if open_rows else
+      f"<p>Every one of the {len(sw.newcodes):,} planned runs of the five new codes has ended; the records were fetched {e(fetched)} and every "
+      "number and figure on this page is built from them.</p>", bullets(
+              (["When they are in: the last fetch, every analysis and page rebuilt, and the site published again."] if open_rows else []) + [
                "The convergence checks of section 4 in 3D (the 3D states are too large to fetch: a job on Sherlock).",
                "Decide whether to mark AREPO's static field loop invalid."]))}'''
     return dict(first="2026-10-28", last=week, title=title, summary=summary, html=body)

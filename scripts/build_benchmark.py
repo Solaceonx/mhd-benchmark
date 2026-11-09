@@ -36,6 +36,7 @@ CODES = (("glm", "Abel et al., GLM kernels", "GPU", "Float32 state; the f16 kern
          ("athenak", "AthenaK", "GPU", "fp64"), ("athenapk", "AthenaPK", "GPU", "fp64"), ("cholla", "Cholla", "GPU", "fp64"),
          ("pluto", "gPLUTO", "GPU", "fp64"), ("miniramses", "RAMSES II (E. Moseley)", "GPU", "fp64"), ("athenapp", "Athena++", "CPU", "fp64"), ("ramses", "RAMSES", "CPU", "fp64"),
          ("enzo", "Enzo", "CPU", "fp64"), ("arepo", "AREPO", "CPU", "fp64"), ("gizmo", "GIZMO", "CPU", "fp64"),
+         ("mhdale", "MHD-ALE + our fixes", "CPU", "fp64"),
          ("phantom", "Phantom", "CPU", "fp64"))
 
 

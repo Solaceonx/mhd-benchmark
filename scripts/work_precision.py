@@ -26,6 +26,7 @@ import functools
 import json
 import re
 import sys
+import tomllib
 from pathlib import Path
 
 import numpy as np
@@ -60,6 +61,16 @@ def ranks(resource):
     m = re.search(r"(\d+) CPU rank", resource or "");return int(m.group(1)) if m else None
 
 
+def meta_of(sw, test, method, n, seed=42):
+    """A run's record: sweep_data's, or for MHD-ALE (outside sweep_data; test_diagnostics reads it by its path) its run.toml.
+    Before 2026-11-09 MHD-ALE's runs had no record here and so no curve, against this module's own description."""
+    m = sw.meta(test, method, n, seed)
+    if m is None and method == "mhdale_ale":
+        p = sw.results/f"{test}-mhdale-ale-run-N{n}-s{seed}"/"data"/"mhdale_ale_r1"/"run.toml"
+        m = tomllib.loads(p.read_text()) if p.is_file() else None
+    return m or {}
+
+
 @functools.lru_cache(maxsize=None)
 def runs_of(test):
     """The run table of a test's data.json (test_diagnostics.py): {(method, N, seed): row}."""
@@ -77,7 +88,7 @@ def full_rate(sw, method):
     for test, c in sw.configs.items():
         if sd.plan.planar(c):continue
         for (m, n, seed), r in runs_of(test).items():
-            meta = sw.meta(test, m, n, seed) or {}
+            meta = meta_of(sw, test, m, n, seed)
             if m != method or r["status"] != "complete" or not r.get("finite_complete") or meta.get("timing_valid") is False:continue
             mcs = meta.get("million_cell_steps_per_second")
             if not mcs:continue
@@ -98,7 +109,7 @@ def curves(sw, test, kind):
     for g in d["diagnostics"]:
         r = runs.get((g["method"], g["N"]))
         if g.get("seed", 42) != 42 or not g.get("errors") or not r or r["status"] != "complete" or not r.get("finite_complete"):continue
-        err = g["errors"][-1]["values"].get(f"{kind}_relative_L1");meta = sw.meta(test, g["method"], g["N"]) or {}
+        err = g["errors"][-1]["values"].get(f"{kind}_relative_L1");meta = meta_of(sw, test, g["method"], g["N"])
         steps, mcs = meta.get("steps"), meta.get("million_cell_steps_per_second")
         if not err or not steps or not mcs:continue
         cpu = ranks(r.get("resource"))

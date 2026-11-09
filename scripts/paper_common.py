@@ -43,6 +43,7 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     "arepo_moving": ("arepo", "AREPO moving mesh, Powell/HLLD", "AREPO moving mesh", "-", "o"),
     "arepo_static": ("arepo", "AREPO static mesh, Powell/HLLD", "AREPO static mesh", (1.5, (4.5, 4.5)), "s"),
     "gizmo_mfm": ("gizmo", "GIZMO meshless finite mass, Dedner + constrained gradient", "GIZMO MFM", "-", "^"),
+    "mhdale_ale": ("mhdale", "MHD-ALE + our fixes (T. Abel's MFEM code), ALE, SSP-RK3", "MHD-ALE", "-", "v"),
     # the order x solver study (sweep_data.ORDER): the other pairs of reconstruction and solver, at one integrator
     "glm_fix_hll32": ("glm", "GLM Float32 PLM/HLL, fixed", "GLM f32 PLM/HLL", (0, (4.5, 4.5)), "s"),
     "glm_fix_ppm32": ("glm", "GLM Float32 PPM/HLL, fixed", "GLM f32 PPM/HLL", "-.", "D"),

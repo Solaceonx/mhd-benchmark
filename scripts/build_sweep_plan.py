@@ -60,17 +60,19 @@ ADDED = [("glm_fix_hll16", "GLM f16 fix", "GLM production kernel fixed (sweep-fi
          ("pluto_glm_best", "gPLUTO GLM b", "gPLUTO best: parabolic / HLLD / RK3, GLM cleaning (GPU)"),
          ("enzo_dedner", "Enzo Dedner", "Enzo: Dedner cleaning (Wang & Abel 2009), PLM / HLL / RK2 (CPUs)"),
          ("enzo_ct", "Enzo CT", "Enzo: CT (Collins et al. 2010), PLM / HLLD (CPUs)"),
-         ("phantom_sph", "Phantom", "Phantom: smoothed-particle MHD with divergence cleaning (CPUs)")]
+         ("phantom_sph", "Phantom", "Phantom: smoothed-particle MHD with divergence cleaning (CPUs)"),
+         # E. Moseley's RAMSES II, the runs classic RAMSES has (sherlock_miniramses/README.md); planar tests on N^3 cells
+         ("miniramses_matched", "RAMSES II m", "RAMSES II (E. Moseley's mini-ramses-ism): MUSCL-Hancock / HLL, CT, Courant 0.5 (GPU)"),
+         ("miniramses_best", "RAMSES II b", "RAMSES II (E. Moseley's mini-ramses-ism): MUSCL-Hancock / HLLD, CT, Courant 0.8 (GPU)")]
 # Codes being set up: a column each, empty until their runs are fetched.
-PLANNED = [("miniramses_matched", "mini-RAMSES m", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLL: ready to run"),
-           ("miniramses_best", "mini-RAMSES b", "mini-ramses-ism (E. Moseley's RAMSES II), GPU, HLLD: ready to run")]
+PLANNED = []
 # Abel et al.'s GLM kernels, original and fixed: one column in the status grid that opens into one per kernel.
 GLM_GROUP = ("glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "glm_fix_hll16", "glm_fct16", "glm_fix_hlld", "glm_fix_ppm")
 ALL_METHODS = [m for m in METHODS if m[0] in GLM_GROUP] + [m for m in ADDED if m[0] in GLM_GROUP] + \
     [m for m in METHODS if m[0] == "ct"] + [m for m in ADDED if m[0] == "ct_fix"] + \
     [m for m in METHODS if m[0] not in GLM_GROUP and m[0] != "ct" and not m[0].endswith("reference")] + \
     [m for m in ADDED if m[0] not in GLM_GROUP and m[0] != "ct_fix"] + PLANNED + [m for m in METHODS if m[0].endswith("reference")]
-PLANAR_LABELS = ("ramses", "athenapp", "arepo", "mhdale", "miniramses", "gizmo",     # planar tests run as planes
+PLANAR_LABELS = ("ramses", "athenapp", "arepo", "mhdale", "gizmo",                  # planar tests run as planes (RAMSES II: cubes)
                  "athenapk", "cholla", "pluto", "enzo", "phantom")                  # (Cholla: on a slab N x N x 8)
 STATE_TEXT = dict(done="finished", stopped="stopped by the solver", redo="failed, to rerun", open="not finished",
                   unknown="finished or not: only the count is known", skipped="taken out of the sweep")
@@ -312,7 +314,7 @@ def added_rows():
     frac, note, detail) as the export's rows."""
     import sweep_data
     sw = sweep_data.Sweep();out = []
-    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()) + list(sw.gizmo.items()) + list(sw.newcodes.items()):
+    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()) + list(sw.gizmo.items()) + list(sw.newcodes.items()) + list(sw.miniramses.items()):
         test, label, n, seed = key;row = dict(test=test, label=label, n=n, seed=seed, state=r["state"], frac=r.get("frac"), note=r.get("note", ""))
         if r["state"] == "stopped":
             m = sw.meta(*key) or {}
@@ -429,6 +431,32 @@ def newcodes_card():
             f'<p><strong>{ended} of {total} runs have a result ({100*ended/total:.0f} %)</strong>: finished, or stopped by the code itself. '
             'In the grid above, each column from AthenaPK to Phantom has a mark per grid: solid when finished, amber up to how far '
             'it got when the code stopped, a dotted outline when still to run (queued or running on Sherlock).</p>'
+            f'<ul class="checks plain">{"".join(items)}</ul><p class="small">As of the records fetched {e(fetched)}.</p></div>')
+
+
+def miniramses_card():
+    """E. Moseley's RAMSES II, run after the sweep: a card with what its fetched records say (empty when none are here)."""
+    import collections
+    import sweep_data
+    rows = sweep_data.Sweep().miniramses
+    if not rows:return ""
+    stamp = sweep_data.MINIRAMSES_RESULTS/"FETCHED";fetched = stamp.read_text().strip() if stamp.is_file() else "last"
+    items = []
+    for label, name in (("miniramses_matched", "HLL, Courant 0.5"), ("miniramses_best", "HLLD, Courant 0.8")):
+        mine = {k: r for k, r in rows.items() if k[1] == label}
+        if not mine:continue
+        done = sum(r["state"] == "done" for r in mine.values());stopped = sorted(k for k, r in mine.items() if r["state"] == "stopped")
+        text = f"<strong>{name}</strong>: {done} of {len(mine)} runs reached the end"
+        if stopped:
+            tests = collections.Counter(k[0].replace("_", " ") for k in stopped)
+            dts = sorted(float(m[1]) for k in stopped if (m := re.search(r"fallen to (\S+)", rows[k].get("note", ""))))
+            text += "; " + ", ".join(f"{n} on {e(t)}" for t, n in tests.items()) + " stopped at the sweep's step limit"
+            if dts:text += f", after its time step fell to {dts[0]:.0e} to {dts[-1]:.0e}"
+        items.append(f"<li>{text}.</li>")
+    return ('<div class="card"><h3>Run after the sweep: RAMSES II</h3><p>E. Moseley\'s RAMSES II (mini-ramses-ism, commit 579d842), the GPU '
+            'rewrite of RAMSES: constrained transport, MUSCL-Hancock with the MonCen slope, a uniform grid, one H100 per run, double precision. '
+            'Every run classic RAMSES has in the sweep, with its two set-ups, from the suite\'s own starting state through the sweep\'s driver. '
+            'Its GPU path is 3D only, so a planar test runs on N³ cells that are the same at every z.</p>'
             f'<ul class="checks plain">{"".join(items)}</ul><p class="small">As of the records fetched {e(fetched)}.</p></div>')
 
 
@@ -613,7 +641,7 @@ def status_html(status, configs, families, family_of, driven=None, added=()):
             "<script>document.querySelectorAll('.glm-toggle').forEach(b=>b.addEventListener('click',()=>{const t=b.closest('table');"
             "t.classList.toggle('glm-closed');}))</script>"
             f'<p class="small">The GLM column holds Abel et al.\'s {len(GLM_GROUP)} GLM kernels (5 original, 4 fixed); open it for one column per kernel. '
-            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE, the fixed kernels and the five codes from AthenaPK to Phantom ran after the sweep, outside its plan. The MHD-ALE runs use commit adde93b of the code with two fixes of ours: the tolerance of its divergence check scales with the grid spacing, and its fast speed uses c<sub>s</sub>² + v<sub>A</sub>². GIZMO\'s particles are converted to the grid with its own partition of space, which conserves mass exactly.</p>')
+            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE, the fixed kernels the five codes from AthenaPK to Phantom and RAMSES II ran after the sweep, outside its plan. The MHD-ALE runs use commit adde93b of the code with two fixes of ours: the tolerance of its divergence check scales with the grid spacing, and its fast speed uses c<sub>s</sub>² + v<sub>A</sub>². GIZMO\'s particles are converted to the grid with its own partition of space, which conserves mass exactly.</p>')
 
     # ---- counts by method, with a part-to-whole bar (the numbers beside it are the table view)
     t = tally(dict(status, rows=every));tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}
@@ -846,6 +874,7 @@ Only the original GLM kernel and CT run nearly everything; they are also the mos
 {arepo_card()}
 {gizmo_card()}
 {newcodes_card()}
+{miniramses_card()}
 {fixed_card()}
 
 <h2 class="section-title">The plan and its cost</h2>

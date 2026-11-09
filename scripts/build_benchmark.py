@@ -34,7 +34,7 @@ JOBS = (("Smooth waves", ("entropy", "alfven", "alfven_oblique")),
 # Codes in the order of the rows: (family in paper_common.STYLE, name, where it runs, precision)
 CODES = (("glm", "Abel et al., GLM kernels", "GPU", "Float32 state; the f16 kernels compute in Float16"), ("ct", "Abel et al., CT prototype", "GPU", "Float32"),
          ("athenak", "AthenaK", "GPU", "fp64"), ("athenapk", "AthenaPK", "GPU", "fp64"), ("cholla", "Cholla", "GPU", "fp64"),
-         ("pluto", "gPLUTO", "GPU", "fp64"), ("athenapp", "Athena++", "CPU", "fp64"), ("ramses", "RAMSES", "CPU", "fp64"),
+         ("pluto", "gPLUTO", "GPU", "fp64"), ("miniramses", "RAMSES II (E. Moseley)", "GPU", "fp64"), ("athenapp", "Athena++", "CPU", "fp64"), ("ramses", "RAMSES", "CPU", "fp64"),
          ("enzo", "Enzo", "CPU", "fp64"), ("arepo", "AREPO", "CPU", "fp64"), ("gizmo", "GIZMO", "CPU", "fp64"),
          ("phantom", "Phantom", "CPU", "fp64"))
 

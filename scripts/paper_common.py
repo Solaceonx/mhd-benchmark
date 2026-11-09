@@ -65,6 +65,9 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     "enzo_dedner": ("enzo", "Enzo Dedner (Wang & Abel), PLM/HLL/RK2", "Enzo Dedner", (0, (4.5, 4.5)), "s"),
     "enzo_ct": ("enzo", "Enzo CT (Collins et al.), PLM/HLLD", "Enzo CT", "-", "o"),
     "phantom_sph": ("phantom", "Phantom SPMHD, divergence cleaning", "Phantom SPH", "-", "^"),
+    # E. Moseley's RAMSES II (sweep_data.MINIRAMSES): the two set-ups of classic RAMSES, on one H100; in the new codes' panels
+    "miniramses_matched": ("miniramses", "RAMSES II (E. Moseley) MUSCL-Hancock/HLL, CT", "RAMSES II HLL", (0, (4.5, 4.5)), "s"),
+    "miniramses_best": ("miniramses", "RAMSES II (E. Moseley) MUSCL-Hancock/HLLD, CT", "RAMSES II HLLD", "-", "o"),
     "athenak_reference": ("reference", "AthenaK reference", "Reference", "-", ""),
     "athenapp_reference": ("reference", "Athena++ check", "Check", (0, (4, 2)), ""),
 }
@@ -75,6 +78,7 @@ ALL = GPU + OTHER
 AREPO = ("arepo_moving", "arepo_static")      # run after the sweep on the planar tests (sherlock_arepo/); not part of ALL
 GIZMO = ("gizmo_mfm",)                        # the same (sherlock_gizmo/)
 NEWCODES = sweep_data.NEWCODES                 # five more codes, every test (sherlock_newcodes/); their own panels
+MINIRAMSES = sweep_data.MINIRAMSES             # RAMSES II, every test classic RAMSES ran (sherlock_miniramses/); the same panels
 
 
 def color(method):

@@ -72,6 +72,9 @@ FAMILY = dict(ct="#eb6834", glm="#199e70", athenak="#2a78d6", ramses="#4a3aa7", 
 # twelve hues on one set of axes cannot all be told apart. These five pass the dataviz validator on every pair (normal
 # vision 16.3, colour-blind 9.7); cholla's gold and phantom's pink are under 3:1 on white, so the legends name them.
 FAMILY.update(athenapk="#6250d6", cholla="#eda100", pluto="#b0479d", enzo="#7a8b00", phantom="#e87ba4")
+# E. Moseley's RAMSES II shares those panels: its light violet against the five and the reference grey, normal vision 15.7,
+# protan 13.3, deutan 14.5 (OKLab x 100, 2026-11-09); 3.1:1 on white. Against classic RAMSES's indigo it stays apart too.
+FAMILY.update(miniramses="#a07dfb")
 RUN = FAMILY["glm"]        # the green of Tom Abel's kernels: a run made with them
 REFERENCE = "#52514e"      # the grey of reference runs: the branch or code another is compared with
 COLUMN = {"glm": FAMILY["glm"], "ct": FAMILY["ct"], "truth": REFERENCE}     # the three columns of the first pages (progress/style.css)

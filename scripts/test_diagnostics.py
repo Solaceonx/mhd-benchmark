@@ -36,8 +36,9 @@ FIELDS=("density","magnetic")
 NORMS=("L1","L2","Linf")
 ALE_TESTS=re.search(r'^MHDALE_TESTS="([^"]+)"',(ROOT/"sherlock_mhdale/options.sh").read_text(),re.M).group(1).split()
 OURS=sd.GPU_METHODS+sd.FIXED+sd.ORDER_GLM
-METHODS=OURS+sd.EXTERNAL+sd.ORDER[len(sd.ORDER_GLM):]+sd.AREPO+sd.GIZMO+("mhdale_ale",)+sd.NEWCODES
-# The five codes added after the sweep get their own panels (twelve hues cannot share axes), with this run in the
+METHODS=OURS+sd.EXTERNAL+sd.ORDER[len(sd.ORDER_GLM):]+sd.AREPO+sd.GIZMO+("mhdale_ale",)+sd.NEWCODES+sd.MINIRAMSES
+AFTER_SWEEP=sd.NEWCODES+sd.MINIRAMSES      # the codes with their own panels
+# The six codes added after the sweep (five new codes and RAMSES II) get their own panels (twelve hues cannot share axes), with this run in the
 # reference grey as the common yardstick; GREY holds it while those panels are drawn (groups).
 NEW_REFERENCE="athenak_best"
 GREY=set()
@@ -78,11 +79,11 @@ def style(method):
 
 
 def groups(methods):
-    """The panels of a figure: Abel et al. and the codes of the sweep on shared axes; then the five codes added after it,
+    """The panels of a figure: Abel et al. and the codes of the sweep on shared axes; then the six codes added after it,
     with AthenaK PPM/HLLD in grey (GREY, while that panel is drawn)."""
-    old=[m for m in methods if m not in sd.NEWCODES];new=[m for m in methods if m in sd.NEWCODES]
+    old=[m for m in methods if m not in AFTER_SWEEP];new=[m for m in methods if m in AFTER_SWEEP]
     out=[("All codes on shared axes" if not new else "Abel et al. and the codes of the sweep",old,False)] if old else []
-    if new:out.append(("Five more codes, AthenaK PPM/HLLD in grey",new+[NEW_REFERENCE]*(NEW_REFERENCE in methods),True))
+    if new:out.append(("Six more codes, AthenaK PPM/HLLD in grey",new+[NEW_REFERENCE]*(NEW_REFERENCE in methods),True))
     for name,group,grey in out:
         GREY.clear();GREY.update([NEW_REFERENCE] if grey else [])
         yield name,group
@@ -167,7 +168,7 @@ class Run:
                 <=1e-5*max(1,abs(self.diag["time"][-1])))
 
     @property
-    def gpu(self):return self.method in OURS or self.method.startswith("athenak") or self.method.split("_")[0] in ("athenapk","cholla","pluto")
+    def gpu(self):return self.method in OURS or self.method.startswith("athenak") or self.method.split("_")[0] in ("athenapk","cholla","pluto","miniramses")
 
     @functools.cached_property
     def environment(self):
@@ -192,7 +193,7 @@ class Data:
             if method not in METHODS:continue
             path=self.sw.path(test,method,n,"run.toml",seed)
             if path and path.is_file():
-                meta=self.sw.meta(*key);row=self.sw.fixed.get(key) or self.sw.order.get(key) or self.sw.newcodes.get(key)
+                meta=self.sw.meta(*key);row=self.sw.fixed.get(key) or self.sw.order.get(key) or self.sw.newcodes.get(key) or self.sw.miniramses.get(key)
                 if row and row["state"]=="stopped" and meta.get("status")=="complete":   # ran to the end, not a result (sweep_data.blew_up)
                     meta=dict(meta,status="not a result",error=row["note"],result_until=row["reached"])
                 self.runs[key]=Run(test,method,n,seed,path.parent,meta,self.sw.diag(*key) or {},planned)
@@ -208,7 +209,7 @@ class Data:
     def methods(self,test):
         out=self.sw.labels(test,fixed=True)+[m for m in sd.AREPO if test in sd.AREPO_TESTS]+[m for m in sd.GIZMO if test in sd.GIZMO_TESTS]
         if test in ALE_TESTS:out.append("mhdale_ale")
-        out+=[m for m in sd.NEWCODES if self.sw.grids(test,m)]
+        out+=[m for m in AFTER_SWEEP if self.sw.grids(test,m)]
         return list(dict.fromkeys(out))
 
     def select(self,test,n=None,seed=42,methods=None):
@@ -626,7 +627,7 @@ def section(test, figure_prefix=None, data_test=None):
         options="".join(f'<option value="{e(m)}">{e(style(m)["label"].replace("Abel ","").replace("$c_h$","cₕ"))}</option>' for m in methods if m in OURS)
         families=list(dict.fromkeys(m.split("_")[0] for m in methods if m not in OURS))
         names=dict(athenak="AthenaK",ramses="RAMSES",athenapp="Athena++",arepo="AREPO",gizmo="GIZMO",mhdale="MHD-ALE + our fixes",
-                   athenapk="AthenaPK",cholla="Cholla",pluto="gPLUTO",enzo="Enzo",phantom="Phantom")
+                   athenapk="AthenaPK",cholla="Cholla",pluto="gPLUTO",enzo="Enzo",phantom="Phantom",miniramses="RAMSES II")
         external="".join(f'<option value="{e(m)}">{e(names[m])}</option>' for m in families)
         parts.append('<div class="comparison-controls" hidden style="position:sticky;top:0;z-index:4;background:var(--paper);padding:8px 0"><div class="toolbar" style="flex-wrap:wrap;justify-content:flex-start;margin-bottom:6px">'
             '<label class="control-group">Abel kernel <select class="field-select" name="abel-kernel"><option value="">All kernels</option>'+options+'</select></label>'

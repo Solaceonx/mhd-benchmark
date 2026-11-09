@@ -209,36 +209,77 @@ def test_speed_figure(week, rows, t):
     return save(fig, week, f"speed_vs_accuracy_{t}"), [(m, y) for m, _, y, *_ in hit[:3]]
 
 
-def test_error_figure(week, rows, t):
+def own_points(rows, sc, t, m):
+    """(N, error against the set-up's own finest grid, cost) on every grid but the finest (self_convergence.py); [] when
+    its final states are not on the Mac (3D tests)."""
+    own = ((sc.get(t) or {}).get("methods", {}).get(m) or {}).get("own", {})
+    return [(n, own[str(n)], cost) for n, _, cost in sorted(rows[t]["methods"][m]["points"]) if str(n) in own and own[str(n)] > 0]
+
+
+def own_top(rows, sc, t, k=3):
+    """The k set-ups fastest to the target when each judges its error by its own finest grid: (method, that time, the
+    time against the truth or None)."""
+    eps = rows[t]["eps"];out = []
+    for m, x in rows[t]["methods"].items():
+        pts = own_points(rows, sc, t, m)
+        hit = pts and wp.at_error({"points": [dict(N=n, error=err, cost=c) for n, err, c in pts]}, eps)
+        if hit and m in pc.STYLE:out.append((hit[1], m, x["cost"]))
+    return [(m, y, true) for y, m, true in sorted(out)[:k]]
+
+
+def own_bias(rows, sc, t):
+    """How the time each set-up's own finest grid gives compares with the time against the truth, on one test: the
+    ratios truth/own of the set-ups that reach the target both ways, and how many reach it only by their own grid."""
+    eps = rows[t]["eps"];r = [];only_own = 0
+    for m, x in rows[t]["methods"].items():
+        pts = own_points(rows, sc, t, m)
+        hit = pts and wp.at_error({"points": [dict(N=n, error=err, cost=c) for n, err, c in pts]}, eps)
+        if not hit:continue
+        if x["cost"]:r.append(x["cost"]/hit[1])
+        else:only_own += 1
+    return r, only_own
+
+
+def test_error_figure(week, rows, sc, t):
     """One test: error against time to solution, a line per code through its grids (marker: the grid), for the code's
     set-up with the least time to the target on the test (or, if none reached it, the least error on its finest grid).
-    The dashed line is the target."""
+    Left: against the test's truth; right: against the set-up's own finest grid (no truth needed). Dashed: the target."""
     pc.apply_plot_style();plt.rcParams.update({"font.size": 9})
-    fig, ax = plt.subplots(figsize=(8.4, 4.8));eps = rows[t]["eps"];ms = rows[t]["methods"];hs = [];grids = set()
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(11.6, 4.6), sharey=True, gridspec_kw=dict(wspace=.06))
+    eps = rows[t]["eps"];ms = rows[t]["methods"];hs = [];grids = set();own_any = False
     for f, *_ in bb.CODES:
         mine = [m for m in ms if m in pc.STYLE and pc.STYLE[m][0] == f and ms[m]["points"]]
         if not mine:continue
         m = min(mine, key=lambda m: (ms[m]["cost"] is None, ms[m]["cost"] or sorted(ms[m]["points"])[-1][1]))
-        pts = sorted(ms[m]["points"]);c = pc.color(m);cpu = ms[m]["cpu"]
-        ax.plot([q[2] for q in pts], [100*q[1] for q in pts], color=c, lw=1.2, ls="--" if cpu else "-", zorder=2)
-        for n, err, cost in pts:
-            mk, size = GRID_MARK[n];grids.add(n)
-            ax.scatter(cost, 100*err, s=size, marker=mk, facecolor="white" if cpu else c, edgecolor=c, lw=1.1, zorder=3)
+        c = pc.color(m);cpu = ms[m]["cpu"]
+        for a, pts in ((ax, sorted(ms[m]["points"])), (ax2, own_points(rows, sc, t, m))):
+            if not pts:continue
+            own_any |= a is ax2
+            a.plot([q[2] for q in pts], [100*q[1] for q in pts], color=c, lw=1.2, ls="--" if cpu else "-", zorder=2)
+            for n, err, cost in pts:
+                mk, size = GRID_MARK[n];grids.add(n)
+                a.scatter(cost, 100*err, s=size, marker=mk, facecolor="white" if cpu else c, edgecolor=c, lw=1.1, zorder=3)
         hs.append(Line2D([], [], color=c, ls="--" if cpu else "-", label=short(m)))
-    ax.axhline(100*eps, color=pc.INK, lw=.8, ls=(0, (4, 3)), zorder=1)
+    for a in (ax, ax2):
+        a.axhline(100*eps, color=pc.INK, lw=.8, ls=(0, (4, 3)), zorder=1)
+        a.set_xscale("log");a.set_yscale("log");pc.style_axes(a)
+        a.set_xlabel("Time to solution [s] (GPU: one H100; CPU: 128 cores)")
     ax.text(.99, 100*eps*1.08, "target: AthenaK PLM/HLLE at 256²", transform=ax.get_yaxis_transform(), ha="right", va="bottom", fontsize=7.5, color=pc.INK)
-    ax.set_xscale("log");ax.set_yscale("log");pc.style_axes(ax)
-    ax.set_title(f"{TITLES.get(t, t)}: {rows[t]['kind']} error against time to solution", loc="left", fontsize=10)
-    ax.set_xlabel("Time to solution [s] (GPU codes on one H100, CPU codes on 128 cores)")
+    ax.set_title("against the truth", loc="left", fontsize=9.5)
+    ax2.set_title("against the set-up's own finest grid (512²; that grid not shown)", loc="left", fontsize=9.5)
+    if not own_any:
+        ax2.text(.5, .5, "no final states on the Mac for this test\n(3D states stay on Sherlock)", transform=ax2.transAxes,
+                 ha="center", va="center", fontsize=8.5, color=pc.MUTED)
+    fig.suptitle(f"{TITLES.get(t, t)}: {rows[t]['kind']} error against time to solution", x=.125, ha="left", fontsize=10.5)
     ax.set_ylabel(f"{rows[t]['kind'].capitalize()} error, relative L1 [%]")
     hs += [Line2D([], [], color=pc.MUTED, label="GPU (filled)"), Line2D([], [], color=pc.MUTED, ls="--", label="CPU (open)")] + grid_handles(sorted(grids))
-    ax.legend(handles=hs, fontsize=7.5, frameon=False, loc="upper left", bbox_to_anchor=(1.01, 1), title="each code's best set-up here", title_fontsize=8)
+    ax2.legend(handles=hs, fontsize=7.5, frameon=False, loc="upper left", bbox_to_anchor=(1.01, 1), title="each code's best set-up here", title_fontsize=8)
     return save(fig, week, f"error_vs_time_{t}")
 
 
 def test_switcher(figs):
     """The per-test figures behind a row of buttons, a kind of test per row; without script every figure shows."""
-    by = {t: top for t, *_, top in figs};groups = []
+    by = {t: top for t, _, _, top, _ in figs};groups = []
     for job, ts in bb.JOBS:
         ts = [t for t in ts if t in by]
         if ts:groups.append(f'<div class="wpt-group"><span>{e(job)}</span>' + "".join(
@@ -247,7 +288,10 @@ def test_switcher(figs):
         f'<figure class="week-figure"><img src="{src}" alt="{e(TITLES.get(t, t))}: {alt}" loading="lazy"></figure>' for src, alt in (
             (speed_src, "speed against time to the target error"), (error_src, "error against time to solution"))) +
         '<p class="week-caption">Fastest to the target: ' + "; ".join(f"{i}. {e(bb.full_name(m))}, {bb.seconds(y)}" for i, (m, y) in enumerate(top, 1)) +
-        f' · <a href="{bb.test_page(t)}#analysis-03-cost">every set-up on the test\'s page</a></p></div>' for t, speed_src, error_src, top in figs)
+        f' · <a href="{bb.test_page(t)}#analysis-03-cost">every set-up on the test\'s page</a></p>' +
+        ('<p class="week-caption">Fastest by its own finest grid: ' + "; ".join(
+            f"{i}. {e(bb.full_name(m))}, {bb.seconds(y)} (against the truth: {bb.seconds(true) if true else 'not reached'})"
+            for i, (m, y, true) in enumerate(own, 1)) + '</p>' if own else '') + '</div>' for t, speed_src, error_src, top, own in figs)
     script = ('<script>(()=>{const w=document.currentScript.parentElement,b=[...w.querySelectorAll("button")],p=[...w.querySelectorAll(".wpt-panel")];'
               'const show=t=>{p.forEach(x=>x.hidden=x.dataset.t!==t);b.forEach(x=>x.setAttribute("aria-pressed",x.dataset.t===t))};'
               'b.forEach(x=>x.addEventListener("click",()=>show(x.dataset.t)));show(b[0].dataset.t)})()</script>')
@@ -306,7 +350,10 @@ def week_2026_11_04():
         "glm": ("Abel GLM LLF (original)", (-20, 34)), "glm_hlld": ("Abel GLM HLLD, f16/HLL", (-4, -30)), "ct": ("Abel CT prototype", (-8, 0)),
         "cholla_ppmc": ("Cholla PPMC", (8, 0)), "athenak_best": ("AthenaK PPM/HLLD", (8, 0)), "athenak_matched": ("AthenaK PLM/HLLE", (-8, 6)),
         "athenapk_best": ("AthenaPK PPM/HLLD", (-8, 0)), "gizmo_mfm": ("GIZMO", (8, 0)), "phantom_sph": ("Phantom", (8, 0))})
-    per_test = [(t, (f := test_speed_figure(week, rows, t))[0], test_error_figure(week, rows, t), f[1]) for t in tests]
+    per_test = [(t, (f := test_speed_figure(week, rows, t))[0], test_error_figure(week, rows, sc, t), f[1], own_top(rows, sc, t)) for t in tests]
+    bias = {t: own_bias(rows, sc, t) for t in tests};smooth = [x for t in ("entropy", "alfven", "alfven_oblique") for x in bias[t][0]]
+    rough = {t: statistics.median(bias[t][0]) for t in tests if bias[t][0] and t not in ("entropy", "alfven", "alfven_oblique")}
+    only_own = sum(b[1] for b in bias.values());cs_only = bias.get("current_sheet", ([], 0))[1]
     planar_only = sorted({names[pc.STYLE[m][0]] for m in methods if (s := bb.speed(rows, tests, m)) and "³" not in s[1]})
     job_rows = [(e(job), *(f"{e(bb.full_name(m))} <span class='small'>({bb.times(s)})</span>" for m, s in top), f"{n} of {len(methods)}")
                 for job, _, top, n in bb.best(rows, methods, fastest)]
@@ -381,7 +428,7 @@ def week_2026_11_04():
       "<p>The least time to the accuracy, per kind of test (× the fastest on each test, geometric mean over the kind's tests; only set-ups that "
       "reached the accuracy on all of them):</p>",
       table(("tests", "first", "second", "third", "reached all"), job_rows),
-      f"<p><strong>Test by test.</strong> Two plots for each test. The first is the plot above with the time in seconds to that test's target "
+      f"<p><strong>Test by test.</strong> Two figures for each test. The first is the plot above with the time in seconds to that test's target "
       "error; the marker shape is the first grid that reaches the target, so it also shows the memory each set-up needs. The two axes are linked: "
       "time = steps × cells ÷ speed, so time × speed is the work, in cell updates, a set-up needs for the target (the grey diagonals are equal "
       "work, a factor of 10 apart). Moving along a diagonal trades speed for time at the same work; a set-up below another's diagonal needs fewer "
@@ -391,7 +438,14 @@ def week_2026_11_04():
       "set-up with the least time to the target on that test), the target as the dashed line. Where a line crosses the target is the time in the "
       "first plot; the time there is interpolated between the two grids on either side of it, so a set-up that passes well below the target on "
       "a grid is not charged for that whole grid. A set-up already below the target on its coarsest grid has only an upper limit (the arrow); "
-      "one that never reaches it is in the band at the top of the first plot.</p>",
+      "one that never reaches it is in the band at the top of the first plot.</p>"
+      "<p><strong>Without the true solution.</strong> The right panel scores the same runs against each set-up's own finest grid (512², "
+      "averaged to each coarser grid), as one would in a problem with no known answer; the second caption line ranks every set-up that way. "
+      f"On the smooth waves this works: the times agree to within {100*(max(smooth) - 1):.0f} % (median {100*(statistics.median(smooth) - 1):.0f} %) "
+      "and the ranking is the same. Elsewhere it flatters nearly every code: the time it gives is shorter than the true one by a median factor of "
+      f"{min(rough.values()):.1f} to {max(rough.values()):.1f} per test, because a code's 512² run carries its own error, which this measure cannot see, "
+      f"and {only_own} set-ups ({cs_only} of them on the current sheet) seem to reach a target they never reach against the truth: their grids "
+      "agree with each other on an answer that is not the right one. The 3D tests have no right panel: their states stay on Sherlock.</p>",
       test_switcher(per_test),
       more("benchmark.html", "Every set-up and test on the Benchmark page"))}
 {card(3, "Higher order and a better Riemann solver: PLM vs PPM, HLL vs HLLD",

@@ -1,0 +1,7 @@
+# Sherlock's own CUDA toolkit (module cuda/12.4.0, for the H100 nodes' 550 driver): the toolkit artifacts CUDA.jl
+# downloads need glibc 2.27, and Sherlock has 2.17 (job 51642135 failed loading libcublasLt).
+[CUDA_Runtime_jll]
+local = "true"
+
+[CUDA_Compiler_jll]
+local = "true"

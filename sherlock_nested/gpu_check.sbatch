@@ -17,7 +17,7 @@
 #SBATCH --error=logs/%x-%j.out
 set -uo pipefail
 here="$SLURM_SUBMIT_DIR"; cd "$here"
-module load "${JULIA_MODULE:-julia/1.12.6}"
+module load "${JULIA_MODULE:-julia/1.12.6}" ${NESTED_CUDA_MODULES:-devel cuda/12.4.0}   # env/LocalPreferences.toml: the local toolkit
 export JULIA_DEPOT_PATH="${MHD_JULIA_DEPOT:-$HOME/.julia-mhd}:"
 nested="${NESTED_DIR:-$SCRATCH/mhd-study/NestedTurbulence}"
 out="${NESTED_RESULTS:-$SCRATCH/mhd-results-nested}/gpu_check"

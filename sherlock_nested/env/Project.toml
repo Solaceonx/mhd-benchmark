@@ -9,3 +9,7 @@ TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 CUDA = "6.5.1"
 KernelAbstractions = "0.10"
 julia = "1.12"
+
+[extras]
+CUDA_Compiler_jll = "d1e2174e-dfdc-576e-b43e-73b79eb1aca8"
+CUDA_Runtime_jll = "76a88914-d11a-5bdc-97e0-2f5a05c973a2"

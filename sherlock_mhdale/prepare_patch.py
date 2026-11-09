@@ -43,7 +43,7 @@ def fixes(tree, which="all"):
     p = tree/"tools.cpp";t = p.read_text()
     t = edit(t, "        if(GFDivError(gf) <= 1e-11*std::max(norm,real_t(1e-30))) return;\n",
              "        // abel fix: div B is B over a length, so compare it with norm/h. The divergence of an exactly represented\n"
-             "        // field is round-off that grows as the mesh is refined: against norm alone it passes 1e-11 from 128^2\n"
+             "        // field is round-off that grows as the mesh is refined: against norm alone it exceeds 1e-11 from 128^2\n"
              "        // elements of the unit square on, and the mixed solve below does not converge on a fully periodic mesh.\n"
              "        const real_t h = GetMeshSize(gf.ParFESpace()->GetParMesh());\n"
              "        if(GFDivError(gf) <= 1e-11*std::max(norm,real_t(1e-30))/h) return;\n", p.name)

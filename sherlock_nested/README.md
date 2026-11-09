@@ -22,6 +22,17 @@ Not vendored here: the clone lives in `../external/NestedTurbulence` (git-ignore
   3-level nest, CT/GLM, Float32/Float64), and one crossing time of driven Mach-10 turbulence nested
   (3 × 64³, finest 256³ in the central 1/4) and uniform 256³. Output `$SCRATCH/mhd-results-nested/gpu_check/`.
 
+gpu_check, job 51686178 (2026-11-09): CPU and GPU agree to round-off on every level (Float64 1e-8, Float32 1e-6;
+same step counts), CT keeps div B at 1e-15; uniform 1.6–2.1e9 cell updates/s (Float32), 1.15e9 (Float64); the 3-level
+nest 1.1e9 with GLM but 0.37e9 with CT. The driven Mach-10 nest (Courant 0.4) failed after ~55 min: level 2's CFL step
+collapsed (ceil(Int, remaining/dt) overflowed at 8e19). In 3-D these kernels are unsafe at Courant 0.4 (sum rule;
+sherlock_checks, 2026-10-12); Tom's run_mach10.jl is 2-D.
+
+- `driven_debug.jl` / `driven_debug.sbatch`: that failure, small: nest 3 × 32³ and uniform 128³ at Courant 0.4 and
+  0.25, then 3 × 64³ at 0.25; per root step per level the CFL step, density range, max speed and where the largest
+  signal speed is (`<case>.csv`); a watchdog saves every level's state when a step collapses. Output
+  `$SCRATCH/mhd-results-nested/driven_debug/`. Checked on the Mac CPU (`NESTED_BACKEND=cpu ... tiny_c040`).
+
 Send (Mac), then submit (Sherlock):
 
 ```bash

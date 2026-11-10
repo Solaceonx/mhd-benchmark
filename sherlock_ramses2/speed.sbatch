@@ -15,7 +15,9 @@
 set -uo pipefail
 cd "$SLURM_SUBMIT_DIR"; here="$PWD"
 export MHD_CODES="${MHD_CODES:-$SCRATCH/mhd-codes-sweep}"
-results="${RAMSES2_RESULTS:-$SCRATCH/mhd-results-ramses2}"; mkdir -p "$results"
+tag="$(cd "$MHD_CODES/ramses2" && git rev-parse --short=7 HEAD)"       # builds and results per commit of the source
+export RAMSES2_BUILD_ROOT="${RAMSES2_BUILD_ROOT:-$MHD_CODES/ramses2-build-$tag}"
+results="${RAMSES2_RESULTS:-$SCRATCH/mhd-results-ramses2-$tag}"; mkdir -p "$results"
 echo "== $(date -u) on $(hostname); $(nvidia-smi -L | head -n1)"
 
 # ---- compiler: the newest NVIDIA HPC SDK module that builds the code (compiler.sh)
@@ -40,13 +42,13 @@ run_one() {      # variant exe level solver [dump]
 { date -u; hostname; nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader; module list 2>&1; } > "$results/provenance.txt"
 if [[ $built -eq 1 ]]; then
     for npre in 8 4; do for ns in 1 2; do
-        variant="ot_ns${ns}_p${npre}"; exe="$MHD_CODES/ramses2-build/$variant/bin/ramses_ot3d"
-        bash "$here/build.sh" "$ns" "$npre" || { echo "   skipping $variant"; mkdir -p "$results/$variant"; cp "$MHD_CODES/ramses2-build/$variant/build.log" "$results/$variant/" 2>/dev/null; continue; }
-        mkdir -p "$results/$variant"; cp "$MHD_CODES/ramses2-build/$variant/BUILD_INFO.txt" "$MHD_CODES/ramses2-build/$variant/build.log" "$results/$variant/" 2>/dev/null
+        variant="ot_ns${ns}_p${npre}"; exe="$RAMSES2_BUILD_ROOT/$variant/bin/ramses_ot3d"
+        bash "$here/build.sh" "$ns" "$npre" || { echo "   skipping $variant"; mkdir -p "$results/$variant"; cp "$RAMSES2_BUILD_ROOT/$variant/build.log" "$results/$variant/" 2>/dev/null; continue; }
+        mkdir -p "$results/$variant"; cp "$RAMSES2_BUILD_ROOT/$variant/BUILD_INFO.txt" "$RAMSES2_BUILD_ROOT/$variant/build.log" "$results/$variant/" 2>/dev/null
         for solver in hll hlld; do for level in 6 7 8 9; do run_one "$variant" "$exe" "$level" "$solver"; done; done
     done; done
     # One run that also writes the code's snapshots (t = 0 and the end), kept on scratch to check the fields later.
-    exe="$MHD_CODES/ramses2-build/ot_ns1_p8/bin/ramses_ot3d"; [[ -x "$exe" ]] && run_one ot_ns1_p8 "$exe" 8 hlld dump
+    exe="$RAMSES2_BUILD_ROOT/ot_ns1_p8/bin/ramses_ot3d"; [[ -x "$exe" ]] && run_one ot_ns1_p8 "$exe" 8 hlld dump
 fi
 python3 "$here/summarize.py" "$results" --json "$results/summary.json" | tee "$results/summary.txt"
 { echo; echo "compiler: ${nvhpc_chosen:-none}"; grep -H "objects built below -O4" "$results"/*/BUILD_INFO.txt 2>/dev/null | sed "s|$results/||"; } | tee -a "$results/summary.txt"

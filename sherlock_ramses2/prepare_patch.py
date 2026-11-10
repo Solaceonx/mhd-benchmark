@@ -52,6 +52,26 @@ CONDINIT_NEW = """#if INIT==OT
   end do
 #endif
 """
+# Since commit e18f77e4 (E. Moseley, 2026-10-08; in develop from 2026-11-04) upstream sets pi once for every problem,
+# guards the 2D-only Bz line and has the 3D vector potential itself: the same Orszag-Tang block, newer form.
+CONDINIT_OLD_2026_11 = """#if INIT==OT
+  do i=1,nn
+     xc=x(i,1)
+     yc=x(i,2)
+     q(i,1)=25.0/(36.0*pi)
+     q(i,2)=-sin(2.0*pi*yc)
+     q(i,3)=+sin(2.0*pi*xc)
+     q(i,4)=0.0
+     q(i,5)=5.0/(12.0*pi)
+#if NDIM==2
+     q(i,nvar+1)=0.0 ! Bz
+#endif
+  end do
+#endif
+"""
+VECPOT_UPSTREAM_3D = """     A(i) = 0.0
+     if(idim==3)A(i) = B0*(cos(4.0*pi*xx)/(4.0*pi)+cos(2.0*pi*yy)/(2.0*pi))
+"""
 # Upstream declares pi twice when INIT=OT (once for every problem, once in the OT branch), which does not compile.
 DECL_OLD = """#elif INIT==OT
   real(kind=8)::pi,xc,yc
@@ -79,9 +99,16 @@ def swap(text, old, new, name):
 
 def main(src, out):
     src, out = Path(src), Path(out);out.mkdir(parents=True, exist_ok=True)
-    cond = swap((src/"hydro/condinit.f90").read_text(), CONDINIT_OLD, CONDINIT_NEW, "condinit.f90")
-    (out/"condinit.f90").write_text(swap(cond, DECL_OLD, DECL_NEW, "condinit.f90 (declarations)"))
-    (out/"vecpotentialinit.f90").write_text(swap((src/"hydro/vecpotentialinit.f90").read_text(), VECPOT_OLD, VECPOT_NEW, "vecpotentialinit.f90"))
+    cond = (src/"hydro/condinit.f90").read_text()
+    if cond.count(CONDINIT_OLD_2026_11) == 1:                 # the newer upstream: pi set and declared once already
+        cond = cond.replace(CONDINIT_OLD_2026_11, CONDINIT_NEW)
+        if cond.count(DECL_NEW) != 1:sys.exit("condinit.f90 (declarations): not the form this patch knows")
+    else:
+        cond = swap(swap(cond, CONDINIT_OLD, CONDINIT_NEW, "condinit.f90"), DECL_OLD, DECL_NEW, "condinit.f90 (declarations)")
+    (out/"condinit.f90").write_text(cond)
+    vec = (src/"hydro/vecpotentialinit.f90").read_text()
+    if vec.count(VECPOT_UPSTREAM_3D) != 1:vec = swap(vec, VECPOT_OLD, VECPOT_NEW, "vecpotentialinit.f90")
+    (out/"vecpotentialinit.f90").write_text(vec)
     time = (src/"amr/update_time.f90").read_text()
     for old, new in FORMAT_OLD:time = swap(time, old, new, "update_time.f90")
     (out/"update_time.f90").write_text(time)

@@ -1,7 +1,17 @@
 # RAMSES II on one H100: speed, with validation data
 
 Suggested by Eric Moseley (2026-10-05). RAMSES II (github.com/ramses-organisation/ramses2, pinned at commit
-`aafd2abb`, 2026-09-26) has a CUDA Fortran GPU backend whose MHD is constrained transport in double precision.
+`ec616477`, develop of 2026-11-08; the first test, 2026-10-06, was `aafd2abb` of 2026-09-26, results in
+`$SCRATCH/mhd-results-ramses2` and `fix_results/mhd-results-ramses2/` on the Mac) has a CUDA Fortran GPU backend whose
+MHD is constrained transport in double precision.
+
+**2026-11-09, `ec616477`:** E. Moseley's fused-HLLD GPU work is merged (PRs #45, #46: reciprocals in c2p, trace, HLLD
+and 2D-HLLD; the subgrid's neighbour octs staged in shared memory, read once per block; launch bounds per GPU, nsubgrid
+and precision through `GPU_SM`, which `CUDA_ARCH` sets). `NSUBGRID` is now a make variable whose default is **1**:
+`build.sh` passes it (the old `sed` of `gpu_utils.cuf` would leave 1). Upstream now has the 3D vector potential and a
+single `pi`; `prepare_patch.py` takes either form. Builds go to `ramses2-build-<commit>`, results to
+`$SCRATCH/mhd-results-ramses2-<commit>`. Still open upstream: `turb/turb_commons.f90` `find_unitk` folds negative
+wave numbers to |k| (our forcing-projection report); UCT-HLLD remains Metal-only.
 This bundle times it on the problem of the sweep's throughput test, 3D Orszag–Tang to t = 0.05, at 64³–512³.
 
 ## What runs
@@ -54,7 +64,7 @@ module cannot build the code at all, the next two are tried (`compiler.sh`).
 
 When the job has ended (about an hour once it starts):
 
-    cat /scratch/users/lyxia/mhd-results-ramses2/summary.txt; tail -n 30 /scratch/users/lyxia/mhd-study/sherlock_ramses2/logs/ramses2-speed-*.out
+    cat /scratch/users/lyxia/mhd-results-ramses2-ec61647/summary.txt; tail -n 30 /scratch/users/lyxia/mhd-study/sherlock_ramses2/logs/ramses2-speed-*.out
 
 Overrides: `RAMSES2_NVHPC_MODULE` (default: the newest `nvhpc` module that builds the code), `RAMSES2_CHECK_ON=login`, `RAMSES2_CUDA_ARCH` (default: from the GPU),
 `RAMSES2_RESULTS`, `MHD_CODES`.

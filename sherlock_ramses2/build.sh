@@ -1,7 +1,8 @@
 #!/bin/bash
 # Build RAMSES II for one speed-test variant on a Sherlock GPU node (NVIDIA HPC SDK, CUDA Fortran).
 #   bash build.sh NSUBGRID NPRE
-# NSUBGRID: tile size of the GPU kernels (1 or 2 for MHD; hard-coded in gpu/gpu_utils.cuf, so every value is a build).
+# NSUBGRID: tile size of the GPU kernels (1 or 2 for MHD; a make variable, or in gpu/gpu_utils.cuf before November
+# 2026: every value is a build).
 # NPRE: 8 (double precision, the code's default) or 4. The problem is 3D Orszag-Tang (INIT=OT with our patch).
 # Every variant is built in its own copy of the source, $MHD_CODES/ramses2-build/<variant> (or under
 # RAMSES2_BUILD_ROOT); a finished build is kept. RAMSES2_CUDA_ARCH (e.g. sm_90) names the GPU when the build host
@@ -20,9 +21,13 @@ variant="${kind}_ns${ns}_p${npre}"; build="${RAMSES2_BUILD_ROOT:-$codes/ramses2-
 arch="${RAMSES2_CUDA_ARCH:-}"
 [[ -n "$arch" ]] || arch="sm_$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -n1 | tr -d ' .')"
 rm -rf "$build"; mkdir -p "$(dirname "$build")"; cp -R "$src" "$build"
-grep -q "integer, parameter :: nsubgrid = 1" "$build/gpu/gpu_utils.cuf" || { echo "gpu_utils.cuf: nsubgrid line not found" >&2; exit 2; }
-sed -i "s/integer, parameter :: nsubgrid = 1/integer, parameter :: nsubgrid = ${ns}/" "$build/gpu/gpu_utils.cuf"
 opts=(COMPILER=NVHPC "CUDA_ARCH=$arch" NDIM=3 MPI=0 HYDRO=1 MHD=1 "NPRE=$npre" "EXEC=ramses_${kind}")
+if grep -q "^NSUBGRID *=" "$build/bin/Makefile"; then
+    opts+=("NSUBGRID=$ns")          # a make variable since November 2026 (default 1); CUDA_ARCH also sets GPU_SM, its tuning
+else
+    grep -q "integer, parameter :: nsubgrid = 1" "$build/gpu/gpu_utils.cuf" || { echo "gpu_utils.cuf: nsubgrid line not found" >&2; exit 2; }
+    sed -i "s/integer, parameter :: nsubgrid = 1/integer, parameter :: nsubgrid = ${ns}/" "$build/gpu/gpu_utils.cuf"
+fi
 python3 "$here/prepare_patch.py" "$src" "$build/abel-patch"
 opts+=(INIT=OT "PATCH=$build/abel-patch")
 echo "== building $variant: make ${opts[*]}"

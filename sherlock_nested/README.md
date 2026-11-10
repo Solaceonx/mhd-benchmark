@@ -28,6 +28,16 @@ nest 1.1e9 with GLM but 0.37e9 with CT. The driven Mach-10 nest (Courant 0.4) fa
 collapsed (ceil(Int, remaining/dt) overflowed at 8e19). In 3-D these kernels are unsafe at Courant 0.4 (sum rule;
 sherlock_checks, 2026-10-12); Tom's run_mach10.jl is 2-D.
 
+**Fixed 2026-11-10.** Two causes, both 3-D only. (1) Courant 0.4 (sum rule) is unstable in 3-D even uniform: 0.25.
+(2) `prolong_cells_kernel!` (interlevel.jl) adds three independently MonCen-limited slopes, so a ghost cell at a corner
+of its coarse cell can reach q0 − 3/2·q0 < 0 next to a near-vacuum (2-D: at most 0): negative ghost density beside the
+face where |B| ran away (every 3-D nest, CT or GLM, 2 or 3 levels, t ≈ 0.034). Fix: one α scales every slope of the
+cell so the fine density stays ≥ the lowest of the six coarse neighbours; non-positive thermal energy → coarse state.
+Branch `gpu-3d-fixes` (4fe5682) of `../external/NestedTurbulence` (local; not in Tom's repository), on Sherlock as
+`$SCRATCH/mhd-study/NestedTurbulence-gpu3d` (`NESTED_DIR`). Job 51745822: 3 × 64³ and 3 × 32³ CT, 2 × 32³, GLM all reach
+t = 0.1 at Mach 10.1–10.3, CT div B 1e-15; Tom's 2-D nest unchanged. Driving's per-root-step `totals(H)` copies the root
+to the host: it dominates the wall time of these small runs (75 Mcell/s for 3 × 64³).
+
 - `driven_debug.jl` / `driven_debug.sbatch`: that failure, small: nest 3 × 32³ and uniform 128³ at Courant 0.4 and
   0.25, then 3 × 64³ at 0.25; per root step per level the CFL step, density range, max speed and where the largest
   signal speed is (`<case>.csv`); a watchdog saves every level's state when a step collapses. Output

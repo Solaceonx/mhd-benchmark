@@ -79,7 +79,10 @@ def main(src, out):
     # module abel_ic first: the Makefile builds this file before condinit.f90 (bin/deps.mk), which uses the module
     (out/"input_hydro_condinit.f90").write_text((HERE/"patch"/"abel_ic.f90").read_text() + "\n" + text + FACES)
     name = "pm/newdt_fine.f90";text = (src/name).read_text()
-    text = edit(text, "  if(r%fixed_dt>0.0d0)g%dtnew(ilevel)=r%fixed_dt\n", CLAMP + "  if(r%fixed_dt>0.0d0)g%dtnew(ilevel)=r%fixed_dt\n", name)
+    if text.count("  if(r%fixed_dt>0.0d0)g%dtnew(ilevel)=r%fixed_dt\n") == 1:          # mini-ramses-ism 579d842
+        text = edit(text, "  if(r%fixed_dt>0.0d0)g%dtnew(ilevel)=r%fixed_dt\n", CLAMP + "  if(r%fixed_dt>0.0d0)g%dtnew(ilevel)=r%fixed_dt\n", name)
+    else:                     # public RAMSES II (develop ec61647, 2026-11-08): no fixed_dt; after every limit of the level
+        text = edit(text, "  ! Adaptive time step condition\n", CLAMP + "\n  ! Adaptive time step condition\n", name)
     (out/"newdt_fine.f90").write_text(text)
     print("mini-ramses patch written to", out)
 

@@ -4,7 +4,8 @@
 # NDIM: 2 (the planar tests) or 3. NPRE: 8 (double precision) or 4 (single, Eric Moseley's production setting).
 # One build per (NDIM, NPRE) in its own copy of the source, $MHD_CODES/miniramses-build/nd<NDIM>_p<NPRE> (or under
 # MINIRAMSES_BUILD_ROOT), patched by prepare_patch.py (the sweep's initial data, exact output times); a finished build
-# is kept. MINIRAMSES_CUDA_ARCH (e.g. sm_90) names the GPU when the build host has none, as on a login node.
+# is kept. MINIRAMSES_SRC builds another RAMSES II source the same way (timing.sbatch: public develop); NSUBGRID is
+# 2 (MINIRAMSES_NSUBGRID): mini-ramses-ism's Makefile default, public RAMSES II's is 1. MINIRAMSES_CUDA_ARCH (e.g. sm_90) names the GPU when the build host has none, as on a login node.
 #
 # As in sherlock_ramses2/build.sh: nvfortran 25.1 stopped with an internal compiler error on cooling/cooling_module.f90
 # of RAMSES II at the Makefile's -O4. An object that fails this way is built at the highest optimisation level that
@@ -12,7 +13,7 @@
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 codes="${MHD_CODES:-${SCRATCH:?set MHD_CODES or SCRATCH}/mhd-codes-sweep}"
-src="$codes/miniramses-ism"; ndim="${1:?usage: build.sh NDIM NPRE}"; npre="${2:?usage: build.sh NDIM NPRE}"
+src="${MINIRAMSES_SRC:-$codes/miniramses-ism}"; ndim="${1:?usage: build.sh NDIM NPRE}"; npre="${2:?usage: build.sh NDIM NPRE}"
 variant="nd${ndim}_p${npre}"; build="${MINIRAMSES_BUILD_ROOT:-$codes/miniramses-build}/$variant"; exe="$build/bin/ramses${ndim}d"
 [[ -x "$exe" ]] && { echo "already built: $exe"; exit 0; }
 [[ -d "$src/gpu" ]] || { echo "mini-ramses-ism source not found in $src (run fetch.sh)" >&2; exit 2; }
@@ -20,7 +21,7 @@ arch="${MINIRAMSES_CUDA_ARCH:-}"
 [[ -n "$arch" ]] || arch="sm_$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -n1 | tr -d ' .')"
 rm -rf "$build"; mkdir -p "$(dirname "$build")"; cp -R "$src" "$build"
 python3 "$here/prepare_patch.py" "$src" "$build/abel-patch"
-opts=(COMPILER=NVHPC "CUDA_ARCH=$arch" "NDIM=$ndim" MPI=0 HYDRO=1 MHD=1 "NPRE=$npre" "PATCH=$build/abel-patch")
+opts=(COMPILER=NVHPC "CUDA_ARCH=$arch" "NDIM=$ndim" MPI=0 HYDRO=1 MHD=1 "NPRE=$npre" "NSUBGRID=${MINIRAMSES_NSUBGRID:-2}" "PATCH=$build/abel-patch")
 echo "== building $variant: make ramses ${opts[*]}"
 jobs="${SLURM_CPUS_PER_TASK:-8}"; lowered=""; ok=0; keep=()
 mk() { ( cd "$build/bin" && make "$@" "${opts[@]}" ); }

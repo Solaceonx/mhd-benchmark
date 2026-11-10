@@ -21,13 +21,22 @@ const DT_FLOOR = parse(Float64, get(ENV, "NESTED_DT_FLOOR", "2e-7"))
 const MAX_SUB = parse(Int, get(ENV, "NESTED_MAX_SUB", "20000"))
 say(x...) = (println(x...); flush(stdout))
 
-# (name, root cells, levels, Courant, t_end): Mach 10, CT, HLL, Float64, as gpu_check's driven run
+# (name, root cells, levels, Courant, t_end, options): Mach 10, HLL, Float64, as gpu_check's driven run; options: mode
+# (:ct), dims (3; 2 = Tom Abel's run_mach10.jl nest), and Hierarchy's adaptive, time_interp, skip_covered (all true)
 const CASES = Dict(
-    "nest32_c040" => (32, 3, 0.40, 0.1), "uni128_c040" => (128, 1, 0.40, 0.1),
-    "nest32_c025" => (32, 3, 0.25, 0.1), "uni128_c025" => (128, 1, 0.25, 0.1),
-    "nest64_c025" => (64, 3, 0.25, 0.1),
-    "tiny_c040"   => (8, 3, 0.40, 0.004))                                # the Mac check
-const ORDER = length(ARGS) > 2 ? ARGS[3:end] : ["nest32_c040", "uni128_c040", "nest32_c025", "uni128_c025", "nest64_c025"]
+    "nest32_c040" => (32, 3, 0.40, 0.1, (;)), "uni128_c040" => (128, 1, 0.40, 0.1, (;)),
+    "nest32_c025" => (32, 3, 0.25, 0.1, (;)), "uni128_c025" => (128, 1, 0.25, 0.1, (;)),
+    "nest64_c025" => (64, 3, 0.25, 0.1, (;)),
+    # job 51708826: the 3-D nests fail at level 2's outer faces (|B| first), at either Courant number; one change each
+    "nest32_glm"     => (32, 3, 0.25, 0.1, (mode=:glm,)),          # no CT: face-field prolongation, EMF correction
+    "nest32_2lev"    => (32, 2, 0.25, 0.1, (;)),                   # no level that is both child and parent
+    "nest32_fixed"   => (32, 3, 0.25, 0.1, (adaptive=false,)),     # ratio-2 subcycling instead of per-level CFL steps
+    "nest32_stale"   => (32, 3, 0.25, 0.1, (time_interp=false,)),  # ghosts from the parent's last state, not blended
+    "nest32_noskip"  => (32, 3, 0.25, 0.1, (skip_covered=false,)), # the parent also updates deep inside its child
+    "tom2d_c040"     => (64, 3, 0.40, 0.1, (dims=2,)),             # Tom's 2-D nest, which runs on the CPU
+    "tiny_c040"   => (8, 3, 0.40, 0.004, (;)), "tiny_2d" => (16, 3, 0.40, 0.004, (dims=2,)),   # the Mac checks
+    "tiny_glm_fixed" => (8, 3, 0.25, 0.004, (mode=:glm, adaptive=false, time_interp=false, skip_covered=false)))
+const ORDER = length(ARGS) > 2 ? ARGS[3:end] : ["nest32_glm", "nest32_2lev", "nest32_fixed", "nest32_stale", "nest32_noskip", "tom2d_c040"]
 
 struct Abort <: Exception; why::String; end
 
@@ -87,14 +96,19 @@ end
 
 results = Dict{String,Any}()
 for name in ORDER
-    N, nlev, courant, tend = CASES[name]
-    say(@sprintf("== %s: %s, Courant %.2f, Mach 10, CT, HLL, Float64, to t = %g", name, nlev == 1 ? "uniform $(N)³" :
-                 "nest $nlev × $(N)³ (finest $(N*2^(nlev-1))³ in the central 1/$(2^(nlev-1)))", courant, tend))
+    N, nlev, courant, tend, opt = CASES[name]
+    mode = get(opt, :mode, :ct); dims = get(opt, :dims, 3); hk = Base.structdiff(opt, NamedTuple{(:mode, :dims)})
+    say(@sprintf("== %s: %s, Courant %.2f, Mach 10, %s, HLL, Float64, to t = %g%s", name, dims == 2 ? "2-D nest of Tom's run_mach10.jl, root $(N)²" :
+                 nlev == 1 ? "uniform $(N)³" : "nest $nlev × $(N)³ (finest $(N*2^(nlev-1))³ in the central 1/$(2^(nlev-1)))",
+                 courant, uppercase(string(mode)), tend, isempty(hk) ? "" : ", " * join(("$k = $v" for (k, v) in pairs(hk)), ", ")))
     GC.gc(); CPU_RUN || CUDA.reclaim()
     cs = 1.0; B0 = sqrt(2cs^2/200)
-    H = nested_central(N, nlev; n=N, mode=:ct, riemann=:hll, T=Float64, backend=BE, gamma=1.01, courant=courant)
+    H = dims == 2 ?
+        Hierarchy(; N0=(N, N, 1), levels=[((N÷2+1, N÷2+1, 1), (N, N, 2)), ((3N÷2+1, 3N÷2+1, 1), (N, N, 4))], mode=mode,
+                  riemann=:hll, T=Float64, backend=BE, gamma=1.01, courant=courant, hk...) :
+        nested_central(N, nlev; n=N, mode=mode, riemann=:hll, T=Float64, backend=BE, gamma=1.01, courant=courant, hk...)
     init!(H, (x, y, z) -> (1.0, 0.0, 0.0, 0.0, cs^2, B0, 0.0, 0.0); vecpot=(x, y, z) -> (0.0, 0.0, B0*y))
-    d = Driving(H; mach=10.0, cs=cs, kmin=1, kmax=3, zeta=1.0, two_d=false, seed=1)
+    d = Driving(H; mach=10.0, cs=cs, kmin=1, kmax=3, zeta=1.0, two_d=dims == 2, seed=1)
     push!(H.sources, d)
     io = open(joinpath(OUT, "$name.csv"), "w")
     println(io, "t,level,nsteps,substeps,dt_cfl,rho_min,rho_max,v_max,b_max,sig_max,x,y,z,i,j,k,amp,mach_m,wall")

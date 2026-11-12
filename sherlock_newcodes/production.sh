@@ -27,6 +27,8 @@ gpu2=(--partition=gpu,owners --requeue -G 2 --constraint=GPU_SKU:H100_SXM5 --nod
 for code in "$@"; do
     case $code in
         athenapk|cholla) "$py" tasks.py "$code" > "tasks/$code.txt" && LINES_PER_TASK=5 submit "$code" "tasks/$code.txt" "${gpu[@]}" ;;
+        # single precision (2026-11-12): one H100 each, 3D 512^3 included (Cholla in Float32 fits one GPU); 128 GB for the driver's 512^3 frames
+        athenakf32|athenapkf32|chollaf32) "$py" tasks.py "$code" > "tasks/$code.txt" && LINES_PER_TASK=5 submit "$code" "tasks/$code.txt" "${gpu[@]/--mem=64G/--mem=128G}" ;;
         # Lines of tasks/athenapk.txt with the grids that aborted on blocks of 256, written by hand
         athenapk-redo) LINES_PER_TASK=5 submit "athenapk, again" tasks/athenapk_redo.txt "${gpu[@]}" ;;
         # Lines of tasks/cholla.txt whose task stopped (Cholla's own stops were read as lost jobs), 3D grids to 256; and the

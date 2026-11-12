@@ -73,7 +73,7 @@ def edit(path, old, new, done):
 def main(root, header):
     root = Path(root);grid = root/"src/grid"
     shutil.copy(header, grid/"abel_problems.hpp")
-    for f in ("make.type.abel_plmc", "make.type.abel_ppmc", "make.host.sherlock"):shutil.copy(HERE/f, root/"builds"/f)
+    for f in ("make.type.abel_plmc", "make.type.abel_ppmc", "make.type.abel_plmc_f32", "make.type.abel_ppmc_f32", "make.host.sherlock"):shutil.copy(HERE/f, root/"builds"/f)
     edit(grid/"grid3D.h", "  void Orszag_Tang_Vortex();\n",
          "  void Orszag_Tang_Vortex();\n  void Abel_Suite();  // abel: the comparison suite (init=Abel)\n", "Abel_Suite()")
     ic = grid/"initial_conditions.cpp"

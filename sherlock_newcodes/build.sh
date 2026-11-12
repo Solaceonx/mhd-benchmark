@@ -5,6 +5,7 @@
 #   pluto      gPLUTO, OpenACC for the H100 (NVHPC), one build per set-up and dimension -> pluto/<set-up>-<2|3>d/pluto
 #   enzo       Enzo, MPI, double precision                                      -> enzo/build/bin/enzo (or the path printed)
 #   phantom    Phantom, OpenMP, MHD, periodic, our set-up and analysis             -> phantom/tree/bin/{phantom,phantomsetup,phantomanalysis}
+#   athenak-f32, athenapk-f32, cholla-f32: single-precision builds of the GPU codes (athenak-f32/, athenapk-f32/, cholla/*_f32/)
 # Everything under $MHD_CODES/newcodes. A build is always remade from the sources; the sources are never changed.
 set -uo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -26,12 +27,25 @@ cpu_mods="${NEWCODES_CPU_MODULES:-devel system git/2.45.1 gcc/12.4.0 openmpi/4.1
 use() { module purge >/dev/null 2>&1; module load $1 >/dev/null 2>&1 || { echo "module load $1 failed"; module load $1; }; }
 prefix_of() { dirname "$(dirname "$(command -v "$1")")"; }
 
-build_athenapk() {
-    fresh "$src/athenapk" "$root/athenapk/tree" && python3 "$here/athenapk/patch_athenapk.py" "$root/athenapk/tree" "$header" \
-    && NVCC_WRAPPER_DEFAULT_COMPILER=g++ cmake -S "$root/athenapk/tree" -B "$root/athenapk/build" -DCMAKE_BUILD_TYPE=Release \
-         -DKokkos_ENABLE_CUDA=ON -DKokkos_ARCH_HOPPER90=ON -DCMAKE_CXX_COMPILER="$root/athenapk/tree/external/Kokkos/bin/nvcc_wrapper" \
+build_athenapk() {   # [f32]: single precision (PARTHENON_SINGLE_PRECISION) in athenapk-f32/
+    local d="$root/athenapk${1:+-$1}" single=OFF; [[ "${1:-}" == f32 ]] && single=ON
+    fresh "$src/athenapk" "$d/tree" && python3 "$here/athenapk/patch_athenapk.py" "$d/tree" "$header" \
+    && NVCC_WRAPPER_DEFAULT_COMPILER=g++ cmake -S "$d/tree" -B "$d/build" -DCMAKE_BUILD_TYPE=Release \
+         -DKokkos_ENABLE_CUDA=ON -DKokkos_ARCH_HOPPER90=ON -DCMAKE_CXX_COMPILER="$d/tree/external/Kokkos/bin/nvcc_wrapper" \
          -DPARTHENON_DISABLE_OPENPMD=ON -DPARTHENON_ENABLE_PYTHON_MODULE_CHECK=OFF -DHDF5_ROOT="$(prefix_of h5pcc 2>/dev/null || prefix_of h5cc)" \
-    && NVCC_WRAPPER_DEFAULT_COMPILER=g++ cmake --build "$root/athenapk/build" -j "$jobs"
+         -DPARTHENON_SINGLE_PRECISION="$single" \
+    && NVCC_WRAPPER_DEFAULT_COMPILER=g++ cmake --build "$d/build" -j "$jobs"
+}
+# AthenaK in single precision, for the GPU codes' fp32 comparison (lyxia, 2026-11-12): the sweep's AthenaK source at its
+# pinned commit, restored to upstream in a copy and patched by the sweep's patch_athenak.py (which also makes the types
+# agree where single precision did not compile), Athena_SINGLE_PRECISION=ON, for the H100 -> athenak-f32/build/src/athena
+build_athenak_f32() {
+    local d="$root/athenak-f32" ak="${ATHENAK_DIR:-$codes/athenak}"
+    rm -rf "$d" && mkdir -p "$d" && rsync -a --exclude 'build-*' --exclude 'build' "$ak/" "$d/tree/" \
+    && (cd "$d/tree" && git checkout -q -- . ) && python3 "$SWEEP_BUNDLE/codes/athenak/patch_athenak.py" "$d/tree" \
+    && cmake -S "$d/tree" -B "$d/build" -D CMAKE_BUILD_TYPE=Release -D PROBLEM=abel_suite -D Athena_SINGLE_PRECISION=ON \
+         -D Kokkos_ENABLE_CUDA=ON -D Kokkos_ARCH_HOPPER90=ON -D CMAKE_CXX_COMPILER="$d/tree/kokkos/bin/nvcc_wrapper" \
+    && cmake --build "$d/build" -j "$jobs"
 }
 build_cholla() {    # set-up
     local t="$root/cholla/$1"
@@ -110,6 +124,9 @@ echo "== building under $root, $jobs at a time, $(date -u)"; bad=0
 for code in "${want[@]}"; do
     case $code in
         athenapk) use "$cuda_mods"; step athenapk "$root/athenapk/build/bin/athenaPK" build_athenapk || bad=1 ;;
+        athenapk-f32) use "$cuda_mods"; step athenapk-f32 "$root/athenapk-f32/build/bin/athenaPK" build_athenapk f32 || bad=1 ;;
+        athenak-f32) use "$cuda_mods"; step athenak-f32 "$root/athenak-f32/build/src/athena" build_athenak_f32 || bad=1 ;;
+        cholla-f32) use "$cuda_mods"; for s in plmc_f32 ppmc_f32; do step "cholla-$s" "$root/cholla/$s/bin/cholla.abel_$s.sherlock" build_cholla $s || bad=1; done ;;
         cholla) use "$cuda_mods"; for s in plmc ppmc; do step "cholla-$s" "$root/cholla/$s/bin/cholla.abel_$s.sherlock" build_cholla $s || bad=1; done ;;
         pluto) use "$nvhpc_mods"; step pluto-tree "$root/pluto/tree/Config/linux.sherlock.acc.defs" build_pluto_tree || { bad=1; continue; }
                for s in ct_matched ct_best glm_matched glm_best; do for d in 2 3; do step "pluto-$s-${d}d" "$root/pluto/$s-${d}d/pluto" build_pluto $s $d || bad=1; done; done ;;

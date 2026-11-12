@@ -14,7 +14,9 @@ TESTS = ("alfven alfven_oblique blast_2d_b0 blast_2d_b50 blast_2d_b100 blast_3d_
          "brio_wu_rotated current_sheet decay decay_supersonic entropy field_loop field_loop_3d field_loop_novz gem "
          "kh_localized kh_uniform orszag_tang orszag_tang_3d rotor uniform").split()
 VARIANTS = {"athenapk": ["matched", "best"], "cholla": ["plmc", "ppmc"], "pluto": ["ct_matched", "ct_best", "glm_matched", "glm_best"],
-            "enzo": ["dedner", "ct"], "phantom": ["sph"]}
+            "enzo": ["dedner", "ct"], "phantom": ["sph"],
+            # single precision of the GPU codes (2026-11-12); AthenaK as in the sweep: every test in 3D (planar ones on N^3)
+            "athenakf32": ["matched", "best"], "athenapkf32": ["matched", "best"], "chollaf32": ["plmc", "ppmc"]}
 PHANTOM_3D_MAX = 256           # 512^3 would be 134 million particles
 
 
@@ -28,7 +30,7 @@ def runs(code, variants=(), want_grids=(), dim=""):
             grids = [g for g in cfg["grids"] if (not want_grids or g in want_grids) and not (code == "phantom" and not flat and g > PHANTOM_3D_MAX)]
             if not grids:continue
             for seed in cfg.get("seeds", [42]):
-                yield v, test, seed, grids, "plane" if flat else "cube"
+                yield v, test, seed, grids, "plane" if flat and code != "athenakf32" else "cube"
 
 
 def main(code, variants):

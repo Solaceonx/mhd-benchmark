@@ -225,6 +225,7 @@ def run_cholla(args, config, spec, settings, rundir, rep, outputs, resume=False)
     ranks = int(m.group(1)) if (m := re.search(r"-n\s*(\d+)", args.mpi or "")) else 1
     nz = SLAB if args.geometry == "plane" else args.n
     need, have = CHOLLA_BYTES_PER_CELL*(args.n + 8)**2*(nz + 8)/ranks, gpu_bytes()
+    if settings.get("precision") == "fp32":need /= 2                       # PRECISION=1: every field array in Float32
     if have and need > 0.95*have:
         # Cholla does not check its allocations: it would start and stop on "an illegal memory access"
         return 1, (f"does not fit: Cholla needs about {need/1e9:.0f} GB a GPU at N={args.n} on {ranks} rank(s), "
@@ -501,6 +502,20 @@ X.VARIANTS["phantom"] = {
                 "artificial viscosity and resistivity switches, individual timesteps; div B projection off; planar tests on a slab of 8 layers"),
 }
 X.RUNNERS.update(athenapk=run_athenapk, cholla=run_cholla, pluto=run_pluto, enzo=run_enzo, phantom=run_phantom)
+
+# Single precision (lyxia, 2026-11-12: every GPU code also in fp32, as Abel et al.'s kernels and RAMSES II): the same
+# set-ups and runner with an fp32 build (build_f32.sh), under their own code name, so that records and pages keep them
+# apart: athenakf32 (AthenaK, Athena_SINGLE_PRECISION), athenapkf32 (PARTHENON_SINGLE_PRECISION), chollaf32 (PRECISION=1).
+def _single(runner):
+    def run(args, config, spec, settings, rundir, rep, outputs, resume=False):
+        rc, tail, perf, frames = runner(args, config, spec, settings, rundir, rep, outputs, resume)
+        return rc, tail, dict(perf, precision="fp32 evolution; Float32 snapshots"), frames
+    return run
+
+
+for _code in ("athenak", "athenapk", "cholla"):
+    X.VARIANTS[_code + "f32"] = {v: dict(s, precision="fp32") for v, s in X.VARIANTS[_code].items() if v != "reference"}
+    X.RUNNERS[_code + "f32"] = _single(X.RUNNERS[_code])
 
 if __name__ == "__main__":
     positional = [a for a in sys.argv[1:] if not a.startswith("-")]

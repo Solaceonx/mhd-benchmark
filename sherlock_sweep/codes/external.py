@@ -822,6 +822,8 @@ def main():
         meta["timing_valid"] = not perf.get("resumed", False)
         wanted = output_times(config) if rep == 1 else [float(config["t_end"])]
         tol = 1e-6*float(config["t_end"])/(int(config["frames"]) - 1)   # outputs land exactly; guard roundoff only
+        # A single-precision build keeps its time in Float32: its outputs land within its rounding (~1e-7 of t), not 1e-6 of an interval
+        if settings.get("precision") == "fp32":tol *= 100
         targets = output_times(config)
         seen = set()
         for t, cycle, u in frames:

@@ -66,6 +66,15 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**GPU codes in single precision, 2026-11-12 (lyxia: "compare all the GPU codes apples to apples"):** AthenaK, AthenaPK,
+Cholla again in fp32 (codes athenakf32, athenapkf32, chollaf32 in `sherlock_newcodes/newcodes_run.py`; same set-ups,
+`_single` wrapper records fp32), every test line of tasks.py (54 each; AthenaK in 3D as in the sweep). Builds
+(`build.sh athenak-f32 athenapk-f32 cholla-f32`): AthenaK fp32 needed type fixes in 7 unused files (`SINGLE` in
+`codes/athenak/patch_athenak.py`; Mac CPU build checked: alfven 32 = fp64 errors to 3 digits, 171 steps vs 140 from
+float landing on output times); our gamma checks got an fp32 tolerance; `external.py` matches fp32 output times at 100x
+the tolerance. Jobs: build 52114552 -> pilot 52114554 (`pilot_f32.sbatch`, `check_f32.py`: complete + errors within 25 %
+of fp64) -> arrays 52114556/57/63. gPLUTO has no fp32 build; CPU codes and references stay fp64.
+
 **RAMSES II rerun, official code, 2026-11-12 (lyxia):** UCT-HLLD is merged in github.com/ramses-organisation/ramses2
 `develop` (04abdd9; also #57 fixes its forcing projection, #64 the LLF switch). `sherlock_miniramses/ramses2.sbatch`
 (`submit_ramses2.sh`, `fetch_ramses2.sh`, `make_tasks_ramses2.py` -> `runs_ramses2.json`): 804 runs = the mini-ramses

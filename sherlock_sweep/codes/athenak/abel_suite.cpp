@@ -32,7 +32,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     std::exit(EXIT_FAILURE);
   }
   const Real gamma = pmbp->pmhd->peos->eos_data.gamma;
-  if (std::abs(gamma - spec.gamma) > 1e-12) {
+  if (std::abs(gamma - spec.gamma) > (sizeof(Real) == 4 ? 1e-6 : 1e-12)) {   // Real = float: gamma as read differs by rounding
     std::cout << "### FATAL ERROR: <mhd> gamma " << gamma << " differs from spec gamma "
               << spec.gamma << std::endl;
     std::exit(EXIT_FAILURE);

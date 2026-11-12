@@ -68,6 +68,14 @@ _R2 = "RAMSES II (official, develop 04abdd9): MUSCL-Hancock / {}, CT, Courant {}
 PLANNED = [(f"{code}_{v}", f"RAMSES II {short}{' f32' if code.endswith('f32') else ''}", _R2.format(solver, c, "single" if code.endswith("f32") else "double"))
            for code in ("ramses2", "ramses2f32")
            for v, short, solver, c in (("matched", "m", "HLL", 0.5), ("best", "b", "HLLD", 0.8), ("uct", "UCT", "UCT-HLLD", 0.8))]
+# The other GPU codes in single precision (2026-11-12, lyxia: compare every GPU code at the precision of Abel et al.'s
+# kernels): the same set-ups as their double-precision columns, fp32 builds (sherlock_newcodes/submit_f32.sh).
+PLANNED += [("athenakf32_matched", "AthenaK m f32", "AthenaK matched in single precision: PLM / HLLE / RK2 (GPU)"),
+            ("athenakf32_best", "AthenaK b f32", "AthenaK best in single precision: PPM / HLLD / RK3 (GPU)"),
+            ("athenapkf32_matched", "AthenaPK m f32", "AthenaPK matched in single precision: PLM / HLLE / VL2, GLM (GPU)"),
+            ("athenapkf32_best", "AthenaPK b f32", "AthenaPK best in single precision: PPM / HLLD / RK3, GLM (GPU)"),
+            ("chollaf32_plmc", "Cholla PLMC f32", "Cholla in single precision: PLMC / HLLD / Van Leer, CT (GPU)"),
+            ("chollaf32_ppmc", "Cholla PPMC f32", "Cholla in single precision: PPMC / HLLD / Van Leer, CT (GPU)")]
 # Abel et al.'s GLM kernels, original and fixed: one column in the status grid that opens into one per kernel.
 GLM_GROUP = ("glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "glm_fix_hll16", "glm_fct16", "glm_fix_hlld", "glm_fix_ppm")
 ALL_METHODS = [m for m in METHODS if m[0] in GLM_GROUP] + [m for m in ADDED if m[0] in GLM_GROUP] + \
@@ -447,7 +455,13 @@ def ramses2_card():
             f'about {hours:.0f} GPU-hours by what the same runs took before. Submitted 2026-11-12: a pilot (both builds, the field loop in all six '
             'set-ups, UCT at 512³ for memory), then the tasks. A CPU build of this commit reproduces the earlier Alfvén wave to four digits.</p>'
             '<p class="small">These runs replace those of E. Moseley\'s mini-ramses-ism (commit 579d842, October 2026: 268 runs, 260 finished), '
-            'which the other pages show until the new records are fetched.</p></div>')
+            'which the other pages show until the new records are fetched.</p></div>'
+            '<div class="card"><h3>Being run: the GPU codes in single precision</h3><p>Abel et al.\'s kernels run in Float32 (and Float16), '
+            'every other GPU code ran in double precision, which costs a GPU about two to three times in speed. So AthenaK, AthenaPK and Cholla '
+            'run again, every test at every grid with both their set-ups, from single-precision builds (AthenaK needed type fixes in seven files '
+            'it does not use for these tests; its Alfvén wave in single precision matches double to three digits), 54 test lines each, submitted '
+            '2026-11-12 behind a pilot that compares each with its double-precision run. gPLUTO has no single-precision build. '
+            'The CPU codes and the references stay in double precision.</p></div>')
 
 
 def driven_grid_rows(campaign, methods):

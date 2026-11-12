@@ -28,7 +28,7 @@ void ProblemGenerator(MeshBlock *pmb, ParameterInput *pin) {
     std::cerr << "### FATAL ERROR: abel_suite mesh must be [0,1] with nx1 = spec n = " << n << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if (std::abs(pin->GetReal("hydro", "gamma") - spec.gamma) > 1e-12) {
+  if (std::abs(pin->GetReal("hydro", "gamma") - spec.gamma) > (sizeof(Real) == 4 ? 1e-6 : 1e-12)) {   // Real = float: rounding
     std::cerr << "### FATAL ERROR: hydro/gamma differs from the spec's " << spec.gamma << std::endl;
     std::exit(EXIT_FAILURE);
   }

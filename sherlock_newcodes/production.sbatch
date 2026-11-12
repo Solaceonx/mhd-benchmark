@@ -21,6 +21,10 @@ while IFS='|' read -r code variant test seed grids geometry; do
     kind=gpu
     case $code in
         athenapk) mods="devel gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0 hdf5/1.14.4"; exe="$root/athenapk/build/bin/athenaPK"; mpi="srun -n 1" ;;
+        # single precision (build.sh athenak-f32 athenapk-f32 cholla-f32); AthenaK launched as in the sweep (no srun)
+        athenakf32) mods="devel cuda/12.4.0 gcc/12.4.0"; exe="$root/athenak-f32/build/src/athena"; mpi="" ;;
+        athenapkf32) mods="devel gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0 hdf5/1.14.4"; exe="$root/athenapk-f32/build/bin/athenaPK"; mpi="srun -n 1" ;;
+        chollaf32) mods="devel gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0 hdf5/1.14.4"; exe="$root/cholla/${variant}_f32/bin/cholla.abel_${variant}_f32.sherlock"; mpi="srun -n $SLURM_NTASKS" ;;
         cholla) mods="devel gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0 hdf5/1.14.4"; exe="$root/cholla/$variant/bin/cholla.abel_$variant.sherlock"; mpi="srun -n $SLURM_NTASKS" ;;   # a rank per GPU
         pluto) mods="devel nvhpc/24.7"; exe="$root/pluto/$variant-2d/pluto"; mpi="srun -n $SLURM_NTASKS" ;;   # an MPI build: started directly it hangs in MPI_Init
         enzo) mods="devel gcc/12.4.0 openmpi/4.1.6 hdf5/1.14.4"; exe="$root/enzo/enzo"; mpi="srun -n $SLURM_NTASKS"; kind=cpu ;;

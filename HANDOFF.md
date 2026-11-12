@@ -66,6 +66,15 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**RAMSES II rerun, official code, 2026-11-12 (lyxia):** UCT-HLLD is merged in github.com/ramses-organisation/ramses2
+`develop` (04abdd9; also #57 fixes its forcing projection, #64 the LLF switch). `sherlock_miniramses/ramses2.sbatch`
+(`submit_ramses2.sh`, `fetch_ramses2.sh`, `make_tasks_ramses2.py` -> `runs_ramses2.json`): 804 runs = the mini-ramses
+campaign's 134 runs x {matched HLL, best HLLD, uct UCT-HLLD} x {code ramses2 = fp64, ramses2f32 = fp32}, ~130 GPU-h
+estimated from the old records, 32 tasks; pilot job 52103157 (task 0: builds + 9 runs incl. 512^3 UCT fp64 memory),
+tasks 52103162_[1-32] afterok. Results `$MHD_RESULTS/<test>-ramses2[f32]-<variant>-run-N<n>-s<seed>/`. Mac CPU check of
+04abdd9 (HLL, fp64): alfven 32 = the old campaign's 220 steps and errors to 4 digits; UCT-HLLD is GPU only. lyxia's
+choices: replace the old RAMSES II on the site with these; then add RAMSES II driven turbulence (Mach 3-50) too.
+
 **Nested turbulence page, 2026-11-12:** `nested.html` ("Nested turbulence", after Turbulence) from
 `scripts/nested_figures.py` (figures, `progress/media/nested/nested.json`) and `scripts/build_nested.py`, on data in
 `nested_results/` (compare/, movie/, logs/, gpu_check/). Movies: `sherlock_nested/movie.jl` (job 52098533: nest64, then

@@ -6,7 +6,7 @@ from pathlib import Path
 
 root = Path(sys.argv[1]);pattern = sys.argv[2] if len(sys.argv) > 2 else "*-miniramses-*-run-N*-s*"
 for d in sorted(root.glob(pattern)):
-    recs = sorted(d.glob("data/miniramses_*_r1/run.toml"))
+    recs = sorted(d.glob("data/*_r1/run.toml"))
     if not recs:print(f"{d.name:<58} no record yet");continue
     m = tomllib.loads(recs[0].read_text());err = (m.get("frames") or [{}])[-1].get("errors", {})
     e = next((f"{k} {v:.3g}" for k, v in err.items() if k.endswith("relative_L1") and k.startswith(("magnetic", "density")) and v), "")

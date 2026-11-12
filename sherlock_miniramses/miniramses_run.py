@@ -42,6 +42,15 @@ X.VARIANTS["miniramses"] = {
     "matched": dict(riemann="hll", riemann2d="hll", slope_type=2, courant=0.5, precision=PRECISION),
     "best": dict(riemann="hlld", riemann2d="hlld", slope_type=2, courant=0.8, precision=PRECISION),
 }
+# The official RAMSES II (github.com/ramses-organisation/ramses2, develop; ramses2.sbatch), 2026-11-12: the same two
+# set-ups plus E. Moseley's upwind constrained transport with HLLD faces (riemann='uct-hlld', GPU only), each in double
+# (code ramses2, NPRE=8) and single precision (code ramses2f32, NPRE=4): the precision is a build option.
+for _code, _prec in (("ramses2", "fp64"), ("ramses2f32", "fp32")):
+    X.VARIANTS[_code] = {
+        "matched": dict(riemann="hll", riemann2d="hll", slope_type=2, courant=0.5, precision=_prec),
+        "best": dict(riemann="hlld", riemann2d="hlld", slope_type=2, courant=0.8, precision=_prec),
+        "uct": dict(riemann="uct-hlld", riemann2d="hlld", slope_type=2, courant=0.8, precision=_prec),
+    }
 
 
 def namelist(config, n, settings, outputs, ndim):
@@ -152,7 +161,7 @@ def run_miniramses(args, config, spec, settings, rundir, rep, outputs, resume=Fa
     with log.open("w") as f:
         code = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, cwd=rundir, env=env).returncode
     wall = time.perf_counter() - start;text = log.read_text(errors="replace") if log.is_file() else ""
-    perf = dict(wall_seconds=wall, precision=f"{PRECISION} evolution; Float32 snapshots")
+    perf = dict(wall_seconds=wall, precision=f"{settings.get('precision', PRECISION)} evolution; Float32 snapshots")
     m = re.findall(r"Total elapsed time:\s*([\d.eE+-]+)", text)
     if m:perf["code_seconds"] = float(m[-1])
     outs = outputs_of(rundir);gamma = X.gamma_of(config)
@@ -166,12 +175,12 @@ def run_miniramses(args, config, spec, settings, rundir, rep, outputs, resume=Fa
 
 def remove_native(outdir):
     """After a finished run: drop mini-ramses's own outputs (converted; the run can be made again)."""
-    for record in Path(outdir).glob("miniramses_*_r*/run.toml"):
+    for record in Path(outdir).glob("*_r*/run.toml"):
         if 'status = "complete"' not in record.read_text():continue
         for o in record.parent.glob("output_*"):shutil.rmtree(o)
 
 
-X.RUNNERS["miniramses"] = run_miniramses
+X.RUNNERS["miniramses"] = X.RUNNERS["ramses2"] = X.RUNNERS["ramses2f32"] = run_miniramses
 
 if __name__ == "__main__":
     positional = [a for a in sys.argv[1:] if not a.startswith("-")]

@@ -4,7 +4,8 @@
 
 Writes SITE_CLONE_DIR/mhd/: every page except the GPU suite, whose 38,000 stills are 235 MB (its movies are on the
 test pages, test-<name>.html, which are published and reached from tests.html). The Papers
-page stays index.html (the address that was given out first) and the Orszag–Tang page becomes orszag-tang.html. The
+page stays index.html (the address that was given out first); the five first pages (Orszag–Tang and the checks after it) are
+no longer published. The
 pages are unlisted: nothing on the website links to them and they ask search engines not to index them. --link adds
 links to them in the MHD entry of research.html (lyxia had them removed on 2026-10-04: not for general readers yet).
 
@@ -28,17 +29,15 @@ PAGES = [   # local name, published name, label in the navigation (in its order)
     ("paper-figures.html", "index.html", "Paper figures"),
     ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
     ("turbulence.html", "turbulence.html", "Turbulence"),
+    ("nested.html", "nested.html", "Nested turbulence"),
     ("tests.html", "tests.html", "Tests"),
     ("our-figures.html", "our-figures.html", "Our figures"),
     ("sweep-fixes.html", "sweep-fixes.html", "Kernel fixes"),
     ("problems.html", "problems.html", "Test definitions"),
     ("solver.html", "solver.html", "Inside the solver"),
-    ("index.html", "orszag-tang.html", "Orszag–Tang"),
-    ("hydro-decay.html", "hydro-decay.html", "Hydro decay"),
-    ("isothermal-decay.html", "isothermal-decay.html", "Prepared decay"),
-    ("acoustic-wave.html", "acoustic-wave.html", "Acoustic check"),
-    ("entropy-wave.html", "entropy-wave.html", "Entropy wave"),
 ]
+# Not published since 2026-11-12 (lyxia: not needed): the first five pages, index.html (Orszag–Tang), hydro-decay.html,
+# isothermal-decay.html, acoustic-wave.html, entropy-wave.html. They stay in progress/ for the local preview.
 NAMES = {src: dst for src, dst, _ in PAGES}
 NOT_PUBLISHED = ("gpu", "movies",           # directories of progress/media that belong to the GPU-suite page
                  "showcase")                # work in progress of another session (untracked); take it off this list to publish it
@@ -97,10 +96,13 @@ def copy_wanted(wanted, out):
     return missing
 
 
-def copy_media(out):
+def copy_media(out, published):
+    """progress/media/ minus NOT_PUBLISHED; of the loose files at its top level only those a published page names (the rest
+    belonged to the five first pages, no longer published)."""
     for f in sorted((SITE/"media").rglob("*")):
         rel = f.relative_to(SITE/"media")
         if not f.is_file() or f.name == ".DS_Store" or rel.parts[0] in NOT_PUBLISHED:continue
+        if len(rel.parts) == 1 and f"media/{f.name}" not in published:continue
         # of other papers' figures only the CC BY ones (Tomida et al. 2026) may be published
         if rel.parts[:2] == ("papers", "original") and not f.name.startswith("tomida2026_"):
             print(f"not published (no reuse licence): {rel}");continue
@@ -144,13 +146,14 @@ def main(argv):
     (out/"app.js").write_text(localise(app.replace(gpu_link, ""), wanted))
     raw = (SITE/"data.js").read_text();head = raw[:raw.index("{")]
     data = json.loads(raw[raw.index("{"):raw.rindex("}") + 1])
-    del data["gpu"];data["tests"] = [t for t in data["tests"] if t["kind"] != "gpu"]
+    del data["gpu"];data["tests"] = [t for t in data["tests"] if t["kind"] != "gpu" and t["page"] in NAMES]
+    if not any(t["kind"] == "ot" for t in data["tests"]):data.pop("ot", None)
     order = {dst: f"{i:02d}" for i, (_, dst, _) in enumerate(PAGES, 1)}
     for t in data["tests"]:t["page"] = NAMES[t["page"]];t["number"] = order[t["page"]]
     (out/"data.js").write_text(localise(head + json.dumps(data, ensure_ascii=False) + ";\n", wanted))
     for name in ("style.css", "sync-videos.js", "solver-walkthrough.css", "solver-walkthrough.js", "problem-definitions.css"):shutil.copy(SITE/name, out/name)
     shutil.copy(SITE/"notes.html", out/"notes.html")       # private notes: encrypted in the browser, not in the navigation
-    copy_media(out)
+    copy_media(out, "".join(f.read_text() for f in [*out.glob("*.html"), out/"app.js", out/"data.js"] if f.name != "notes.html"))
     missing = copy_wanted(wanted, out)
     if missing:print("linked from the pages but not found here (those links will be dead):\n  " + "\n  ".join(missing))
     check(out)

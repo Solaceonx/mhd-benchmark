@@ -43,6 +43,12 @@ to the host: it dominates the wall time of these small runs (75 Mcell/s for 3 ×
   signal speed is (`<case>.csv`); a watchdog saves every level's state when a step collapses. Output
   `$SCRATCH/mhd-results-nested/driven_debug/`. Checked on the Mac CPU (`NESTED_BACKEND=cpu ... tiny_c040`).
 
+- `compare.jl` / `compare.sbatch`: nest (3 × 64³, 3 × 128³) against uniform at its finest resolution (256³, 512³),
+  histograms and 3-D snapshots every 0.05. Figures and the site page: `scripts/nested_figures.py`, `scripts/build_nested.py` (Mac).
+- `movie.jl` / `movie.sbatch`: the same nest with a mid-plane slice of every level (ln ρ, |v|, log10 |B|) every
+  0.002 to t = 1 (501 frames; nest64 ~37 MB, nest128 ~300 MB) in `$SCRATCH/mhd-results-nested/movie/`.
+  `plot_movie.py` (Mac): the movie. Checked on the Mac CPU (`NESTED_BACKEND=cpu ... movie.jl ... tiny`).
+
 Send (Mac), then submit (Sherlock):
 
 ```bash

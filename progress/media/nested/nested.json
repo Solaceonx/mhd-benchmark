@@ -1,0 +1,251 @@
+{
+ "t_uniform": 0.35,
+ "runs": {
+  "nest64": {
+   "header": "nest 3 × 64³ (finest 256³ in the central 1/4), Float64, Mach 10, CT, HLL, Courant 0.25, to t = 1",
+   "end": "finished: 225 s, steps [13705, 34230, 74015], 3.20e+10 cell updates (142 Mcell/s)",
+   "t": 1.0,
+   "wall": 225.0,
+   "steps": [
+    13705,
+    34230,
+    74015
+   ]
+  },
+  "uni256": {
+   "header": "uniform 256³, Float64, Mach 10, CT, HLL, Courant 0.25, to t = 1",
+   "end": "[2026-11-10T16:56:50.245] error: *** JOB 51806667 ON sh04-13n01 CANCELLED AT 2026-11-10T16:56:50 DUE TO TIME LIMIT ***",
+   "t": 0.35,
+   "wall": 4485.0,
+   "steps": [
+    133046
+   ]
+  },
+  "nest128": {
+   "header": "nest 3 × 128³ (finest 512³ in the central 1/4), Float32, Mach 10, CT, HLL, Courant 0.25, to t = 0.5",
+   "end": "finished: 3772 s, steps [15814, 69015, 338881], 8.89e+11 cell updates (236 Mcell/s)",
+   "t": 0.5,
+   "wall": 3772.0,
+   "steps": [
+    15814,
+    69015,
+    338881
+   ]
+  },
+  "uni512": {
+   "header": "uniform 512³, Float32, Mach 10, CT, HLL, Courant 0.25, to t = 0.5",
+   "end": "[2026-11-10T18:29:32.931] error: *** JOB 51806669 ON sh04-04n07 CANCELLED AT 2026-11-10T18:29:32 DUE TO PREEMPTION ***",
+   "t": null,
+   "wall": null,
+   "steps": null
+  }
+ },
+ "cell_updates": {
+  "nest64": 31968460800,
+  "nest128": 888584273920
+ },
+ "divb": {
+  "nest64": 8.377905099130307e-15,
+  "nest128": 5.159537970789914e-05
+ },
+ "level_wall": {
+  "nest64": [
+   20.49807153599994,
+   58.3080382820004,
+   101.63799061699908
+  ],
+  "nest128": [
+   48.03924931200014,
+   638.2652385520056,
+   3031.815342590994
+  ]
+ },
+ "mach_box": {
+  "nest64": 10.382343528183883,
+  "uni256": 10.162877193700858,
+  "nest128": 10.525087000007424
+ },
+ "brms_box_at_tu": {
+  "nest64": 1.4545574563914767,
+  "uni256": 1.4384440715131197
+ },
+ "brms_box_mean": {
+  "nest64": 1.307143813465944,
+  "uni256": 1.286812458100714
+ },
+ "brms_central_range": {
+  "nest64": [
+   0.44560278575370216,
+   1.5922611913591256
+  ],
+  "uni256": [
+   0.7042961319747454,
+   1.8743488216478301
+  ]
+ },
+ "lowest_box_uni": -12.0,
+ "lowest_central": {
+  "nest64": -8.0,
+  "uni256": -7.1,
+  "nest128": -12.0
+ },
+ "wall_02_to_tu": {
+  "nest64": 26.0,
+  "uni256": 4099.0
+ },
+ "steps_to_tu": {
+  "nest64": [
+   4211,
+   8948,
+   17643
+  ],
+  "uni256": [
+   133046
+  ]
+ },
+ "dt_finest": {
+  "nest64": {
+   "min": 6.430868167202578e-06,
+   "median": 1.2886619338232253e-05
+  },
+  "uni256": {
+   "min": 3.1593580184506537e-07,
+   "median": 1.4712373105781976e-06
+  },
+  "nest128": {
+   "min": 8.015582291975563e-08,
+   "median": 5.133857056135444e-06
+  }
+ },
+ "gpu": {
+  "agreement": [
+   {
+    "T": "Float64",
+    "mode": "ct",
+    "riemann": "hll",
+    "diff": 6.8189369093196805e-09,
+    "same_steps": true
+   },
+   {
+    "T": "Float64",
+    "mode": "glm",
+    "riemann": "hll",
+    "diff": 2.8739485119612414e-08,
+    "same_steps": true
+   },
+   {
+    "T": "Float32",
+    "mode": "ct",
+    "riemann": "hlld",
+    "diff": 2.9148554858693387e-06,
+    "same_steps": true
+   },
+   {
+    "T": "Float32",
+    "mode": "glm",
+    "riemann": "hll",
+    "diff": 7.465037583642697e-07,
+    "same_steps": true
+   }
+  ],
+  "speed": [
+   {
+    "setup": "uniform 128³",
+    "T": "Float32",
+    "mode": "ct",
+    "rate": 1593445369.3956366
+   },
+   {
+    "setup": "uniform 128³",
+    "T": "Float32",
+    "mode": "glm",
+    "rate": 1748364304.5554156
+   },
+   {
+    "setup": "uniform 256³",
+    "T": "Float32",
+    "mode": "ct",
+    "rate": 1911787411.81788
+   },
+   {
+    "setup": "uniform 256³",
+    "T": "Float32",
+    "mode": "glm",
+    "rate": 1991579339.8749306
+   },
+   {
+    "setup": "uniform 512³",
+    "T": "Float32",
+    "mode": "ct",
+    "rate": 2059125196.522764
+   },
+   {
+    "setup": "uniform 512³",
+    "T": "Float32",
+    "mode": "glm",
+    "rate": 2049381127.6097841
+   },
+   {
+    "setup": "uniform 256³",
+    "T": "Float64",
+    "mode": "ct",
+    "rate": 1150179948.3823614
+   },
+   {
+    "setup": "uniform 256³",
+    "T": "Float64",
+    "mode": "glm",
+    "rate": 1161006356.8992012
+   },
+   {
+    "setup": "nest 3 × 128³",
+    "T": "Float32",
+    "mode": "ct",
+    "rate": 370213856.6403528
+   },
+   {
+    "setup": "nest 3 × 128³",
+    "T": "Float32",
+    "mode": "glm",
+    "rate": 1092433163.9349957
+   },
+   {
+    "setup": "nest 3 × 128³",
+    "T": "Float64",
+    "mode": "ct",
+    "rate": 352527810.9776827
+   },
+   {
+    "setup": "nest 3 × 128³",
+    "T": "Float64",
+    "mode": "glm",
+    "rate": 708224981.9521059
+   }
+  ]
+ },
+ "spectra_ratio_central": {
+  "v": 0.7719605931805956,
+  "B": 0.5813815263821732,
+  "rho": 0.3120214650495405
+ },
+ "movies": {
+  "nest64": {
+   "frames": 501,
+   "t_last": 1.0,
+   "dt": 0.002,
+   "finished": true,
+   "wall": 196.42164707183838,
+   "steps": [
+    14920,
+    36668,
+    73148
+   ],
+   "mb": 10.6
+  }
+ },
+ "spectra_ratio_box": {
+  "v": 0.6317141789408629,
+  "B": 0.7983108773695933,
+  "rho": 1.134103198641406
+ }
+}

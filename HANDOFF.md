@@ -66,6 +66,16 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**Nested turbulence page, 2026-11-12:** `nested.html` ("Nested turbulence", after Turbulence) from
+`scripts/nested_figures.py` (figures, `progress/media/nested/nested.json`) and `scripts/build_nested.py`, on data in
+`nested_results/` (compare/, movie/, logs/, gpu_check/). Movies: `sherlock_nested/movie.jl` (job 52098533: nest64, then
+nest128 to t = 1, ~2.2 h), fetched with `ssh sherlock 'tar -C $SCRATCH/mhd-results-nested -c movie' | tar -x -C nested_results`,
+then `python3 scripts/build_nested.py` and publish. The nest128 movie was still running when the page was first published (2026-11-12, with the nest64 movie).
+Job 51806669 (rerun of nest128 + uniform 512³) is held: cancel it unless lyxia wants the 512³ attempt. The website was
+839 MB of GitHub Pages' 1 GB limit on 2026-11-12: keep new media small.
+Same day, lyxia: the five first pages (Orszag–Tang, Hydro decay, Prepared decay, Acoustic check, Entropy wave) are no
+longer published (`PAGES` in `scripts/publish_site.py`; they stay in `progress/` locally); site 826 MB after.
+
 **Notes storage, 2026-10-20:** the private notes page saves its encrypted file to the `notes` branch of the website repository (lyxia chose this over a private repository), with a coloured status line, retries, conflict copies and a warning before closing with unsaved changes. A token saved before 2026-10-18 is accepted. Live.
 
 **Fix branch, 2026-10-15:** Tom asked lyxia and me to fix the seven problems on a branch and test it. Branch

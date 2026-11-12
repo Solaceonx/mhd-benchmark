@@ -49,6 +49,12 @@ to the host: it dominates the wall time of these small runs (75 Mcell/s for 3 ×
   0.002 to t = 1 (501 frames; nest64 ~37 MB, nest128 ~300 MB) in `$SCRATCH/mhd-results-nested/movie/`.
   `plot_movie.py` (Mac): the movie. Checked on the Mac CPU (`NESTED_BACKEND=cpu ... movie.jl ... tiny`).
 
+- `bigrun.jl` / `bigrun.sbatch`: a long nest that stops and resumes (checkpoint every 30 min, bit-identical on resume,
+  checked on the Mac CPU), with an Alfvén-speed cap (`BIG_VA_MAX`, default 30 c_s) from our commit 1164c73 of
+  `../external/NestedTurbulence` (on Sherlock as `NestedTurbulence-cap`). Case `deep192`: root 128³ + 3 levels of 192³
+  (finest 1024³-equivalent over the central 3/16; level 3 512³-equivalent over 3/8). Histograms per level every 0.01,
+  slices every 0.002, 3-D snapshots every 0.05 in `$SCRATCH/mhd-results-nested/big/`. Job 52101427 (2026-11-12).
+
 Send (Mac), then submit (Sherlock):
 
 ```bash

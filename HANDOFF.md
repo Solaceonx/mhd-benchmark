@@ -73,6 +73,8 @@ nest128 to t = 1, ~2.2 h), fetched with `ssh sherlock 'tar -C $SCRATCH/mhd-resul
 then `python3 scripts/build_nested.py` and publish. The nest128 movie was still running when the page was first published (2026-11-12, with the nest64 movie).
 Job 51806669 (rerun of nest128 + uniform 512³) is held: cancel it unless lyxia wants the 512³ attempt. The website was
 839 MB of GitHub Pages' 1 GB limit on 2026-11-12: keep new media small.
+Big run (lyxia, 2026-11-12): `sherlock_nested/bigrun.jl` case deep192, job 52101427 (gpu,owners, requeue, resumes from
+its checkpoint; resubmit `sbatch bigrun.sbatch deep192` if 2 days are not enough). Spectra on the page are now k E(k)/σ².
 Same day, lyxia: the five first pages (Orszag–Tang, Hydro decay, Prepared decay, Acoustic check, Entropy wave) are no
 longer published (`PAGES` in `scripts/publish_site.py`; they stay in `progress/` locally); site 826 MB after.
 

@@ -238,6 +238,13 @@ def spectra(case, kind, times):
     return k, [a / len(times) / fac for a in acc]          # E(k) per unit k in box units
 
 
+def variance_per_lnk(k, E):
+    """k E(k) / σ²: the share of the variance per unit ln k (= 4π k³ P(k) / σ² for the 3-D power P); the k = 0 mean is left out,
+    so its area over ln k is 1."""
+    dk = k[1] - k[0]
+    return k * E / (E[1:].sum() * dk)
+
+
 def fig_spectra(tu):
     fig, axs = plt.subplots(2, 3, figsize=(15, 9), layout="constrained")
     tsel = {c: [t for t in snap_times(c) if (c != "nest64" or t <= tu + 1e-9)] for c in CASES}
@@ -246,21 +253,21 @@ def fig_spectra(tu):
         for case in CASES:
             k, (ev, eb, er) = spectra(case, kind, tsel[case]); out[case, kind] = (k, ev, eb, er)
             sel = k >= (1 if kind == "r" else 4)
-            for ax, y in zip(axs[row], (k ** 2 * ev, eb, er)):
-                plot(ax, case, k[sel], y[sel])
+            for ax, E in zip(axs[row], (ev, eb, er)):
+                plot(ax, case, k[sel], variance_per_lnk(k, E)[sel])
         for ax in axs[row]:
             ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("$k$ (box units)")
             if kind == "c":
                 ax.axvspan(3, 12, color=ps.PANEL, lw=0); ax.set_xlim(3, None)
-        axs[row, 0].set_ylabel((r"$k^2 E_v(k)$" + (", whole box" if kind == "r" else ", central cube")))
-        axs[row, 1].set_ylabel(r"$E_B(k)$"); axs[row, 2].set_ylabel(r"$E_\rho(k)$")
+        axs[row, 0].set_ylabel(r"$k\,E(k)/\sigma^2 = 4\pi k^3 P(k)/\sigma^2$" + (", whole box" if kind == "r" else ", central cube"))
     axs[1, 0].text(0.02, 0.04, "shaded: the window\nsets these", transform=axs[1, 0].transAxes, fontsize=9, color=ps.MUTED)
-    for j, q in enumerate(("velocity (compensated by $k^2$)", "magnetic field", "density")):
+    for j, q in enumerate(("velocity", "magnetic field", "density")):
         axs[0, j].set_title(q)
     legend(fig, CASES)
-    fig.suptitle(f"Power spectra. Top: the whole periodic box at the nest's root resolution (uniform: 4$^3$ block averages). "
-                 f"Bottom: the central cube at the finest resolution,\nHann-windowed. Averages of the snapshots from $t$ = 0.2 to {tu:g} "
-                 "(nest 3 $\\times$ 64$^3$, uniform) and to 0.5 (nest 3 $\\times$ 128$^3$), every 0.05", fontsize=12)
+    fig.suptitle(f"Normalized power spectra: the share of each field's variance per unit ln $k$ (area under a curve over ln $k$ = 1). "
+                 f"Top: the whole periodic box at the nest's root resolution\n(uniform: 4$^3$ block averages). Bottom: the central cube at the "
+                 f"finest resolution, Hann-windowed. Snapshots every 0.05 from $t$ = 0.2 to {tu:g} (nest 3 $\\times$ 64$^3$, uniform) "
+                 "and to 0.5 (nest 3 $\\times$ 128$^3$)", fontsize=11.5)
     fig.savefig(OUT/"nested-spectra.png", dpi=140); plt.close(fig)
     return out
 
@@ -318,14 +325,15 @@ def main():
         gpu=dict(agreement=[dict(T=a["T"], mode=a["mode"], riemann=a["riemann"], diff=max(a["max_rel_diff_by_level"]),
                                  same_steps=a["steps_cpu"] == a["steps_gpu"]) for a in gpu["agreement"]],
                  speed=[dict(setup=s["setup"], T=s["T"], mode=s["mode"], rate=s["cell_updates_per_s"]) for s in gpu["speed"]]),
-        spectra_ratio_central={},
         movies=movies(),
     )
-    # small scales of the central cube: power of the nest over the uniform grid at the same finest resolution, 32 <= k <= 96
-    k, ev_n, eb_n, er_n = S["nest64", "c"]; _, ev_u, eb_u, er_u = S["uni256", "c"]; sel = (k >= 32) & (k <= 96)
-    num["spectra_ratio_central"] = {q: float(np.exp(np.mean(np.log(a[sel] / b[sel])))) for q, a, b in (("v", ev_n, ev_u), ("B", eb_n, eb_u), ("rho", er_n, er_u))}
-    k, ev_n, eb_n, er_n = S["nest64", "r"]; _, ev_u, eb_u, er_u = S["uni256", "r"]; sel = (k >= 8) & (k <= 24)
-    num["spectra_ratio_box"] = {q: float(np.exp(np.mean(np.log(a[sel] / b[sel])))) for q, a, b in (("v", ev_n, ev_u), ("B", eb_n, eb_u), ("rho", er_n, er_u))}
+    # share of each field's variance at small scales: central cube k = 32–96 (finest resolution), whole box k = 8–24
+    def share(case, kind, lo, hi):
+        k, *E = S[case, kind]; dk = k[1] - k[0]; sel = (k >= lo) & (k <= hi)
+        return {q: float(e[sel].sum() / e[1:].sum()) for q, e in zip(("v", "B", "rho"), E)}
+    num["variance_share_central"] = {c: share(c, "c", 32, 96) for c in CASES}
+    num["variance_share_box"] = {c: share(c, "r", 8, 24) for c in CASES}
+    num.pop("spectra_ratio_central", None)
     (OUT/"nested.json").write_text(json.dumps(num, indent=1, ensure_ascii=False) + "\n")
     print(json.dumps({k: v for k, v in num.items() if k not in ("gpu", "runs")}, indent=1, ensure_ascii=False))
     print("wrote", OUT)

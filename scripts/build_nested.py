@@ -58,7 +58,8 @@ def f2(x, d=2):
 
 
 def build(J):
-    R = J["runs"]; tu = J["t_uniform"]; cu = J["cell_updates"]; dt = J["dt_finest"]; sr, sb = J["spectra_ratio_central"], J["spectra_ratio_box"]
+    R = J["runs"]; tu = J["t_uniform"]; cu = J["cell_updates"]; dt = J["dt_finest"]; vc, vb = J["variance_share_central"], J["variance_share_box"]
+    pc = lambda c, q: f"{100 * vc[c][q]:.0f} %" if vc[c][q] >= 0.1 else f"{100 * vc[c][q]:.1f} %"
     wall = {c: R[c]["wall"] for c in R}
     agree = J["gpu"]["agreement"]; speed = J["gpu"]["speed"]
     unif32 = [s["rate"] for s in speed if s["setup"].startswith("uniform") and s["T"] == "Float32"]
@@ -86,8 +87,9 @@ Sherlock's H100s, which it had not run on before, fixed what stopped it in 3-D, 
 round-off ({max(J["divb"].values()):.0e}) on every level.</li>
 <li><strong>Large-scale statistics agree.</strong> Over the whole box the rms Mach number is {f2(mb["nest64"])} (nest) and {f2(mb["uni256"])} (uniform), and at t = {tu:g} the
 rms field is {f2(bt["nest64"])} and {f2(bt["uni256"])}. The density and speed PDFs of the central cube match.</li>
-<li><strong>Small scales do not, yet.</strong> At wave numbers 32–96 the nest's finest level carries {sr["v"] * 100:.0f} % of the uniform grid's velocity power,
-{sr["B"] * 100:.0f} % of its field power and {sr["rho"] * 100:.0f} % of its density power at the same resolution (figure 4).</li>
+<li><strong>Small scales do not, yet.</strong> In the central cube at the same resolution, wave numbers 32–96 hold {pc("nest64", "rho")} of the density
+variance in the nest's finest level and {pc("uni256", "rho")} in the uniform grid; for the velocity {pc("nest64", "v")} and {pc("uni256", "v")}, for the field
+{pc("nest64", "B")} and {pc("uni256", "B")} (figure 4).</li>
 <li><strong>The uniform grids are the slow part.</strong> The uniform 256³ run stalled at t = {tu:g}; the uniform 512³ run reached no output in about 2 hours. Nearly empty cells
 (ρ near the floor of 10⁻⁶) make the Alfvén speed, and so the time step, collapse. The 3 × 128³ nest meets them too (figure 5).</li></ul></div>''']
     M = J.get("movies", {})
@@ -116,16 +118,17 @@ rms field is {f2(bt["nest64"])} and {f2(bt["uni256"])}. The density and speed PD
          f"in the same way in the nest and the uniform grid ({f2(bt['nest64'])} and {f2(bt['uni256'])} at t = {tu:g}). The central cube is too small to compare its field: "
          f"its rms swings between {f2(bc['nest64'][0])} and {f2(bc['nest64'][1])} in the nest and {f2(bc['uni256'][0])} and {f2(bc['uni256'][1])} in the uniform grid. "
          "The uniform grid has more weak-field cells (log₁₀ |B| below −2)."),
-        ("nested-spectra", "Power spectra",
-         "Spectra of the velocity (times k²), the magnetic field and the density, averaged over the snapshots (every 0.05). Top: the whole periodic box at the nest's root "
-         "resolution. Bottom: the central cube at the finest resolution; it is not periodic, so it is multiplied by a Hann window first, which sets the lowest "
-         "wave numbers (shaded). The nest 3 × 128³ is averaged to t = 0.5, the other two to the uniform run's last output; the field is still growing, so its "
-         "spectra are not compared across those times.",
-         f"over the whole box, outside its finer levels the nest is a 64³ simulation: at k = 8–24 it has {sb['v'] * 100:.0f} % of the uniform grid's velocity power. "
-         f"In the central cube, at the same resolution, the nest's finest level has {sr['v'] * 100:.0f} % of the velocity power, {sr['B'] * 100:.0f} % of the field "
-         f"power and {sr['rho'] * 100:.0f} % of the density power at k = 32–96. Gas crosses the central cube (a quarter of the box) in about 0.025 at Mach 10, "
-         "probably too short for the cascade to rebuild the small scales the coarser levels never had. That is the next thing to test (a larger finest level, "
-         "or more levels)."),
+        ("nested-spectra", "Normalized power spectra",
+         "Each field's variance per unit ln k, k E(k)/σ² (that is 4π k³P(k)/σ² for the 3-D power P(k)), so the area under a curve over ln k is 1 and runs "
+         "with different total power compare by where their variance lives. Velocity, magnetic field and density, averaged over the snapshots (every 0.05). "
+         "Top: the whole periodic box at the nest's root resolution. Bottom: the central cube at the finest resolution; it is not periodic, so it is multiplied "
+         "by a Hann window first, which sets the lowest wave numbers (shaded). The nest 3 × 128³ is averaged to t = 0.5, the other two to the uniform run's last "
+         "output; the field is still growing, so its spectra are not compared across those times.",
+         f"over the whole box, outside its finer levels the nest is a 64³ simulation: k = 8–24 holds {100 * vb['nest64']['v']:.1f} % of its velocity variance "
+         f"against {100 * vb['uni256']['v']:.1f} % in the uniform grid. In the central cube, at the same resolution, k = 32–96 holds {pc('nest64', 'rho')} of the "
+         f"density variance in the nest's finest level against {pc('uni256', 'rho')} in the uniform grid ({pc('nest128', 'rho')} in the 3 × 128³ nest, twice as fine); "
+         f"the field differs less ({pc('nest64', 'B')} against {pc('uni256', 'B')}). Gas crosses the central cube (a quarter of the box) in about 0.025 at Mach 10, "
+         "probably too short for the cascade to rebuild the small scales the coarser levels never had. A wider finest level will test that."),
         ("nested-cost", "Cost and time step",
          "Left: wall-clock time on one H100. Middle: the mean time step of the finest grid between outputs. Right: the lowest density in the central cube, and over "
          "the whole uniform 256³ grid.",

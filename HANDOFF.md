@@ -73,9 +73,12 @@ capped comparison (both grids capped at v_A = 30 c_s; all four runs finished: ne
 1,249 s vs uni512 15,617 s to t = 0.5): density statistics agree from t = 0.3 on (the earlier 18 % vs 32 % small-scale gap
 was the t <= 0.35 window), velocity ~20 % short at k = 8–96 in the nests, the field too intermittent to call; the 8-seed
 ergodicity test (time mean at a point = volume mean within errors; tau_int 0.009); the big nest; three movies. Figures
-`nested-capped.png`, `nested-ergodic.png` (nested_figures.fig_capped, fig_ergodic). RAMSES II: 788 of 804 complete (16 failures
-all decay_supersonic HLL), records in `ramses2_results/`; the pages still show the old mini-ramses data until `sweep_data`
-reads `ramses2_results` (labels ramses2[f32]_{matched,best,uct}). 512³ speed (G updates/s): HLL 0.35/1.07, HLLD 0.36/0.86,
+`nested-capped.png`, `nested-ergodic.png` (nested_figures.fig_capped, fig_ergodic). RAMSES II: 788 of 804 complete (16 stopped:
+all decay_supersonic HLL, at the step cap after the time step collapses), records in `ramses2_results/`; since 2026-11-14
+every page shows them (sweep_data.RAMSES2, labels ramses2[f32]_{matched,best,uct}; the fp32 ones in tables and the benchmark,
+not in the test figures' panels: test_diagnostics.groups); miniramses_results/ is no longer read. work_precision prints
+the RAMSES II pairs: fp32 the same accuracy at 1.87x the speed; UCT-HLLD ~2x faster than HLLD-CT, a little less accurate
+on field loops; HLL -> HLLD 40-56x on KH and GEM. 512³ speed (G updates/s): HLL 0.35/1.07, HLLD 0.36/0.86,
 UCT-HLLD 0.61/1.21 (fp64/fp32). fp32 GPU codes: Cholla refuses PRECISION=1, dropped (tasks.py, status page); AthenaK failed
 again on `binary_gravity.cpp` (1.0e-300 underflows a float; added to `SINGLE`; the build now runs `make -k`); resubmitted
 2026-11-14: build 52355179 -> pilot 52355180 -> arrays 52355195 (athenakf32), 52355201 (athenapkf32).

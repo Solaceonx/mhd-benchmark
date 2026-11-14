@@ -49,7 +49,10 @@ PAIRS = (("order", "glm_fix_hll16", "glm_fix_ppm", "Abel GLM f16/HLL: PLM → PP
          ("all", "athenak_matched", "athenak_best", "AthenaK: PLM/HLLE/RK2 → PPM/HLLD/RK3"),
          ("all", "athenapp_matched", "athenapp_best", "Athena++: PLM/HLLE/VL2 → PPM/HLLD/RK3"),
          ("solver", "ramses_matched", "ramses_best", "RAMSES: HLL → HLLD"),
-         ("solver", "glm", "glm_fix_hlld", "Abel GLM Float32: LLF → HLLD"))
+         ("solver", "glm", "glm_fix_hlld", "Abel GLM Float32: LLF → HLLD"),
+         ("solver", "ramses2_matched", "ramses2_best", "RAMSES II: HLL → HLLD"),
+         ("solver", "ramses2_best", "ramses2_uct", "RAMSES II HLLD: CT → upwind CT (UCT)"),
+         ("precision", "ramses2_uct", "ramses2f32_uct", "RAMSES II UCT-HLLD: fp64 → fp32"))
 # The order x solver study (sherlock_order/): each code's four pairs (PLM, HLL-family), (PPM, HLL-family), (PLM, HLLD),
 # (PPM, HLLD) at one integrator (Abel et al.'s kernels: also one precision and tile, Float32 4-cell).
 GRID = (("Abel GLM, Float32", ("glm_fix_hll32", "glm_fix_ppm32", "glm_fix_hlld", "glm_fix_ppm_hlld")),

@@ -48,8 +48,8 @@ NEWS = (   # (date, page, text): what changed, newest first
     ("2026-11-14", "nested.html", "Nested turbulence: nests against uniform grids with the same Alfvén-speed cap, now all run to the end; an 8-seed ergodicity "
                                   "test; a big four-level nest (1024³-equivalent); three movies."),
     ("2026-11-14", "home.html", "The site reorganised: this home page, the pages in groups; the paper figures moved from index.html to papers.html."),
-    ("2026-11-13", "sweep-plan.html", "RAMSES II rerun with the official code (HLL, HLLD and UCT-HLLD, double and single precision): {r2_done} of {r2} runs "
-                                      "complete, fetched; they replace the earlier mini-RAMSES runs on the pages next."),
+    ("2026-11-14", "benchmark.html", "RAMSES II rerun with the official code (HLL, HLLD and UCT-HLLD, double and single precision): {r2_done} of {r2} runs "
+                                     "complete, now on every page in place of the earlier mini-RAMSES runs."),
     ("2026-11-12", "nested.html", "Nested turbulence page added; the Orszag–Tang page and the four first check pages retired."),
     ("queued", "sweep-plan.html", "AthenaK and AthenaPK in single precision, so the GPU codes compare at one precision."),
 )
@@ -60,16 +60,16 @@ def count():
     import sweep_data as sd
     sw = sd.Sweep()
     camp, code, tests = Counter(), Counter(), set()
-    later = {name: getattr(sw, name) for name in ("arepo", "gizmo", "fixed", "order", "newcodes")}
+    later = {name: getattr(sw, name) for name in ("arepo", "gizmo", "fixed", "order", "newcodes", "ramses2")}
     for key, row in sw.rows.items():
-        if row.get("state") not in ("done", "stopped") or key[1].startswith("miniramses"):
+        if row.get("state") not in ("done", "stopped") :
             continue
         camp[next((n for n, d in later.items() if key in d), "sweep")] += 1; tests.add(key[0])
         code[next(name for p, name, _ in CODES if key[1].startswith(p))] += 1
     r2 = sorted(glob.glob(str(ROOT/"ramses2_results"/"*-run-N*-s*"/"data"/"*_r1"/"run.toml")))
     r2_done = sum(tomllib.load(open(f, "rb")).get("status") == "complete" for f in r2)
     ale = glob.glob(str(ROOT/"sweep_results"/"*-mhdale-ale-run-N*-s*"))
-    camp["ramses2"], camp["mhdale"] = len(r2), len(ale); code["RAMSES II"] += len(r2); code["MHD-ALE"] += len(ale)
+    camp["mhdale"] = len(ale); code["MHD-ALE"] += len(ale)
     turb = len(glob.glob(str(ROOT/"turb_results"/"**"/"run.toml"), recursive=True))
     nested = len(glob.glob(str(ROOT/"nested_results"/"**"/"run.toml"), recursive=True)) + len(glob.glob(str(ROOT/"nested_results"/"**"/"movie.toml"), recursive=True))
     grids = sorted({k[2] for k, r in sw.rows.items() if r.get("state") in ("done", "stopped") and k[2] <= 512})

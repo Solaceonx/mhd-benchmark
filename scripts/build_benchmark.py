@@ -34,7 +34,7 @@ JOBS = (("Smooth waves", ("entropy", "alfven", "alfven_oblique")),
 # Codes in the order of the rows: (family in paper_common.STYLE, name, where it runs, precision)
 CODES = (("glm", "Abel et al., GLM kernels", "GPU", "Float32 state; the f16 kernels compute in Float16"), ("ct", "Abel et al., CT prototype", "GPU", "Float32"),
          ("athenak", "AthenaK", "GPU", "fp64"), ("athenapk", "AthenaPK", "GPU", "fp64"), ("cholla", "Cholla", "GPU", "fp64"),
-         ("pluto", "gPLUTO", "GPU", "fp64"), ("miniramses", "RAMSES II (E. Moseley)", "GPU", "fp64"), ("athenapp", "Athena++", "CPU", "fp64"), ("ramses", "RAMSES", "CPU", "fp64"),
+         ("pluto", "gPLUTO", "GPU", "fp64"), ("ramses2", "RAMSES II", "GPU", "fp64 and fp32"), ("athenapp", "Athena++", "CPU", "fp64"), ("ramses", "RAMSES", "CPU", "fp64"),
          ("enzo", "Enzo", "CPU", "fp64"), ("arepo", "AREPO", "CPU", "fp64"), ("gizmo", "GIZMO", "CPU", "fp64"),
          ("mhdale", "MHD-ALE + our fixes", "CPU", "fp64"),
          ("phantom", "Phantom", "CPU", "fp64"))
@@ -81,6 +81,7 @@ def full_name(m):
 
 def precision(m):
     """The arithmetic of a set-up (CODES gives it per code): Abel et al.'s f16 kernels compute in Float16."""
+    if "f32" in m.split("_")[0]:return "Float32"          # RAMSES II in single precision
     if pc.STYLE[m][0] not in ("glm", "ct"):return "fp64"
     return "Float16" if m.endswith("16") else "Float32"
 
@@ -271,7 +272,7 @@ steps are of different length, and each cell buys a different accuracy. {contras
 <article class="card"><h3>How this is measured</h3><ul class="checks plain">
 <li>Every code starts from the suite's own initial state and writes the same outputs; the error is against the exact solution or a 4096² reference run.</li>
 <li>Each code runs a <em>matched</em> set-up (second order, an HLL-type solver, as close to Abel et al.'s kernels as it allows) and a <em>best</em> one (its strongest standard choice).</li>
-<li>Precision: Abel et al.'s kernels keep their state in Float32 (the f16 kernels compute in Float16); every other code runs in fp64. GPU: one NVIDIA H100; set-ups on two GPUs are counted per GPU.</li>
+<li>Precision: Abel et al.'s kernels keep their state in Float32 (the f16 kernels compute in Float16); RAMSES II runs each set-up in both fp64 and Float32 (fp32 rows); every other code runs in fp64. GPU: one NVIDIA H100; set-ups on two GPUs are counted per GPU.</li>
 <li>A run that stopped or turned non-finite counts as not reaching the accuracy at that grid; the test pages say why each stopped.</li>
 <li>Seed 42, the end time of each test. Data: <a href="media/analysis/work_precision.json">work_precision.json</a>{f"; the five newest codes as fetched {e(fetched)}" if fetched else ""}.</li></ul></article>'''
 

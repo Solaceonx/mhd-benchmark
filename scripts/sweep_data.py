@@ -73,11 +73,14 @@ NEWCODE_CLOCKS = {}            # (run directory, part) -> (seconds, timer): each
 if (NEWCODES_RESULTS.parent/"code_clocks.tsv").is_file():
     for _line in (NEWCODES_RESULTS.parent/"code_clocks.tsv").read_text().splitlines():
         _d, _p, _s, _t = _line.split("\t");NEWCODE_CLOCKS[(_d, _p)] = (float(_s), _t)
-# E. Moseley's RAMSES II (mini-ramses-ism, sherlock_miniramses/README.md): every run classic RAMSES has in the sweep, with
-# its two set-ups, one H100 each, planar tests on N^3 cells (its GPU path is 3D only); the sweep's layout and records,
-# fetched into miniramses_results/ (git-ignored) by sherlock_miniramses/tools/pack_for_mac.sh. Outside the plan.
-MINIRAMSES = ("miniramses_matched", "miniramses_best")
-MINIRAMSES_RESULTS = Path(os.environ.get("MHD_MINIRAMSES_RESULTS", ROOT/"miniramses_results"))
+# RAMSES II, the official code (github ramses-organisation/ramses2, develop 04abdd9; sherlock_miniramses/README.md): every
+# run classic RAMSES has in the sweep, three set-ups (HLL, HLLD, UCT-HLLD) each in double and single precision, one H100
+# each, planar tests on N^3 cells (its GPU path is 3D only); the sweep's layout and records, fetched into ramses2_results/
+# (git-ignored) by sherlock_miniramses/tools/pack_for_mac.sh. Outside the plan. They replace (2026-11-14, lyxia) the
+# earlier runs of E. Moseley's mini-ramses-ism (miniramses_results/, no longer read).
+RAMSES2 = ("ramses2_matched", "ramses2_best", "ramses2_uct", "ramses2f32_matched", "ramses2f32_best", "ramses2f32_uct")
+RAMSES2_F32 = RAMSES2[3:]
+RAMSES2_RESULTS = Path(os.environ.get("MHD_RAMSES2_RESULTS", ROOT/"ramses2_results"))
 _spec = importlib.util.spec_from_file_location("newcode_tasks", ROOT/"sherlock_newcodes"/"tasks.py")
 NEWCODE_TASKS = importlib.util.module_from_spec(_spec);_spec.loader.exec_module(NEWCODE_TASKS)      # their planned runs
 FIELDS = ("rho", "mx", "my", "mz", "E", "Bx", "By", "Bz", "psi")
@@ -172,13 +175,13 @@ class Sweep:
                                 row["note"] = m.get("arepo_stopped", "") if code == "arepo" else \
                                     next((l for l in lines if l.startswith("Step limit")), lines[0] if lines else "")
                         getattr(self, code)[key] = row;self.rows[key] = row
-        self.fixed, self.order, self.newcodes, self.miniramses = {}, {}, {}, {}      # (test, label, n, seed) -> status row, from the fetched records
+        self.fixed, self.order, self.newcodes, self.ramses2 = {}, {}, {}, {}      # (test, label, n, seed) -> status row, from the fetched records
         for root, known, code in ((RERUN, FIXES, "fixed"), (ORDER_RESULTS, ORDER, "order"), (NEWCODES_RESULTS, NEWCODES, "newcodes"),
-                                  (MINIRAMSES_RESULTS, MINIRAMSES, "miniramses")):
+                                  (RAMSES2_RESULTS, RAMSES2, "ramses2")):
             for d in sorted(root.glob("*-N*-s*")) if root.is_dir() else ():
                 m = re.fullmatch(r"(.+)-N(\d+)-s(\d+)-(\w+)", d.name)
-                if code in ("newcodes", "miniramses"):           # <test>-<code>-<variant>-run-N<n>-s<seed>
-                    m = re.fullmatch(r"(.+)-([a-z]+)-(\w+)-run-N(\d+)-s(\d+)", d.name)
+                if code in ("newcodes", "ramses2"):           # <test>-<code>-<variant>-run-N<n>-s<seed>
+                    m = re.fullmatch(r"(.+)-([a-z][a-z0-9]*)-(\w+)-run-N(\d+)-s(\d+)", d.name)
                     m = m and (None, m[1], m[4], m[5], f"{m[2]}_{m[3]}")
                 if not m or m[4] not in known or m[1] not in self.configs:continue
                 test, n, seed, label = m[1], int(m[2]), int(m[3]), m[4];key = (test, label, n, seed)
@@ -195,7 +198,7 @@ class Sweep:
                     elif row["state"] == "stopped":
                         lines = meta.get("error", "").split("\n")      # the code's own stop message when there is one, else the first line
                         row["reached"] = float(meta.get("time_reached", 0.0));row["note"] = next((l.strip() for l in lines if STOP_TEXT.search(l)), lines[0])
-                    if row["state"] == "stopped" and code == "miniramses":row.update(self.miniramses_stop(d, label, row))
+                    if row["state"] == "stopped" and code == "ramses2":row.update(self.ramses2_stop(d, label, row))
                     if row["state"] == "stopped":row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None
                 getattr(self, code)[key] = row;self.rows[key] = row
         # The new codes' planned runs with no fetched record: not finished (their plan is the task lists production.sh submits)
@@ -209,7 +212,7 @@ class Sweep:
                     self.newcodes[key] = self.rows[key] = dict(test=test, n=n, seed=seed, label=label, frac=None, state="open")
 
     @staticmethod
-    def miniramses_stop(d, label, row):
+    def ramses2_stop(d, label, row):
         """RAMSES II ends at its step limit (nstepmax in the namelist: the sweep's cap) without a message of its own: the
         driver then records only the outputs it missed. Its log's last step line gives the time and step it reached."""
         part = d/"data"/f"{label}_r1";nml = part/"abel.nml";log = part/"miniramses.log"
@@ -277,7 +280,7 @@ class Sweep:
     def recorded(self, test, label, n, seed=42, rep=1):
         """The export's record of a part (status, reached, frames, steps, ...), or None."""
         r = self.by.get((test, label, n, seed))
-        if r is not None and r["code"] in ("arepo", "gizmo", "fixed", "order", "newcodes", "miniramses"):          # not in the export: from the fetched record
+        if r is not None and r["code"] in ("arepo", "gizmo", "fixed", "order", "newcodes", "ramses2"):          # not in the export: from the fetched record
             m = self.meta(test, label, n, seed, rep);row = self.rows.get((test, label, n, seed), {})
             return None if m is None else dict(part=f"{label}_r{rep}", status=m.get("status"), frames=len(m.get("frames", [])),
                                                reached=row.get("reached", m.get("time_reached")), steps=m.get("steps"))

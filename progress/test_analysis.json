@@ -118,7 +118,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/entropy/07-validity-matrix.png",
      "vector": "media/analysis/entropy/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -158,7 +158,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/entropy/08-runtime-1.png",
      "vector": "media/analysis/entropy/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -166,7 +166,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 215,
+   "records": 235,
    "methods": [
     "glm",
     "glm_hll16",
@@ -200,8 +200,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -324,7 +328,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/kh_uniform/07-validity-matrix.png",
      "vector": "media/analysis/kh_uniform/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM fixed N=512:     @ Base ./client.jl:550"
@@ -366,7 +370,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/kh_uniform/08-runtime-1.png",
      "vector": "media/analysis/kh_uniform/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -374,7 +378,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 172,
+   "records": 188,
    "methods": [
     "glm",
     "glm_hll16",
@@ -408,8 +412,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -532,7 +540,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/current_sheet/07-validity-matrix.png",
      "vector": "media/analysis/current_sheet/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM HLLD (original) N=64:     @ Base ./client.jl:550",
@@ -588,7 +596,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/current_sheet/08-runtime-1.png",
      "vector": "media/analysis/current_sheet/08-runtime-1.svg",
-     "aspect": 1.5330188679245282,
+     "aspect": 1.450892857142857,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -596,7 +604,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 170,
+   "records": 190,
    "methods": [
     "glm",
     "glm_hll16",
@@ -630,8 +638,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -754,7 +766,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_3d_b50/07-validity-matrix.png",
      "vector": "media/analysis/blast_3d_b50/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.8849557522123893,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
@@ -817,7 +829,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b50/08-runtime-1.png",
      "vector": "media/analysis/blast_3d_b50/08-runtime-1.svg",
-     "aspect": 1.3771186440677965,
+     "aspect": 1.310483870967742,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -825,7 +837,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 149,
+   "records": 169,
    "methods": [
     "glm",
     "glm_hll16",
@@ -855,8 +867,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 64
@@ -969,7 +985,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/uniform/07-validity-matrix.png",
      "vector": "media/analysis/uniform/07-validity-matrix.svg",
-     "aspect": 0.9077155824508321,
+     "aspect": 0.823045267489712,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -1009,7 +1025,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/uniform/08-runtime-1.png",
      "vector": "media/analysis/uniform/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1017,7 +1033,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 165,
+   "records": 185,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1050,8 +1066,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -1174,7 +1194,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/alfven/07-validity-matrix.png",
      "vector": "media/analysis/alfven/07-validity-matrix.svg",
-     "aspect": 0.9077155824508321,
+     "aspect": 0.823045267489712,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -1214,7 +1234,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/alfven/08-runtime-1.png",
      "vector": "media/analysis/alfven/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1222,7 +1242,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 210,
+   "records": 230,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1255,8 +1275,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -1379,7 +1403,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/alfven_oblique/07-validity-matrix.png",
      "vector": "media/analysis/alfven_oblique/07-validity-matrix.svg",
-     "aspect": 0.9077155824508321,
+     "aspect": 0.823045267489712,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": []
     },
@@ -1419,7 +1443,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/alfven_oblique/08-runtime-1.png",
      "vector": "media/analysis/alfven_oblique/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1427,7 +1451,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 210,
+   "records": 230,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1460,8 +1484,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -1584,7 +1612,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/brio_wu/07-validity-matrix.png",
      "vector": "media/analysis/brio_wu/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550"
@@ -1626,7 +1654,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/brio_wu/08-runtime-1.png",
      "vector": "media/analysis/brio_wu/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1634,7 +1662,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 215,
+   "records": 235,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1668,8 +1696,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -1792,7 +1824,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/brio_wu_rotated/07-validity-matrix.png",
      "vector": "media/analysis/brio_wu_rotated/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
@@ -1836,7 +1868,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/brio_wu_rotated/08-runtime-1.png",
      "vector": "media/analysis/brio_wu_rotated/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -1844,7 +1876,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 215,
+   "records": 235,
    "methods": [
     "glm",
     "glm_hll16",
@@ -1878,8 +1910,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -2002,7 +2038,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/orszag_tang/07-validity-matrix.png",
      "vector": "media/analysis/orszag_tang/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=64:     @ Base ./client.jl:550",
@@ -2047,7 +2083,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/orszag_tang/08-runtime-1.png",
      "vector": "media/analysis/orszag_tang/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2055,7 +2091,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 215,
+   "records": 235,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2089,8 +2125,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -2213,7 +2253,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/orszag_tang_3d/07-validity-matrix.png",
      "vector": "media/analysis/orszag_tang_3d/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.8849557522123893,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM HLLD (original) N=256:     @ Base ./client.jl:550",
@@ -2263,7 +2303,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/orszag_tang_3d/08-runtime-1.png",
      "vector": "media/analysis/orszag_tang_3d/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2271,7 +2311,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 149,
+   "records": 169,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2301,8 +2341,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 64
@@ -2425,7 +2469,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/rotor/07-validity-matrix.png",
      "vector": "media/analysis/rotor/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM HLLD (original) N=512:     @ Base ./client.jl:550",
@@ -2470,7 +2514,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/rotor/08-runtime-1.png",
      "vector": "media/analysis/rotor/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2478,7 +2522,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 215,
+   "records": 235,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2512,8 +2556,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -2636,7 +2684,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/gem/07-validity-matrix.png",
      "vector": "media/analysis/gem/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
@@ -2684,7 +2732,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/gem/08-runtime-1.png",
      "vector": "media/analysis/gem/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2692,7 +2740,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 172,
+   "records": 188,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2726,8 +2774,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -2850,7 +2902,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop/07-validity-matrix.png",
      "vector": "media/analysis/field_loop/07-validity-matrix.svg",
-     "aspect": 0.9077155824508321,
+     "aspect": 0.823045267489712,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
@@ -2902,7 +2954,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop/08-runtime-1.png",
      "vector": "media/analysis/field_loop/08-runtime-1.svg",
-     "aspect": 1.3771186440677965,
+     "aspect": 1.310483870967742,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -2910,7 +2962,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 165,
+   "records": 185,
    "methods": [
     "glm",
     "glm_hll16",
@@ -2943,8 +2995,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -3067,7 +3123,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop_novz/07-validity-matrix.png",
      "vector": "media/analysis/field_loop_novz/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
@@ -3119,7 +3175,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop_novz/08-runtime-1.png",
      "vector": "media/analysis/field_loop_novz/08-runtime-1.svg",
-     "aspect": 1.3771186440677965,
+     "aspect": 1.310483870967742,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -3127,7 +3183,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 215,
+   "records": 235,
    "methods": [
     "glm",
     "glm_hll16",
@@ -3161,8 +3217,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -3285,7 +3345,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/field_loop_3d/07-validity-matrix.png",
      "vector": "media/analysis/field_loop_3d/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.8849557522123893,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
@@ -3336,7 +3396,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/field_loop_3d/08-runtime-1.png",
      "vector": "media/analysis/field_loop_3d/08-runtime-1.svg",
-     "aspect": 1.450892857142857,
+     "aspect": 1.3771186440677965,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -3345,7 +3405,7 @@
     "Only a few paired snapshots are local. Error points are sparse; a continuous history requires more matched reference snapshots.",
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 194,
+   "records": 214,
    "methods": [
     "glm",
     "glm_hll16",
@@ -3375,8 +3435,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -3499,7 +3563,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_2d_b0/07-validity-matrix.png",
      "vector": "media/analysis/blast_2d_b0/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM fixed N=32:     @ Base ./client.jl:550"
@@ -3541,7 +3605,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_2d_b0/08-runtime-1.png",
      "vector": "media/analysis/blast_2d_b0/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -3549,7 +3613,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 215,
+   "records": 235,
    "methods": [
     "glm",
     "glm_hll16",
@@ -3583,8 +3647,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -3707,7 +3775,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_2d_b50/07-validity-matrix.png",
      "vector": "media/analysis/blast_2d_b50/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
@@ -3763,7 +3831,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_2d_b50/08-runtime-1.png",
      "vector": "media/analysis/blast_2d_b50/08-runtime-1.svg",
-     "aspect": 1.3771186440677965,
+     "aspect": 1.310483870967742,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -3771,7 +3839,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 215,
+   "records": 235,
    "methods": [
     "glm",
     "glm_hll16",
@@ -3805,8 +3873,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -3929,7 +4001,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_2d_b100/07-validity-matrix.png",
      "vector": "media/analysis/blast_2d_b100/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
@@ -3991,7 +4063,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_2d_b100/08-runtime-1.png",
      "vector": "media/analysis/blast_2d_b100/08-runtime-1.svg",
-     "aspect": 1.3771186440677965,
+     "aspect": 1.310483870967742,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -3999,7 +4071,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 170,
+   "records": 190,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4033,8 +4105,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -4157,7 +4233,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_3d_b0/07-validity-matrix.png",
      "vector": "media/analysis/blast_3d_b0/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.8849557522123893,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=512:     @ Base ./client.jl:550",
@@ -4208,7 +4284,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b0/08-runtime-1.png",
      "vector": "media/analysis/blast_3d_b0/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -4216,7 +4292,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 149,
+   "records": 169,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4246,8 +4322,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 64
@@ -4370,7 +4450,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/blast_3d_b100/07-validity-matrix.png",
      "vector": "media/analysis/blast_3d_b100/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.8849557522123893,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=32:     @ Base ./client.jl:550",
@@ -4437,7 +4517,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/blast_3d_b100/08-runtime-1.png",
      "vector": "media/analysis/blast_3d_b100/08-runtime-1.svg",
-     "aspect": 1.3771186440677965,
+     "aspect": 1.310483870967742,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -4445,7 +4525,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 149,
+   "records": 169,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4475,8 +4555,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 64
@@ -4599,7 +4683,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/kh_localized/07-validity-matrix.png",
      "vector": "media/analysis/kh_localized/07-validity-matrix.svg",
-     "aspect": 0.8849557522123893,
+     "aspect": 0.8042895442359248,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM PPM (original) N=512:     @ Base ./client.jl:550",
@@ -4642,7 +4726,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/kh_localized/08-runtime-1.png",
      "vector": "media/analysis/kh_localized/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -4650,7 +4734,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=128. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 136,
+   "records": 152,
    "methods": [
     "glm",
     "glm_hll16",
@@ -4684,8 +4768,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 128
@@ -4939,7 +5027,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/decay/07-validity-matrix.png",
      "vector": "media/analysis/decay/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.8849557522123893,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=256:     @ Base ./client.jl:550",
@@ -4997,7 +5085,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/decay/08-runtime-1.png",
      "vector": "media/analysis/decay/08-runtime-1.svg",
-     "aspect": 1.310483870967742,
+     "aspect": 1.2500000000000002,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -5005,7 +5093,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 447,
+   "records": 507,
    "methods": [
     "glm",
     "glm_hll16",
@@ -5035,8 +5123,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 64
@@ -5161,7 +5253,7 @@
      "group": "Seed 42 \u00b7 all planned grids",
      "file": "media/analysis/decay_supersonic/07-validity-matrix.png",
      "vector": "media/analysis/decay_supersonic/07-validity-matrix.svg",
-     "aspect": 0.983606557377049,
+     "aspect": 0.8849557522123893,
      "caption": "\u2713: complete and finite. Percentage: last finite physical time / requested time. Grey dot: no fetched record (not a solver failure). Other seeds and full status are available in the data table.",
      "details": [
       "Abel GLM f16/HLL (original) N=64:     @ Base ./client.jl:550",
@@ -5223,7 +5315,11 @@
       "RAMSES II HLL N=64:  ",
       "RAMSES II HLL N=128:  ",
       "RAMSES II HLL N=256:  ",
-      "RAMSES II HLL N=512:  "
+      "RAMSES II HLL N=512:  ",
+      "RAMSES II HLL fp32 N=64:  ",
+      "RAMSES II HLL fp32 N=128:  ",
+      "RAMSES II HLL fp32 N=256:  ",
+      "RAMSES II HLL fp32 N=512:  "
      ]
     },
     {
@@ -5262,7 +5358,7 @@
      "group": "Six more codes, AthenaK PPM/HLLD in grey \u00b7 N=128, seed 42",
      "file": "media/analysis/decay_supersonic/08-runtime-1.png",
      "vector": "media/analysis/decay_supersonic/08-runtime-1.svg",
-     "aspect": 1.8465909090909092,
+     "aspect": 1.728723404255319,
      "caption": "All codes sorted by recorded execution time, on logarithmic time axes. Solid: recorded solver/evolution-loop time. Hatched: measured additional wall time only for a single matched timing record. Endpoint dots are measured; no intermediate wall-clock progress is inferred. GPU and CPU ranks differ; resource and timing scopes appear in the run table.",
      "details": []
     }
@@ -5270,7 +5366,7 @@
    "warnings": [
     "History diagnostics use N=128; reference-error histories use N=64. Seed 42 is plotted consistently; the run table includes all fetched seeds."
    ],
-   "records": 230,
+   "records": 262,
    "methods": [
     "glm",
     "glm_hll16",
@@ -5300,8 +5396,12 @@
     "enzo_dedner",
     "enzo_ct",
     "phantom_sph",
-    "miniramses_matched",
-    "miniramses_best"
+    "ramses2_matched",
+    "ramses2_best",
+    "ramses2_uct",
+    "ramses2f32_matched",
+    "ramses2f32_best",
+    "ramses2f32_uct"
    ],
    "history_grid": 128,
    "error_grid": 64
@@ -5636,6 +5736,6 @@
    ]
   }
  },
- "built_utc": "2026-11-09T21:43:00.044563+00:00",
+ "built_utc": "2026-11-14T23:07:50.383802+00:00",
  "synthetic": false
 }

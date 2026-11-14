@@ -3112,709 +3112,1405 @@ phantom_sph,Phantom SPH,256,43,failed,False,0.04000000000000022,,0,incomplete or
 
  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
 "
-miniramses_matched,RAMSES II HLL,64,42,failed,False,0.06,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,miniramses_results/decay_supersonic-miniramses-matched-run-N64-s42/data/miniramses_matched_r1,"exit code 1; missing output times [0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
-55.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
+ramses2_matched,RAMSES II HLL,64,42,failed,False,0.06,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N64-s42/data/ramses2_matched_r1,"exit code 1; missing output times [0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
+ Used memory: 386.4 Mb
  Run completed
- Total elapsed time: 7.4510350
- Used memory: 455.3 Mb
+ Total elapsed time: 5.3176916
+ Used memory: 386.4 Mb
 
      seconds         %    STEP
+       0.176       3.3    output                  
        0.012       0.2    rho                     
-       0.348       6.2    compute dt              
-       0.150       2.7    hydro - set unew        
+       0.259       4.8    compute dt              
+       0.147       2.7    hydro - set unew        
        0.013       0.2    update time             
        0.013       0.2    hydro - turbulence      
-       4.343      77.1    hydro - godunov         
-       0.015       0.3    hydro - source          
-       0.740      13.1    hydro - set uold        
-       5.634     100.0    TOTAL
+       4.553      84.9    hydro - godunov         
+       0.016       0.3    hydro - source          
+       0.174       3.2    hydro - set uold        
+       5.363     100.0    TOTAL
  
 "
-miniramses_matched,RAMSES II HLL,64,43,failed,False,0.02,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,miniramses_results/decay_supersonic-miniramses-matched-run-N64-s43/data/miniramses_matched_r1,"exit code 1; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
-55.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
- Used memory: 455.3 Mb
+ramses2_matched,RAMSES II HLL,64,43,failed,False,0.02,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N64-s43/data/ramses2_matched_r1,"exit code 1; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+02.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
+ Used memory: 402.9 Mb
  Run completed
- Total elapsed time: 5.7750370
- Used memory: 455.3 Mb
+ Total elapsed time: 5.1429372
+ Used memory: 402.9 Mb
 
      seconds         %    STEP
-       0.012       0.2    rho                     
-       0.348       6.1    compute dt              
-       0.150       2.6    hydro - set unew        
-       0.013       0.2    update time             
-       0.013       0.2    hydro - turbulence      
-       4.333      76.5    hydro - godunov         
-       0.015       0.3    hydro - source          
-       0.777      13.7    hydro - set uold        
-       5.661     100.0    TOTAL
+       0.072       1.4    output                  
+       0.240       4.6    compute dt              
+       0.142       2.7    hydro - set unew        
+       0.006       0.1    update time             
+       0.006       0.1    hydro - turbulence      
+       4.535      87.6    hydro - godunov         
+       0.007       0.1    hydro - source          
+       0.164       3.2    hydro - set uold        
+       5.178     100.0    TOTAL
  
 "
-miniramses_matched,RAMSES II HLL,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,miniramses_results/decay_supersonic-miniramses-matched-run-N128-s42/data/miniramses_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
- Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
- Used memory: 888.5 Mb
+ramses2_matched,RAMSES II HLL,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N128-s42/data/ramses2_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
  Run completed
- Total elapsed time: 87.4788032
- Used memory: 888.5 Mb
+ Total elapsed time: 74.4877746
+ Used memory: 796.5 Mb
 
      seconds         %    STEP
-       1.985       2.3    compute dt              
-       1.893       2.2    hydro - set unew        
-      66.904      76.5    hydro - godunov         
-      16.637      19.0    hydro - set uold        
-      87.479     100.0    TOTAL
+       0.101       0.1    output                  
+       1.486       2.0    compute dt              
+       1.906       2.6    hydro - set unew        
+      69.030      92.5    hydro - godunov         
+       1.957       2.6    hydro - set uold        
+      74.589     100.0    TOTAL
  
 "
-miniramses_matched,RAMSES II HLL,128,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,miniramses_results/decay_supersonic-miniramses-matched-run-N128-s43/data/miniramses_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
- Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
- Used memory: 872.0 Mb
+ramses2_matched,RAMSES II HLL,128,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N128-s43/data/ramses2_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
+ Used memory: 796.5 Mb
  Run completed
- Total elapsed time: 87.8821528
- Used memory: 872.0 Mb
+ Total elapsed time: 74.3803353
+ Used memory: 796.5 Mb
 
      seconds         %    STEP
-       2.081       2.4    compute dt              
-       1.925       2.2    hydro - set unew        
-      66.839      76.1    hydro - godunov         
-      16.921      19.3    hydro - set uold        
-      87.883     100.0    TOTAL
+       0.107       0.1    output                  
+       1.491       2.0    compute dt              
+       1.899       2.5    hydro - set unew        
+      68.919      92.5    hydro - godunov         
+       1.961       2.6    hydro - set uold        
+      74.488     100.0    TOTAL
  
 "
-miniramses_matched,RAMSES II HLL,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,miniramses_results/decay_supersonic-miniramses-matched-run-N256-s42/data/miniramses_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ramses2_matched,RAMSES II HLL,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N256-s42/data/ramses2_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
 
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
  Run completed
- Total elapsed time: 1381.1724870
- Used memory: 4.1 Gb
+ Total elapsed time: 1168.3278933
+ Used memory: 4.0 Gb
 
      seconds         %    STEP
-      23.273       1.7    compute dt              
-      28.818       2.1    hydro - set unew        
-    1062.253      76.9    hydro - godunov         
-     266.657      19.3    hydro - set uold        
-    1381.175     100.0    TOTAL
+      16.424       1.4    compute dt              
+      29.200       2.5    hydro - set unew        
+    1093.087      93.5    hydro - godunov         
+      29.390       2.5    hydro - set uold        
+    1168.922     100.0    TOTAL
  
 "
-miniramses_matched,RAMSES II HLL,256,43,failed,False,0.02,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,miniramses_results/decay_supersonic-miniramses-matched-run-N256-s43/data/miniramses_matched_r1,"exit code 1; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
-
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
- Used memory: 4.1 Gb
+ramses2_matched,RAMSES II HLL,256,43,failed,False,0.02,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N256-s43/data/ramses2_matched_r1,"exit code 1; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+mory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
+ Used memory: 4.0 Gb
  Run completed
- Total elapsed time: 1381.5820661
- Used memory: 4.1 Gb
+ Total elapsed time: 1168.6228380
+ Used memory: 4.0 Gb
 
      seconds         %    STEP
-      23.257       1.7    compute dt              
-      29.252       2.1    hydro - set unew        
-    1060.209      76.9    hydro - godunov         
-     266.619      19.3    hydro - set uold        
-    1379.577     100.0    TOTAL
+       1.676       0.1    output                  
+      16.458       1.4    compute dt              
+      29.197       2.5    hydro - set unew        
+    1092.341      93.4    hydro - godunov         
+      29.397       2.5    hydro - set uold        
+    1169.308     100.0    TOTAL
  
 "
-miniramses_matched,RAMSES II HLL,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,miniramses_results/decay_supersonic-miniramses-matched-run-N512-s42/data/miniramses_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
-30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
+ramses2_matched,RAMSES II HLL,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N512-s42/data/ramses2_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
  Run completed
- Total elapsed time: 22169.0497461
- Used memory: 30.1 Gb
+ Total elapsed time: 18612.8306923
+ Used memory: 29.6 Gb
 
      seconds         %    STEP
-     356.682       1.6    compute dt              
-     468.988       2.1    hydro - set unew        
-   16915.331      76.7    hydro - godunov         
-    4310.283      19.5    hydro - set uold        
-   22052.023     100.0    TOTAL
+     244.985       1.3    compute dt              
+     460.000       2.5    hydro - set unew        
+   17392.184      93.4    hydro - godunov         
+     459.520       2.5    hydro - set uold        
+      55.638       0.3    backup                  
+   18618.546     100.0    TOTAL
  
 "
-miniramses_matched,RAMSES II HLL,512,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,miniramses_results/decay_supersonic-miniramses-matched-run-N512-s43/data/miniramses_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
-30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
- Used memory: 30.1 Gb
+ramses2_matched,RAMSES II HLL,512,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N512-s43/data/ramses2_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
+ Used memory: 29.6 Gb
  Run completed
- Total elapsed time: 22090.4051221
- Used memory: 30.1 Gb
+ Total elapsed time: 18678.2385063
+ Used memory: 29.6 Gb
 
      seconds         %    STEP
-     357.310       1.6    compute dt              
-     467.927       2.1    hydro - set unew        
-   16890.872      76.8    hydro - godunov         
-    4272.127      19.4    hydro - set uold        
-   21989.075     100.0    TOTAL
+     249.270       1.3    compute dt              
+     467.706       2.5    hydro - set unew        
+   17443.881      93.4    hydro - godunov         
+     466.706       2.5    hydro - set uold        
+      49.935       0.3    backup                  
+   18685.556     100.0    TOTAL
  
 "
-miniramses_best,RAMSES II HLLD,64,42,complete,True,0.2,12.3930258,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,miniramses_results/decay_supersonic-miniramses-best-run-N64-s42/data/miniramses_best_r1,
-miniramses_best,RAMSES II HLLD,64,43,complete,True,0.2,1.3532059,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,miniramses_results/decay_supersonic-miniramses-best-run-N64-s43/data/miniramses_best_r1,
-miniramses_best,RAMSES II HLLD,128,42,complete,True,0.2,9.858257,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,miniramses_results/decay_supersonic-miniramses-best-run-N128-s42/data/miniramses_best_r1,
-miniramses_best,RAMSES II HLLD,128,43,complete,True,0.2,10.0487221,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,miniramses_results/decay_supersonic-miniramses-best-run-N128-s43/data/miniramses_best_r1,
-miniramses_best,RAMSES II HLLD,256,42,complete,True,0.2,169.0230438,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,miniramses_results/decay_supersonic-miniramses-best-run-N256-s42/data/miniramses_best_r1,
-miniramses_best,RAMSES II HLLD,256,43,complete,True,0.2,149.462176,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,miniramses_results/decay_supersonic-miniramses-best-run-N256-s43/data/miniramses_best_r1,
-miniramses_best,RAMSES II HLLD,512,42,complete,True,0.2,3788.3124909,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,miniramses_results/decay_supersonic-miniramses-best-run-N512-s42/data/miniramses_best_r1,
-miniramses_best,RAMSES II HLLD,512,43,complete,True,0.2,3149.837369,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,miniramses_results/decay_supersonic-miniramses-best-run-N512-s43/data/miniramses_best_r1,
+ramses2_best,RAMSES II HLLD,64,42,complete,True,0.2,1.1692359,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-best-run-N64-s42/data/ramses2_best_r1,
+ramses2_best,RAMSES II HLLD,64,43,complete,True,0.2,0.6557209,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-best-run-N64-s43/data/ramses2_best_r1,
+ramses2_best,RAMSES II HLLD,128,42,complete,True,0.2,6.6605601,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-best-run-N128-s42/data/ramses2_best_r1,
+ramses2_best,RAMSES II HLLD,128,43,complete,True,0.2,6.9798155,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-best-run-N128-s43/data/ramses2_best_r1,
+ramses2_best,RAMSES II HLLD,256,42,complete,True,0.2,121.6815367,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-best-run-N256-s42/data/ramses2_best_r1,
+ramses2_best,RAMSES II HLLD,256,43,complete,True,0.2,110.2010231,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-best-run-N256-s43/data/ramses2_best_r1,
+ramses2_best,RAMSES II HLLD,512,42,complete,True,0.2,3024.2816696,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-best-run-N512-s42/data/ramses2_best_r1,
+ramses2_best,RAMSES II HLLD,512,43,complete,True,0.2,2506.0449753,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-best-run-N512-s43/data/ramses2_best_r1,
+ramses2_uct,RAMSES II UCT-HLLD,64,42,complete,True,0.2,0.577292,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-uct-run-N64-s42/data/ramses2_uct_r1,
+ramses2_uct,RAMSES II UCT-HLLD,64,43,complete,True,0.2,0.600194,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-uct-run-N64-s43/data/ramses2_uct_r1,
+ramses2_uct,RAMSES II UCT-HLLD,128,42,complete,True,0.2,3.6506712,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-uct-run-N128-s42/data/ramses2_uct_r1,
+ramses2_uct,RAMSES II UCT-HLLD,128,43,complete,True,0.2,3.8563719,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-uct-run-N128-s43/data/ramses2_uct_r1,
+ramses2_uct,RAMSES II UCT-HLLD,256,42,complete,True,0.2,57.6276197,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-uct-run-N256-s42/data/ramses2_uct_r1,
+ramses2_uct,RAMSES II UCT-HLLD,256,43,complete,True,0.2,58.7857118,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-uct-run-N256-s43/data/ramses2_uct_r1,
+ramses2_uct,RAMSES II UCT-HLLD,512,42,complete,True,0.2,1603.2085419,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-uct-run-N512-s42/data/ramses2_uct_r1,
+ramses2_uct,RAMSES II UCT-HLLD,512,43,complete,True,0.2,1161.9196625,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2-uct-run-N512-s43/data/ramses2_uct_r1,
+ramses2f32_matched,RAMSES II HLL fp32,64,42,failed,False,0.02,,0,incomplete or invalid,1 H100,fp32 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2f32-matched-run-N64-s42/data/ramses2f32_matched_r1,"exit code 1; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Run completed
+ Total elapsed time: 2.0123341
+ Used memory: 360.2 Mb
+
+     seconds         %    STEP
+       0.074       3.6    output                  
+       0.012       0.6    rho                     
+       0.235      11.5    compute dt              
+       0.105       5.2    hydro - set unew        
+       0.012       0.6    update time             
+       0.012       0.6    hydro - turbulence      
+       1.437      70.2    hydro - godunov         
+       0.014       0.7    hydro - source          
+       0.144       7.0    hydro - set uold        
+       2.046     100.0    TOTAL
+ 
+"
+ramses2f32_matched,RAMSES II HLL fp32,64,43,failed,False,0.02,,0,incomplete or invalid,1 H100,fp32 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2f32-matched-run-N64-s43/data/ramses2f32_matched_r1,"exit code 1; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Used memory: 360.2 Mb
+ Run completed
+ Total elapsed time: 2.0097229
+ Used memory: 360.2 Mb
+
+     seconds         %    STEP
+       0.070       3.4    output                  
+       0.012       0.6    rho                     
+       0.216      10.6    compute dt              
+       0.109       5.3    hydro - set unew        
+       0.013       0.6    update time             
+       0.013       0.6    hydro - turbulence      
+       1.446      70.8    hydro - godunov         
+       0.014       0.7    hydro - source          
+       0.150       7.3    hydro - set uold        
+       2.043     100.0    TOTAL
+ 
+"
+ramses2f32_matched,RAMSES II HLL fp32,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp32 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2f32-matched-run-N128-s42/data/ramses2f32_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+2.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Run completed
+ Total elapsed time: 24.5167108
+ Used memory: 642.5 Mb
+
+     seconds         %    STEP
+       0.087       0.4    output                  
+       1.029       4.2    compute dt              
+       1.091       4.4    hydro - set unew        
+       0.025       0.1    update time             
+       0.025       0.1    hydro - turbulence      
+      21.139      85.9    hydro - godunov         
+       0.030       0.1    hydro - source          
+       1.154       4.7    hydro - set uold        
+      24.604     100.0    TOTAL
+ 
+"
+ramses2f32_matched,RAMSES II HLL fp32,128,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp32 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2f32-matched-run-N128-s43/data/ramses2f32_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+2.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Used memory: 642.5 Mb
+ Run completed
+ Total elapsed time: 24.4643638
+ Used memory: 642.5 Mb
+
+     seconds         %    STEP
+       0.100       0.4    output                  
+       1.022       4.2    compute dt              
+       1.091       4.4    hydro - set unew        
+       0.025       0.1    update time             
+       0.025       0.1    hydro - turbulence      
+      21.111      85.9    hydro - godunov         
+       0.028       0.1    hydro - source          
+       1.140       4.6    hydro - set uold        
+      24.564     100.0    TOTAL
+ 
+"
+ramses2f32_matched,RAMSES II HLL fp32,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp32 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2f32-matched-run-N256-s42/data/ramses2f32_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+emory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Run completed
+ Total elapsed time: 372.9777689
+ Used memory: 2.8 Gb
+
+     seconds         %    STEP
+       0.510       0.1    output                  
+       9.717       2.6    compute dt              
+      15.881       4.3    hydro - set unew        
+     331.254      88.7    hydro - godunov         
+      15.916       4.3    hydro - set uold        
+     373.490     100.0    TOTAL
+ 
+"
+ramses2f32_matched,RAMSES II HLL fp32,256,43,failed,False,0.02,,0,incomplete or invalid,1 H100,fp32 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2f32-matched-run-N256-s43/data/ramses2f32_matched_r1,"exit code 1; missing output times [0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+emory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Used memory: 2.8 Gb
+ Run completed
+ Total elapsed time: 373.7382536
+ Used memory: 2.8 Gb
+
+     seconds         %    STEP
+       1.218       0.3    output                  
+       9.752       2.6    compute dt              
+      15.910       4.3    hydro - set unew        
+     331.089      88.5    hydro - godunov         
+      16.001       4.3    hydro - set uold        
+     374.227     100.0    TOTAL
+ 
+"
+ramses2f32_matched,RAMSES II HLL fp32,512,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp32 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2f32-matched-run-N512-s42/data/ramses2f32_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+b
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Run completed
+ Total elapsed time: 5920.4030952
+ Used memory: 20.5 Gb
+
+     seconds         %    STEP
+       8.151       0.1    output                  
+     143.483       2.4    compute dt              
+     252.564       4.3    hydro - set unew        
+    5271.278      88.9    hydro - godunov         
+     252.526       4.3    hydro - set uold        
+    5928.562     100.0    TOTAL
+ 
+"
+ramses2f32_matched,RAMSES II HLL fp32,512,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp32 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2f32-matched-run-N512-s43/data/ramses2f32_matched_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Used memory: 20.5 Gb
+ Run completed
+ Total elapsed time: 5930.8889351
+ Used memory: 20.5 Gb
+
+     seconds         %    STEP
+     143.945       2.4    compute dt              
+     253.370       4.3    hydro - set unew        
+    5280.488      89.0    hydro - godunov         
+     252.867       4.3    hydro - set uold        
+    5935.829     100.0    TOTAL
+ 
+"
+ramses2f32_best,RAMSES II HLLD fp32,64,42,complete,True,0.2,0.5010159,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-best-run-N64-s42/data/ramses2f32_best_r1,
+ramses2f32_best,RAMSES II HLLD fp32,64,43,complete,True,0.2,0.51666,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-best-run-N64-s43/data/ramses2f32_best_r1,
+ramses2f32_best,RAMSES II HLLD fp32,128,42,complete,True,0.2,2.7713981,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-best-run-N128-s42/data/ramses2f32_best_r1,
+ramses2f32_best,RAMSES II HLLD fp32,128,43,complete,True,0.2,2.677073,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-best-run-N128-s43/data/ramses2f32_best_r1,
+ramses2f32_best,RAMSES II HLLD fp32,256,42,complete,True,0.2,44.7581353,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-best-run-N256-s42/data/ramses2f32_best_r1,
+ramses2f32_best,RAMSES II HLLD fp32,256,43,complete,True,0.2,40.6494389,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-best-run-N256-s43/data/ramses2f32_best_r1,
+ramses2f32_best,RAMSES II HLLD fp32,512,42,complete,True,0.2,1042.8684082,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-best-run-N512-s42/data/ramses2f32_best_r1,
+ramses2f32_best,RAMSES II HLLD fp32,512,43,complete,True,0.2,910.9481888,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-best-run-N512-s43/data/ramses2f32_best_r1,
+ramses2f32_uct,RAMSES II UCT-HLLD fp32,64,42,complete,True,0.2,0.4722209,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-uct-run-N64-s42/data/ramses2f32_uct_r1,
+ramses2f32_uct,RAMSES II UCT-HLLD fp32,64,43,complete,True,0.2,0.5002308,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-uct-run-N64-s43/data/ramses2f32_uct_r1,
+ramses2f32_uct,RAMSES II UCT-HLLD fp32,128,42,complete,True,0.2,2.532757,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-uct-run-N128-s42/data/ramses2f32_uct_r1,
+ramses2f32_uct,RAMSES II UCT-HLLD fp32,128,43,complete,True,0.2,2.20351,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-uct-run-N128-s43/data/ramses2f32_uct_r1,
+ramses2f32_uct,RAMSES II UCT-HLLD fp32,256,42,complete,True,0.2,32.2578082,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-uct-run-N256-s42/data/ramses2f32_uct_r1,
+ramses2f32_uct,RAMSES II UCT-HLLD fp32,256,43,complete,True,0.2,32.2124462,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-uct-run-N256-s43/data/ramses2f32_uct_r1,
+ramses2f32_uct,RAMSES II UCT-HLLD fp32,512,42,complete,True,0.2,827.5129051,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-uct-run-N512-s42/data/ramses2f32_uct_r1,
+ramses2f32_uct,RAMSES II UCT-HLLD fp32,512,43,complete,True,0.2,622.4054565,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp32 evolution; Float32 snapshots,0.8,ramses2_results/decay_supersonic-ramses2f32-uct-run-N512-s43/data/ramses2f32_uct_r1,

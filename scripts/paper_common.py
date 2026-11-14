@@ -66,9 +66,14 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     "enzo_dedner": ("enzo", "Enzo Dedner (Wang & Abel), PLM/HLL/RK2", "Enzo Dedner", (0, (4.5, 4.5)), "s"),
     "enzo_ct": ("enzo", "Enzo CT (Collins et al.), PLM/HLLD", "Enzo CT", "-", "o"),
     "phantom_sph": ("phantom", "Phantom SPMHD, divergence cleaning", "Phantom SPH", "-", "^"),
-    # E. Moseley's RAMSES II (sweep_data.MINIRAMSES): the two set-ups of classic RAMSES, on one H100; in the new codes' panels
-    "miniramses_matched": ("miniramses", "RAMSES II (E. Moseley) MUSCL-Hancock/HLL, CT", "RAMSES II HLL", (0, (4.5, 4.5)), "s"),
-    "miniramses_best": ("miniramses", "RAMSES II (E. Moseley) MUSCL-Hancock/HLLD, CT", "RAMSES II HLLD", "-", "o"),
+    # RAMSES II, the official code (sweep_data.RAMSES2): three set-ups on one H100, in double and in single precision; in the new
+    # codes' panels (the single-precision ones in the tables and the benchmark only: test_diagnostics.groups)
+    "ramses2_matched": ("ramses2", "RAMSES II MUSCL-Hancock/HLL, CT", "RAMSES II HLL", (0, (4.5, 4.5)), "s"),
+    "ramses2_best": ("ramses2", "RAMSES II MUSCL-Hancock/HLLD, CT", "RAMSES II HLLD", "-", "o"),
+    "ramses2_uct": ("ramses2", "RAMSES II MUSCL-Hancock/HLLD, upwind CT (UCT-HLLD)", "RAMSES II UCT-HLLD", "-.", "D"),
+    "ramses2f32_matched": ("ramses2", "RAMSES II MUSCL-Hancock/HLL, CT, single precision", "RAMSES II HLL fp32", (0, (1.5, 2.5)), "s"),
+    "ramses2f32_best": ("ramses2", "RAMSES II MUSCL-Hancock/HLLD, CT, single precision", "RAMSES II HLLD fp32", (0, (1, 1)), "o"),
+    "ramses2f32_uct": ("ramses2", "RAMSES II MUSCL-Hancock/HLLD, UCT-HLLD, single precision", "RAMSES II UCT-HLLD fp32", (0, (3, 1, 1, 1)), "D"),
     "athenak_reference": ("reference", "AthenaK reference", "Reference", "-", ""),
     "athenapp_reference": ("reference", "Athena++ check", "Check", (0, (4, 2)), ""),
 }
@@ -79,7 +84,7 @@ ALL = GPU + OTHER
 AREPO = ("arepo_moving", "arepo_static")      # run after the sweep on the planar tests (sherlock_arepo/); not part of ALL
 GIZMO = ("gizmo_mfm",)                        # the same (sherlock_gizmo/)
 NEWCODES = sweep_data.NEWCODES                 # five more codes, every test (sherlock_newcodes/); their own panels
-MINIRAMSES = sweep_data.MINIRAMSES             # RAMSES II, every test classic RAMSES ran (sherlock_miniramses/); the same panels
+RAMSES2 = sweep_data.RAMSES2                   # RAMSES II, every test classic RAMSES ran (sherlock_miniramses/); the same panels
 
 
 def color(method):

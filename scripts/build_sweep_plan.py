@@ -65,9 +65,11 @@ ADDED = [("glm_fix_hll16", "GLM f16 fix", "GLM production kernel fixed (sweep-fi
 # (github ramses-organisation/ramses2, develop 04abdd9) replaces E. Moseley's mini-ramses-ism runs (579d842), with
 # UCT-HLLD added and every run in double and single precision (sherlock_miniramses/ramses2.sbatch, runs_ramses2.json).
 _R2 = "RAMSES II (official, develop 04abdd9): MUSCL-Hancock / {}, CT, Courant {} (GPU, {} precision)"
-PLANNED = [(f"{code}_{v}", f"RAMSES II {short}{' f32' if code.endswith('f32') else ''}", _R2.format(solver, c, "single" if code.endswith("f32") else "double"))
-           for code in ("ramses2", "ramses2f32")
-           for v, short, solver, c in (("matched", "m", "HLL", 0.5), ("best", "b", "HLLD", 0.8), ("uct", "UCT", "UCT-HLLD", 0.8))]
+RAMSES2_COLS = [(f"{code}_{v}", f"RAMSES II {short}{' f32' if code.endswith('f32') else ''}", _R2.format(solver, c, "single" if code.endswith("f32") else "double"))
+                for code in ("ramses2", "ramses2f32")
+                for v, short, solver, c in (("matched", "m", "HLL", 0.5), ("best", "b", "HLLD", 0.8), ("uct", "UCT", "UCT-HLLD", 0.8))]
+ADDED += RAMSES2_COLS                      # their records are fetched (ramses2_results/): no longer planned
+PLANNED = []
 # The other GPU codes in single precision (2026-11-12, lyxia: compare every GPU code at the precision of Abel et al.'s
 # kernels): the same set-ups as their double-precision columns, fp32 builds (sherlock_newcodes/submit_f32.sh).
 PLANNED += [("athenakf32_matched", "AthenaK m f32", "AthenaK matched in single precision: PLM / HLLE / RK2 (GPU)"),
@@ -323,7 +325,7 @@ def added_rows():
     frac, note, detail) as the export's rows."""
     import sweep_data
     sw = sweep_data.Sweep();out = []
-    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()) + list(sw.gizmo.items()) + list(sw.newcodes.items()):
+    for key, r in list(sw.fixed.items()) + list(sw.arepo.items()) + list(sw.gizmo.items()) + list(sw.newcodes.items()) + list(sw.ramses2.items()):
         test, label, n, seed = key;row = dict(test=test, label=label, n=n, seed=seed, state=r["state"], frac=r.get("frac"), note=r.get("note", ""))
         if r["state"] == "stopped":
             m = sw.meta(*key) or {}
@@ -452,7 +454,7 @@ def ramses2_card():
     stopped = sorted({f.parts[-4].split("-ramses2")[0] + " " + f.parent.name.split("_")[1] for f in rec
                       if tomllib.load(open(f, "rb")).get("status") != "complete"})
     state = (f' <strong>All tasks ended: {done} of {len(rec)} runs complete</strong>' + (f' (stopped: {", ".join(stopped)})' if stopped else '')
-             + '; the records are fetched and go into the tables next.') if rec else ''
+             + '; the records are in the tables above and on every page.') if rec else ''
     return ('<div class="card"><h3>Rerun: RAMSES II with the official code</h3><p>RAMSES II as released on GitHub '
             '(ramses-organisation/ramses2, <code>develop</code> at 04abdd9, 2026-11-12), now with E. Moseley\'s upwind constrained '
             'transport (UCT-HLLD) on GPUs. Three set-ups (HLL at Courant 0.5, HLLD and UCT-HLLD at 0.8), each in double and in single '
@@ -461,7 +463,7 @@ def ramses2_card():
             'set-ups, UCT at 512³ for memory), then the tasks. A CPU build of this commit reproduces the earlier Alfvén wave to four digits.'
             f'{state}</p>'
             '<p class="small">These runs replace those of E. Moseley\'s mini-ramses-ism (commit 579d842, October 2026: 268 runs, 260 finished), '
-            'which the other pages show until the new records are fetched.</p></div>'
+            'which the pages no longer show.</p></div>'
             '<div class="card"><h3>Being run: the GPU codes in single precision</h3><p>Abel et al.\'s kernels run in Float32 (and Float16), '
             'every other GPU code ran in double precision, which costs a GPU about two to three times in speed. So AthenaK and AthenaPK '
             'run again, every test at every grid with both their set-ups, from single-precision builds (AthenaK needed type fixes in ten files '
@@ -652,7 +654,7 @@ def status_html(status, configs, families, family_of, driven=None, added=()):
             "<script>document.querySelectorAll('.glm-toggle').forEach(b=>b.addEventListener('click',()=>{const t=b.closest('table');"
             "t.classList.toggle('glm-closed');}))</script>"
             f'<p class="small">The GLM column holds Abel et al.\'s {len(GLM_GROUP)} GLM kernels (5 original, 4 fixed); open it for one column per kernel. '
-            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE, the fixed kernels and the five codes from AthenaPK to Phantom ran after the sweep, outside its plan; RAMSES II is being rerun with its official code (the italic columns). The MHD-ALE runs use commit adde93b of the code with two fixes of ours: the tolerance of its divergence check scales with the grid spacing, and its fast speed uses c<sub>s</sub>² + v<sub>A</sub>². GIZMO\'s particles are converted to the grid with its own partition of space, which conserves mass exactly.</p>')
+            'Columns in italics are codes whose runs have not been made yet. AREPO, GIZMO, MHD-ALE, the fixed kernels and the five codes from AthenaPK to Phantom ran after the sweep, outside its plan; RAMSES II ran again with its official code, each set-up in double and single precision (f32). The MHD-ALE runs use commit adde93b of the code with two fixes of ours: the tolerance of its divergence check scales with the grid spacing, and its fast speed uses c<sub>s</sub>² + v<sub>A</sub>². GIZMO\'s particles are converted to the grid with its own partition of space, which conserves mass exactly.</p>')
 
     # ---- counts by method, with a part-to-whole bar (the numbers beside it are the table view)
     t = tally(dict(status, rows=every));tot = {k: sum(v[k] for v in t.values()) for k in ("planned", "finished", "stopped", "redo", "unfinished", "skipped")}

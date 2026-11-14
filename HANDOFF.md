@@ -66,16 +66,19 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
-**2026-11-14 (session cut by the usage limit):** RAMSES II rerun done: 788 of 804 complete; the 16 failures are all
-decay_supersonic HLL (both precisions), as in the old campaign; records fetched to `ramses2_results/` (git-ignored; the
-site still shows the old mini-ramses data: next, point `sweep_data` at `ramses2_results` with labels ramses2[f32]_{matched,best,uct}).
-512³ speed (G updates/s): HLL 0.35/1.07, HLLD 0.36/0.86, UCT-HLLD 0.61/1.21 (fp64/fp32). fp32 GPU codes: Cholla refuses
-PRECISION=1 (static assertion), dropped; AthenaK needed one more fix (unit_system.cpp, `UNITS` in patch_athenak.py); resubmitted
-build 52303589 -> pilot 52303590 -> arrays 52303614 (athenakf32), 52303640 (athenapkf32). Nested: big run deep192 finished
-(t = 0.5, 7,797 s, mass added 1.7e-5, Mach 9.93); 128³ movie run stopped at t = 0.72 (wall cap); spectra by level in
-`big/deep192/spectra.npz` (spectra.py/.sbatch); `nested_figures.py` now draws `nested-big.png` and all three movies, but
-`build_nested.py` does not yet show them (not published). Queued: ergodicity ensemble 52303938 (ergodic.jl, 8 seeds), capped
-comparisons 52303940 (nest64 uni256) and 52303942 (nest128 uni512) in `compare_cap/` (NESTED_VA_MAX=30).
+**2026-11-14, later (site reorganised, nested results in):** the site has a home page (`scripts/build_home.py` ->
+`progress/home.html`, published as index.html; it counts every run from the records: 5,547) and grouped navigation
+(`publish_site.GROUPS`, `nav_html`); the Papers page moved from index.html to papers.html. Nested page now leads with the
+capped comparison (both grids capped at v_A = 30 c_s; all four runs finished: nest64 214 s vs uni256 3,655 s to t = 1, nest128
+1,249 s vs uni512 15,617 s to t = 0.5): density statistics agree from t = 0.3 on (the earlier 18 % vs 32 % small-scale gap
+was the t <= 0.35 window), velocity ~20 % short at k = 8–96 in the nests, the field too intermittent to call; the 8-seed
+ergodicity test (time mean at a point = volume mean within errors; tau_int 0.009); the big nest; three movies. Figures
+`nested-capped.png`, `nested-ergodic.png` (nested_figures.fig_capped, fig_ergodic). RAMSES II: 788 of 804 complete (16 failures
+all decay_supersonic HLL), records in `ramses2_results/`; the pages still show the old mini-ramses data until `sweep_data`
+reads `ramses2_results` (labels ramses2[f32]_{matched,best,uct}). 512³ speed (G updates/s): HLL 0.35/1.07, HLLD 0.36/0.86,
+UCT-HLLD 0.61/1.21 (fp64/fp32). fp32 GPU codes: Cholla refuses PRECISION=1, dropped (tasks.py, status page); AthenaK failed
+again on `binary_gravity.cpp` (1.0e-300 underflows a float; added to `SINGLE`; the build now runs `make -k`); resubmitted
+2026-11-14: build 52355179 -> pilot 52355180 -> arrays 52355195 (athenakf32), 52355201 (athenapkf32).
 
 **GPU codes in single precision, 2026-11-12 (lyxia: "compare all the GPU codes apples to apples"):** AthenaK, AthenaPK,
 Cholla again in fp32 (codes athenakf32, athenapkf32, chollaf32 in `sherlock_newcodes/newcodes_run.py`; same set-ups,

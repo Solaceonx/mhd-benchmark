@@ -3,9 +3,9 @@
     python3 scripts/publish_site.py SITE_CLONE_DIR [--link]
 
 Writes SITE_CLONE_DIR/mhd/: every page except the GPU suite, whose 38,000 stills are 235 MB (its movies are on the
-test pages, test-<name>.html, which are published and reached from tests.html). The Papers
-page stays index.html (the address that was given out first); the five first pages (Orszag–Tang and the checks after it) are
-no longer published. The
+test pages, test-<name>.html, which are published and reached from tests.html). index.html is the
+home page (scripts/build_home.py; until 2026-11-14 it was the Papers page, now papers.html); the five first pages (Orszag–Tang
+and the checks after it) are no longer published. The
 pages are unlisted: nothing on the website links to them and they ask search engines not to index them. --link adds
 links to them in the MHD entry of research.html (lyxia had them removed on 2026-10-04: not for general readers yet).
 
@@ -24,18 +24,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT/"progress"
 PAGES = [   # local name, published name, label in the navigation (in its order)
+    ("home.html", "index.html", "Home"),
     ("benchmark.html", "benchmark.html", "Benchmark"),
-    ("weekly.html", "weekly.html", "Weekly progress"),
-    ("paper-figures.html", "index.html", "Paper figures"),
-    ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
-    ("turbulence.html", "turbulence.html", "Turbulence"),
+    ("paper-figures.html", "papers.html", "Paper figures"),
+    ("our-figures.html", "our-figures.html", "Our figures"),
+    ("turbulence.html", "turbulence.html", "Driven turbulence"),
     ("nested.html", "nested.html", "Nested turbulence"),
     ("tests.html", "tests.html", "Tests"),
-    ("our-figures.html", "our-figures.html", "Our figures"),
-    ("sweep-fixes.html", "sweep-fixes.html", "Kernel fixes"),
     ("problems.html", "problems.html", "Test definitions"),
     ("solver.html", "solver.html", "Inside the solver"),
+    ("sweep-fixes.html", "sweep-fixes.html", "Kernel fixes"),
+    ("sweep-plan.html", "sweep-plan.html", "Sweep status"),
+    ("weekly.html", "weekly.html", "Weekly progress"),
 ]
+# The navigation in groups (2026-11-14, lyxia: "organize the site"): each group's first page and its label. The home page took
+# index.html; the Papers page, index.html until then, is papers.html.
+GROUPS = {"benchmark.html": "Results", "turbulence.html": "Turbulence", "tests.html": "Tests and methods", "sweep-plan.html": "Progress"}
 # Not published since 2026-11-12 (lyxia: not needed): the first five pages, index.html (Orszag–Tang), hydro-decay.html,
 # isothermal-decay.html, acoustic-wave.html, entropy-wave.html. They stay in progress/ for the local preview.
 NAMES = {src: dst for src, dst, _ in PAGES}
@@ -55,13 +59,21 @@ def localise(text, wanted):
     return LOCAL.sub(one, text)
 
 
+def nav_html(name):
+    """The shared navigation: Research, Home, then the groups of GROUPS, each kept together when the bar wraps."""
+    out, open_set = ['<nav class="test-nav grouped" aria-label="Pages"><a href="../research.html"><span>←</span>Research</a>'], False
+    for i, (src, dst, label) in enumerate(PAGES, 1):
+        if src in GROUPS:
+            out.append(("</span>" if open_set else "") + f'<span class="nav-set"><b class="nav-group">{GROUPS[src]}</b>');open_set = True
+        out.append(f'<a href="{dst}"{" aria-current=\"page\"" if src == name else ""}><span>{i:02d}</span>{label}</a>')
+    return "".join(out) + ("</span>" if open_set else "") + "</nav>"
+
+
 def rewrite(html, name, wanted):
     html = re.sub(r'href="([a-z-]+\.html)', lambda m: f'href="{NAMES.get(m.group(1), m.group(1))}', html)
     html = localise(html, wanted)
-    nav = '<nav class="test-nav" aria-label="Pages"><a href="../research.html"><span>←</span>Research</a>' + "".join(
-        f'<a href="{dst}"{" aria-current=\"page\"" if src == name else ""}><span>{i:02d}</span>{label}</a>'
-        for i, (src, dst, label) in enumerate(PAGES, 1)) + "</nav>"
-    html, n = re.subn(r'<nav class="test-nav".*?</nav>', lambda m: nav, html, count=1, flags=re.S)
+    nav = nav_html(name)
+    html, n = re.subn(r'<nav class="test-nav[^"]*".*?</nav>', lambda m: nav, html, count=1, flags=re.S)
     if n != 1:sys.exit(f"{name}: no navigation found")
     html = re.sub(r'<a class="brand" href="[^"]*">', '<a class="brand" href="../research.html">', html, count=1)
     html = html.replace("LOCAL RESEARCH NOTEBOOK", "RESEARCH NOTEBOOK")
@@ -116,7 +128,7 @@ def check(out):
         if f.name == 'notes.html':continue  # Copy the private notebook without reading its contents.
         text = f.read_text()
         if f.suffix == '.html':
-            nav = re.search(r'<nav class="test-nav".*?</nav>', text, re.S)
+            nav = re.search(r'<nav class="test-nav[^"]*".*?</nav>', text, re.S)
             expected = [dst for _, dst, _ in PAGES]
             actual = re.findall(r'href="([^"]+)"', nav.group()) if nav else []
             if actual != ['../research.html', *expected]:
@@ -159,7 +171,7 @@ def main(argv):
     check(out)
     # research.html: links in the MHD project entry (once)
     research = clone/"research.html";text = research.read_text()
-    links = (f'{MARK}<p>Comparison sweep with every code: <a href="mhd/index.html">paper figures redrawn</a> · '
+    links = (f'{MARK}<p>Comparison sweep with every code: <a href="mhd/papers.html">paper figures redrawn</a> · '
              '<a href="mhd/sweep-plan.html">run status</a>.</p>')
     if not link:pass
     elif MARK in text:text = re.sub(re.escape(MARK) + r"<p>.*?</p>", links, text, flags=re.S)

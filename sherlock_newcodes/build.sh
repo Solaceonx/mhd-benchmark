@@ -45,7 +45,7 @@ build_athenak_f32() {
     && (cd "$d/tree" && git checkout -q -- . ) && python3 "$SWEEP_BUNDLE/codes/athenak/patch_athenak.py" "$d/tree" \
     && cmake -S "$d/tree" -B "$d/build" -D CMAKE_BUILD_TYPE=Release -D PROBLEM=abel_suite -D Athena_SINGLE_PRECISION=ON \
          -D Kokkos_ENABLE_CUDA=ON -D Kokkos_ARCH_HOPPER90=ON -D CMAKE_CXX_COMPILER="$d/tree/kokkos/bin/nvcc_wrapper" \
-    && cmake --build "$d/build" -j "$jobs"
+    && cmake --build "$d/build" -j "$jobs" -- -k    # -k: one failed build shows every file that does not compile
 }
 build_cholla() {    # set-up
     local t="$root/cholla/$1"

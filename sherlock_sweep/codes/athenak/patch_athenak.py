@@ -47,6 +47,8 @@ SINGLE = [
     ("src/pgen/unit_tests/gauss_legendre.cpp", "double ylmR1,ylmI1,ylmR2,ylmI2;", "Real ylmR1,ylmI1,ylmR2,ylmI2;"),
     ("src/pgen/tests/divb_amr.cpp", "+ std::abs(divb_amr.guide_b3) + 6.0*std::abs(divb_amr.field_amp));",
      "+ std::abs(divb_amr.guide_b3) + static_cast<Real>(6.0)*std::abs(divb_amr.field_amp));"),
+    # 1e-300 underflows a float: the CUDA front end refuses it ("floating-point value does not fit", job 52303589); clang did not
+    ("src/pgen/tests/binary_gravity.cpp", "constexpr Real floor_den = 1.0e-300;", "constexpr Real floor_den = 1.0e-30;"),
 ]
 UNITS = "src/eos/primitive-solver/unit_system.cpp"
 TABLES = ("src/eos/primitive-solver/eos_compose.cpp", "src/eos/primitive-solver/eos_hybrid.cpp")   # Real * table_x = table["x"] (double)

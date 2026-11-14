@@ -38,18 +38,19 @@ def figure(i, name, title, caption, finding=None):
     return "".join(out) + "</article>"
 
 
-def movie(case, m, title, text):
+def movie(case, m, title, text, rerun=True):
     mp4 = MEDIA/f"{case}-movie.mp4"
     if not mp4.is_file():
         return ""
     v = int(mp4.stat().st_mtime); src = f"media/nested/{case}-movie"
+    poster = f"{src}.jpg" if (MEDIA/f"{case}-movie.jpg").is_file() else f"{src}.png"
+    note = (" This is a rerun of the same set-up with outputs every 0.002; stopping that often changes the time steps slightly, so it does not follow the runs "
+            "of the figures below in detail.") if rerun else ""
     return f'''<article class="card test-movie" id="movie-{case}"><h3>{e(title)}</h3>
-<video controls loop muted playsinline preload="metadata" poster="{src}.png?v={v}" style="width:100%;height:auto;max-height:80vh;object-fit:contain"
+<video controls loop muted playsinline preload="none" poster="{poster}?v={v}" style="width:100%;height:auto;max-height:80vh;object-fit:contain"
 aria-label="{e(title)}"><source src="{src}.mp4?v={v}" type="video/mp4"><a href="{src}.mp4">Download the movie</a></video>
 <p>{text} {m["frames"]} frames, one every {m["dt"]:g} from t = 0 to {m["t_last"]:g}{"" if m["finished"] else " (the run stopped there)"}, played at 25 per second.
-Every level is drawn in its own place at the finest resolution (coarser levels as blocks); dashed squares mark levels 2 and 3. The colour scales are fixed.
-This is a rerun of the same set-up with outputs every 0.002; stopping that often changes the time steps slightly, so it does not follow the run of the figures
-below in detail.</p>
+Every level is drawn in its own place at the finest resolution (coarser levels as blocks); dashed squares mark the finer levels. The colour scales are fixed.{note}</p>
 <p><a href="{src}.mp4?v={v}" download>Download MP4 · {m["mb"]:g} MB</a></p></article>'''
 
 
@@ -69,30 +70,44 @@ def build(J):
     ratio_steps = J["steps_to_tu"]["uni256"][0] / J["steps_to_tu"]["nest64"][-1]
     bt = J["brms_box_at_tu"]; bc = J["brms_central_range"]; mb = J["mach_box"]
     number = next(i for i, (src, _, _) in enumerate(PAGES, 1) if src == PAGE)
-    chips = ["3 levels, refinement ratio 2", "driven Mach 10, plasma β 200", "constrained transport, HLL, Courant 0.25",
-             f"nest 3 × 64³ to t = 1 in {wall['nest64'] / 60:.0f} min", f"nest 3 × 128³ to t = 0.5 in {wall['nest128'] / 60:.0f} min",
-             f"div B ≤ {max(J['divb'].values()):.0e}", "one H100 per run"]
+    C = J["capped"]; G = J["ergodic"]; B = J["big"]; cr = C["runs"]; sh = C["share_central"]; sr = C["spectrum_ratio"]; ln = C["lnrho_central"]
+    cpc = lambda c, q: f"{100 * sh[c][q]:.0f} %" if sh[c][q] >= 0.1 else f"{100 * sh[c][q]:.1f} %"
+    chips = ["3–4 levels, refinement ratio 2", "driven Mach 10, plasma β 200", "constrained transport, HLL, Courant 0.25",
+             f"nest 3 × 64³ to t = 1 in {cr['nest64']['wall'] / 60:.0f} min", f"uniform 256³ to t = 1 in {cr['uni256']['wall'] / 60:.0f} min",
+             f"big nest (1024³-equivalent) to t = {B['t']:g} in {B['wall'] / 3600:.1f} h", f"{len(G['seeds'])}-seed ergodicity test",
+             f"div B ≤ {max(max(J['divb'].values()), B['divb']):.0e}", "one H100 per run"]
     out = [f'''
-<div class="page-heading"><div><div class="eyebrow"><span>{number:02d} · Nested turbulence</span><span class="badge">3 runs + movies</span></div>
+<div class="page-heading"><div><div class="eyebrow"><span>{number:02d} · Nested turbulence</span><span class="badge">nests against uniform grids</span></div>
 <h1>Nested turbulence: Tom Abel's NestedMHD on a GPU</h1>
-<p>A nest puts a finer grid inside a coarser one: here three levels, each twice as fine as the one around it, centred in a periodic box, so the central
-quarter of the box is computed at four times the resolution of the rest. Tom's question: does the finest level of a nest reproduce what a uniform grid at
+<p>A nest puts a finer grid inside a coarser one: here three or four levels, each twice as fine as the one around it, centred in a periodic box, so the centre
+of the box is computed at four or eight times the resolution of the rest. Tom's question: does the finest level of a nest reproduce what a uniform grid at
 that resolution gives, for much less computing? We ran his code (<a href="https://github.com/yipihey/NestedTurbulence">NestedTurbulence</a>, MIT) on
-Sherlock's H100s, which it had not run on before, fixed what stopped it in 3-D, and set a nest against a uniform grid in driven Mach-10 MHD turbulence.</p></div>
+Sherlock's H100s, which it had not run on before, fixed what stopped it in 3-D, and set nests against uniform grids in driven Mach-10 MHD turbulence.</p></div>
 <a class="method-link" href="../sherlock_nested/README.md">Set-up, fixes and jobs <span>↗</span></a></div>
 <div class="chips">{"".join(f'<span class="chip">{e(c)}</span>' for c in chips)}</div>
-<div class="card"><h3>The short answer so far</h3><ul>
-<li><strong>It runs, and it is cheap.</strong> The 3 × 64³ nest (finest 256³-equivalent) reached t = 1 in {wall["nest64"]:.0f} s. Over t = 0.2–{tu:g} it took
-{J["wall_02_to_tu"]["nest64"]:.0f} s where the uniform 256³ grid took {J["wall_02_to_tu"]["uni256"] / 60:.0f} min ({ratio_wall:.0f}×). Constrained transport keeps div B at
-round-off ({max(J["divb"].values()):.0e}) on every level.</li>
-<li><strong>Large-scale statistics agree.</strong> Over the whole box the rms Mach number is {f2(mb["nest64"])} (nest) and {f2(mb["uni256"])} (uniform), and at t = {tu:g} the
-rms field is {f2(bt["nest64"])} and {f2(bt["uni256"])}. The density and speed PDFs of the central cube match.</li>
-<li><strong>Small scales do not, yet.</strong> In the central cube at the same resolution, wave numbers 32–96 hold {pc("nest64", "rho")} of the density
-variance in the nest's finest level and {pc("uni256", "rho")} in the uniform grid; for the velocity {pc("nest64", "v")} and {pc("uni256", "v")}, for the field
-{pc("nest64", "B")} and {pc("uni256", "B")} (figure 4).</li>
-<li><strong>The uniform grids are the slow part.</strong> The uniform 256³ run stalled at t = {tu:g}; the uniform 512³ run reached no output in about 2 hours. Nearly empty cells
-(ρ near the floor of 10⁻⁶) make the Alfvén speed, and so the time step, collapse. The 3 × 128³ nest meets them too (figure 5).</li></ul></div>''']
+<div class="card"><h3>The short answer</h3><ul>
+<li><strong>The nest is {cr["uni512"]["wall"] / cr["nest128"]["wall"]:.0f}–{cr["uni256"]["wall"] / cr["nest64"]["wall"]:.0f} times faster to the same time.</strong> With the same cap on the Alfvén speed in both
+(30 c<sub>s</sub>; it adds at most {max(r["mass_added"] for r in cr.values()):.0e} of the mass), every run now reaches its end: the 3 × 64³ nest t = 1 in
+{cr["nest64"]["wall"]:.0f} s against {cr["uni256"]["wall"] / 60:.0f} min for the uniform 256³ grid, the 3 × 128³ nest t = 0.5 in {cr["nest128"]["wall"] / 60:.0f} min
+against {cr["uni512"]["wall"] / 3600:.1f} h for the uniform 512³ grid, with {cr["uni256"]["cell_updates"] / cr["nest64"]["cell_updates"]:.0f} and
+{cr["uni512"]["cell_updates"] / cr["nest128"]["cell_updates"]:.0f} times fewer cell updates (figure 2).</li>
+<li><strong>Density agrees.</strong> Over the central cube from t = {C["t_stat"]:g} to 1, ln ρ has mean {ln["nest64"]["mean"]:.2f} and spread {ln["nest64"]["sigma"]:.2f} in the
+nest and {ln["uni256"]["mean"]:.2f} and {ln["uni256"]["sigma"]:.2f} in the uniform grid, and k = 32–96 holds {cpc("nest64", "rho")} and {cpc("uni256", "rho")} of
+the density variance. The gap we reported first ({pc("nest64", "rho")} against {pc("uni256", "rho")}) came from the early outputs alone: before t ≈ 0.35 the finest
+level has not yet built its small scales.</li>
+<li><strong>Velocity and field are somewhat short at small scales.</strong> Normalized, the nest's velocity spectrum over k = 8–96 is a median
+{sr["nest64/uni256"]["v"]["median"]:.2f} of the uniform grid's at 256³ and {sr["nest128/uni512"]["v"]["median"]:.2f} at 512³. k = 32–96 holds
+{cpc("nest64", "B")} of the field's variance in the nest against {cpc("uni256", "B")} at 256³, but {cpc("nest128", "B")} against {cpc("uni512", "B")} at 512³ over that
+shorter run: the central cube's field is intermittent and needs longer averages.</li>
+<li><strong>One point, over time, samples the volume (ergodicity).</strong> In {len(G["seeds"])} runs with different driving seeds, the time mean of ln ρ at one point is
+{G["ensemble_time_mean"]:.2f} and the volume mean {G["ensemble_volume_mean"]:.2f} ({abs(G["z_ensemble"]):.1f} standard errors apart); the mass-weighted mean,
+{G["ensemble_mass_mean"]:+.2f}, is far off. The correlation time at the point is {G["tau_s"]:.3f}, about a tenth of a crossing time (figure 3).</li>
+<li><strong>A big nest runs too.</strong> Root 128³ plus three levels of 192³ (1024³-equivalent in the central 3/16 of the box) reached t = {B["t"]:g} in
+{B["wall"] / 3600:.1f} h on one H100 (figure 4).</li></ul></div>''']
     M = J.get("movies", {})
+    if "deep192" in M:
+        out.append(movie("deep192", M["deep192"], "Movie: the big nest, root 128³ + 3 levels of 192³ (finest 1024³-equivalent)",
+                         "Density and field strength in the mid-plane z = 1/2; left the whole box with every level pasted in, right the finest level alone.", rerun=False))
     if "nest128" in M:
         out.append(movie("nest128", M["nest128"], "Movie: nest 3 × 128³ (finest 512³-equivalent)",
                          "Density and field strength in the mid-plane z = 1/2, from the uniform start to developed turbulence."))
@@ -102,10 +117,43 @@ variance in the nest's finest level and {pc("uni256", "rho")} in the uniform gri
     if not M:
         out.append('<div class="card"><h3>Movies</h3><p>The movie runs (a mid-plane slice of every level every 0.002, from t = 0 to 1) are on Sherlock now; '
                    'they are added here when they finish.</p></div>')
-    figs = [
+    sg = G["seeds"]; within = sum(abs(r["time_mean"] - r["volume_mean"]) <= r["err"] for r in sg)
+    figs_new = [
         ("nested-overview", "What the 3 × 128³ nest looks like",
          "The mid-plane at t = 0.5. Left: the whole box, level 1 (128³ across the box) with level 3 (the central quarter, 512³-equivalent) pasted in; level 2 "
          "is computed but was not saved in these runs (the movies show it). Right: level 3 alone. Top ln ρ, bottom log₁₀ |B|.", None),
+        ("nested-capped", "Nest against uniform grid, both capped",
+         "The comparison again, now with the same safeguard in both: where the Alfvén speed B/√ρ would exceed 30 c<sub>s</sub>, the density is raised to bring it "
+         "down, at the same velocity. Dashed: finest resolution 256³ (3 × 64³ nest and uniform 256³, to t = 1). Solid: finest 512³ (3 × 128³ nest and uniform 512³, "
+         f"to t = 0.5). Top: each field's variance per unit ln k in the central cube (Hann-windowed, the shaded wave numbers are set by the window), averaged over the "
+         f"snapshots from t = {C['t_stat']:g} on. Bottom: the density PDF of the central cube over the same outputs, the central cube's rms field, and the wall-clock time.",
+         f"the density PDFs lie on top of each other at 256³; at 512³ the nest's is a little narrower ({ln['nest128']['sigma']:.2f} against {ln['uni512']['sigma']:.2f}) "
+         f"over only {cr['nest128']['snapshots']} snapshots. The velocity spectra of the nests fall below the uniform grids' from k ≈ 15 on, by about "
+         f"{100 * (1 - sr['nest64/uni256']['v']['median']):.0f} % at 256³ and {100 * (1 - sr['nest128/uni512']['v']['median']):.0f} % at 512³: the finest level is "
+         "fed through its boundary by coarser levels that do not carry those scales. The central cube's rms field swings by a factor of 3–4 in time in every run, "
+         "so its spectra need longer runs than these to compare. The cap adds "
+         f"{cr['uni512']['mass_added']:.0e} of the mass in the uniform 512³ grid and {cr['nest64']['mass_added']:.0e} or less in the others."),
+        ("nested-ergodic", "Ergodicity: one point over time against the volume",
+         f"Tom's test (his report, chapter 7) in 3-D: {len(sg)} runs of the 3 × 64³ nest to t = 1, identical but for the random seed of the driving, each with a probe "
+         "in the finest-level cell at the box centre, read every second step of that level. Left: the PDF of s = ln ρ at the probe over time (all seeds pooled) and over "
+         f"the finest level's volume. Middle: per seed, the probe's time mean of s with its error σ/√N<sub>eff</sub>, where N<sub>eff</sub> = T/2τ<sub>int</sub> "
+         f"(about {G['n_eff']:.0f} independent samples per run), against the volume mean of the finest level and the mass-weighted mean. Right: the autocorrelation of "
+         "s at the probe.",
+         f"the time mean matches the volume mean within its error in {within} of {len(sg)} runs, and the {len(sg)} time means scatter by {G['spread_time_means']:.2f}, "
+         f"no more than the errors predict ({G['mean_err']:.2f}). So a point in the turbulence samples the volume-weighted distribution, not the mass-weighted one "
+         f"(mean {G['ensemble_mass_mean']:+.2f}). The correlation time, {G['tau_s']:.3f}, is about a tenth of the crossing time L / (10 c<sub>s</sub>) = 0.1. "
+         f"Each run took {G['wall'] / 60:.1f} min."),
+        ("nested-big", "The big nest: root 128³ + 3 levels of 192³",
+         "A four-level nest with each refined level wider than its parent's half: root 128³ over the box, then 192³ cells over 3/4, 3/8 and 3/16 of the box "
+         f"(the finest at 1024³-equivalent), {B['precision']}, Alfvén speed capped at {B['va_max']:g} c<sub>s</sub>, to t = {B['t']:g}. Top: each level's own "
+         "spectrum (Hann-windowed for the refined levels), averaged over t = 0.2–0.5. Bottom: the mean time step of each level against the finest level of the "
+         "uncapped 3 × 128³ nest, the mass the cap and the floor add, and the rms Mach number.",
+         f"{B['wall'] / 3600:.1f} h on one H100 for {B['cell_updates']:.1e} cell updates, checkpointed every half hour. With the cap the finest step never fell "
+         f"below {B['dt_min'][str(B['levels'])]:.0e} (the uncapped 3 × 128³ nest went to {dt['nest128']['min']:.0e}), and the cap added {B['mass_added']:.0e} of the mass. "
+         f"Each finer level holds more of its variance at k = 32–96: the density {', '.join(f'{100 * B['share'][f'rho_L{l}']:.0f} %' for l in range(2, B['levels'] + 1))} "
+         f"on levels 2–{B['levels']}."),
+    ]
+    figs_old = [
         ("nested-slices", f"Nest and uniform grid at the same time (t = {tu:g})",
          f"Mid-plane slices of the 3 × 64³ nest (top) and the uniform 256³ grid (bottom): the whole box at 64³ (the uniform grid averaged over 4³ blocks) and the central "
          f"cube at 256³ cells across the box, the nest's finest level. Both runs have the same driving with the same random seed.",
@@ -128,7 +176,8 @@ variance in the nest's finest level and {pc("uni256", "rho")} in the uniform gri
          f"against {100 * vb['uni256']['v']:.1f} % in the uniform grid. In the central cube, at the same resolution, k = 32–96 holds {pc('nest64', 'rho')} of the "
          f"density variance in the nest's finest level against {pc('uni256', 'rho')} in the uniform grid ({pc('nest128', 'rho')} in the 3 × 128³ nest, twice as fine); "
          f"the field differs less ({pc('nest64', 'B')} against {pc('uni256', 'B')}). Gas crosses the central cube (a quarter of the box) in about 0.025 at Mach 10, "
-         "probably too short for the cascade to rebuild the small scales the coarser levels never had. A wider finest level will test that."),
+         "probably too short for the cascade to rebuild the small scales the coarser levels never had. The capped runs to t = 1 (figure 2) show the density gap closes "
+         "after t ≈ 0.35; the velocity stays somewhat short."),
         ("nested-cost", "Cost and time step",
          "Left: wall-clock time on one H100. Middle: the mean time step of the finest grid between outputs. Right: the lowest density in the central cube, and over "
          "the whole uniform 256³ grid.",
@@ -137,17 +186,31 @@ variance in the nest's finest level and {pc("uni256", "rho")} in the uniform gri
          f"The cause is nearly empty cells: where ρ approaches the floor (10⁻⁶) the Alfvén speed B/√ρ becomes huge. The 3 × 128³ nest, with a finer finest level, "
          f"meets them as well (its step fell to {dt['nest128']['min']:.0e} near t = 0.29), so they come with resolution, not with the uniform grid itself."),
     ]
-    out += [figure(i + 1, *f) for i, f in enumerate(figs)]
-    rows = [("nest 3 × 64³", "256³ in the central 1/4", "Float64", "1 (finished)", f"{wall['nest64']:.0f} s", " / ".join(f"{s:,}" for s in R["nest64"]["steps"]),
+    out += [figure(i + 1, *f) for i, f in enumerate(figs_new)]
+    out.append('<div class="card"><h3>The first comparison, without the cap</h3><p>The figures below are from the runs without a cap on the Alfvén speed. '
+               f'There the uniform 256³ grid stalled at t = {tu:g} and the uniform 512³ grid reached no output: nearly empty cells made the time step collapse. '
+               'They are kept for the record; the capped runs above replace them.</p></div>')
+    out += [figure(len(figs_new) + i + 1, *f) for i, f in enumerate(figs_old)]
+    figs = figs_new + figs_old
+    def row(name, finest, prec, r, steps, cu):
+        return (name, finest, prec, f"{r['t']:g}" if r.get("t") is not None else "–", f"{r['wall']:,.0f} s", " / ".join(f"{s:,}" for s in steps),
+                f"{cu:.2e}", f"{cu / r['wall']:.2e}")
+    rows = [row("nest 3 × 64³, capped", "256³ in the central 1/4", "Float64", cr["nest64"], cr["nest64"]["steps"], cr["nest64"]["cell_updates"]),
+            row("uniform 256³, capped", "256³ everywhere", "Float64", cr["uni256"], cr["uni256"]["steps"], cr["uni256"]["cell_updates"]),
+            row("nest 3 × 128³, capped", "512³ in the central 1/4", "Float32", cr["nest128"], cr["nest128"]["steps"], cr["nest128"]["cell_updates"]),
+            row("uniform 512³, capped", "512³ everywhere", "Float32", cr["uni512"], cr["uni512"]["steps"], cr["uni512"]["cell_updates"]),
+            row(f"big nest {B['root']}³ + {B['levels'] - 1} × {B['n']}³, capped", "1024³ in the central 3/16", B["precision"], B, B["steps"], B["cell_updates"]),
+            (f"ergodicity, {len(sg)} seeds of 3 × 64³", "256³ in the central 1/4", "Float64", "1", f"{G['wall']:.0f} s each", "–", "–", "–"),
+            ("nest 3 × 64³", "256³ in the central 1/4", "Float64", "1", f"{wall['nest64']:.0f} s", " / ".join(f"{s:,}" for s in R["nest64"]["steps"]),
              f"{cu['nest64']:.2e}", f"{cu['nest64'] / wall['nest64']:.2e}"),
-            ("uniform 256³", "256³ everywhere", "Float64", f"{R['uni256']['t']:g} (stalled; time limit)", f"{wall['uni256']:.0f} s", f"{R['uni256']['steps'][0]:,}",
+            ("uniform 256³", "256³ everywhere", "Float64", f"{R['uni256']['t']:g} (stalled)", f"{wall['uni256']:.0f} s", f"{R['uni256']['steps'][0]:,}",
              f"{R['uni256']['steps'][0] * 256 ** 3:.2e}", f"{R['uni256']['steps'][0] * 256 ** 3 / wall['uni256']:.2e}"),
-            ("nest 3 × 128³", "512³ in the central 1/4", "Float32", "0.5 (finished)", f"{wall['nest128']:.0f} s", " / ".join(f"{s:,}" for s in R["nest128"]["steps"]),
+            ("nest 3 × 128³", "512³ in the central 1/4", "Float32", "0.5", f"{wall['nest128']:.0f} s", " / ".join(f"{s:,}" for s in R["nest128"]["steps"]),
              f"{cu['nest128']:.2e}", f"{cu['nest128'] / wall['nest128']:.2e}"),
-            ("uniform 512³", "512³ everywhere", "Float32", "below 0.2 (no output; pre-empted after about 2 h)", "–", "–", "–", "–")]
+            ("uniform 512³", "512³ everywhere", "Float32", "below 0.2 (no output)", "–", "–", "–", "–")]
     cols = ("run", "finest resolution", "precision", "reached t", "wall", "steps per level (coarsest first)", "cell updates", "cell updates / s")
     out.append(f'<article class="card paper-fig" id="nested-runs"><div class="fig-head"><span class="fig-no">{len(figs) + 1}</span><h3>Every run</h3></div>'
-               '<p>One H100 each. The nests advance each level with its own time step, so the finest level takes the most steps. The rates include the driving and '
+               '<p>One H100 each; the last four rows are the first comparison, without the cap. The nests advance each level with its own time step, so the finest level takes the most steps. The rates include the driving and '
                'the outputs every 0.01; small grids do not fill the GPU.</p><div class="table-scroll"><table class="metrics-table sweep-text paper-table"><thead><tr>'
                + "".join(f"<th>{e(c)}</th>" for c in cols) + "</tr></thead><tbody>"
                + "".join("<tr>" + "".join(f"<td>{e(c)}</td>" for c in r) + "</tr>" for r in rows) + "</tbody></table></div></article>")
@@ -167,11 +230,12 @@ density stays above the lowest of its six coarse neighbours.</li>
 <li><strong>Faster driving.</strong> The driving's totals are now summed on the GPU instead of copying the root level to the CPU every step.</li></ul>
 <p>The fixes are on our branch <code>gpu-3d-fixes</code> of his code; they are not in Tom's repository yet.</p></div>
 <div class="card"><h3>Open</h3><ul>
-<li>A fair uniform reference at 256³ and 512³: either a longer run, or the same safeguard for nearly empty cells in both (a higher floor, or a cap on the Alfvén speed).</li>
-<li>Why the finest level is short of small-scale power: a larger finest level or more levels would tell.</li>
-<li>Longer runs of the nests, for time-averaged statistics once the field has saturated.</li></ul></div>
-<div class="card paper-state"><h3>Where the data comes from</h3><p>nested_results/ (copied from Sherlock): compare/ (histograms every 0.01, snapshots every 0.05),
-movie/ (mid-plane slices every 0.002), logs/ and gpu_check/. Figures: <code>python3 scripts/nested_figures.py</code>; page: <code>python3 scripts/build_nested.py</code>.</p></div>''')
+<li>Why the finest level is short of small-scale velocity: a run whose finest level is wider than a quarter of the box, against a uniform grid at its resolution,
+would tell whether it is the time gas spends inside the level.</li>
+<li>Longer capped runs at 512³ (to t = 1) and several seeds, for time-averaged field spectra: the central cube's field is too intermittent for one short run.</li>
+<li>The ergodicity test with the probe near a level boundary, and for the field.</li></ul></div>
+<div class="card paper-state"><h3>Where the data comes from</h3><p>nested_results/ (copied from Sherlock): compare/ and compare_cap/ (histograms every 0.01, snapshots every 0.05),
+ergodic/ (probe series, volume PDFs), big/ (the big nest), movie/ (mid-plane slices every 0.002), logs/ and gpu_check/. Figures: <code>python3 scripts/nested_figures.py</code>; page: <code>python3 scripts/build_nested.py</code>.</p></div>''')
     return "".join(out)
 
 

@@ -16,7 +16,7 @@ TESTS = ("alfven alfven_oblique blast_2d_b0 blast_2d_b50 blast_2d_b100 blast_3d_
 VARIANTS = {"athenapk": ["matched", "best"], "cholla": ["plmc", "ppmc"], "pluto": ["ct_matched", "ct_best", "glm_matched", "glm_best"],
             "enzo": ["dedner", "ct"], "phantom": ["sph"],
             # single precision of the GPU codes (2026-11-12); AthenaK as in the sweep: every test in 3D (planar ones on N^3)
-            "athenakf32": ["matched", "best"], "athenapkf32": ["matched", "best"], "chollaf32": ["plmc", "ppmc"]}
+            "athenakf32": ["matched", "best"], "athenapkf32": ["matched", "best"]}   # no chollaf32: Cholla refuses PRECISION=1
 PHANTOM_3D_MAX = 256           # 512^3 would be 134 million particles
 
 

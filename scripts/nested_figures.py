@@ -43,14 +43,14 @@ def tex(s):
 
 
 # ---------------------------------------------------------------- records
-def snap(case, kind, t):
-    a = np.fromfile(CMP/case/f"snap_{kind}_{t:.3f}.bin", np.float32)
+def snap(case, kind, t, root=CMP):
+    a = np.fromfile(root/case/f"snap_{kind}_{t:.3f}.bin", np.float32)
     n = round((a.size // 7) ** (1 / 3))
     return a.reshape(7, n, n, n)                   # [field, z, y, x]: ρ, vx, vy, vz, Bx, By, Bz
 
 
-def snap_times(case):
-    return sorted(float(f.name[7:12]) for f in (CMP/case).glob("snap_c_*.bin"))
+def snap_times(case, root=CMP):
+    return sorted(float(f.name[7:12]) for f in (root/case).glob("snap_c_*.bin"))
 
 
 def midplane(s):
@@ -59,8 +59,8 @@ def midplane(s):
     return np.log(sl[0]), np.sqrt((sl[1:4] ** 2).sum(0)), np.log10(np.sqrt((sl[4:7] ** 2).sum(0)))
 
 
-def hists(case):
-    a = np.fromfile(CMP/case/"hist.bin", np.float64).reshape(-1, 3 * sum(SIZES) + 1)
+def hists(case, root=CMP):
+    a = np.fromfile(root/case/"hist.bin", np.float64).reshape(-1, 3 * sum(SIZES) + 1)
     out, i = {}, 0
     for where in ("central", "box", "rootres"):
         for name, n in zip(EDGES, SIZES):
@@ -69,10 +69,10 @@ def hists(case):
     return out
 
 
-def logs():
+def logs(pattern="nested-compare-*.out"):
     """Per case, from the job logs: t, steps per level, M_m, M_v, wall seconds at every output (every 0.01)."""
     runs, cur = {}, None
-    for f in sorted((DATA/"logs").glob("nested-compare-*.out")):
+    for f in sorted((DATA/"logs").glob(pattern)):
         for line in f.read_text().splitlines():
             m = re.match(r"== (\w+): (.*)", line)
             if m and m.group(1) in CASES or (m and m.group(1).startswith("uni")):
@@ -226,11 +226,11 @@ def shells(f, window):
     return E
 
 
-def spectra(case, kind, times):
+def spectra(case, kind, times, root=CMP):
     """Time-averaged spectra of v, B and ρ; kind "r" the whole box (periodic), "c" the central cube (Hann window)."""
     acc = None
     for t in times:
-        s = snap(case, kind, t).astype(np.float64)
+        s = snap(case, kind, t, root).astype(np.float64)
         e = [shells(s[1:4], kind == "c"), shells(s[4:7], kind == "c"), shells(s[0:1], kind == "c")]
         acc = e if acc is None else [a + b for a, b in zip(acc, e)]
     fac = 4 if kind == "c" else 1
@@ -347,6 +347,135 @@ def fig_big(L):
                 cell_updates=float(sum(s * (meta["root"] if i == 0 else meta["n"]) ** 3 for i, s in enumerate(meta["steps"]))))
 
 
+# ---------------------------------------------------------------- the capped comparison (compare.jl with NESTED_VA_MAX=30)
+CAP = DATA/"compare_cap"
+CAP_CASES = {"nest64": dict(label="nest 3 × 64³", color=ps.RUN, ls=(0, (5, 2)), lw=1.8),
+             "uni256": dict(label="uniform 256³", color=ps.REFERENCE, ls=(0, (5, 2)), lw=1.8),
+             "nest128": dict(label="nest 3 × 128³", color=ps.RUN, ls="-", lw=2.2),
+             "uni512": dict(label="uniform 512³", color=ps.REFERENCE, ls="-", lw=2.2)}
+T_STAT = 0.3                                       # statistics from 3 crossing times on (Tom's choice, ergodic.jl)
+
+
+def fig_capped():
+    """Nest against uniform with the same Alfvén-speed cap in both: now the uniform runs reach the end (uni256 t = 1, uni512 t = 0.5)."""
+    H = {c: hists(c, CAP) for c in CAP_CASES}; L = logs("nested-cmpcap-*.out")
+    run = {c: tomllib.load(open(CAP/c/"run.toml", "rb")) for c in CAP_CASES}
+    fig, axs = plt.subplots(2, 3, figsize=(15, 9), layout="constrained")
+    S = {}
+    for case, st in CAP_CASES.items():
+        ts = [t for t in snap_times(case, CAP) if t >= T_STAT - 1e-9]
+        k, ev, eb, er = (lambda kE: (kE[0], *kE[1]))(spectra(case, "c", ts, CAP)); S[case] = (k, ev, eb, er, ts)
+        sel = k >= 4
+        for ax, E in zip(axs[0], (ev, eb, er)):
+            ax.plot(k[sel], variance_per_lnk(k, E)[sel], color=st["color"], ls=st["ls"], lw=st["lw"])
+    for j, q in enumerate(("velocity", "magnetic field", "density")):
+        ax = axs[0, j]; ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("$k$ (box units)"); ax.set_title(q)
+        ax.axvspan(3, 12, color=ps.PANEL, lw=0); ax.set_xlim(3, None)
+    axs[0, 0].set_ylabel(r"$k\,E(k)/\sigma^2$, central cube (Hann window)")
+    ax = axs[1, 0]
+    for case, st in CAP_CASES.items():
+        h = H[case]; x, y = pdf(h, "lnrho", h["t"] >= T_STAT - 1e-9)
+        ax.plot(x, np.where(y > 0, y, np.nan), color=st["color"], ls=st["ls"], lw=st["lw"])
+    ax.set_yscale("log"); ax.set_ylim(1e-6, None); ax.set_xlim(-10, 5); ax.set_xlabel(r"$\ln\rho$"); ax.set_ylabel("PDF over the central cube")
+    ax = axs[1, 1]
+    for case, st in CAP_CASES.items():
+        ax.plot(H[case]["t"], rms(H[case], "central", "logb"), color=st["color"], ls=st["ls"], lw=st["lw"])
+    ax.set_xlabel("$t$"); ax.set_ylabel(r"rms $|B|$, central cube"); ax.set_xlim(0.2, 1)
+    ax = axs[1, 2]
+    for case, st in CAP_CASES.items():
+        r = L[case]; ax.plot(r["t"], r["wall"] / 60, color=st["color"], ls=st["ls"], lw=st["lw"])
+        ax.annotate(f"{r['wall'][-1] / 60:.0f} min", (r["t"][-1], r["wall"][-1] / 60), xytext=(4, 0), textcoords="offset points", va="center", fontsize=10)
+    ax.set_yscale("log"); ax.set_xlabel("$t$"); ax.set_ylabel("wall clock [min], one H100"); ax.set_xlim(0.18, 1.12)
+    hs = [Line2D([], [], color=s["color"], ls=s["ls"], lw=s["lw"]) for s in CAP_CASES.values()]
+    fig.legend(hs, [tex(s["label"]) for s in CAP_CASES.values()], loc="outside lower center", ncol=4)
+    fig.suptitle("Nest against uniform grid, both with the Alfvén speed capped at 30 $c_s$: dashed = finest 256$^3$ (to $t$ = 1), "
+                 "solid = finest 512$^3$ (to $t$ = 0.5);\nspectra and PDFs average every output from $t$ = 0.3 (3 crossing times) to the end", fontsize=12)
+    fig.savefig(OUT/"nested-capped.png", dpi=140); plt.close(fig)
+
+    def share(case, lo, hi):
+        k, *E, _ = S[case]; sel = (k >= lo) & (k <= hi)
+        return {q: float(e[sel].sum() / e[1:].sum()) for q, e in zip(("v", "B", "rho"), E)}
+
+    def moments(case):
+        h = H[case]; c = h["central", "lnrho"][h["t"] >= T_STAT - 1e-9].sum(0); e = EDGES["lnrho"]; x = 0.5 * (e[1:] + e[:-1])
+        m = (c * x).sum() / c.sum(); return dict(mean=float(m), sigma=float(np.sqrt((c * (x - m) ** 2).sum() / c.sum())))
+
+    def ratio(a, b, q, lo=8, hi=96):         # how far the nest's spectrum is from the uniform one, k = 8–96: the median ratio and its range
+        ka, *Ea, _ = S[a]; kb, *Eb, _ = S[b]; i = ("v", "B", "rho").index(q)
+        sel = (ka >= lo) & (ka <= min(hi, ka[-1]))
+        r = variance_per_lnk(ka, Ea[i])[sel] / variance_per_lnk(kb, Eb[i])[sel]
+        return dict(median=float(np.median(r)), lo=float(r.min()), hi=float(r.max()))
+    return dict(t_stat=T_STAT,
+                runs={c: dict(t=run[c]["t_end"] if run[c]["finished"] else None, wall=run[c]["wall"], steps=run[c]["steps"], finished=run[c]["finished"], va_max=run[c]["va_max"],
+                              mass_added=run[c]["mass"] - 1, cell_updates=run[c].get("cell_updates"), snapshots=len(S[c][4])) for c in CAP_CASES},
+                mach_box={c: float(rms(H[c], "rootres", "v")[H[c]["t"] >= T_STAT - 1e-9].mean()) for c in CAP_CASES},
+                brms_central={c: float(rms(H[c], "central", "logb")[H[c]["t"] >= T_STAT - 1e-9].mean()) for c in CAP_CASES},
+                lnrho_central={c: moments(c) for c in CAP_CASES},
+                share_central={c: share(c, 32, 96) for c in CAP_CASES},
+                spectrum_ratio={f"{a}/{b}": {q: ratio(a, b, q) for q in ("v", "B", "rho")} for a, b in (("nest64", "uni256"), ("nest128", "uni512"))})
+
+
+# ---------------------------------------------------------------- Tom's ergodicity test in 3-D (ergodic.jl): 8 seeds
+ERG = DATA/"ergodic"
+
+
+def tau_int(x, dt):
+    """Integral correlation time: the autocorrelation integrated to its first zero."""
+    x = x - x.mean(); n = len(x); f = np.fft.rfft(x, 2 * n); ac = np.fft.irfft(f * np.conj(f))[:n]; ac /= ac[0]
+    z = np.argmax(ac <= 0) or n
+    return float(ac[:z].sum() * dt), ac
+
+
+def fig_ergodic():
+    seeds = sorted(ERG.glob("seed*"), key=lambda d: int(d.name[4:]))
+    e = EDGES["lnrho"]; x = 0.5 * (e[1:] + e[:-1]); DT = 1e-3
+    per, acs, pv, pp = [], [], np.zeros(len(x)), np.zeros(len(x))
+    for d in seeds:
+        meta = tomllib.load(open(d/"run.toml", "rb"))
+        p = np.fromfile(d/"probe.bin", np.float64).reshape(-1, 8); p = p[p[:, 0] >= T_STAT - 1e-9]
+        tg = np.arange(T_STAT, p[-1, 0], DT); s = np.interp(tg, p[:, 0], np.log(p[:, 1])); vx = np.interp(tg, p[:, 0], p[:, 2])
+        ts, ac = tau_int(s, DT); tv, _ = tau_int(vx, DT); acs.append(ac[:int(0.2 / DT)])
+        h = np.fromfile(d/"pdf.bin", np.float64).reshape(3, -1)[-1]            # the finest level, summed over outputs t >= 0.3
+        vol = (h * x).sum() / h.sum(); mass = (h * np.exp(x) * x).sum() / (h * np.exp(x)).sum()
+        T = tg[-1] - tg[0]; neff = T / (2 * ts)
+        per.append(dict(seed=int(d.name[4:]), time_mean=float(s.mean()), time_sigma=float(s.std()), tau_s=ts, tau_vx=tv, n_eff=neff,
+                        err=float(s.std() / np.sqrt(neff)), volume_mean=float(vol), mass_mean=float(mass), wall=meta["wall"], records=meta["probe_records"]))
+        pv += h / h.sum(); pp += np.histogram(s, e)[0] / len(s)
+    pv /= len(seeds); pp /= len(seeds)
+    fig, axs = plt.subplots(1, 3, figsize=(15, 4.9), layout="constrained")
+    ax = axs[0]; w = np.diff(e)
+    ax.plot(x, np.where(pv > 0, pv / w, np.nan), color=ps.REFERENCE, lw=2.2, label="volume of the finest level (every output)")
+    ax.plot(x, np.where(pp > 0, pp / w, np.nan), color=ps.RUN, lw=1.8, ls=(0, (5, 2)), label="one point, over time")
+    ax.set_yscale("log"); ax.set_ylim(1e-4, None); ax.set_xlim(-9, 4); ax.set_xlabel(r"$s = \ln\rho$"); ax.set_ylabel(f"PDF, {len(seeds)} seeds pooled, $t \\geq$ {T_STAT:g}")
+    ax.legend(loc="lower center", fontsize=9, frameon=False)
+    ax = axs[1]
+    for i, r in enumerate(per):
+        ax.errorbar(i + 1, r["time_mean"], yerr=r["err"], fmt="o", color=ps.RUN, ms=6, capsize=3, lw=1.4)
+        ax.plot([i + 0.7, i + 1.3], [r["volume_mean"]] * 2, color=ps.REFERENCE, lw=2)
+        ax.plot([i + 0.7, i + 1.3], [r["mass_mean"]] * 2, color=ps.FAMILY["ct"], lw=1.4, ls=":")
+    ax.set_xticks(range(1, len(per) + 1)); ax.set_xlabel("seed of the driving"); ax.set_ylabel(r"mean of $s = \ln\rho$, $t \geq$ " + f"{T_STAT:g}")
+    ax.legend(handles=[Line2D([], [], color=ps.RUN, marker="o", ls="", ms=6), Line2D([], [], color=ps.REFERENCE, lw=2),
+                       Line2D([], [], color=ps.FAMILY["ct"], lw=1.4, ls=":")],
+              labels=[r"time mean at the probe $\pm\,\sigma/\sqrt{N_{\rm eff}}$", "volume mean (volume-weighted)", "mass-weighted mean"],
+              fontsize=9, frameon=False, loc="center right")
+    ax = axs[2]; lag = np.arange(acs[0].size) * DT
+    for ac in acs:
+        ax.plot(lag, ac, color=ps.RUN, lw=.8, alpha=.45)
+    ax.plot(lag, np.mean(acs, 0), color=ps.INK, lw=2); ax.axhline(0, color=ps.MUTED, lw=.8)
+    tm = float(np.mean([r["tau_s"] for r in per])); ax.axvline(tm, color=ps.MUTED, lw=.8, ls=":")
+    ax.text(tm, 0.92, f"  $\\tau_{{\\rm int}}$ = {tm:.4f}", color=ps.MUTED, fontsize=10, transform=ax.get_xaxis_transform())
+    ax.set_xlabel("time lag"); ax.set_ylabel(r"autocorrelation of $s$ at the probe (thin: each seed)"); ax.set_xlim(0, lag[-1])
+    fig.suptitle(f"Ergodicity in 3-D: nest 3 $\\times$ 64$^3$, driven Mach 10, {len(seeds)} seeds of the driving; one probe at the box centre "
+                 f"on the finest level, every second step, from $t$ = {T_STAT:g} to 1", fontsize=12)
+    fig.savefig(OUT/"nested-ergodic.png", dpi=140); plt.close(fig)
+    tm_ = np.array([r["time_mean"] for r in per]); vm = np.array([r["volume_mean"] for r in per])
+    return dict(seeds=per, t_stat=T_STAT, spread_time_means=float(tm_.std(ddof=1)), mean_err=float(np.mean([r["err"] for r in per])),
+                ensemble_time_mean=float(tm_.mean()), ensemble_volume_mean=float(vm.mean()),
+                ensemble_mass_mean=float(np.mean([r["mass_mean"] for r in per])),
+                z_ensemble=float((tm_.mean() - vm.mean()) / (tm_.std(ddof=1) / np.sqrt(len(per)))),
+                tau_s=tm, n_eff=float(np.mean([r["n_eff"] for r in per])), wall=float(np.mean([r["wall"] for r in per])))
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     ps.apply_movie_style(11)
@@ -383,6 +512,8 @@ def main():
                  speed=[dict(setup=s["setup"], T=s["T"], mode=s["mode"], rate=s["cell_updates_per_s"]) for s in gpu["speed"]]),
         movies=movies(),
         big=fig_big(L) if (BIG/"spectra.npz").is_file() else None,
+        capped=fig_capped() if (CAP/"uni512"/"run.toml").is_file() else None,
+        ergodic=fig_ergodic() if ERG.is_dir() else None,
     )
     # share of each field's variance at small scales: central cube k = 32–96 (finest resolution), whole box k = 8–24
     def share(case, kind, lo, hi):

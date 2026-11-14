@@ -73,9 +73,8 @@ PLANNED = [(f"{code}_{v}", f"RAMSES II {short}{' f32' if code.endswith('f32') el
 PLANNED += [("athenakf32_matched", "AthenaK m f32", "AthenaK matched in single precision: PLM / HLLE / RK2 (GPU)"),
             ("athenakf32_best", "AthenaK b f32", "AthenaK best in single precision: PPM / HLLD / RK3 (GPU)"),
             ("athenapkf32_matched", "AthenaPK m f32", "AthenaPK matched in single precision: PLM / HLLE / VL2, GLM (GPU)"),
-            ("athenapkf32_best", "AthenaPK b f32", "AthenaPK best in single precision: PPM / HLLD / RK3, GLM (GPU)"),
-            ("chollaf32_plmc", "Cholla PLMC f32", "Cholla in single precision: PLMC / HLLD / Van Leer, CT (GPU)"),
-            ("chollaf32_ppmc", "Cholla PPMC f32", "Cholla in single precision: PPMC / HLLD / Van Leer, CT (GPU)")]
+            ("athenapkf32_best", "AthenaPK b f32", "AthenaPK best in single precision: PPM / HLLD / RK3, GLM (GPU)")]
+# (Cholla is not among them: its source refuses a single-precision build, "Single precision is not currently supported".)
 # Abel et al.'s GLM kernels, original and fixed: one column in the status grid that opens into one per kernel.
 GLM_GROUP = ("glm", "glm_hll16", "glm_hlld", "glm_ppm", "glm_constch", "glm_fix_hll16", "glm_fct16", "glm_fix_hlld", "glm_fix_ppm")
 ALL_METHODS = [m for m in METHODS if m[0] in GLM_GROUP] + [m for m in ADDED if m[0] in GLM_GROUP] + \
@@ -445,23 +444,31 @@ def newcodes_card():
 
 
 def ramses2_card():
-    """RAMSES II, rerun with the official code: what is queued (runs_ramses2.json), until its records are fetched."""
+    """RAMSES II, rerun with the official code: what was queued (runs_ramses2.json) and, once fetched, how many finished."""
     plan = json.loads((ROOT/"sherlock_miniramses"/"runs_ramses2.json").read_text())
     runs = plan["runs"];hours = sum(r["est_seconds"] for r in runs)/3600
-    return ('<div class="card"><h3>Being rerun: RAMSES II with the official code</h3><p>RAMSES II as released on GitHub '
+    rec = sorted((ROOT/"ramses2_results").glob("*-run-N*-s*/data/*_r1/run.toml"))
+    done = sum(tomllib.load(open(f, "rb")).get("status") == "complete" for f in rec)
+    stopped = sorted({f.parts[-4].split("-ramses2")[0] + " " + f.parent.name.split("_")[1] for f in rec
+                      if tomllib.load(open(f, "rb")).get("status") != "complete"})
+    state = (f' <strong>All tasks ended: {done} of {len(rec)} runs complete</strong>' + (f' (stopped: {", ".join(stopped)})' if stopped else '')
+             + '; the records are fetched and go into the tables next.') if rec else ''
+    return ('<div class="card"><h3>Rerun: RAMSES II with the official code</h3><p>RAMSES II as released on GitHub '
             '(ramses-organisation/ramses2, <code>develop</code> at 04abdd9, 2026-11-12), now with E. Moseley\'s upwind constrained '
             'transport (UCT-HLLD) on GPUs. Three set-ups (HLL at Courant 0.5, HLLD and UCT-HLLD at 0.8), each in double and in single '
             f'precision: every run classic RAMSES has in the sweep plus the speed test, {len(runs)} runs in {len(plan["tasks"])} GPU tasks, '
             f'about {hours:.0f} GPU-hours by what the same runs took before. Submitted 2026-11-12: a pilot (both builds, the field loop in all six '
-            'set-ups, UCT at 512³ for memory), then the tasks. A CPU build of this commit reproduces the earlier Alfvén wave to four digits.</p>'
+            'set-ups, UCT at 512³ for memory), then the tasks. A CPU build of this commit reproduces the earlier Alfvén wave to four digits.'
+            f'{state}</p>'
             '<p class="small">These runs replace those of E. Moseley\'s mini-ramses-ism (commit 579d842, October 2026: 268 runs, 260 finished), '
             'which the other pages show until the new records are fetched.</p></div>'
             '<div class="card"><h3>Being run: the GPU codes in single precision</h3><p>Abel et al.\'s kernels run in Float32 (and Float16), '
-            'every other GPU code ran in double precision, which costs a GPU about two to three times in speed. So AthenaK, AthenaPK and Cholla '
-            'run again, every test at every grid with both their set-ups, from single-precision builds (AthenaK needed type fixes in seven files '
-            'it does not use for these tests; its Alfvén wave in single precision matches double to three digits), 54 test lines each, submitted '
-            '2026-11-12 behind a pilot that compares each with its double-precision run. gPLUTO has no single-precision build. '
-            'The CPU codes and the references stay in double precision.</p></div>')
+            'every other GPU code ran in double precision, which costs a GPU about two to three times in speed. So AthenaK and AthenaPK '
+            'run again, every test at every grid with both their set-ups, from single-precision builds (AthenaK needed type fixes in ten files '
+            'it does not use for these tests; its Alfvén wave in single precision matches double to three digits), 54 test lines each, behind a '
+            'pilot that compares each with its double-precision run. Submitted 2026-11-12; resubmitted 2026-11-14 after the GPU compiler refused '
+            'two more of those files. Cholla\'s source refuses a single-precision build ("Single precision is not currently supported") and gPLUTO '
+            'has none. The CPU codes and the references stay in double precision.</p></div>')
 
 
 def driven_grid_rows(campaign, methods):

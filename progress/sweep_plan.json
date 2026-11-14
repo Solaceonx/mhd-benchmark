@@ -1,5 +1,5 @@
 {
- "built": "2026-11-09T13:44-08:00",
+ "built": "2026-11-14T14:56-08:00",
  "totals": {
   "gpu": {
    "central": 220.4776733757628,
@@ -284,7 +284,7 @@
     "unfinished": 0,
     "skipped": 0
    },
-   "miniramses_matched": {
+   "ramses2_matched": {
     "planned": 0,
     "finished": 0,
     "stopped": 0,
@@ -292,7 +292,71 @@
     "unfinished": 0,
     "skipped": 0
    },
-   "miniramses_best": {
+   "ramses2_best": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "ramses2_uct": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "ramses2f32_matched": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "ramses2f32_best": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "ramses2f32_uct": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "athenakf32_matched": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "athenakf32_best": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "athenapkf32_matched": {
+    "planned": 0,
+    "finished": 0,
+    "stopped": 0,
+    "redo": 0,
+    "unfinished": 0,
+    "skipped": 0
+   },
+   "athenapkf32_best": {
     "planned": 0,
     "finished": 0,
     "stopped": 0,
@@ -370,7 +434,7 @@
    "cpu": 0.0
   }
  },
- "project_bytes": 100574568448,
+ "project_bytes": 106807255040,
  "accounting": {
   "query": {
    "fetched_at": "2026-10-15T05:00:21.885815+00:00",

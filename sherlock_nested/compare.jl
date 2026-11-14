@@ -18,6 +18,9 @@ include(joinpath(NT, "core", "src", "NestedMHD.jl")); using .NestedMHD
 const NM = NestedMHD; const G = NM.G
 const BE = CPU_RUN ? KA.CPU() : CUDABackend()
 const CAP = parse(Float64, get(ENV, "NESTED_CASE_WALL", "10800"))       # seconds per case, then it stops and saves
+# The Alfvén-speed cap of our branch (Driving's va_max; NestedTurbulence 1164c73), the same in the nest and the uniform grid:
+# without it nearly empty cells make the uniform grids' time step collapse (2026-11-10). Inf: none, as the first comparison.
+const VA_MAX = parse(Float64, get(ENV, "NESTED_VA_MAX", "Inf"))
 say(x...) = (println(x...); flush(stdout))
 
 # (root cells per side, levels, precision, t_end, t_stats, dt_out, dt_snap); the nest's finest = the uniform grid
@@ -53,13 +56,17 @@ snapfields(U) = Float32.(cat(fields(U)...; dims=4))
 for name in ARGS[3:end]
     N, nlev, T, tend, tstats, dtout, dtsnap = CASES[name]
     dir = joinpath(OUT, name); mkpath(dir); nr = NEST_ROOT[name]
+    if isfile(joinpath(dir, "run.toml")) && get(TOML.parsefile(joinpath(dir, "run.toml")), "finished", false)
+        say("== $name: already finished here, kept"); continue          # a requeued job does not redo its finished cases
+    end
     say(@sprintf("== %s: %s, %s, Mach 10, CT, HLL, Courant 0.25, to t = %g", name, nlev == 1 ? "uniform $(N)³" :
                  "nest $nlev × $(N)³ (finest $(N*2^(nlev-1))³ in the central 1/$(2^(nlev-1)))", T, tend))
     GC.gc(); CPU_RUN || CUDA.reclaim()
     cs = 1.0; B0 = sqrt(2cs^2/200)
     H = nested_central(N, nlev; n=N, mode=:ct, riemann=:hll, T=T, backend=BE, gamma=1.01, courant=0.25)
     init!(H, (x, y, z) -> (1.0, 0.0, 0.0, 0.0, cs^2, B0, 0.0, 0.0); vecpot=(x, y, z) -> (0.0, 0.0, B0*y))
-    d = Driving(H; mach=10.0, cs=cs, kmin=1, kmax=3, zeta=1.0, two_d=false, seed=1)
+    d = isfinite(VA_MAX) ? Driving(H; mach=10.0, cs=cs, kmin=1, kmax=3, zeta=1.0, two_d=false, seed=1, va_max=VA_MAX) :
+                           Driving(H; mach=10.0, cs=cs, kmin=1, kmax=3, zeta=1.0, two_d=false, seed=1)
     push!(H.sources, d)
     fine = N * 2^(nlev-1)                                  # the finest resolution, cells across the box
     c0 = 3fine ÷ 8 + 1; c1 = 5fine ÷ 8                     # the central cube at that resolution
@@ -93,8 +100,8 @@ for name in ARGS[3:end]
     meta = Dict("case" => name, "root" => N, "levels" => nlev, "precision" => string(T), "t_end" => tend, "finished" => isempty(why),
                 "why" => why, "wall" => wall, "level_wall" => H.wall, "steps" => H.nsteps, "cell_updates" => upd,
                 "finest" => fine, "central_cells" => [c0, c1], "nest_root" => nr, "times" => times,
-                "mach_t" => d.log_t, "mach_m" => d.log_mach_m, "mach_v" => d.log_mach, "amp" => d.log_amp,
-                "divb" => max_divb(H), "nested_commit" => readchomp(joinpath(NT, "COMMIT")),
+                "va_max" => VA_MAX, "mass" => NM.totals(H).mass, "mach_t" => d.log_t, "mach_m" => d.log_mach_m, "mach_v" => d.log_mach, "amp" => d.log_amp,
+                "divb" => max_divb(H), "nested_commit" => (f = joinpath(NT, "COMMIT"); isfile(f) ? readchomp(f) : "unknown"),
                 "device" => CPU_RUN ? "cpu" : CUDA.name(CUDA.device()))
     open(io -> TOML.print(io, meta), joinpath(dir, "run.toml"), "w")
     open(joinpath(dir, "hist.toml"), "w") do io

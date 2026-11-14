@@ -1,6 +1,6 @@
 #!/bin/bash -l
-# The single-precision pilot of the GPU codes (after build.sh athenak-f32 athenapk-f32 cholla-f32): every set-up of AthenaK,
-# AthenaPK and Cholla in fp32 on the Alfven wave at 64 and the 3D field loop at 32, through production.sbatch, into a
+# The single-precision pilot of the GPU codes (after build.sh athenak-f32 athenapk-f32): every set-up of AthenaK and
+# AthenaPK in fp32 on the Alfven wave at 64 and the 3D field loop at 32, through production.sbatch, into a
 # separate results directory; check_f32.py compares each with its fp64 run. Exit code 0 only if all pass.
 #SBATCH --job-name=newcodes-f32-pilot
 #SBATCH --partition=gpu,owners
@@ -15,7 +15,7 @@
 #SBATCH --error=logs/%x-%j.out
 set -uo pipefail
 here="$SLURM_SUBMIT_DIR"; mkdir -p "$here/tasks"; lines="$here/tasks/f32_pilot.txt"; : > "$lines"
-for cv in athenakf32:matched athenakf32:best athenapkf32:matched athenapkf32:best chollaf32:plmc chollaf32:ppmc; do
+for cv in athenakf32:matched athenakf32:best athenapkf32:matched athenapkf32:best; do      # Cholla refuses PRECISION=1 (static assertion)
     c="${cv%%:*}"; v="${cv#*:}"; g=plane; [[ "$c" == athenakf32 ]] && g=cube
     printf '%s|%s|alfven|42|64|%s\n%s|%s|field_loop_3d|42|32|cube\n' "$c" "$v" "$g" "$c" "$v" >> "$lines"
 done

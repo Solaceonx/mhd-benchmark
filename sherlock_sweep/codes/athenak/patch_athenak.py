@@ -31,7 +31,7 @@ static Real AbelNextStop(Mesh *pmesh, Outputs *pout, Real tlim) {{
 
 '''
 # Single precision (Athena_SINGLE_PRECISION=ON) does not compile at the pinned commit c5a0d7f: double constants and
-# double tables meet Real = float in seven files, all in parts the suite does not use (viscosity's time step, the turbulence
+# double tables meet Real = float in eight files, all in parts the suite does not use (viscosity's time step, the turbulence
 # driver, z4c drift control, tabulated and piecewise EOS, two test problems). These edits only make the types agree;
 # with Real = double they change nothing. Checked on the Mac (Kokkos serial, clang): the fp32 build then compiles.
 SINGLE = [
@@ -48,6 +48,7 @@ SINGLE = [
     ("src/pgen/tests/divb_amr.cpp", "+ std::abs(divb_amr.guide_b3) + 6.0*std::abs(divb_amr.field_amp));",
      "+ std::abs(divb_amr.guide_b3) + static_cast<Real>(6.0)*std::abs(divb_amr.field_amp));"),
 ]
+UNITS = "src/eos/primitive-solver/unit_system.cpp"
 TABLES = ("src/eos/primitive-solver/eos_compose.cpp", "src/eos/primitive-solver/eos_hybrid.cpp")   # Real * table_x = table["x"] (double)
 
 
@@ -61,6 +62,17 @@ def single_precision(root):
         f = root/name;text = f.read_text()
         new = re.sub(r'Real \* (table_\w+) = table\["', r'auto * \1 = table["', text)
         if new != text:f.write_text(new)
+    # unit_system.cpp builds its UnitSystem structs (Real members) from double constants in braces: a narrowing that the CUDA
+    # compiler refuses outright (job 52114552: 18 errors, "invalid narrowing conversion from double to float")
+    f = root/UNITS;out = [];inside = False
+    for line in f.read_text().split("\n"):
+        if "return UnitSystem{" in line:inside = True
+        elif inside and line.strip() == "};":inside = False
+        elif inside:
+            m = re.match(r"^(\s+)(?!//)(.+?),(\s*(?://.*)?)$", line)
+            if m and not m.group(2).startswith("static_cast<Real>("):line = f"{m.group(1)}static_cast<Real>({m.group(2)}),{m.group(3)}"
+        out.append(line)
+    f.write_text("\n".join(out))
 
 
 def main(root):

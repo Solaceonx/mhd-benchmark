@@ -66,6 +66,17 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**2026-11-14 (session cut by the usage limit):** RAMSES II rerun done: 788 of 804 complete; the 16 failures are all
+decay_supersonic HLL (both precisions), as in the old campaign; records fetched to `ramses2_results/` (git-ignored; the
+site still shows the old mini-ramses data: next, point `sweep_data` at `ramses2_results` with labels ramses2[f32]_{matched,best,uct}).
+512³ speed (G updates/s): HLL 0.35/1.07, HLLD 0.36/0.86, UCT-HLLD 0.61/1.21 (fp64/fp32). fp32 GPU codes: Cholla refuses
+PRECISION=1 (static assertion), dropped; AthenaK needed one more fix (unit_system.cpp, `UNITS` in patch_athenak.py); resubmitted
+build 52303589 -> pilot 52303590 -> arrays 52303614 (athenakf32), 52303640 (athenapkf32). Nested: big run deep192 finished
+(t = 0.5, 7,797 s, mass added 1.7e-5, Mach 9.93); 128³ movie run stopped at t = 0.72 (wall cap); spectra by level in
+`big/deep192/spectra.npz` (spectra.py/.sbatch); `nested_figures.py` now draws `nested-big.png` and all three movies, but
+`build_nested.py` does not yet show them (not published). Queued: ergodicity ensemble 52303938 (ergodic.jl, 8 seeds), capped
+comparisons 52303940 (nest64 uni256) and 52303942 (nest128 uni512) in `compare_cap/` (NESTED_VA_MAX=30).
+
 **GPU codes in single precision, 2026-11-12 (lyxia: "compare all the GPU codes apples to apples"):** AthenaK, AthenaPK,
 Cholla again in fp32 (codes athenakf32, athenapkf32, chollaf32 in `sherlock_newcodes/newcodes_run.py`; same set-ups,
 `_single` wrapper records fp32), every test line of tasks.py (54 each; AthenaK in 3D as in the sweep). Builds

@@ -84,6 +84,17 @@ shared login is used only while they are present). Done on the Mac:
   UCT-HLLD), E_M 0.67-1.01; ESB at 256³ 0.05-0.20 (u), 0.05-0.14 (B); every PPM/HLLD/RK3 "best" set-up (6 codes) stops by
   t = 0.02 at every grid; HLL-family codes' high chi = P_d/P_s at k > 100 is lost solenoidal power (they keep 0.30-0.71 of it,
   0.75-0.95 of the dilatational); classic RAMSES and RAMSES II agree to 0.04 % in E_K.
+- *Later the same night:* the decay analysis averages both seeds, each against the reference's same seed, and drops runs whose
+  total energy moves by more than 1 %: only AthenaPK PLM/HLLE 512³ seed 42 (+180 % between t = 0.04 and 0.06, time step 4x
+  smaller there; every other run holds 0.07 % or better). That run had made AthenaPK look least diffusive (1.11); with seed 43
+  alone it is 0.85, with the HLLE codes. Worth telling the AthenaPK developers (energy floor or first-order fallback?).
+  RAMSES II GEM fp32 "order drop" explained: at 512² the sheet goes plasmoid-unstable and fp32/fp64 reconnected flux, equal to
+  1e-5 until t ~ 0.7, diverge exponentially to 39 % (256²: within 0.8 %); not a precision floor.
+- *Next for the paper (my order):* (1) a K11-faithful start: drive MHD at Mach 9 with B0 = 0.3 to saturation in one code and
+  start every code from that state (needs a state-file reader in AthenaK/Athena++/AthenaPK/Cholla/gPLUTO/Enzo; RAMSES, RAMSES II,
+  AREPO and Abel et al.'s kernels read states already); (2) submit the RAMSES II turbulence job and the nested long windows;
+  (3) the [TODO]s in main.tex (code references, the limiter options each "best" set-up left at defaults, accuracy text for the
+  new codes, a driven-turbulence figure).
 - *Manuscript draft:* `manuscript/` (main.tex, AASTeX 7; `numbers.tex` from `scripts/manuscript_numbers.py`, every number a
   macro; `tables/decay.tex`; refs.bib). Kept OUT of git (`.git/info/exclude`): the repository is public and the draft names
   Tom and Eric as authors; lyxia decides where it lives. Build: `cd manuscript && latexmk -pdf main.tex`.

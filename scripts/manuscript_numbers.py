@@ -224,8 +224,20 @@ def accuracy():
     put("accNonlinTests", str(len(nonlinear)), "nonlinear planar tests of the accuracy figure")
 
 
+def gem_precision():
+    """RAMSES II UCT-HLLD on GEM in fp32 against fp64: the relative difference of the reconnected flux over time."""
+    sw = sd.Sweep();out = {}
+    for n in (256, 512):
+        a, b = sw.diag("gem", "ramses2_uct", n), sw.diag("gem", "ramses2f32_uct", n)
+        rel = np.abs(b["recon_flux_lower"] - a["recon_flux_lower"])/np.maximum(np.abs(a["recon_flux_lower"]), 1e-12);out[n] = (a["time"], rel)
+    t, r = out[512];first = t[np.argmax(r > 1e-5)]
+    put("gemFpSplitT", g(float(first), 1), "GEM 512^2: time at which fp32 and fp64 reconnected flux first differ by 1e-5")
+    put("gemFpEndFiveTwelve", g(100*float(r[-1]), 0), "their difference at the end, per cent")
+    put("gemFpMaxTwoFiftySix", g(100*float(out[256][1].max()), 1), "the largest difference at 256^2, per cent")
+
+
 def main():
-    counts();decay();factorial();turbulence();nested();suite();accuracy()
+    counts();decay();factorial();turbulence();nested();suite();accuracy();gem_precision()
     lines = ["% Written by scripts/manuscript_numbers.py from the records; do not edit by hand."]
     for name, value, comment in M:
         lines.append(f"\\newcommand{{\\{name}}}{{{value}}}" + (f"  % {comment}" if comment else ""))

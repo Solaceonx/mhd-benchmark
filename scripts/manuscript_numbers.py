@@ -11,6 +11,8 @@ Macro names are letters only (LaTeX); each line carries a comment saying where t
 import csv
 import json
 import statistics
+
+import numpy as np
 import sys
 from collections import Counter
 from pathlib import Path
@@ -85,10 +87,22 @@ def decay():
     hll = [m for m in fin if "ps_k100" in S[m] and m not in ("glm", "ct") and S[m]["ps_k100"] < 0.9]
     put("decayPsHLLmin", g(min(S[m]["ps_k100"] for m in hll)));put("decayPsHLLmax", g(max(S[m]["ps_k100"] for m in hll)), "solenoidal power fraction at k > 100, the HLL-family codes")
     put("decayPdHLLmin", g(min(S[m]["pd_k100"] for m in hll)));put("decayPdHLLmax", g(max(S[m]["pd_k100"] for m in hll)), "dilatational, the same codes")
-    seeds = [abs(S[m]["ek_seed_spread"]) for m in main if "ek_seed_spread" in S[m]]
-    put("decaySeedEK", g(100*max(seeds), 1), "largest |E_K(seed 43)/E_K(seed 42) - 1| at t = 0.2, per cent")
-    seeds = [abs(S[m]["em_seed_spread"]) for m in main if "em_seed_spread" in S[m]]
+    seeds = [abs(S[m]["ek_seed_raw"]) for m in main if "ek_seed_raw" in S[m]]
+    put("decaySeedEK", g(100*max(seeds), 1), "largest |E_K(seed 43)/E_K(seed 42) - 1| at t = 0.2 over the set-ups, per cent")
+    seeds = [abs(S[m]["em_seed_raw"]) for m in main if "em_seed_raw" in S[m]]
     put("decaySeedEM", g(100*max(seeds), 1), "the same for E_M, per cent")
+    v = J["energy_violations"]
+    put("decayEnergyViolations", str(len(v)), "runs whose total energy moved by more than 1 % (not used)")
+    if v:put("decayEnergyWorst", g(100*max(x["drift"] for x in v), 0), "the largest such change, per cent")
+    put("decayEnergyTolerance", g(100*J["energy_tolerance"], 0))
+    if v:                 # how far the excluded run's kinetic energy strays from the reference's run of the same seed
+        import manuscript_decay as md
+        w = v[0];a_ = md.series(sw, w["setup"], w["N"], w["seed"]);r_ = md.series(sw, J["reference"], w["N"], w["seed"])
+        put("decayEnergyBadSetup", S[w["setup"]]["label"].split(",")[0]);put("decayEnergyBadEK", g(100*float(np.max(a_["ek"]/r_["ek"] - 1)), 0),
+            "the excluded run: largest excess of E_K over the reference's, per cent")
+        put("decayEnergyBadRe", g(float(a_["omega"][1:].mean()/r_["omega"][1:].mean()), 2), "and its 2 Omega + 4/3 Delta relative to the reference")
+    others = [d for e in S.values() for d in e.get("energy_drift", {}).values() if d <= J["energy_tolerance"]]
+    put("decayEnergyOthers", g(100*max(others), 2), "the largest change of total energy of every other run, per cent")
     a, b = S["ramses_best"], S["ramses2_best"]
     put("decayRamsesTwinEK", g(100*abs(a["ek_ratio"]/b["ek_ratio"] - 1), 2), "RAMSES (CPU) against RAMSES II (GPU), same scheme: E_K difference, per cent")
     put("decayRamsesTwinEM", g(100*abs(a["em_ratio"]/b["em_ratio"] - 1), 2))

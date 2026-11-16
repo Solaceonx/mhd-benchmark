@@ -10,6 +10,8 @@ Macro names are letters only (LaTeX); each line carries a comment saying where t
 """
 import csv
 import json
+import re
+import subprocess
 import statistics
 
 import numpy as np
@@ -59,6 +61,8 @@ def decay():
     J = json.loads((sd.SITE/"media"/"analysis"/"decay_k11.json").read_text());S = J["setups"]
     main = [m for m in S if m not in sd.RAMSES2_F32]
     put("decayRef", J["reference_label"], "the reference: least diffusive finished 512^3 set-up");put("decayFinished", str(J["spread"]["finished_512"]), "set-ups finished at 512^3")
+    fam = {S[m]["family"] for m in main if S[m].get("ek_ratio") is not None}
+    put("decayFinishedCodes", {9: "nine", 10: "ten", 8: "eight", 11: "eleven", 12: "twelve", 13: "thirteen"}.get(len(fam), str(len(fam))), "codes among them")
     put("decayEKmin", g(J["spread"]["ek"][0], 3));put("decayEKmax", g(J["spread"]["ek"][1], 3), "E_K/ref at t = 0.2, 512^3")
     put("decayEMmin", g(J["spread"]["em"][0]));put("decayEMmax", g(J["spread"]["em"][1]), "E_M/ref at t = 0.2, 512^3")
     sw = sd.Sweep();runs = {}
@@ -131,25 +135,36 @@ def factorial():
 
 
 def turbulence():
-    rows = list(csv.DictReader(open(ROOT/"turb_results"/"summary.csv")))
-    def re_of(prefix_code, method, mach, n):
-        v = [float(r["re_eff"]) for r in rows if r["code"] == prefix_code and r["method"] == method and r["mach_target"] == str(mach) and r["N"] == str(n)
-             and r["status"] == "complete" and r["re_eff"] not in ("", "nan")]
+    """The driven-turbulence pilot (sherlock_turb/summarize.py -> turb_results/summary.csv): complete runs only. RAMSES as
+    released and with its forcing projection corrected share the code name; the run name tells them apart."""
+    rows = [r for r in csv.DictReader(open(ROOT/"turb_results"/"summary.csv")) if r["status"] == "complete"]
+    kind = lambda r: r["run"].split("-")[0] + "-" + r["method"]          # ramses-best, ramsesfix-best, gpu-hydro, ramses2-uct, ...
+    def mean_of(k, col, mach, n):
+        v = [float(r[col]) for r in rows if kind(r) == k and r["mach_target"] == str(mach) and r["N"] == str(n) and r[col] not in ("", "nan")]
         return statistics.mean(v) if v else None
-    put("turbMachs", "3, 10, 30 and 50", "target Mach numbers (config.toml, config_highmach.toml)")
-    gains = [];glm = []
-    for mach in (3, 10, 30, 50):
-        for n in (128, 256):
-            code = "ramsesfix" if any(r["code"] == "ramsesfix" for r in rows) else "ramses"
-            a, b = re_of(code, "matched", mach, n), re_of(code, "best", mach, n)
-            if a and b:gains.append(b/a)
-            h, l = re_of("gpu", "hydro", mach, n), re_of("gpu", "glm", mach, n)
-            if h and l:glm.append(l/h)
-    if gains:put("turbHLLCgainMin", g(min(gains)));put("turbHLLCgainMax", g(max(gains)), "Re_eff of RAMSES HLLC/MonCen over HLL/minmod, same grid and Mach")
-    if glm:put("turbGLMlossMin", g(min(glm)));put("turbGLMlossMax", g(max(glm)), "Re_eff of Abel et al.'s MHD kernel (zero field) over their Euler kernel")
-    d = [float(r["re_eff"]) for r in rows if r["code"] == "gpu" and r["method"] == "hydro" and r["mach_target"] == "10" and r["status"] == "complete"]
-    r2 = [r for r in rows if r["code"] == "ramses2"]
-    put("turbRamsesTwoRuns", str(len(r2)), "RAMSES II UCT-HLLD turbulence runs in the summary (0 until fetched)")
+    machs = sorted({int(r["mach_target"]) for r in rows})
+    put("turbMachs", ", ".join(map(str, machs[:-1])) + f" and {machs[-1]}", "target Mach numbers")
+    grow = [mean_of(k, "re_eff", m, 256)/mean_of(k, "re_eff", m, 128) for k in {kind(r) for r in rows} for m in machs
+            if mean_of(k, "re_eff", m, 256) and mean_of(k, "re_eff", m, 128)]
+    put("turbReGrowMin", g(min(grow), 1));put("turbReGrowMax", g(max(grow), 1), "Re_eff(256^3)/Re_eff(128^3), every code, Mach number")
+    hllc = [mean_of("ramsesfix-best", "re_eff", m, n)/mean_of("ramsesfix-matched", "re_eff", m, n) for m in machs for n in (128, 256)
+            if mean_of("ramsesfix-best", "re_eff", m, n) and mean_of("ramsesfix-matched", "re_eff", m, n)]
+    put("turbHLLCgainMin", g(min(hllc)));put("turbHLLCgainMax", g(max(hllc)), "RAMSES (corrected forcing): Re_eff of HLLC/MonCen over HLL/minmod")
+    hll = [mean_of("gpu-hydro", "re_eff", m, n)/mean_of("ramsesfix-matched", "re_eff", m, n) for m in machs for n in (128, 256)
+           if mean_of("gpu-hydro", "re_eff", m, n) and mean_of("ramsesfix-matched", "re_eff", m, n)]
+    put("turbHydroOverRamsesMin", g(min(hll)));put("turbHydroOverRamsesMax", g(max(hll)), "Abel et al.'s Euler kernel over RAMSES HLL (corrected), Re_eff")
+    glm = [mean_of("gpu-glm", "re_eff", m, n)/mean_of("gpu-hydro", "re_eff", m, n) for m in machs for n in (128, 256)
+           if mean_of("gpu-glm", "re_eff", m, n) and mean_of("gpu-hydro", "re_eff", m, n)]
+    put("turbGLMlossMin", g(min(glm)));put("turbGLMlossMax", g(max(glm)), "Re_eff of Abel et al.'s MHD kernel (zero field) over their Euler kernel")
+    proj = [mean_of("gpu-hydro_ramsesproj", "mach", m, 128)/mean_of("gpu-hydro", "mach", m, 128) for m in (3, 10) if mean_of("gpu-hydro_ramsesproj", "mach", m, 128)]
+    put("turbProjMachMin", g(100*(1 - max(proj)), 0));put("turbProjMachMax", g(100*(1 - min(proj)), 0),
+        "per cent lower Mach number with RAMSES's released projection in Abel et al.'s kernel, same a_rms, 128^3")
+    fl = [float(r["floor_cells"])/int(r["N"])**3 for r in rows if int(r["mach_target"]) >= 30 and r["floor_cells"] not in ("", "nan")]
+    put("turbFloorMaxPermille", g(1000*max(fl), 1), "largest share of cells at the density floor at Mach 30-50, per mille")
+    put("turbRamsesTwoRuns", str(sum(r["run"].startswith("ramses2-") for r in rows)), "RAMSES II runs in the summary (0 until fetched)")
+    out = subprocess.run([sys.executable, str(ROOT/"sherlock_turb"/"forcing_compressive_share.py")], capture_output=True, text=True).stdout
+    share = float(re.search(r"comp_frac 0\.000: .* released RAMSES ([\d.]+)", out).group(1))
+    put("turbProjCompressive", g(100*share, 0), "per cent of the released RAMSES forcing's power that is compressive at comp_frac = 0")
 
 
 def nested():

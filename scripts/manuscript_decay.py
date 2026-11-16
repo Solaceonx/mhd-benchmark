@@ -182,7 +182,7 @@ def latex(out):
              r"\colhead{$\langle J^2\rangle$} & \colhead{$u$-ESB} & \colhead{$B$-ESB} & \colhead{$\bar\chi(k>100)$} & \colhead{Cost}}", r"\startdata"]
     for m, e in out["setups"].items():
         st = e["status"];done = sum(v == "complete" for v in st.values());ran = sum(v != "not run" for v in st.values())
-        fin = f"{done}/{ran}" + ("" if done else f", $t\\le{max(e['reached'].values()):.2f}$")
+        fin = r"$\le128^3$ only" if not ran else f"{done}/{ran}" + ("" if done else f", $t\\le{max(e['reached'].values()):.2f}$")
         cost_ = e.get("cost_h_512");res = e.get("resource_512") or "";unit = "n" if "CPU" in res else "g"
         lab = pc.label(m, True).replace("&", "+").replace("_", " ") + (r"$^{\rm a}$" if "energy" in st.values() else "")
         lines.append(f"{lab} & {fin} & {fmt(e.get('ek_ratio'), 3)} & {fmt(e.get('em_ratio'))} & {fmt(e.get('re_rel'))} & {fmt(e.get('rm_rel'))} & "

@@ -108,6 +108,14 @@ check died on libpython3.12 (no python module in the parent shell), and the chec
 submitted with no dependency. Note: AthenaK fp32 takes 11 % more steps than the sweep's fp64 AthenaK (289 vs 260 on the
 Alfvén wave at 64; AthenaPK identical): check the time-step settings when the results come in.
 
+**AthenaPK energy jump, diagnosed (2026-11-16):** matched 512³ seed 42: dt fell 240x at t = 0.0539-0.0541 (~4,000 steps;
+local signal speed ~16,000 vs ~70), thermal energy 114 -> 370 by t = 0.06. Cause: `src/eos/adiabatic_glmmhd.hpp` applies
+dfloor (1e-6 in our deck) "without changing momentum or energy", so an emptied cell gets v = m/1e-6; the pressure floor then
+resets E = pfloor/(gamma-1) + e_k + e_B with that e_k. gamma = 1.01 makes voids deep. Also: AthenaPK best (PPM/HLLD/RK3) is
+"complete" in run.toml but NaN everywhere by t = 0.02 (density floor in every cell). Fix under test: AthenaPK's own
+`first_order_flux_correct = true` (variants matched_fofc, best_fofc in newcodes_run.py), job 52536645 (fofc_test.sbatch:
+best 256³, matched 512³ s42; results $SCRATCH/mhd-results-newcodes-fofc; compare with check_fofc.py).
+
 **2026-11-14, later (site reorganised, nested results in):** the site has a home page (`scripts/build_home.py` ->
 `progress/home.html`, published as index.html; it counts every run from the records: 5,547) and grouped navigation
 (`publish_site.GROUPS`, `nav_html`); the Papers page moved from index.html to papers.html. Nested page now leads with the

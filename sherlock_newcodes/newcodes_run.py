@@ -139,8 +139,9 @@ def athenapk_input(config, n, spec, settings, geometry, outputs):
               "<parthenon/time>", f"integrator = {settings['integrator']}", f"cfl = {settings['cfl']}", f"tlim = {t_end!r}",
               f"nlim = {X.step_cap(config, n)}", "perf_cycle_offset = 2", "ncycle_out = 1000",
               "<hydro>", "fluid = glmmhd", "eos = adiabatic", f"riemann = {settings['riemann']}",
-              f"reconstruction = {settings['reconstruction']}", f"gamma = {X.gamma_of(config)!r}", "dfloor = 1.0e-6", "pfloor = 1.0e-6",
-              "<parthenon/output0>", "file_type = hdf5", "id = cons", "variables = cons", f"dt = {interval(config, outputs)!r}"]
+              f"reconstruction = {settings['reconstruction']}", f"gamma = {X.gamma_of(config)!r}", "dfloor = 1.0e-6", "pfloor = 1.0e-6"]
+    if settings.get("fofc"):lines += ["first_order_flux_correct = true"]
+    lines += ["<parthenon/output0>", "file_type = hdf5", "id = cons", "variables = cons", f"dt = {interval(config, outputs)!r}"]
     return "\n".join(lines) + "\n"
 
 
@@ -516,6 +517,13 @@ def _single(runner):
 for _code in ("athenak", "athenapk", "cholla"):
     X.VARIANTS[_code + "f32"] = {v: dict(s, precision="fp32") for v, s in X.VARIANTS[_code].items() if v != "reference"}
     X.RUNNERS[_code + "f32"] = _single(X.RUNNERS[_code])
+
+# AthenaPK with its first-order flux correction (2026-11-16): a cell whose update would make density or pressure negative
+# gets first-order LLF fluxes on its faces instead of the floors (dfloor keeps the momentum, so the velocity and, through the
+# pressure floor, the total energy jump: matched 512^3 seed 42 gained 180 % at t = 0.054; best went NaN by t = 0.02).
+# AthenaPK's own Orszag-Tang and turbulence inputs turn it on. Added after the fp32 copies, so athenapkf32 is unchanged.
+for _v in ("matched", "best"):
+    X.VARIANTS["athenapk"][_v + "_fofc"] = dict(X.VARIANTS["athenapk"][_v], fofc=True, limiter="first-order flux correction (LLF)")
 
 if __name__ == "__main__":
     positional = [a for a in sys.argv[1:] if not a.startswith("-")]

@@ -18,6 +18,11 @@ Figures:
   divergence      rotated shock tube (field along the normal) and field loop with v_z (out-of-plane field)
   field_loop      magnetic energy of the advected loop in 2D and 3D, with Gardiner & Stone's fits
   turbulence      Mach 9 decay at 512^3: energies against time and spectra at the end
+  decay_rates     Mach 9 decay, every code at 512^3: E_K, E_M, and K11's small-scale measures against the reference (manuscript_decay.py)
+  decay_dissipation  effective Reynolds against magnetic Reynolds ranking; solenoidal against dilatational power at k > 100
+  robustness_more the same for the codes run after the sweep (AthenaPK, Cholla, gPLUTO, Enzo, Phantom, RAMSES II)
+  factorial       order x solver study: what PPM alone and HLLD alone buy, in three codes, per test
+  decay_bandwidth K11's effective spectral bandwidth at 256^3 (spectra averaged over t = 0.1-0.2) and against cost
 """
 import logging
 import re
@@ -251,6 +256,15 @@ COLUMNS = (("glm", "GLM", (("glm", "LLF"), ("glm_hll16", "f16/\nHLL"), ("glm_hll
 # originals' counts go under the key.
 COLUMNS = tuple(c for c in COLUMNS if not c[1].endswith("fixed")) if not FIXED else \
     tuple((f, t, tuple(v for v in vs if v[0] not in FADED)) for f, t, vs in COLUMNS if any(v[0] not in FADED for v in vs))
+# The codes run after the sweep (sweep_data.NEWCODES, RAMSES2): their own figure, robustness_more (the first has no room).
+COLUMNS_MORE = (("athenapk", "AthenaPK", (("athenapk_matched", "PLM/\nHLLE"), ("athenapk_best", "PPM/\nHLLD"))),
+                ("cholla", "Cholla", (("cholla_plmc", "PLMC"), ("cholla_ppmc", "PPMC"))),
+                ("pluto", "gPLUTO", (("pluto_ct_matched", "CT\nlinear"), ("pluto_ct_best", "CT\nparab."), ("pluto_glm_matched", "GLM\nlinear"),
+                                     ("pluto_glm_best", "GLM\nparab."))),
+                ("enzo", "Enzo", (("enzo_dedner", "Dedner"), ("enzo_ct", "CT"))),
+                ("phantom", "Phantom", (("phantom_sph", "SPMHD"),)),
+                ("ramses2", "RAMSES II, fp64", (("ramses2_matched", "HLL"), ("ramses2_best", "HLLD"), ("ramses2_uct", "UCT-\nHLLD"))),
+                ("ramses2", "RAMSES II, fp32", (("ramses2f32_matched", "HLL"), ("ramses2f32_best", "HLLD"), ("ramses2f32_uct", "UCT-\nHLLD"))))
 MARK_W, MARK_H, PITCH = .82, 1.22, 1.62      # a mark and the distance between rows, in units of the distance between grids
 
 
@@ -270,12 +284,19 @@ def mark(ax, x, y, state, frac, colour):
     elif state == "skipped":ax.plot([x], [y], marker="x", ms=2.8, color=MUTED, markeredgewidth=.6)
 
 
-def robustness(sw):
+def robustness_more(sw):
+    """As robustness, for the codes run after the sweep: AthenaPK, Cholla, gPLUTO, Enzo, Phantom and RAMSES II."""
+    return robustness(sw, COLUMNS_MORE, faded_note=False)
+
+
+def robustness(sw, columns=None, faded_note=True):
+    columns = columns or COLUMNS
+    lookup = lambda key: sw.rows.get(key) or sw.newcodes.get(key) or sw.ramses2.get(key)
     t_end = {name: float(c["t_end"]) for name, c in sw.configs.items()}
     sweep_status.mark_nonfinite(sw.status, sw.nonfinite_parts(), t_end)       # codes that ran on after their state turned to NaN
     # columns: five grids per method
     xs, x = {}, 0.0;spans = []
-    for fam, title, variants in COLUMNS:
+    for fam, title, variants in columns:
         start = x
         for m, _ in variants:xs[m] = x;x += len(SLOTS) + 1.1
         spans.append((fam, title, start - .5, x - 1.1 - .5));x += .9
@@ -290,7 +311,7 @@ def robustness(sw):
                 rows.append(("run", (test, s, label if len(seeds) == 1 else f"{label}, seed {seeds.index(s) + 1}", indent), y));y += PITCH
         y += .55
     height = y - .55 - PITCH
-    label_w = 26.0;top, bottom = 6.9, 6.0 + 1.9*bool(FADED)
+    label_w = 26.0;top, bottom = 6.9, 6.0 + 1.9*bool(FADED and faded_note)
     unit = FULL/(label_w + width + 1.0)
     fig = plt.figure(figsize=(FULL, unit*(height + top + bottom)));ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(-label_w, width + 1.0);ax.set_ylim(height + bottom, -top);ax.axis("off")
@@ -298,7 +319,7 @@ def robustness(sw):
     for fam, title, a, b in spans:
         ax.plot([a, b], [-4.35, -4.35], color=pc.FAMILY[fam], lw=1.6, solid_capstyle="butt")
         ax.text((a + b)/2, -4.7, title, ha="center", va="bottom", fontsize=8)
-    for fam, title, variants in COLUMNS:
+    for fam, title, variants in columns:
         for m, text in variants:ax.text(xs[m] + (len(SLOTS) - 1)/2, -1.25, text, ha="center", va="bottom", fontsize=6.8, linespacing=.95)
     done = {m: 0 for m in xs};planned = {m: 0 for m in xs}
     for kind, what, y in rows:
@@ -308,7 +329,7 @@ def robustness(sw):
         ax.text(-label_w + 1.6 + 1.6*indent, y, label, ha="left", va="center", fontsize=7.4)
         for m in xs:
             for i, n in enumerate(SLOTS):
-                row = sw.rows.get((test, m, n, seed))
+                row = lookup((test, m, n, seed))
                 if row is None:continue
                 planned[m] += 1;done[m] += row["state"] == "done"
                 mark(ax, xs[m] + i, y, row["state"], row.get("frac"), pc.FAMILY[pc.STYLE[m][0]])
@@ -320,11 +341,11 @@ def robustness(sw):
     yk = height + 4.4;x = -label_w + .7
     for i in range(len(SLOTS)):mark(ax, x + i, yk, "done", None, MUTED)
     ax.text(x + len(SLOTS) + .1, yk, r"$N = 32,\ 64,\ 128,\ 256,\ 512$", ha="left", va="center", fontsize=7)
-    x += 26.5
+    x += 29.0
     for state, frac, text, w in (("done", None, "finished", 9.5), ("stopped", .45, "solver failed; filled part: how far it got", 30.0),
                                  ("redo", None, "being rerun", 12.0), ("skipped", None, "taken out", 0.0)):
         mark(ax, x, yk, state, frac, MUTED);ax.text(x + 1.0, yk, text, ha="left", va="center", fontsize=7);x += w
-    if FADED:                         # the originals the fixed kernels replace in the columns
+    if FADED and faded_note:          # the originals the fixed kernels replace in the columns
         counts = []
         for m in dict.fromkeys(sweep_data.FIXES[f] for f in FIXED):
             keys = [k for k in sw.rows if k[1] == m and k[2] in SLOTS and any(k[0] == t for _, ts in TESTS for t, *_ in ts)]
@@ -667,7 +688,7 @@ def work_precision(sw):
     return fig
 
 
-WP_PAIR = {"order": ("o", True), "all": ("D", True), "solver": ("s", False)}      # marker, filled
+WP_PAIR = {"order": ("o", True), "all": ("D", True), "solver": ("s", False), "precision": ("^", False)}      # marker, filled
 
 
 def order_tradeoff(sw):
@@ -699,9 +720,67 @@ def order_tradeoff(sw):
     return fig
 
 
+def factorial(sw):
+    """The order x solver study (sherlock_order/, work_precision.GRID): in three codes, each of the four pairs of
+    reconstruction (PLM, PPM) and Riemann solver (HLL-family, HLLD) at one integrator. Per test, (a) what PPM alone buys
+    (at the HLL-family solver) and what HLLD alone buys (at PLM), as the cost to reach the error of AthenaK PLM/HLLE at
+    256^2 (lower over higher; above 1 the change pays); (b) the same split of the error itself at 512^2 (256^2 where a
+    code stopped short), which needs no cost model. K11 (sec. 6) could only correlate such design choices across codes."""
+    import work_precision as wp
+    rows = wp.table(sw);tests = [t for t, _ in wp.TESTS if t in rows and t != "current_sheet"]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(FULL, 4.4), sharey=True, gridspec_kw=dict(wspace=.08, left=.15, right=.99, top=.93, bottom=.22))
+    codes = [(name, cells, color(cells[-1] if cells[-1] in pc.STYLE else cells[0])) for name, cells in wp.GRID]
+    off = np.linspace(-.27, .27, 2*len(codes))
+    for c, (name, cells, col) in enumerate(codes):
+        for i, t in enumerate(tests):
+            g = wp.factorial(rows[t], cells);es = rows[t]["error_split"].get(name) or {}
+            N = max(es, key=int) if es else None
+            for j, (key, mk) in enumerate((("order_hll", "o"), ("solver_plm", "s"))):
+                y = i + off[2*c + j]
+                if g:a.plot(g[key], y, marker=">" if g["at_most"] else mk, ms=4.4, color=col, mfc=col if j == 0 else "white", mew=.9, ls="")
+                if N:
+                    v = es[N][key];off_scale = v > 250           # Athena++ PPM on the smooth waves: 10^4 and more
+                    b.plot(min(v, 250), y, marker=">" if off_scale else mk, ms=4.4, color=col, mfc=col if j == 0 else "white", mew=.9, ls="")
+                    if off_scale:b.annotate(f"{v:.0e}".replace("e+0", "e").replace("e+", "e"), (250, y), xytext=(-6, 0), textcoords="offset points",
+                                            ha="right", va="center", fontsize=6.5, color=col)
+    for ax, head in ((a, "(a) cost to the yardstick error: before ÷ after"), (b, "(b) error at the finest grid: before ÷ after")):
+        ax.axvline(1, color=MUTED, lw=.7);ax.set_xscale("log");ticks(ax);ax.set_title(head, loc="left", pad=4, fontsize=8.5)
+        ax.set_xlim(0.08, 300)
+        ax.xaxis.set_major_locator(matplotlib.ticker.FixedLocator([.1, .3, 1, 3, 10, 30, 100]))
+        ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}"));ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+        for i in range(len(tests)):ax.axhline(i + .5, color=RULE, lw=.4)
+    a.set_yticks(range(len(tests)));a.set_yticklabels([t.replace("_", " ") for t in tests]);a.set_ylim(len(tests) - .5, -.5)
+    a.set_xlabel("← the change costs more · the change pays →", fontsize=7.5)
+    hs = [Line2D([], [], color=col, marker="o", ls="", mew=.9, label=f"{name}: PLM → PPM (HLL-family)") for name, _, col in codes]
+    hs += [Line2D([], [], color=col, marker="s", ls="", mfc="white", mew=.9, label=f"{name}: HLL-family → HLLD (PLM)") for name, _, col in codes]
+    fig.legend(handles=hs, loc="lower center", ncol=2, columnspacing=1.6, bbox_to_anchor=(.55, 0), fontsize=7)
+    return fig
+
+
+import manuscript_decay as _decay  # noqa: E402  (the Mach 9 decay test after Kritsuk et al. 2011, every code)
+
+
+@__import__("functools").lru_cache(maxsize=None)
+def _decay_out(sw):
+    return _decay.analyse(sw)
+
+
+def decay_rates(sw):
+    return _decay.fig_rates(sw, _decay_out(sw))
+
+
+def decay_dissipation(sw):
+    return _decay.fig_dissipation(sw, _decay_out(sw))
+
+
+def decay_bandwidth(sw):
+    return _decay.fig_bandwidth(sw, _decay_out(sw))
+
+
 FIGURES = dict(cost_vs_error=cost_vs_error, speed=speed, accuracy=accuracy, robustness=robustness, convergence=convergence, leakage=leakage,
                divergence=divergence, field_loop=field_loop, turbulence=turbulence, arepo=arepo,
-               work_precision=work_precision, order_tradeoff=order_tradeoff)
+               work_precision=work_precision, order_tradeoff=order_tradeoff,
+               decay_rates=decay_rates, decay_dissipation=decay_dissipation, decay_bandwidth=decay_bandwidth, factorial=factorial, robustness_more=robustness_more)
 
 
 def main(argv):

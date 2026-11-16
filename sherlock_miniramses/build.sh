@@ -14,7 +14,7 @@ set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 codes="${MHD_CODES:-${SCRATCH:?set MHD_CODES or SCRATCH}/mhd-codes-sweep}"
 src="${MINIRAMSES_SRC:-$codes/miniramses-ism}"; ndim="${1:?usage: build.sh NDIM NPRE}"; npre="${2:?usage: build.sh NDIM NPRE}"
-variant="nd${ndim}_p${npre}"; build="${MINIRAMSES_BUILD_ROOT:-$codes/miniramses-build}/$variant"; exe="$build/bin/ramses${ndim}d"
+turb="${MINIRAMSES_TURB:-0}"; variant="nd${ndim}_p${npre}"; [[ "$turb" == 1 ]] && variant="${variant}_turb"; build="${MINIRAMSES_BUILD_ROOT:-$codes/miniramses-build}/$variant"; exe="$build/bin/ramses${ndim}d"
 [[ -x "$exe" ]] && { echo "already built: $exe"; exit 0; }
 [[ -d "$src/gpu" ]] || { echo "mini-ramses-ism source not found in $src (run fetch.sh)" >&2; exit 2; }
 arch="${MINIRAMSES_CUDA_ARCH:-}"
@@ -22,6 +22,20 @@ arch="${MINIRAMSES_CUDA_ARCH:-}"
 rm -rf "$build"; mkdir -p "$(dirname "$build")"; cp -R "$src" "$build"
 python3 "$here/prepare_patch.py" "$src" "$build/abel-patch"
 opts=(COMPILER=NVHPC "CUDA_ARCH=$arch" "NDIM=$ndim" MPI=0 HYDRO=1 MHD=1 "NPRE=$npre" "NSUBGRID=${MINIRAMSES_NSUBGRID:-2}" "PATCH=$build/abel-patch")
+if [[ "$turb" == 1 ]]; then
+    # MINIRAMSES_TURB=1 (sherlock_turb/ramses2.sbatch): RAMSES II's turbulence driving (TURB=1: cuFFT on the GPU, FFTW on
+    # the host), upstream initial conditions (uniform region), only the output-time patch (newdt_fine.f90) kept.
+    rm -f "$build/abel-patch/condinit.f90" "$build/abel-patch/input_hydro_condinit.f90"
+    fftw="${TURB_FFTW_DIR:-}"
+    if [[ -z "$fftw" ]]; then
+        while read -r f; do
+            d="${f%/include/fftw3.f}"; compgen -G "$d/lib/libfftw3.so*" > /dev/null && { fftw="$d"; break; }
+        done < <(find "${MHD_JULIA_DEPOT:-$HOME/.julia-mhd}/artifacts" -maxdepth 3 -path '*/include/fftw3.f' 2>/dev/null | sort)
+    fi
+    [[ -n "$fftw" && -f "$fftw/include/fftw3.f" ]] || { echo "no FFTW with include/fftw3.f (Julia depot artifacts); set TURB_FFTW_DIR"; exit 1; }
+    link="-lfftw3"; [[ -e "$fftw/lib/libfftw3.so" ]] || link="-l:$(basename "$(ls "$fftw"/lib/libfftw3.so.* | head -n1)")"
+    opts+=(TURB=1 "FFTW=$fftw" "LIBFFTW=-L$fftw/lib -Wl,-rpath,$fftw/lib $link")
+fi
 echo "== building $variant: make ramses ${opts[*]}"
 jobs="${SLURM_CPUS_PER_TASK:-8}"; lowered=""; ok=0; keep=()
 mk() { ( cd "$build/bin" && make "$@" "${opts[@]}" ); }

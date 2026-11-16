@@ -66,3 +66,18 @@ Sherlock's git (1.8) has no `git -C`: write the commit to `NestedTurbulence/COMM
 ```bash
 cd $SCRATCH/mhd-study/sherlock_nested && mkdir -p logs && p=$(sbatch --parsable precompile.sbatch) && sbatch --dependency=afterok:$p gpu_check.sbatch
 ```
+
+## Long windows for time-averaged spectra (2026-11-16)
+
+lyxia: compare the nest's spectra with the uniform grid's over a window of time, not at a snapshot. The capped runs give
+15 snapshots (one per crossing time, t = 0.3–1) at 256³ and 5 at 512³; with them the nests' velocity shape ratio over
+k = 8–96 is 0.72 (95 %: 0.52–0.97) and 0.75 (0.46–1.28), and a single pair of snapshots at one time gives anything from
+0.1 to 2.5 (`scripts/nested_figures.py: fig_window`, nested-window.png). Longer windows, same set-up (`compare.jl`
+cases `*_long`, capped at v_A = 30 c_s): to t = 3 at 256³ (55 snapshots, ~3 h for the uniform grid) and to t = 1.5 at
+512³ (25 snapshots, ~14 h; the gpu partition, as compare.jl has no checkpoint and owners could pre-empt it):
+
+    cd $SCRATCH/mhd-study/sherlock_nested && sbatch --time=10:00:00 compare_cap.sbatch nest64_long uni256_long
+    cd $SCRATCH/mhd-study/sherlock_nested && sbatch --partition=gpu --time=24:00:00 --export=ALL,NESTED_CASE_WALL=82800 compare_cap.sbatch nest128_long uni512_long
+
+Fetch: `ssh sherlock 'tar -C $SCRATCH/mhd-results-nested -c compare_cap/nest64_long compare_cap/uni256_long' | tar -x -C nested_results`
+(about 1.6 GB per 256³ pair; the 512³ pair about 6 GB: fetch only `snap_c_*` and the records if space is short).

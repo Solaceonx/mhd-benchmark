@@ -321,3 +321,24 @@ Local checks: `.venv-movie/bin/python -m unittest discover -s sherlock_turb -p t
 The compact density reader is checked against the pilot's full-volume reader using a two-rank native-format fixture,
 including negative density and rejection of the MHD variable layout. These checks do not replace an actual Sherlock run.
 
+
+## RAMSES II (official code), UCT-HLLD
+
+`ramses2.sbatch` (one H100, `ramses2_turb.py`): RAMSES II from the RAMSES II campaign's source (ramses2 `develop`
+04abdd9), built with its own turbulence driving (`sherlock_miniramses/build.sh` with `MINIRAMSES_TURB=1`: TURB=1,
+cuFFT on the GPU, the Julia depot's FFTW on the host, upstream uniform initial state, only the output-time patch),
+E. Moseley's UCT-HLLD (MonCen slopes, Courant 0.8), double precision, zero magnetic field. Mach 3, 10, 30, 50 at 128³
+and 256³, seeds 1 and 2 (16 runs), with each configuration's gamma and the pilot's driving strengths (`forcing.toml`)
+unchanged. Differences from classic RAMSES, neither a patch: no `turb_exact_rms` (RAMSES II normalises the force
+analytically, so the per-component rms is a_rms on average), and the projection is the corrected one (PR #57).
+A 32³ trial (one driving time) runs first; nothing else runs unless it completed and was measured. Runs work in
+`$L_SCRATCH_JOB` and only the measured results reach `$SCRATCH/mhd-results-turb/ramses2-uct-M*-N*-s*`. A measured run
+is kept, so the job can run again. Tested on the Mac (2026-11-16): a CPU build of 04abdd9 with TURB=1 (gfortran,
+HLLD, as UCT-HLLD is GPU only) through the whole chain; Mach 3.13 at 32³ over 2–5 T with a_rms = 15 (the corrected
+projection's GPU kernels: 3.17–3.25 at 128³), and the job script rehearsed against stand-ins for Slurm.
+
+Send and submit (Mac):
+
+    cd /Users/lyxia/Projects/research/abel_mhd && COPYFILE_DISABLE=1 tar --no-xattrs --no-mac-metadata -czf - sherlock_turb/ramses2_turb.py sherlock_turb/ramses2.sbatch sherlock_turb/README.md sherlock_miniramses/build.sh | ssh sherlock 'cd /scratch/users/lyxia/mhd-study && tar -xzf - && cd sherlock_turb && sbatch ramses2.sbatch'
+
+Status: `bash -l sherlock_turb/status.sh` (the table lists `ramses2-uct-*`); the job's log is `logs/turb-ramses2-<id>.out`.

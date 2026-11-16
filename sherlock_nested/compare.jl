@@ -27,8 +27,12 @@ say(x...) = (println(x...); flush(stdout))
 const CASES = Dict(
     "nest64"  => (64, 3, Float64, 1.0, 0.2, 0.01, 0.05),  "uni256" => (256, 1, Float64, 1.0, 0.2, 0.01, 0.05),
     "nest128" => (128, 3, Float32, 0.5, 0.2, 0.01, 0.05), "uni512" => (512, 1, Float32, 0.5, 0.2, 0.01, 0.05),
-    "tiny_nest" => (8, 3, Float64, 0.006, 0.002, 0.002, 0.004), "tiny_uni" => (32, 1, Float64, 0.006, 0.002, 0.002, 0.004))
-const NEST_ROOT = Dict("nest64" => 64, "uni256" => 64, "nest128" => 128, "uni512" => 128, "tiny_nest" => 8, "tiny_uni" => 8)
+    "tiny_nest" => (8, 3, Float64, 0.006, 0.002, 0.002, 0.004), "tiny_uni" => (32, 1, Float64, 0.006, 0.002, 0.002, 0.004),
+    # a long window for time-averaged spectra (lyxia, 2026-11-16): to t = 3, a snapshot every crossing time (55 from t = 0.3)
+    "nest64_long" => (64, 3, Float64, 3.0, 0.2, 0.01, 0.05), "uni256_long" => (256, 1, Float64, 3.0, 0.2, 0.01, 0.05),
+    "nest128_long" => (128, 3, Float32, 1.5, 0.2, 0.01, 0.05), "uni512_long" => (512, 1, Float32, 1.5, 0.2, 0.01, 0.05))
+const NEST_ROOT = Dict("nest64" => 64, "uni256" => 64, "nest128" => 128, "uni512" => 128, "tiny_nest" => 8, "tiny_uni" => 8,
+                       "nest64_long" => 64, "uni256_long" => 64, "nest128_long" => 128, "uni512_long" => 128)
 const EDGES = (lnrho = range(-12.0, 6.0; length=181), vx = range(-60.0, 60.0; length=241),
                v = range(0.0, 80.0; length=161), logb = range(-4.0, 1.5; length=111))
 

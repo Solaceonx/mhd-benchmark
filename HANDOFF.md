@@ -66,6 +66,28 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**2026-11-16, overnight (lyxia: get the paper ready, "like Kritsuk et al. 2011 but way more in-depth"; time-averaged
+windows for the nested spectra; RAMSES II driven turbulence with UCT-HLLD).** Sherlock was not touched (lyxia asleep: the
+shared login is used only while they are present). Done on the Mac:
+- *Nested spectra over a window:* `nested_figures.fig_window` -> `nested-window.png`, `nested.json["window"]`: each snapshot's
+  central-cube spectrum divided by its variance, averaged over every snapshot from t = 0.3, bootstrap intervals; one snapshot
+  pair alone gives a velocity ratio 0.1-2.4. Velocity 0.72 (0.52-0.97) at 256³, 0.75 (0.46-1.28) at 512³. Page text updated.
+  Longer windows ready, NOT submitted: `compare.jl` cases `*_long` (commands in `sherlock_nested/README.md`, last section).
+- *RAMSES II driven turbulence, UCT-HLLD:* `sherlock_turb/ramses2_turb.py` + `ramses2.sbatch` (one H100: TURB build via
+  `sherlock_miniramses/build.sh` with `MINIRAMSES_TURB=1`, 32³ trial, then Mach 3/10/30/50 x 128/256 x seeds 1, 2). Tested on
+  a Mac CPU build (HLLD) end to end and rehearsed with stand-ins for Slurm. NOT submitted: send command in
+  `sherlock_turb/README.md` (last section).
+- *Paper:* `scripts/manuscript_decay.py` (K11's Table 1 and Figs. 1, 2, 4 for every code on decay_supersonic ->
+  `progress/media/analysis/decay_k11.json`), new figures in `manuscript_figures.py`: decay_rates, decay_dissipation,
+  decay_bandwidth, factorial (order x solver), robustness_more (codes after the sweep); all paper figures redrawn; five added
+  to Our figures (published, website f602ff4). Findings: E_K at t = 0.2 within 0.91-1.04 of the reference (RAMSES II
+  UCT-HLLD), E_M 0.67-1.01; ESB at 256³ 0.05-0.20 (u), 0.05-0.14 (B); every PPM/HLLD/RK3 "best" set-up (6 codes) stops by
+  t = 0.02 at every grid; HLL-family codes' high chi = P_d/P_s at k > 100 is lost solenoidal power (they keep 0.30-0.71 of it,
+  0.75-0.95 of the dilatational); classic RAMSES and RAMSES II agree to 0.04 % in E_K.
+- *Manuscript draft:* `manuscript/` (main.tex, AASTeX 7; `numbers.tex` from `scripts/manuscript_numbers.py`, every number a
+  macro; `tables/decay.tex`; refs.bib). Kept OUT of git (`.git/info/exclude`): the repository is public and the draft names
+  Tom and Eric as authors; lyxia decides where it lives. Build: `cd manuscript && latexmk -pdf main.tex`.
+
 **2026-11-14, later (site reorganised, nested results in):** the site has a home page (`scripts/build_home.py` ->
 `progress/home.html`, published as index.html; it counts every run from the records: 5,547) and grouped navigation
 (`publish_site.GROUPS`, `nav_html`); the Papers page moved from index.html to papers.html. Nested page now leads with the

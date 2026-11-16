@@ -70,7 +70,7 @@ def build(J):
     ratio_steps = J["steps_to_tu"]["uni256"][0] / J["steps_to_tu"]["nest64"][-1]
     bt = J["brms_box_at_tu"]; bc = J["brms_central_range"]; mb = J["mach_box"]
     number = next(i for i, (src, _, _) in enumerate(PAGES, 1) if src == PAGE)
-    C = J["capped"]; G = J["ergodic"]; B = J["big"]; cr = C["runs"]; sh = C["share_central"]; sr = C["spectrum_ratio"]; ln = C["lnrho_central"]
+    W = J["window"]; C = J["capped"]; G = J["ergodic"]; B = J["big"]; cr = C["runs"]; sh = C["share_central"]; sr = C["spectrum_ratio"]; ln = C["lnrho_central"]
     cpc = lambda c, q: f"{100 * sh[c][q]:.0f} %" if sh[c][q] >= 0.1 else f"{100 * sh[c][q]:.1f} %"
     chips = ["3–4 levels, refinement ratio 2", "driven Mach 10, plasma β 200", "constrained transport, HLL, Courant 0.25",
              f"nest 3 × 64³ to t = 1 in {cr['nest64']['wall'] / 60:.0f} min", f"uniform 256³ to t = 1 in {cr['uni256']['wall'] / 60:.0f} min",
@@ -95,15 +95,18 @@ against {cr["uni512"]["wall"] / 3600:.1f} h for the uniform 512³ grid, with {cr
 nest and {ln["uni256"]["mean"]:.2f} and {ln["uni256"]["sigma"]:.2f} in the uniform grid, and k = 32–96 holds {cpc("nest64", "rho")} and {cpc("uni256", "rho")} of
 the density variance. The gap we reported first ({pc("nest64", "rho")} against {pc("uni256", "rho")}) came from the early outputs alone: before t ≈ 0.35 the finest
 level has not yet built its small scales.</li>
-<li><strong>Velocity and field are somewhat short at small scales.</strong> Normalized, the nest's velocity spectrum over k = 8–96 is a median
-{sr["nest64/uni256"]["v"]["median"]:.2f} of the uniform grid's at 256³ and {sr["nest128/uni512"]["v"]["median"]:.2f} at 512³. k = 32–96 holds
-{cpc("nest64", "B")} of the field's variance in the nest against {cpc("uni256", "B")} at 256³, but {cpc("nest128", "B")} against {cpc("uni512", "B")} at 512³ over that
-shorter run: the central cube's field is intermittent and needs longer averages.</li>
+<li><strong>Velocity may be short at small scales; it takes a window of time to tell.</strong> Each snapshot's spectrum divided by its variance in the central
+cube, then averaged over every snapshot from t = {C["t_stat"]:g} on (one per crossing time): over k = 8–96 the nest's velocity is
+{W["nest64/uni256"]["v"]["shape"]["ratio"]:.2f} of the uniform grid's at 256³ (95 %: {W["nest64/uni256"]["v"]["shape"]["ci95"][0]:.2f}–{W["nest64/uni256"]["v"]["shape"]["ci95"][1]:.2f},
+{W["nest64/uni256"]["snapshots"]} snapshots) and {W["nest128/uni512"]["v"]["shape"]["ratio"]:.2f} at 512³ ({W["nest128/uni512"]["v"]["shape"]["ci95"][0]:.2f}–{W["nest128/uni512"]["v"]["shape"]["ci95"][1]:.2f},
+{W["nest128/uni512"]["snapshots"]} snapshots); field and density are within their intervals of 1. A single pair of snapshots at one time gives anything from
+{min(W[p]["v"]["shape"]["single_min"] for p in W):.1f} to {max(W[p]["v"]["shape"]["single_max"] for p in W):.1f} for the velocity: compared at one instant the two grids
+can look equal or very different (figure 3). Longer windows are set up (to t = 3 at 256³, 1.5 at 512³).</li>
 <li><strong>One point, over time, samples the volume (ergodicity).</strong> In {len(G["seeds"])} runs with different driving seeds, the time mean of ln ρ at one point is
 {G["ensemble_time_mean"]:.2f} and the volume mean {G["ensemble_volume_mean"]:.2f} ({abs(G["z_ensemble"]):.1f} standard errors apart); the mass-weighted mean,
-{G["ensemble_mass_mean"]:+.2f}, is far off. The correlation time at the point is {G["tau_s"]:.3f}, about a tenth of a crossing time (figure 3).</li>
+{G["ensemble_mass_mean"]:+.2f}, is far off. The correlation time at the point is {G["tau_s"]:.3f}, about a tenth of a crossing time (figure 4).</li>
 <li><strong>A big nest runs too.</strong> Root 128³ plus three levels of 192³ (1024³-equivalent in the central 3/16 of the box) reached t = {B["t"]:g} in
-{B["wall"] / 3600:.1f} h on one H100 (figure 4).</li></ul></div>''']
+{B["wall"] / 3600:.1f} h on one H100 (figure 5).</li></ul></div>''']
     M = J.get("movies", {})
     if "deep192" in M:
         out.append(movie("deep192", M["deep192"], "Movie: the big nest, root 128³ + 3 levels of 192³ (finest 1024³-equivalent)",
@@ -133,6 +136,21 @@ shorter run: the central cube's field is intermittent and needs longer averages.
          "fed through its boundary by coarser levels that do not carry those scales. The central cube's rms field swings by a factor of 3–4 in time in every run, "
          "so its spectra need longer runs than these to compare. The cap adds "
          f"{cr['uni512']['mass_added']:.0e} of the mass in the uniform 512³ grid and {cr['nest64']['mass_added']:.0e} or less in the others."),
+        ("nested-window", "Spectra over a window of time, with their errors",
+         "The capped runs again, every snapshot from t = 0.3 on (one per crossing time, t = L/(2·10 c<sub>s</sub>) = 0.05). Each snapshot's spectrum in the central cube "
+         "is divided by its own variance there (the cube's total variance swings with the large eddies passing through it), then the snapshots are averaged. "
+         "Intervals: bootstrap over the snapshots of each run (neighbouring snapshots are uncorrelated: lag-1 correlation "
+         f"{min(min(W[p][q]['lag1'].values()) for p in W for q in ('v', 'B', 'rho')):+.2f} to {max(max(W[p][q]['lag1'].values()) for p in W for q in ('v', 'B', 'rho')):+.2f}). "
+         "Top: the windowed spectra, 95 % intervals. Middle and bottom: the nest's over the uniform grid's for each pair; dark, the windowed ratio with its 95 % interval; "
+         "pale, the 10–90 % range of the ratio of one snapshot pair taken at the same time.",
+         f"averaged over the window, the nests' velocity over k = 8–96 is {W['nest64/uni256']['v']['shape']['ratio']:.2f} of the uniform grid's at 256³ "
+         f"(95 %: {W['nest64/uni256']['v']['shape']['ci95'][0]:.2f}–{W['nest64/uni256']['v']['shape']['ci95'][1]:.2f}) and {W['nest128/uni512']['v']['shape']['ratio']:.2f} at 512³ "
+         f"({W['nest128/uni512']['v']['shape']['ci95'][0]:.2f}–{W['nest128/uni512']['v']['shape']['ci95'][1]:.2f}): short at 256³, just outside the interval, and not measurable at 512³ "
+         f"with {W['nest128/uni512']['snapshots']} snapshots. The field ({W['nest64/uni256']['B']['shape']['ratio']:.2f} and {W['nest128/uni512']['B']['shape']['ratio']:.2f}) and density "
+         f"({W['nest64/uni256']['rho']['shape']['ratio']:.2f} and {W['nest128/uni512']['rho']['shape']['ratio']:.2f}) are within their intervals of 1. One pair of snapshots "
+         f"at one time puts the velocity ratio anywhere from {min(W[p]['v']['shape']['single_min'] for p in W):.2f} to {max(W[p]['v']['shape']['single_max'] for p in W):.2f}, "
+         f"and the raw power (not divided by the variance) from {min(W[p]['v']['raw']['single_min'] for p in W):.2f} to {max(W[p]['v']['raw']['single_max'] for p in W):.1f}: "
+         "the comparison only means something over a window. To shrink the interval by two needs four times the snapshots: the long runs (55 snapshots at 256³, 25 at 512³) are ready to submit."),
         ("nested-ergodic", "Ergodicity: one point over time against the volume",
          f"Tom's test (his report, chapter 7) in 3-D: {len(sg)} runs of the 3 × 64³ nest to t = 1, identical but for the random seed of the driving, each with a probe "
          "in the finest-level cell at the box centre, read every second step of that level. Left: the PDF of s = ln ρ at the probe over time (all seeds pooled) and over "
@@ -232,7 +250,8 @@ density stays above the lowest of its six coarse neighbours.</li>
 <div class="card"><h3>Open</h3><ul>
 <li>Why the finest level is short of small-scale velocity: a run whose finest level is wider than a quarter of the box, against a uniform grid at its resolution,
 would tell whether it is the time gas spends inside the level.</li>
-<li>Longer capped runs at 512³ (to t = 1) and several seeds, for time-averaged field spectra: the central cube's field is too intermittent for one short run.</li>
+<li>Longer windows for the time-averaged spectra: capped runs to t = 3 at 256³ (55 snapshots) and t = 1.5 at 512³ (25), set up in <code>compare.jl</code>
+(cases <code>*_long</code>), not yet submitted. With 15 and 5 snapshots the 95 % intervals of the spectrum ratios are ±25–50 %.</li>
 <li>The ergodicity test with the probe near a level boundary, and for the field.</li></ul></div>
 <div class="card paper-state"><h3>Where the data comes from</h3><p>nested_results/ (copied from Sherlock): compare/ and compare_cap/ (histograms every 0.01, snapshots every 0.05),
 ergodic/ (probe series, volume PDFs), big/ (the big nest), movie/ (mid-plane slices every 0.002), logs/ and gpu_check/. Figures: <code>python3 scripts/nested_figures.py</code>; page: <code>python3 scripts/build_nested.py</code>.</p></div>''')

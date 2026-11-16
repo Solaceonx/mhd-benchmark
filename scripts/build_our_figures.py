@@ -31,6 +31,14 @@ def TEST_PAGE(t):
     return f'<a href="{page}">{e(t)}</a>' if (SITE/page).is_file() else f"<code>{e(t)}</code>"
 
 # name, title, tests, what it shows, how to read it
+def _esb(key):
+    """The range of a bandwidth over the set-ups of the Mach 9 decay analysis (manuscript_decay.py), for the caption below."""
+    path = SITE/"media"/"analysis"/"decay_k11.json"
+    if not path.is_file():return "–"
+    v = [e[key] for e in json.loads(path.read_text())["setups"].values() if key in e]
+    return f"{min(v):.2f}–{max(v):.2f}" if v else "–"
+
+
 FIGURES = (
     ("speed", "Speed", ["throughput_ot3d", "orszag_tang_3d"],
      "(a) Cell updates per second on one H100, on 3D Orszag–Tang run for a short time, 64³ to 512³, the fastest of the repeats (some of the "
@@ -110,6 +118,36 @@ FIGURES = (
      "(a) Field-loop magnetic energy on AREPO's static and moving meshes. (b) The static-mesh runs that stopped: their timestep against time. "
      "(c) AREPO's own divergence measure at the end against grid size.",
      "On the static mesh the field loop's energy grows and the timestep collapses; the moving mesh finishes every test."),
+    ("robustness_more", "Robustness of the codes run after the sweep", ["every test"],
+     "As the robustness figure, for AthenaPK, Cholla, gPLUTO, Enzo, Phantom and RAMSES II (double and single precision): every test, grid "
+     "and seed; a full mark finished, an open mark with a filled part stopped there.",
+     "The PPM-type/HLLD/RK3 set-ups of AthenaPK, Cholla and gPLUTO stop on the Mach 9 decay at every grid, as do the HLL set-ups of RAMSES II; "
+     "Phantom stops itself on the field loops (its divergence check)."),
+    ("decay_rates", "Mach 9 decay after Kritsuk et al. (2011): every code", ["decay_supersonic"],
+     "Their Figs. 1 and 2 for every set-up that finished at 512³: (a) the specific kinetic energy, (b) the magnetic energy, (c) 2Ω + 4/3Δ and "
+     "(d) J², the last two relative to the reference (RAMSES II UCT-HLLD, the least diffusive set-up that finished) at the same time "
+     "(scripts/manuscript_decay.py).",
+     "The kinetic energy agrees to a few per cent in every code; the magnetic energy and the small-scale measures sort the codes by their "
+     "numerical dissipation."),
+    ("decay_dissipation", "Where the numerical dissipation acts", ["decay_supersonic"],
+     "(a) Kritsuk et al.'s two small-scale measures, time-averaged over t = 0.02–0.2, relative to the reference at 512³: a ranking of the "
+     "effective Reynolds (x) and magnetic Reynolds (y) numbers; filled 512³, open 256³. (b) Solenoidal against dilatational velocity power "
+     "at k > 100, averaged over t = 0.1–0.2 at 512³, relative to the reference.",
+     "Every code other than RAMSES and RAMSES II sits below the diagonal: its magnetic dissipation, relative to the reference, exceeds its "
+     "kinetic. The HLL-family codes keep less than three quarters of the reference's solenoidal power near the grid scale but most of its "
+     "dilatational power: their high dilatational-to-solenoidal ratio is missing vorticity, not extra compression."),
+    ("decay_bandwidth", "Effective spectral bandwidth, and what it costs", ["decay_supersonic"],
+     "Kritsuk et al.'s Fig. 4 at 256³ against the 512³ reference, from spectra averaged over t = 0.1–0.2 rather than one snapshot: (a) the "
+     "velocity and (b) magnetic spectrum over the reference's, the band ±25 %; (c) the bandwidth (filled u, open B) against the cost of the "
+     "run to t = 0.2.",
+     f"{_esb('esb_u')} of the Nyquist wave number for the velocity and {_esb('esb_b')} for the field, as in their paper (0.15–0.28 and "
+     "0.07–0.20 against their 1024³ reference); RAMSES (II) and Enzo CT lead."),
+    ("factorial", "Which part of a scheme matters: order or solver", [t for t, _ in wp.TESTS if t != "current_sheet"],
+     "The order × solver study: in Abel et al.'s kernel, AthenaK and Athena++, each of PLM/PPM × HLL-family/HLLD at one integrator. (a) What "
+     "PPM alone (filled circles, at the HLL-family solver) and HLLD alone (open squares, at PLM) buy in the cost to reach the error of "
+     "AthenaK PLM/HLLE at 256²; (b) the same split of the error at the finest grid.",
+     "PPM pays on smooth waves and field transport; HLLD on shocks, Kelvin–Helmholtz and above all reconnection (GEM), and not on smooth waves. "
+     "In Abel et al.'s kernel PPM costs more than it gains on the shock tests."),
 )
 
 

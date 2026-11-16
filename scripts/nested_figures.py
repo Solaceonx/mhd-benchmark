@@ -415,6 +415,90 @@ def fig_capped():
                 spectrum_ratio={f"{a}/{b}": {q: ratio(a, b, q) for q in ("v", "B", "rho")} for a, b in (("nest64", "uni256"), ("nest128", "uni512"))})
 
 
+# ---------------------------------------------------------------- spectra over a time window, with their error
+def snapshot_spectra(case, ts, root=CAP):
+    """E(k) of v, B, ρ in the central cube (Hann window) for every snapshot: an array (3, snapshots, shells)."""
+    out = np.array([[shells(s, True) for s in (lambda a: (a[1:4], a[4:7], a[0:1]))(snap(case, "c", t, root).astype(np.float64))] for t in ts])
+    return 4 * np.arange(out.shape[-1]), out.transpose(1, 0, 2) / 4
+
+
+def lag1(E):
+    """The snapshots' lag-1 correlation, median over shells (near 0: snapshots one crossing time apart are independent)."""
+    d = E - E.mean(0);v = (d ** 2).mean(0)
+    return float(np.nanmedian((d[1:] * d[:-1]).mean(0) / np.where(v > 0, v, np.nan))) if E.shape[0] > 2 else 0.0
+
+
+WINDOW_PAIRS = (("nest64", "uni256"), ("nest128", "uni512"))
+BOOT = 4000
+
+
+def fig_window():
+    """lyxia, 2026-11-16: compare the nest's spectra with the uniform grid's over a window of time, not at a snapshot. The
+    capped runs (compare_cap): every snapshot (every 0.05, one crossing time) from t = 0.3 to the end. Each snapshot's
+    spectrum is divided by its own variance in the cube (the shape; the cube's total variance swings with the large
+    eddies passing through it) and the shapes are averaged over the window. Errors: bootstrap over the snapshots of each
+    run, independently (their lag-1 correlation is near zero). Also the raw power and what a single pair of snapshots
+    taken at one time would have said."""
+    names = ("velocity", "magnetic field", "density");keys = ("v", "B", "rho")
+    fig, axs = plt.subplots(3, 3, figsize=(15, 12.5), layout="constrained", height_ratios=(1.25, 1, 1))
+    rng = np.random.default_rng(20261116);res = {}
+    for row, (a, b) in enumerate(WINDOW_PAIRS, 1):
+        ts = [t for t in snap_times(a, CAP) if t >= T_STAT - 1e-9 and t in set(snap_times(b, CAP))]
+        k, Ea = snapshot_spectra(a, ts);_, Eb = snapshot_spectra(b, ts);n = len(ts)
+        sel = (k >= 8) & (k <= 96);sel32 = (k >= 32) & (k <= 96)
+        sta, stb = CAP_CASES[a], CAP_CASES[b];r = dict(times=ts, snapshots=n)
+        ia = rng.integers(0, n, (BOOT, n));ib = rng.integers(0, n, (BOOT, n))
+        for j, q in enumerate(keys):
+            Sa = Ea[j] / Ea[j][:, 1:].sum(1, keepdims=True);Sb = Eb[j] / Eb[j][:, 1:].sum(1, keepdims=True)     # shapes
+            out = {}
+            for kind, A, B in (("shape", Sa, Sb), ("raw", Ea[j], Eb[j])):
+                ma, mb = A.mean(0), B.mean(0);R = ma / mb
+                bA, bB = A[ia].mean(1), B[ib].mean(1);bR = bA / bB                     # (BOOT, shells)
+                lo, hi = np.percentile(bR, [2.5, 97.5], axis=0)
+                band = lambda x, s_: np.exp(np.log(x[..., s_]).mean(-1))               # log-mean over a range of k
+                bb = band(bR, sel);b32 = band(bR, sel32)
+                single = band(A / B, sel)                                              # one pair at one time
+                out[kind] = dict(ratio=float(band(R, sel)), ci95=[float(x) for x in np.percentile(bb, [2.5, 97.5])],
+                                 ratio_k32_96=float(band(R, sel32)), ci95_k32_96=[float(x) for x in np.percentile(b32, [2.5, 97.5])],
+                                 share_k_excluding_1=float(np.mean((lo[sel] > 1) | (hi[sel] < 1))),
+                                 single_min=float(single.min()), single_max=float(single.max()))
+                if kind == "shape":
+                    kk = k >= 4
+                    for m, B_, st in ((ma, bA, sta), (mb, bB, stb)):
+                        l_, h_ = np.percentile(B_, [2.5, 97.5], axis=0)
+                        axs[0, j].fill_between(k[kk], (k * l_)[kk], (k * h_)[kk], color=st["color"], alpha=.18, lw=0)
+                        axs[0, j].plot(k[kk], (k * m)[kk], color=st["color"], ls=st["ls"], lw=st["lw"])
+                    ax = axs[row, j]
+                    s10, s90 = np.percentile(A / B, [10, 90], axis=0)
+                    ax.fill_between(k[kk], s10[kk], s90[kk], color=sta["color"], alpha=.10, lw=0)
+                    ax.fill_between(k[kk], lo[kk], hi[kk], color=sta["color"], alpha=.30, lw=0)
+                    ax.plot(k[kk], R[kk], color=sta["color"], ls=sta["ls"], lw=sta["lw"])
+            out["lag1"] = dict(nest=lag1(Ea[j]), uniform=lag1(Eb[j]))
+            r[q] = out
+        res[f"{a}/{b}"] = r
+    for j, q in enumerate(names):
+        ax = axs[0, j];ax.set_xscale("log");ax.set_yscale("log");ax.set_title(q);ax.set_xlim(3.5, None);ax.axvspan(3, 12, color=ps.PANEL, lw=0)
+        for row in (1, 2):
+            ax = axs[row, j];ax.set_xscale("log");ax.set_yscale("log");ax.axhline(1, color=ps.MUTED, lw=.8, ls=":")
+            ax.set_xlim(3.5, 300);ax.set_ylim(0.25, 4);ax.axvspan(3, 12, color=ps.PANEL, lw=0)
+        axs[2, j].set_xlabel("$k$ (box units)")
+    axs[0, 0].set_ylabel(r"$\langle k\,E(k)/\sigma^2\rangle_t$, central cube (95 % interval)")
+    for row, (a, b) in enumerate(WINDOW_PAIRS, 1):
+        axs[row, 0].set_ylabel(tex(f"{CAP_CASES[a]['label']} / {CAP_CASES[b]['label']}"))
+        for j, q in enumerate(keys):
+            o = res[f"{a}/{b}"][q]["shape"]
+            axs[row, j].text(.03, .05, f"k = 8–96: {o['ratio']:.2f} (95 %: {o['ci95'][0]:.2f}–{o['ci95'][1]:.2f})\none pair at one time: {o['single_min']:.2f}–{o['single_max']:.2f}",
+                             transform=axs[row, j].transAxes, fontsize=9.5, color=ps.INK, va="bottom")
+    hs = [Line2D([], [], color=s["color"], ls=s["ls"], lw=s["lw"]) for s in CAP_CASES.values()]
+    fig.legend(hs, [tex(s["label"]) for s in CAP_CASES.values()], loc="outside lower center", ncol=4)
+    n1, n2 = (res[f"{a}/{b}"]["snapshots"] for a, b in WINDOW_PAIRS)
+    fig.suptitle(f"Spectra over a window of time, both grids capped at $v_A$ = 30 $c_s$: every snapshot from $t$ = {T_STAT:g}, one per crossing time "
+                 f"({n1} to $t$ = 1 at 256$^3$, {n2} to $t$ = 0.5 at 512$^3$); each normalised by its variance in the cube,\nthen averaged; "
+                 "intervals by bootstrap over the snapshots. Lower rows: the nest's time-averaged shape over the uniform grid's, 95 % (dark); pale: a single pair of snapshots at one time, 10–90 %", fontsize=11.5)
+    fig.savefig(OUT/"nested-window.png", dpi=140);plt.close(fig)
+    return res
+
+
 # ---------------------------------------------------------------- Tom's ergodicity test in 3-D (ergodic.jl): 8 seeds
 ERG = DATA/"ergodic"
 
@@ -513,6 +597,7 @@ def main():
         movies=movies(),
         big=fig_big(L) if (BIG/"spectra.npz").is_file() else None,
         capped=fig_capped() if (CAP/"uni512"/"run.toml").is_file() else None,
+        window=fig_window() if (CAP/"uni512"/"run.toml").is_file() else None,
         ergodic=fig_ergodic() if ERG.is_dir() else None,
     )
     # share of each field's variance at small scales: central cube k = 32–96 (finest resolution), whole box k = 8–24

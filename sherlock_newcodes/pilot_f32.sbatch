@@ -21,5 +21,6 @@ for cv in athenakf32:matched athenakf32:best athenapkf32:matched athenapkf32:bes
 done
 export NEWCODES_RESULTS="$SCRATCH/mhd-results-newcodes-f32-pilot" NEWCODES_TASKS="$lines" NEWCODES_GROUP=100 SLURM_ARRAY_TASK_ID=1
 bash "$here/production.sbatch"
+module load python/3.12.1 py-numpy/2.2.6_py312 >/dev/null 2>&1   # the venv needs libpython3.12 (job 52355180 stopped here)
 "${NEWCODES_VENV:-$HOME/.venvs/mhd-h5py}/bin/python3" "$here/check_f32.py" "$NEWCODES_RESULTS" "$lines" | tee "$here/logs/f32_pilot_report.txt"
 exit "${PIPESTATUS[0]}"

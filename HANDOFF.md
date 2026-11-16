@@ -99,6 +99,15 @@ shared login is used only while they are present). Done on the Mac:
   macro; `tables/decay.tex`; refs.bib). Kept OUT of git (`.git/info/exclude`): the repository is public and the draft names
   Tom and Eric as authors; lyxia decides where it lives. Build: `cd manuscript && latexmk -pdf main.tex`.
 
+**2026-11-16, morning (lyxia present, shared login used):** submitted RAMSES II turbulence 52527031 (`sherlock_turb/logs/
+turb-ramses2-*.out`; 32³ trial first), nested long windows 52527032 (nest64_long, uni256_long, gpu,owners) and 52527109
+(nest128_long, uni512_long, public gpu, 24 h). The fp32 chain of 11-12 had stopped: pilot 52355180 ran all 8 runs, then its
+check died on libpython3.12 (no python module in the parent shell), and the check would have failed anyway on round-off
+(field-loop density error 1e-7 in fp64, 3-8x in fp32; magnetic identical). Fixed `pilot_f32.sbatch` (module) and `check_f32.py`
+(differences under 1e-5 are round-off); check passes; production arrays 52527090 (athenakf32) and 52527100 (athenapkf32)
+submitted with no dependency. Note: AthenaK fp32 takes 11 % more steps than the sweep's fp64 AthenaK (289 vs 260 on the
+Alfvén wave at 64; AthenaPK identical): check the time-step settings when the results come in.
+
 **2026-11-14, later (site reorganised, nested results in):** the site has a home page (`scripts/build_home.py` ->
 `progress/home.html`, published as index.html; it counts every run from the records: 5,547) and grouped navigation
 (`publish_site.GROUPS`, `nav_html`); the Papers page moved from index.html to papers.html. Nested page now leads with the

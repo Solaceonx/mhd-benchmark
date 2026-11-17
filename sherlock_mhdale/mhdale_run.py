@@ -40,6 +40,18 @@ X.VARIANTS["mhdale"] = {
                 integrator="SSP RK3", courant=0.5, viscosity="artificial, on", divb="B = curl A in a Raviart-Thomas space",
                 options=OPT["MHDALE_ORDERS"] + " " + OPT["MHDALE_PERIODIC_ALE"], precision="fp64"),
 }
+# 2026-11-17 (Tom: MHD-ALE "was supposed to have low error at least for a fixed number of zones"): the initial state as a
+# limited least-squares fit per element (testcase_Abel.cpp, ABEL_IC=l2) instead of cell values, which MHD-ALE's own
+# projection turned into first-order slopes; and the same with degree-4 velocity, degree-3 density and energy on
+# elements four cells wide (N/4 per side: the same number of unknowns per side as N/2 elements of degree 2 and 1).
+_ale = X.VARIANTS["mhdale"]["ale"]
+X.VARIANTS["mhdale"]["ale_l2"] = dict(_ale, initial_state="limited least-squares fit of the suite's sub-cell values per element (ABEL_IC=l2)",
+                                      env="ABEL_IC=l2")
+X.VARIANTS["mhdale"]["ale_l2_q4"] = dict(_ale, initial_state="limited least-squares fit of degree 3 per element (ABEL_IC=l2)",
+                                         elements="N/4 per side: velocity degree 4, energy and density degree 3, vector potential degree 5",
+                                         orders=OPT["MHDALE_ORDERS"].replace("-ok 2 -ot 1 -or 1 -oa 3", "-ok 4 -ot 3 -or 3 -oa 5"),
+                                         elem_cells=4, env="ABEL_IC=l2 ABEL_ELEM_CELLS=4 ABEL_IC_ORDER=3")
+X.VARIANTS["mhdale"]["ale_l2_q4"]["options"] = X.VARIANTS["mhdale"]["ale_l2_q4"]["orders"] + " " + OPT["MHDALE_PERIODIC_ALE"]
 OWN_END = re.compile(r"MFEM abort: *(.*)|Verification failed: .*\n *--> *(.*)|(MPI_ABORT was invoked.*)|(Segmentation fault|Floating point exception|terminate called.*)")
 
 
@@ -49,8 +61,8 @@ def frame_info(path):
 
 def run_mhdale(args, config, spec, settings, rundir, rep, outputs, resume=False):
     if args.geometry != "plane":raise SystemExit("MHD-ALE runs the suite's planar tests only (--geometry plane)")
-    n = args.n
-    if n % 2:raise SystemExit("MHD-ALE needs an even N (N/2 elements per side)")
+    n = args.n;k = int(settings.get("elem_cells", 2));orders = settings.get("orders", OPT["MHDALE_ORDERS"])
+    if n % k:raise SystemExit(f"MHD-ALE needs N divisible by {k} (N/{k} elements per side)")
     targets = X.output_times(config) if outputs else [0.0, float(config["t_end"])]
     tol = 1e-6*float(config["t_end"])/(int(config["frames"]) - 1)
     out = rundir/"output";log = rundir/"mhdale.log";last = out/f"abel_frame_{len(targets) - 1:03d}.bin"
@@ -60,14 +72,15 @@ def run_mhdale(args, config, spec, settings, rundir, rep, outputs, resume=False)
     start = time.perf_counter();code = 0
     if not finished:
         shutil.rmtree(out, ignore_errors=True);out.mkdir(parents=True)
-        make_mesh.main(n//2, rundir/"mesh.mesh")
+        make_mesh.main(n//k, rundir/"mesh.mesh")
         (rundir/"output_times.dat").write_text("".join(repr(float(t)) + "\n" for t in targets[1:]))
         cmd = shlex.split(args.mpi or "") + [str(args.exe), "-p", "100", "-dim", "2", "-m", "mesh.mesh", "-rs", "0"] \
-            + shlex.split(OPT["MHDALE_ORDERS"]) + shlex.split(OPT["MHDALE_PERIODIC_ALE"]) \
+            + shlex.split(orders) + shlex.split(OPT["MHDALE_PERIODIC_ALE"]) \
             + ["-tf", repr(float(targets[-1])), "-ptf", "output_times.dat", "-od", "output"]
         (rundir/"command.txt").write_text(" ".join(shlex.quote(c) for c in cmd) + "\n")
         env = dict(os.environ, ABEL_SPEC=str(Path(spec).resolve()), ABEL_BOX="periodic", ABEL_N=str(n), ABEL_SUB=os.environ.get("ABEL_SUB", "8"))
-        for key in ("ABEL_ONLY_INITIAL", "ABEL_DUMP_LAST"):env.pop(key, None)
+        for key in ("ABEL_ONLY_INITIAL", "ABEL_DUMP_LAST", "ABEL_IC", "ABEL_ELEM_CELLS", "ABEL_IC_ORDER"):env.pop(key, None)
+        env.update(kv.split("=", 1) for kv in settings.get("env", "").split())
         with log.open("w") as f:
             code = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, cwd=rundir, env=env).returncode
         print(f"MHD-ALE ended with exit code {code} on {X.mpi_ranks(args.mpi)} ranks", flush=True)

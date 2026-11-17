@@ -19,18 +19,20 @@ export SWEEP_BUNDLE="${SWEEP_BUNDLE:-/scratch/users/lyxia/mhd-study/sherlock_swe
 cd "$SWEEP_BUNDLE" && source jobs/common.sh && prepare_environment && prepare_codes || { echo "the sweep bundle's environment could not be set up"; exit 2; }
 load_modules "${MHDALE_COMPILER_MODULES:-gcc/12.4.0 openmpi/4.1.6}"
 source "$here/options.sh"; tests=(${MHDALE_ARRAY_TESTS:-$MHDALE_TESTS})      # MHDALE_ARRAY_TESTS: the tests of this array
-exe="$MHD_CODES/mhdale-yipihey/build-abel/MHD"; [[ -x "$exe" ]] || { echo "NO EXECUTABLE: $exe (the trial builds it)"; exit 2; }
+# MHDALE_VARIANT: a set-up of mhdale_run.py (default ale); MHDALE_EXE: its build (default build-abel; pilot_l2.sh: build-abel-l2)
+variant="${MHDALE_VARIANT:-ale}"; exe="${MHDALE_EXE:-$MHD_CODES/mhdale-yipihey/build-abel/MHD}"
+[[ -x "$exe" ]] || { echo "NO EXECUTABLE: $exe (the trial builds it)"; exit 2; }
 test="${MHDALE_ONLY:-${tests[$((task - 1))]}}"; config="$SWEEP_BUNDLE/configs/$test.toml"
 echo "== task $task: $test on $(hostname), $(date -u)"; module list 2>&1 | tail -n +2
 # MHDALE_GRIDS: only those of the test's grids (check.sh production sizes the jobs by grid)
 for n in $(python3 -c "import tomllib, sys; w = sys.argv[2].split(); print(*[g for g in tomllib.load(open(sys.argv[1], 'rb'))['grids'] if not w or str(g) in w])" "$config" "${MHDALE_GRIDS:-}"); do
     ranks=1; [[ $n -ge 64 ]] && ranks=4; [[ $n -ge 128 ]] && ranks=8; [[ $n -ge 256 ]] && ranks=16
     ranks="${MHDALE_RANKS:-$ranks}"
-    out="$MHD_RESULTS/$test-mhdale-ale-run-N$n-s42/data"
-    python3 "$here/mhdale_run.py" mhdale ale "$config" "$n" "$out" --exe "$exe" --mpi "srun -n $ranks" --geometry plane \
+    out="$MHD_RESULTS/$test-mhdale-$variant-run-N$n-s42/data"
+    python3 "$here/mhdale_run.py" mhdale "$variant" "$config" "$n" "$out" --exe "$exe" --mpi "srun -n $ranks" --geometry plane \
         --repeats 1 --resume --device "$(hostname)" --device-kind cpu; rc=$?
     [[ $rc -eq 76 ]] && { echo "this job is being stopped; it will be requeued"; exit 1; }
-    cp "$MHD_CODES/mhdale-yipihey/build-abel/ABEL_PATCH.txt" "$MHD_CODES/mhdale-yipihey/BUILD_INFO.txt" "$out/" 2>/dev/null
+    cp "$(dirname "$exe")/ABEL_PATCH.txt" "$MHD_CODES/mhdale-yipihey/BUILD_INFO.txt" "$out/" 2>/dev/null
     [[ $rc -ne 0 ]] && echo "   $test N=$n: exit code $rc (see its run.toml and mhdale.log)"
 done
 echo "== task $task finished $(date -u)"

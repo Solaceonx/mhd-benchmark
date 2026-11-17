@@ -12,8 +12,11 @@
 //
 // In two dimensions MHD-ALE has no v_z and no B_z (scalar potential A_z, two velocity components): a test that
 // needs them is refused here rather than run without them.
+#include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <string>
+#include <vector>
 #include "Problemdata.hpp"
 #include "abel_problems.hpp"
 
@@ -52,6 +55,137 @@ static void abel_cell(const Vector &x, real_t &p, real_t &rho)
    p /= m * m; rho /= m * m;
 }
 
+// ABEL_IC=l2 (2026-11-17): the element's density and internal energy density p/(gamma - 1) as polynomials of degree
+// ABEL_IC_ORDER (the code's density and energy degree, -ot; default 1) in each direction, fitted by least squares so
+// that their averages over the suite's sub-cells (s.sub per cell side; the points abel_cell uses) match the suite's
+// sub-cell values, then limited toward the element mean (Zhang & Shu) to stay within the element's range of values. The
+// element keeps exactly the mass and thermal energy of its cells (the fit has a constant term, so its residuals sum to
+// zero), and a smooth field is represented to order p + 1. With cell values (the default) a smooth field was
+// represented to first order: MHD-ALE projects the cell values, constant over half a degree-1 element, onto the element
+// and gets 3/4 of the true slope; on the entropy wave that error alone was the whole measured error (4.3e-4 at 128^2,
+// the same at t = 0 as at t = 1). The element is ABEL_ELEM_CELLS (default 2) suite cells wide (make_mesh.py: N/K).
+struct AbelElemFit { bool done = false; std::vector<real_t> rho, E; };
+
+static bool abel_ic_l2()
+{
+   static const bool on = std::getenv("ABEL_IC") && std::string(std::getenv("ABEL_IC")) == "l2";
+   return on;
+}
+
+static int abel_env_int(const char *name, int fallback)
+{
+   const char *v = std::getenv(name);
+   return v ? std::atoi(v) : fallback;
+}
+
+static real_t abel_legendre(int a, real_t t)
+{
+   real_t p0 = 1.0, p1 = t;
+   if (a == 0) { return 1.0; }
+   for (int k = 1; k < a; k++) { const real_t p2 = ((2 * k + 1) * t * p1 - k * p0) / (k + 1); p0 = p1; p1 = p2; }
+   return p1;
+}
+
+static real_t abel_poly(const std::vector<real_t> &c, int P, real_t xi, real_t eta)
+{
+   real_t v = 0.0;
+   for (int b = 0; b <= P; b++) for (int a = 0; a <= P; a++) { v += c[b * (P + 1) + a] * abel_legendre(a, xi) * abel_legendre(b, eta); }
+   return v;
+}
+
+// Scale the non-constant part so that the polynomial stays in [lo, hi] at (M + 1)^2 points from corner to corner.
+static void abel_limit(std::vector<real_t> &c, int P, int M, real_t lo, real_t hi)
+{
+   const real_t mean = c[0];
+   real_t pmin = mean, pmax = mean;
+   for (int j = 0; j <= M; j++) for (int i = 0; i <= M; i++)
+   {
+      const real_t v = abel_poly(c, P, -1.0 + 2.0 * i / M, -1.0 + 2.0 * j / M);
+      pmin = fmin(pmin, v); pmax = fmax(pmax, v);
+   }
+   real_t theta = 1.0;
+   if (pmax > hi && pmax > mean) { theta = fmin(theta, (hi - mean) / (pmax - mean)); }
+   if (pmin < lo && pmin < mean) { theta = fmin(theta, (mean - lo) / (mean - pmin)); }
+   theta = fmax(theta, 0.0);
+   for (size_t k = 1; k < c.size(); k++) { c[k] *= theta; }
+}
+
+static const AbelElemFit &abel_fit(const Vector &x, real_t &xi, real_t &eta, int &P)
+{
+   const abel::Spec &s = AbelSpec();
+   static const int K = abel_env_int("ABEL_ELEM_CELLS", 2);
+   static const int order = abel_env_int("ABEL_IC_ORDER", 1);
+   P = order;
+   if (K < 1 || s.n % K) { MFEM_ABORT("abel: ABEL_ELEM_CELLS must divide the suite's N"); }
+   const int ne = s.n / K, m = s.sub > 0 ? s.sub : 1, M = K * m;
+   static std::vector<AbelElemFit> fits(ne * ne);
+   const int ei = std::min(ne - 1, std::max(0, (int) floor(x(0) * ne)));
+   const int ej = std::min(ne - 1, std::max(0, (int) floor(x(1) * ne)));
+   const real_t w = 1.0 / ne, x0 = ei * w, y0 = ej * w;
+   xi = 2.0 * (x(0) - x0) / w - 1.0; eta = 2.0 * (x(1) - y0) / w - 1.0;
+   AbelElemFit &f = fits[ej * ne + ei];
+   static std::vector<real_t> B;                          // (P + 1) x M: least squares on sub-interval averages
+   if (B.empty())
+   {
+      std::vector<real_t> A(M * (P + 1));                 // A[q][a]: average of P_a over sub-interval q of [-1, 1]
+      auto anti = [](int a, real_t t) { return a == 0 ? t : (abel_legendre(a + 1, t) - abel_legendre(a - 1, t)) / (2 * a + 1); };
+      for (int q = 0; q < M; q++) for (int a = 0; a <= P; a++)
+      {
+         const real_t lo = -1.0 + 2.0 * q / M, hi = -1.0 + 2.0 * (q + 1) / M;
+         A[q * (P + 1) + a] = (anti(a, hi) - anti(a, lo)) / (hi - lo);
+      }
+      const int n1 = P + 1;                               // G = A^T A, then B = G^-1 A^T by Gauss-Jordan
+      std::vector<real_t> G(n1 * n1, 0.0), Ginv(n1 * n1, 0.0);
+      for (int a = 0; a < n1; a++) for (int b = 0; b < n1; b++) for (int q = 0; q < M; q++) { G[a * n1 + b] += A[q * n1 + a] * A[q * n1 + b]; }
+      for (int a = 0; a < n1; a++) { Ginv[a * n1 + a] = 1.0; }
+      for (int c = 0; c < n1; c++)
+      {
+         int piv = c;
+         for (int r = c + 1; r < n1; r++) { if (fabs(G[r * n1 + c]) > fabs(G[piv * n1 + c])) { piv = r; } }
+         for (int k = 0; k < n1; k++) { std::swap(G[c * n1 + k], G[piv * n1 + k]); std::swap(Ginv[c * n1 + k], Ginv[piv * n1 + k]); }
+         const real_t d = G[c * n1 + c];
+         if (fabs(d) < 1e-300) { MFEM_ABORT("abel: ABEL_IC=l2 needs at least ABEL_IC_ORDER + 1 samples per element side"); }
+         for (int k = 0; k < n1; k++) { G[c * n1 + k] /= d; Ginv[c * n1 + k] /= d; }
+         for (int r = 0; r < n1; r++)
+         {
+            if (r == c) { continue; }
+            const real_t g = G[r * n1 + c];
+            for (int k = 0; k < n1; k++) { G[r * n1 + k] -= g * G[c * n1 + k]; Ginv[r * n1 + k] -= g * Ginv[c * n1 + k]; }
+         }
+      }
+      B.assign(n1 * M, 0.0);
+      for (int a = 0; a < n1; a++) for (int q = 0; q < M; q++) for (int b = 0; b < n1; b++) { B[a * M + q] += Ginv[a * n1 + b] * A[q * n1 + b]; }
+   }
+   if (!f.done)
+   {
+      const int n1 = P + 1;
+      std::vector<real_t> R(M * M), E(M * M);             // samples, [y][x]
+      real_t rlo = 1e300, rhi = -1e300, elo = 1e300, ehi = -1e300;
+      // The limiter's range: the samples of the element and of one suite cell around it (periodic box). The element's
+      // own samples alone would clip every smooth slope (its corner lies beyond its outermost sample).
+      for (int q = -m; q < M + m; q++) for (int r = -m; r < M + m; r++)
+      {
+         real_t px = x0 + (r + 0.5) / M * w, py = y0 + (q + 0.5) / M * w;
+         px -= floor(px); py -= floor(py);
+         const abel::Prim pr = abel::PrimAt(s, px, py, 0.0);
+         const real_t e = pr.p / (s.gamma - 1.0);
+         if (q >= 0 && q < M && r >= 0 && r < M) { R[q * M + r] = pr.rho; E[q * M + r] = e; }
+         rlo = fmin(rlo, pr.rho); rhi = fmax(rhi, pr.rho); elo = fmin(elo, e); ehi = fmax(ehi, e);
+      }
+      auto fit = [&](const std::vector<real_t> &F, std::vector<real_t> &c)
+      {
+         std::vector<real_t> T(n1 * M, 0.0);              // T[a][q] = sum_r B[a][r] F[q][r]  (x direction)
+         for (int a = 0; a < n1; a++) for (int q = 0; q < M; q++) for (int r = 0; r < M; r++) { T[a * M + q] += B[a * M + r] * F[q * M + r]; }
+         c.assign(n1 * n1, 0.0);                          // c[b][a] = sum_q B[b][q] T[a][q]  (y direction)
+         for (int b = 0; b < n1; b++) for (int a = 0; a < n1; a++) for (int q = 0; q < M; q++) { c[b * n1 + a] += B[b * M + q] * T[a * M + q]; }
+      };
+      fit(R, f.rho); fit(E, f.E);
+      abel_limit(f.rho, P, 2 * M, rlo, rhi); abel_limit(f.E, P, 2 * M, elo, ehi);
+      f.done = true;
+   }
+   return f;
+}
+
 // Density: the value of the suite's cell that holds the point (ABEL_POINT_VALUES=1: the point value). MHD-ALE
 // integrates this function over each element with a symmetric Gauss rule of an even number of points, which gives
 // each of the element's four cells a quarter of the weight: the element then holds the mass of its four cells.
@@ -60,6 +194,7 @@ static real_t abel_rho0(const Vector &x)
 {
    static const bool point = std::getenv("ABEL_POINT_VALUES") != nullptr;
    if (point) { return abel::PrimAt(AbelSpec(), x(0), x(1), 0.0).rho; }
+   if (abel_ic_l2()) { real_t xi, eta; int P; const AbelElemFit &f = abel_fit(x, xi, eta, P); return abel_poly(f.rho, P, xi, eta); }
    real_t p, rho; abel_cell(x, p, rho);
    return rho;
 }
@@ -85,6 +220,11 @@ static real_t abel_e0(const Vector &x)
    {
       const abel::Prim q = abel::PrimAt(s, x(0), x(1), 0.0);
       return q.p / (s.gamma - 1.0) / q.rho;
+   }
+   if (abel_ic_l2())
+   {
+      real_t xi, eta; int P; const AbelElemFit &f = abel_fit(x, xi, eta, P);
+      return abel_poly(f.E, P, xi, eta) / abel_poly(f.rho, P, xi, eta);
    }
    real_t p, rho; abel_cell(x, p, rho);
    return p / (s.gamma - 1.0) / rho;
@@ -173,7 +313,8 @@ ProblemData *GetProblemAbel(int dim)
    if (Mpi::Root())
    {
       const abel::Vec bm = abel::Uniform(s);
-      printf("abel: problem %d, box %s, gamma %.17g, mean B (%g, %g), viscosity %d\n", s.problem, b.c_str(), s.gamma, bm.x, bm.y, (int) pd->visc);
+      printf("abel: problem %d, box %s, gamma %.17g, mean B (%g, %g), viscosity %d, initial state %s\n", s.problem, b.c_str(), s.gamma, bm.x, bm.y,
+             (int) pd->visc, abel_ic_l2() ? "limited L2 projection per element (ABEL_IC=l2)" : "cell values");
    }
    return pd;
 }

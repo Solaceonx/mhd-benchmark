@@ -6,6 +6,8 @@
 #   enzo       Enzo, MPI, double precision                                      -> enzo/build/bin/enzo (or the path printed)
 #   phantom    Phantom, OpenMP, MHD, periodic, our set-up and analysis             -> phantom/tree/bin/{phantom,phantomsetup,phantomanalysis}
 #   athenak-f32, athenapk-f32, cholla-f32: single-precision builds of the GPU codes (athenak-f32/, athenapk-f32/, cholla/*_f32/)
+#   castro     Castro (AMReX-Astro), 3-D MHD, MPI + CUDA for the H100, our problem Exec/mhd_tests/AbelSuite -> castro/castro
+#   nyx        Nyx (AMReX-Astro), hydrodynamics, MPI + CUDA, our problem Exec/AbelSuite (patch_nyx.py)  -> nyx/nyx
 # Everything under $MHD_CODES/newcodes. A build is always remade from the sources; the sources are never changed.
 set -uo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -118,6 +120,19 @@ build_phantom() {
     && (cd "$t" && make $opts && make setup $opts && make analysis $opts)        # serial: its Fortran modules need order
 }
 
+build_castro() {     # the problem directory is ours (castro/abel_suite); Castro's own sources are not changed
+    local t="$root/castro/tree" p="$root/castro/tree/Exec/mhd_tests/AbelSuite"
+    fresh "$src/castro" "$t" && rm -rf "$p" && cp -r "$here/castro/abel_suite" "$p" && cp "$header" "$p/" \
+    && (cd "$p" && make -j "$jobs" USE_CUDA=TRUE CUDA_ARCH=90 CASTRO_HOME="$t") \
+    && { exe="$(ls "$p"/Castro3d*.ex 2>/dev/null | head -n 1)"; [[ -n "$exe" ]] && ln -sf "$exe" "$root/castro/castro"; }
+}
+build_nyx() {
+    local t="$root/nyx/tree"
+    fresh "$src/nyx" "$t" && python3 "$here/nyx/patch_nyx.py" "$t" "$header" \
+    && (cd "$t/Exec/AbelSuite" && make -j "$jobs" USE_CUDA=TRUE CUDA_ARCH=90) \
+    && { exe="$(ls "$t"/Exec/AbelSuite/Nyx3d*.ex 2>/dev/null | head -n 1)"; [[ -n "$exe" ]] && ln -sf "$exe" "$root/nyx/nyx"; }
+}
+
 want=("$@"); [[ ${#want[@]} -gt 0 ]] || want=(athenapk cholla pluto enzo phantom)
 [[ -d "$src/athenapk" && -d "$src/cholla" ]] || { echo "sources not found in $src (run fetch.sh on a login node)"; exit 2; }
 echo "== building under $root, $jobs at a time, $(date -u)"; bad=0
@@ -132,8 +147,10 @@ for code in "${want[@]}"; do
                for s in ct_matched ct_best glm_matched glm_best; do for d in 2 3; do step "pluto-$s-${d}d" "$root/pluto/$s-${d}d/pluto" build_pluto $s $d || bad=1; done; done ;;
         enzo) use "$cpu_mods"; step enzo "$root/enzo/enzo" build_enzo || bad=1 ;;
         phantom) use "$cpu_mods binutils/2.38"; step phantom "$root/phantom/tree/bin/phantomanalysis" build_phantom || bad=1 ;;
+        castro) use "$cuda_mods"; mkdir -p "$root/castro"; step castro "$root/castro/castro" build_castro || bad=1 ;;
+        nyx) use "$cuda_mods"; mkdir -p "$root/nyx"; step nyx "$root/nyx/nyx" build_nyx || bad=1 ;;
         *) echo "unknown code $code"; bad=1 ;;
     esac
 done
-{ date -u; hostname; for d in athenapk cholla gpluto enzo phantom; do [[ -d "$src/$d" ]] && echo "$d $(cd "$src/$d" && git rev-parse HEAD)"; done; } > "$root/BUILD_INFO.txt"
+{ date -u; hostname; for d in athenapk cholla gpluto enzo phantom castro nyx; do [[ -d "$src/$d" ]] && echo "$d $(cd "$src/$d" && git rev-parse HEAD)"; done; } > "$root/BUILD_INFO.txt"
 exit $bad

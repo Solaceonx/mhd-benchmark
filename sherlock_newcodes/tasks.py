@@ -16,7 +16,10 @@ TESTS = ("alfven alfven_oblique blast_2d_b0 blast_2d_b50 blast_2d_b100 blast_3d_
 VARIANTS = {"athenapk": ["matched", "best"], "cholla": ["plmc", "ppmc"], "pluto": ["ct_matched", "ct_best", "glm_matched", "glm_best"],
             "enzo": ["dedner", "ct"], "phantom": ["sph"],
             # single precision of the GPU codes (2026-11-12); AthenaK as in the sweep: every test in 3D (planar ones on N^3)
-            "athenakf32": ["matched", "best"], "athenapkf32": ["matched", "best"]}   # no chollaf32: Cholla refuses PRECISION=1
+            "athenakf32": ["matched", "best"], "athenapkf32": ["matched", "best"],   # no chollaf32: Cholla refuses PRECISION=1
+            "castro": ["plm", "ppm"], "nyx": ["plm", "ppm"]}       # AMReX-Astro (2026-11-17); Castro 3-D MHD, planar tests on a slab
+# Nyx is a hydrodynamics code: only the tests whose field is uniform, zero or negligible (newcodes_run.NYX_TESTS)
+NYX_TESTS = ("entropy", "blast_2d_b0", "blast_3d_b0", "kh_uniform")
 PHANTOM_3D_MAX = 256           # 512^3 would be 134 million particles
 
 
@@ -25,6 +28,7 @@ def runs(code, variants=(), want_grids=(), dim=""):
     sys.path.insert(0, str(SWEEP/"codes"));import external
     for v in variants or VARIANTS[code]:
         for test in TESTS:
+            if code == "nyx" and test not in NYX_TESTS:continue
             cfg = external.load_config(SWEEP/"configs"/f"{test}.toml");flat = external.planar(cfg)
             if (dim == "planar" and not flat) or (dim == "3d" and flat):continue
             grids = [g for g in cfg["grids"] if (not want_grids or g in want_grids) and not (code == "phantom" and not flat and g > PHANTOM_3D_MAX)]

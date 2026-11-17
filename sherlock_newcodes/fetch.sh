@@ -25,3 +25,8 @@ get cholla https://github.com/cholla-hydro/cholla.git 191e59b063b4a4075738b0f016
 get gpluto https://gitlab.com/PLUTO-code/gPLUTO.git 870aa8079326d48271123dbe3ed642c09c3c9fb4
 get enzo https://github.com/enzo-project/enzo-dev.git 45f4c64b93105969b5e862386661ca75d8dd506c
 get phantom https://github.com/danieljprice/phantom.git f535c0742cea3344109bb79595b565a37834e03a
+# AMReX-Astro (2026-11-17): Castro 26.11 with its AMReX and Microphysics submodules, Nyx 26.09 with its AMReX
+get castro https://github.com/AMReX-Astro/Castro.git 2f06db39482d9915353e898806c3298e48b8c80b
+(cd castro && git submodule update --init --recursive --quiet && git submodule status | sed 's/^/   /')
+get nyx https://github.com/AMReX-Astro/Nyx.git e06eabc1b9dbcad5612db9529aced682402daede
+(cd nyx && git submodule update --init --quiet subprojects/amrex && git submodule status | sed 's/^/   /')

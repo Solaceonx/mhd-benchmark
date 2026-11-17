@@ -1,0 +1,3 @@
+# name               data type             default                  in namelist?           size
+# (the suite's tests take their parameters from the spec file named by ABEL_SPEC, not from here)
+abel_unused            real                 0.0_rt                       y

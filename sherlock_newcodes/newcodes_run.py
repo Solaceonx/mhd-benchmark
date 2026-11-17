@@ -504,6 +504,118 @@ X.VARIANTS["phantom"] = {
 }
 X.RUNNERS.update(athenapk=run_athenapk, cholla=run_cholla, pluto=run_pluto, enzo=run_enzo, phantom=run_phantom)
 
+# ------------------------------------------------------------------------------ Castro and Nyx (AMReX-Astro)
+# Added 2026-11-17 (Tom: "Castro and Nyx hydro modules ... They have PPM"). Castro: 3-D MHD only (planar tests on a slab
+# of SLAB cells), CTU (corner transport, 12 Riemann solves) with HLLD and constrained transport (Miniati & Martin),
+# characteristic PLM or PPM. Nyx: hydrodynamics only, CTU with a two-shock Riemann solver, PLM or PPM; run on the tests
+# whose field is uniform, zero or negligible (NYX_TESTS). Both write AMReX plotfiles at exact output times
+# (castro.plot_per_is_exact; Nyx patched by nyx/patch_nyx.py).
+X.VARIANTS["castro"] = {
+    "plm": dict(reconstruction="PLM, characteristic (castro.ppm_type 0, plm_iorder 2)", riemann="hlld",
+                integrator="CTU (corner transport, 12 Riemann solves)", cfl=0.3, divb="CT (Miniati & Martin)", ppm_type=0, precision="fp64"),
+    "ppm": dict(reconstruction="PPM, characteristic (castro.ppm_type 1)", riemann="hlld",
+                integrator="CTU (corner transport, 12 Riemann solves)", cfl=0.3, divb="CT (Miniati & Martin)", ppm_type=1, precision="fp64"),
+}
+X.VARIANTS["nyx"] = {
+    "plm": dict(reconstruction="PLM (nyx.ppm_type 0)", riemann="two-shock (Colella & Glaz)", integrator="CTU (unsplit)", cfl=0.3,
+                divb="none: hydrodynamics only", ppm_type=0, precision="fp64"),
+    "ppm": dict(reconstruction="PPM (nyx.ppm_type 1)", riemann="two-shock (Colella & Glaz)", integrator="CTU (unsplit)", cfl=0.3,
+                divb="none: hydrodynamics only", ppm_type=1, precision="fp64"),
+}
+# The entropy wave's uniform field exerts no force; kh_uniform's (beta = 2e5) is dynamically negligible; the blasts have
+# none. The density error is measured on all four, so a frame without a field is compared fairly ("uniform" is left out:
+# its field would count as an error).
+NYX_TESTS = ("entropy", "blast_2d_b0", "blast_3d_b0", "kh_uniform")
+CODE_TIMERS.update(castro=(r"Run time without initialization = ([\d.eE+-]+)", "Castro run time without initialization (with its output)"),
+                   nyx=(r"Run time = ([\d.eE+-]+)", "Nyx run time (with its set-up and output)"))
+
+
+def amrex_common(config, n, geometry, outputs, prefix):
+    nz = SLAB if geometry == "plane" else n
+    return [f"max_step = {X.step_cap(config, n)}", f"stop_time = {float(config['t_end'])!r}",
+            "geometry.is_periodic = 1 1 1", "geometry.coord_sys = 0", "geometry.prob_lo = 0 0 0", f"geometry.prob_hi = 1 1 {nz/n!r}",
+            f"amr.n_cell = {n} {n} {nz}", "amr.max_level = 0", f"amr.max_grid_size = {min(n, 128)}", "amr.blocking_factor = 8",
+            "amr.v = 1", "amr.check_int = -1", "amr.check_per = -1", "amr.checkpoint_files_output = 0",
+            "amr.plot_file = plt", "amr.plot_int = -1", f"amr.plot_per = {interval(config, outputs)!r}",
+            f"{prefix}.lo_bc = 0 0 0", f"{prefix}.hi_bc = 0 0 0"]
+
+
+def castro_input(config, n, settings, geometry, outputs):
+    lines = amrex_common(config, n, geometry, outputs, "castro") + [
+        "castro.do_hydro = 1", "castro.do_react = 0", f"castro.ppm_type = {settings['ppm_type']}", f"castro.cfl = {settings['cfl']}",
+        "castro.plot_per_is_exact = 1", "castro.sum_interval = -1", "castro.v = 1",
+        "amr.plot_vars = density xmom ymom zmom rho_E", "amr.derive_plot_vars = B_x B_y B_z",
+        f"eos.eos_gamma = {X.gamma_of(config)!r}", "eos.eos_assume_neutral = 1"]
+    return "\n".join(lines) + "\n"
+
+
+def nyx_input(config, n, settings, geometry, outputs):
+    lines = amrex_common(config, n, geometry, outputs, "nyx") + [
+        "nyx.do_hydro = 1", "nyx.do_grav = 0", "nyx.do_react = 0", "nyx.comoving_OmM = 1.0", "nyx.comoving_OmB = 0.0", "nyx.comoving_h = 0.0",
+        "nyx.initial_z = 0.0", f"nyx.gamma = {X.gamma_of(config)!r}", "nyx.h_species = 0.76", "nyx.he_species = 0.24",
+        f"nyx.ppm_type = {settings['ppm_type']}", f"nyx.cfl = {settings['cfl']}", "nyx.init_shrink = 1.0", "nyx.change_max = 1.1",
+        "nyx.small_dens = 1.e-12", "nyx.small_temp = 1.e-12", "nyx.sum_interval = -1", "nyx.v = 1",
+        "amr.plot_vars = density xmom ymom zmom rho_E", "amr.derive_plot_vars = NONE", "amr.probin_file = \"\""]
+    return "\n".join(lines) + "\n"
+
+
+def read_plotfile(path, n, nz):
+    """An AMReX plotfile (one level): (time, steps, {variable: (n, n, nz) array})."""
+    head = (path/"Header").read_text().split("\n");nvar = int(head[1]);names = [head[2 + k].strip() for k in range(nvar)]
+    i = 2 + nvar;t = float(head[i + 1]);steps = int(head[i + 7].split()[0])
+    cellh = (path/"Level_0"/"Cell_H").read_text()
+    out = {v: np.zeros((n, n, nz)) for v in names}
+    box = re.compile(r"\(\((-?\d+),(-?\d+),(-?\d+)\) \((-?\d+),(-?\d+),(-?\d+)\)")
+    for fname, off in re.findall(r"FabOnDisk: (\S+) (\d+)", cellh):
+        with open(path/"Level_0"/fname, "rb") as f:
+            f.seek(int(off));line = f.readline().decode()
+            lo, hi = (lambda m: ([int(m.group(k)) for k in (1, 2, 3)], [int(m.group(k)) for k in (4, 5, 6)]))(box.search(line))
+            ncomp = int(line.split()[-1]);shape = tuple(h - l + 1 for l, h in zip(lo, hi))
+            order = "<" if "(8 7 6 5 4 3 2 1)" in line.replace(",", " ").replace("  ", " ") or "8 7 6 5 4 3 2 1" in line else ">"
+            data = np.fromfile(f, dtype=order + "f8", count=ncomp*int(np.prod(shape))).reshape((ncomp,) + shape[::-1])
+        for c, v in enumerate(names[:ncomp]):
+            out[v][lo[0]:hi[0] + 1, lo[1]:hi[1] + 1, lo[2]:hi[2] + 1] = data[c].transpose(2, 1, 0)
+    return t, steps, out
+
+
+def run_amrex(code, args, config, spec, settings, rundir, rep, outputs, resume=False):
+    nz = SLAB if args.geometry == "plane" else args.n
+    for d in rundir.glob("plt*"):shutil.rmtree(d, ignore_errors=True)
+    deck = (castro_input if code == "castro" else nyx_input)(config, args.n, settings, args.geometry, outputs)
+    (rundir/"inputs").write_text(deck)
+    cmd = shlex.split(args.mpi or "") + [args.exe, "inputs"]
+    code_rc, perf = run_code(cmd, rundir, rundir/f"{code}.log", env=spec_env(spec))
+    perf["ranks"] = int(m.group(1)) if (m := re.search(r"-n\s*(\d+)", args.mpi or "")) else 1
+    text = (rundir/f"{code}.log").read_text(errors="replace")
+    code_clock(code, text, perf)
+    dirs = sorted((d for d in rundir.glob("plt*") if (d/"Header").is_file() and ".old" not in d.name), key=lambda d: int(re.sub(r"\D", "", d.name) or 0))
+    found = []
+    for d in dirs:
+        h = (d/"Header").read_text().split("\n");nv = int(h[1]);found.append((float(h[3 + nv]), int(h[9 + nv].split()[0])))
+    pairs = unique(list(zip(found, dirs)), lambda p: p[0][0], config, outputs);found = [p[0] for p in pairs];dirs = [p[1] for p in pairs]
+    rc, tail = finish(code_rc, text, perf, found, targets_of(config, outputs), config, outputs)
+    plane = args.geometry == "plane"
+
+    def frames():
+        for d in dirs:
+            t, s, f = read_plotfile(d, args.n, nz)
+            u = np.zeros((args.n, args.n, nz, 9))
+            u[..., 0] = f["density"];u[..., 1] = f["xmom"];u[..., 2] = f["ymom"];u[..., 3] = f["zmom"];u[..., 4] = f["rho_E"]
+            if code == "castro":u[..., 5] = f["B_x"];u[..., 6] = f["B_y"];u[..., 7] = f["B_z"]
+            # Nyx: no field in the frames (hydrodynamics); E is its total energy without a magnetic part
+            yield t, s, (u[:, :, :1, :] if plane else u)
+    return rc, tail, perf, frames()
+
+
+def run_castro(*a, **k):return run_amrex("castro", *a, **k)
+
+
+def run_nyx(*a, **k):return run_amrex("nyx", *a, **k)
+
+
+X.RUNNERS.update(castro=run_castro, nyx=run_nyx)
+
+
 # Single precision (lyxia, 2026-11-12: every GPU code also in fp32, as Abel et al.'s kernels and RAMSES II): the same
 # set-ups and runner with an fp32 build (build_f32.sh), under their own code name, so that records and pages keep them
 # apart: athenakf32 (AthenaK, Athena_SINGLE_PRECISION), athenapkf32 (PARTHENON_SINGLE_PRECISION), chollaf32 (PRECISION=1).

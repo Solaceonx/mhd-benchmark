@@ -99,6 +99,27 @@ shared login is used only while they are present). Done on the Mac:
   macro; `tables/decay.tex`; refs.bib). Kept OUT of git (`.git/info/exclude`): the repository is public and the draft names
   Tom and Eric as authors; lyxia decides where it lives. Build: `cd manuscript && latexmk -pdf main.tex`.
 
+**2026-11-17 (Tom via lyxia: add Castro and Nyx; can MHD-ALE be made competitive, "supposed to have low error at least
+for a fixed number of zones"):**
+- *AthenaPK fix confirmed* (job 52536645, `check_fofc.py`): with `first_order_flux_correct` the 512³ seed-42 decay holds
+  energy to 3e-6 (was +180 %) and PPM/HLLD/RK3 at 256³ finishes (was NaN by t = 0.02). Next: rerun AthenaPK decay with
+  the `*_fofc` variants for the paper; tell the AthenaPK developers about the density floor.
+- *MHD-ALE:* at fixed N it ranks near the bottom on most tests, but on the entropy wave its whole error is the initial
+  state (4.3e-4 at 128² at t = 0 and t = 1 alike): we passed cell values, which its 2x2-Gauss projection turns into 0.87
+  of the true slope. `testcase_Abel.cpp` ABEL_IC=l2: limited least-squares fit to the sub-cell values per element (exact
+  mass and energy, third order; local check reproduces the published error exactly with the Gauss emulation). Set-ups
+  `ale_l2` and `ale_l2_q4` (degree 4/3, N/4 elements) in `mhdale_run.py`; build `build-abel-l2` (published `build-abel`
+  untouched). Smoke at 32²: entropy 1.8e-3 -> 7.1e-4 (l2) -> 2.9e-4 (q4). Pilot arrays 52702616/21 (ale_l2), 52702625/32
+  (q4): 8 tests at 64-256² (KH to 128²), results `$SCRATCH/mhd-results-mhdale-l2`.
+- *Castro + Nyx:* `sherlock_newcodes/castro/abel_suite` (problem dir; MHD is 3-D only, planar tests on an 8-cell slab;
+  CTU + HLLD + CT; set-ups plm, ppm), `nyx/abel_suite` + `nyx/patch_nyx.py` (hydro only: entropy, blast_2d_b0,
+  blast_3d_b0, kh_uniform; exact output times patched), runner + AMReX plotfile reader in `newcodes_run.py`, tasks,
+  build, fetch (Castro 26.11 2f06db3, Nyx 26.09 e06eabc). Build 52704067 -> trial 52704074 (`amrex_trial.sbatch`,
+  `check_amrex.py`, report in `logs/amrex_trial_report.txt`). Production after the trial: `bash -l production.sh none castro nyx`.
+- *Nested 256³ long window done* (55 snapshots, t = 0.3-3): velocity 0.79 (0.68-0.92), the same in both halves; B 0.92
+  (0.77-1.08) and density 0.91 (0.77-1.07) consistent with 1. Page not yet updated (waits for the 512³ pair, job 52527109).
+  RAMSES II turbulence job 52527031 COMPLETED (not yet fetched).
+
 **2026-11-16, morning (lyxia present, shared login used):** submitted RAMSES II turbulence 52527031 (`sherlock_turb/logs/
 turb-ramses2-*.out`; 32³ trial first), nested long windows 52527032 (nest64_long, uni256_long, gpu,owners) and 52527109
 (nest128_long, uni512_long, public gpu, 24 h). The fp32 chain of 11-12 had stopped: pilot 52355180 ran all 8 runs, then its

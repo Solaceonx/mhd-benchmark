@@ -557,6 +557,7 @@ def nyx_input(config, n, settings, geometry, outputs):
         "nyx.do_hydro = 1", "nyx.do_grav = 0", "nyx.do_react = 0", "nyx.comoving_OmM = 1.0", "nyx.comoving_OmB = 0.0", "nyx.comoving_h = 0.0",
         "nyx.initial_z = 0.0", f"nyx.gamma = {X.gamma_of(config)!r}", "nyx.h_species = 0.76", "nyx.he_species = 0.24",
         f"nyx.ppm_type = {settings['ppm_type']}", f"nyx.cfl = {settings['cfl']}", "nyx.init_shrink = 1.0", "nyx.change_max = 1.1",
+        "nyx.dt_cutoff = 5.e-20",       # required (ParmParse::get); the value of Nyx's own Sod inputs
         "nyx.small_dens = 1.e-12", "nyx.small_temp = 1.e-12", "nyx.sum_interval = -1", "nyx.v = 1",
         "amr.plot_vars = density xmom ymom zmom rho_E", "amr.derive_plot_vars = NONE", "amr.probin_file = \"\""]
     return "\n".join(lines) + "\n"

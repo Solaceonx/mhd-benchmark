@@ -1,0 +1,248 @@
+method = "uct"
+turb_T = 0.16666666666666666
+steps = 3714
+converted = true
+code = "ramses2"
+precision = "double (NPRE=8); outputs Float32"
+spectrum = "parabolic"
+turb_ndt = 100
+t_end_T = 10.0
+N = 128
+cfl = 0.8
+t_end = 1.6666666666666665
+solver = "RAMSES II (ramses2 develop), MUSCL-Hancock, slope_type=2 (MonCen), riemann='uct-hlld', riemann2d='hlld', courant_factor=0.8, zero magnetic field"
+a_rms = 15.0
+device = "sh04-07n05.int NVIDIA H100 80GB HBM3"
+status = "complete"
+measured_with = "turb_measure.jl: measure.jl on the CPU (8 threads), frames read as Float32"
+mach_target = 3
+projection = "RAMSES II's own (corrected, ramses2 PR #57); force normalised analytically (no turb_exact_rms)"
+comp_frac = 0.0
+measured = true
+gamma = 1.0000100135803223
+seed = 1
+slices_every = 4
+
+[[frames]]
+steps = 0
+time = 0.0
+slice = "slice_000.bin"
+frame = 0
+file = "tmp_000.bin"
+[[frames]]
+steps = 27
+time = 0.0416666666666667
+frame = 1
+file = "tmp_001.bin"
+[[frames]]
+steps = 66
+time = 0.0833333333333333
+frame = 2
+file = "tmp_002.bin"
+[[frames]]
+steps = 122
+time = 0.125
+frame = 3
+file = "tmp_003.bin"
+[[frames]]
+steps = 198
+time = 0.166666666666667
+slice = "slice_004.bin"
+frame = 4
+file = "tmp_004.bin"
+[[frames]]
+steps = 281
+time = 0.208333333333333
+frame = 5
+file = "tmp_005.bin"
+[[frames]]
+steps = 365
+time = 0.25
+frame = 6
+file = "tmp_006.bin"
+[[frames]]
+steps = 455
+time = 0.291666666666667
+frame = 7
+file = "tmp_007.bin"
+[[frames]]
+steps = 548
+time = 0.333333333333333
+slice = "slice_008.bin"
+frame = 8
+file = "tmp_008.bin"
+[[frames]]
+steps = 646
+time = 0.375
+frame = 9
+file = "tmp_009.bin"
+[[frames]]
+steps = 745
+time = 0.416666666666667
+frame = 10
+file = "tmp_010.bin"
+[[frames]]
+steps = 844
+time = 0.458333333333333
+frame = 11
+file = "tmp_011.bin"
+[[frames]]
+steps = 946
+time = 0.5
+slice = "slice_012.bin"
+frame = 12
+file = "tmp_012.bin"
+[[frames]]
+steps = 1045
+time = 0.541666666666667
+frame = 13
+file = "tmp_013.bin"
+[[frames]]
+steps = 1149
+time = 0.583333333333333
+frame = 14
+file = "tmp_014.bin"
+[[frames]]
+steps = 1248
+time = 0.625
+frame = 15
+file = "tmp_015.bin"
+[[frames]]
+steps = 1345
+time = 0.666666666666667
+slice = "slice_016.bin"
+frame = 16
+file = "tmp_016.bin"
+[[frames]]
+steps = 1443
+time = 0.708333333333333
+frame = 17
+file = "tmp_017.bin"
+[[frames]]
+steps = 1543
+time = 0.75
+frame = 18
+file = "tmp_018.bin"
+[[frames]]
+steps = 1646
+time = 0.791666666666667
+frame = 19
+file = "tmp_019.bin"
+[[frames]]
+steps = 1745
+time = 0.833333333333333
+slice = "slice_020.bin"
+frame = 20
+file = "tmp_020.bin"
+[[frames]]
+steps = 1842
+time = 0.875
+frame = 21
+file = "tmp_021.bin"
+[[frames]]
+steps = 1935
+time = 0.916666666666667
+frame = 22
+file = "tmp_022.bin"
+[[frames]]
+steps = 2032
+time = 0.958333333333333
+frame = 23
+file = "tmp_023.bin"
+[[frames]]
+steps = 2132
+time = 1.0
+slice = "slice_024.bin"
+frame = 24
+file = "tmp_024.bin"
+[[frames]]
+steps = 2232
+time = 1.04166666666667
+frame = 25
+file = "tmp_025.bin"
+[[frames]]
+steps = 2329
+time = 1.08333333333333
+frame = 26
+file = "tmp_026.bin"
+[[frames]]
+steps = 2433
+time = 1.125
+frame = 27
+file = "tmp_027.bin"
+[[frames]]
+steps = 2534
+time = 1.16666666666667
+slice = "slice_028.bin"
+frame = 28
+file = "tmp_028.bin"
+[[frames]]
+steps = 2635
+time = 1.20833333333333
+frame = 29
+file = "tmp_029.bin"
+[[frames]]
+steps = 2732
+time = 1.25
+frame = 30
+file = "tmp_030.bin"
+[[frames]]
+steps = 2823
+time = 1.29166666666667
+frame = 31
+file = "tmp_031.bin"
+[[frames]]
+steps = 2919
+time = 1.33333333333333
+slice = "slice_032.bin"
+frame = 32
+file = "tmp_032.bin"
+[[frames]]
+steps = 3016
+time = 1.375
+frame = 33
+file = "tmp_033.bin"
+[[frames]]
+steps = 3110
+time = 1.41666666666667
+frame = 34
+file = "tmp_034.bin"
+[[frames]]
+steps = 3204
+time = 1.45833333333333
+frame = 35
+file = "tmp_035.bin"
+[[frames]]
+steps = 3303
+time = 1.5
+slice = "slice_036.bin"
+frame = 36
+file = "tmp_036.bin"
+[[frames]]
+steps = 3398
+time = 1.54166666666667
+frame = 37
+file = "tmp_037.bin"
+[[frames]]
+steps = 3499
+time = 1.58333333333333
+frame = 38
+file = "tmp_038.bin"
+[[frames]]
+steps = 3605
+time = 1.625
+frame = 39
+file = "tmp_039.bin"
+[[frames]]
+steps = 3714
+time = 1.66666666666667
+slice = "slice_040.bin"
+frame = 40
+file = "tmp_040.bin"
+state = "state_final.bin"
+
+[perf]
+steps = 3714
+code_seconds = 15.7571473
+cell_updates_per_second = 4.9430410084444666e8
+wall_seconds = 18.11223202617839

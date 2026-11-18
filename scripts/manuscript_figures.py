@@ -664,8 +664,8 @@ def arepo(sw):
 # ---------------------------------------------------------------- accuracy for the time: order against grid
 WP_TESTS = (("alfven_oblique", "Alfvén wave, oblique"), ("brio_wu_rotated", "Brio–Wu at 45°"), ("orszag_tang", "Orszag–Tang"),
             ("rotor", "Rotor"), ("kh_uniform", "Kelvin–Helmholtz"), ("field_loop_3d", "Field loop, 3D"))
-WP_SHOW = ("glm", "glm_fix_hll16", "glm_fix_ppm", "glm_fix_hlld", "athenak_matched", "athenak_best", "athenapp_matched", "athenapp_best",
-           "ramses_matched", "ramses_best")
+WP_SHOW = ("glm", "glm_fix_hll16", "glm_fix_hlld", "athenak_matched", "athenak_best", "athenapp_best", "athenapk_best", "cholla_ppmc",
+           "pluto_ct_best", "ramses_best", "ramses2_uct", "ramses2f32_uct", "enzo_ct")
 
 
 def work_precision(sw):
@@ -684,7 +684,7 @@ def work_precision(sw):
         ax.set_xscale("log");ax.set_yscale("log");ticks(ax);ax.set_title(title, pad=4)
         ax.set_xlabel("cost (s): one H100, or 128 cores" if test == "kh_uniform" else "");ax.set_ylabel(r"relative $L_1$ error" if ax in axes[:, 0] else "")
     fig.legend(handles=line_handles(WP_SHOW, extra=[Line2D([], [], color=MUTED, lw=.7, ls=(0, (1, 2)), label="AthenaK PLM/HLLE at 256²")]),
-               loc="lower center", ncol=4, columnspacing=1.4, handlelength=2.6, bbox_to_anchor=(.53, 0))
+               loc="lower center", ncol=5, columnspacing=1.0, handlelength=2.4, bbox_to_anchor=(.53, 0), fontsize=6.4)
     return fig
 
 
@@ -782,6 +782,158 @@ FIGURES = dict(cost_vs_error=cost_vs_error, speed=speed, accuracy=accuracy, robu
                work_precision=work_precision, order_tradeoff=order_tradeoff,
                decay_rates=decay_rates, decay_dissipation=decay_dissipation, decay_bandwidth=decay_bandwidth, factorial=factorial, robustness_more=robustness_more)
 
+
+# ---------------------------------------------------------------- driven turbulence, single precision, MHD-ALE (2026-11-18)
+def driven(sw):
+    """Driven turbulence (turb_results/summary.csv, seed means): (a) the effective Reynolds number against the target Mach
+    number at 128^3 (open) and 256^3 (filled); (b) at 256^3, over RAMSES HLLC/MonCen with the corrected forcing."""
+    import csv
+    rows = [r for r in csv.DictReader(open(sweep_data.ROOT/"turb_results"/"summary.csv")) if r["status"] == "complete"]
+    kind = lambda r: r["run"].split("-")[0] + "-" + r["method"]
+    sets = (("ramses2-uct", "RAMSES II UCT-HLLD (MHD, $B=0$)", pc.color("ramses2_uct"), "D"),
+            ("ramsesfix-best", "RAMSES HLLC, MonCen (hydro)", pc.color("ramses_best"), "s"),
+            ("ramsesfix-matched", "RAMSES HLL, minmod (hydro)", pc.color("ramses_matched"), "v"),
+            ("gpu-hydro", "Abel et al. Euler kernel (hydro)", tint(pc.color("glm"), .35), "o"),
+            ("gpu-glm", "Abel et al. GLM kernel (MHD, $B=0$)", pc.color("glm"), "^"))
+    def mean_of(k, m, n):
+        v = [float(r["re_eff"]) for r in rows if kind(r) == k and r["mach_target"] == str(m) and r["N"] == str(n)]
+        return statistics.mean(v) if v else np.nan
+    machs = (3, 10, 30, 50)
+    fig, axs = plt.subplots(2, 1, figsize=(COLUMN, 4.6), layout="constrained", sharex=True, height_ratios=(1.4, 1))
+    for k, label, c, mk in sets:
+        for n, filled in ((128, False), (256, True)):
+            y = [mean_of(k, m, n) for m in machs]
+            axs[0].plot(machs, y, color=c, marker=mk, markerfacecolor=c if filled else "white", markeredgewidth=.9,
+                        linestyle="-" if filled else ":", label=label if filled else None)
+        ref = [mean_of("ramsesfix-best", m, 256) for m in machs]
+        axs[1].plot(machs, [mean_of(k, m, 256)/r for m, r in zip(machs, ref)], color=c, marker=mk, markerfacecolor=c, markeredgewidth=.9)
+    axs[0].set_xscale("log");axs[0].set_yscale("log");axs[0].set_ylabel(r"$\mathrm{Re}_{\rm eff}$")
+    axs[0].set_xticks(machs);axs[0].set_xticklabels([str(m) for m in machs]);axs[0].minorticks_off()
+    yt = (1000, 2000, 4000, 8000);axs[0].set_yticks(yt);axs[0].set_yticklabels([f"{y:,}" for y in yt]);axs[0].set_ylim(900, 9000)
+    axs[0].legend(handles=[Line2D([], [], color=INK, marker="o", markerfacecolor=INK, label="$256^3$"),
+                           Line2D([], [], color=INK, marker="o", markerfacecolor="white", linestyle=":", label="$128^3$")],
+                  loc="lower right", fontsize=6.5, handlelength=2.2)
+    axs[1].legend(handles=axs[0].get_lines()[1::2], labels=[x[1] for x in sets], loc="upper center", bbox_to_anchor=(.5, .97), fontsize=5.9, handlelength=2.0, ncol=1)
+    axs[1].set_ylim(.5, 1.5)
+    axs[1].axhline(1, color=RULE, lw=.6);axs[1].set_ylabel(r"$\mathrm{Re}_{\rm eff}$ / RAMSES HLLC, $256^3$");axs[1].set_xlabel(r"target rms Mach number")
+    panel_letter(axs[0], "(a)");panel_letter(axs[1], "(b)")
+    for ax in axs:ticks(ax)
+    return fig
+
+
+def precision_floor(sw):
+    """End-time L1 error of the entropy wave against grid, double (filled) and single precision (open), for the second-order
+    and the high-order set-ups of AthenaK and AthenaPK (run.toml errors): the round-off floor of single precision."""
+    import tomllib
+    def err(m, n):
+        p = sw.path("entropy", m, n, "run.toml", 42)
+        if not p or not p.is_file():return np.nan
+        r = tomllib.loads(p.read_text())
+        if r.get("status") != "complete":return np.nan
+        fr = [f for f in r["frames"] if f.get("errors") and abs(f["time"] - r["t_end_requested"]) < 1e-6]
+        return fr[-1]["errors"]["density_relative_L1"] if fr else np.nan
+    ns = (32, 64, 128, 256, 512)
+    fig, ax = plt.subplots(figsize=(COLUMN, 2.7), layout="constrained")
+    for m in ("athenak_matched", "athenak_best", "athenapk_matched", "athenapk_best"):
+        c = pc.color(m);code, v = m.split("_")
+        ax.plot(ns, [err(m, n) for n in ns], color=c, marker=pc.STYLE[m][4], markerfacecolor=c, linestyle="-", markeredgewidth=.9, label=name(m) + ", fp64")
+        ax.plot(ns, [err(f"{code}f32_{v}", n) for n in ns], color=c, marker=pc.STYLE[m][4], markerfacecolor="white", linestyle=":", markeredgewidth=.9)
+    n = np.array(ns, float);ax.plot(n, 6e-8*2.2*n, color=MUTED, lw=.7, ls="--")
+    ax.text(150, 6e-8*2.2*150*0.42, r"$\propto N$", color=MUTED, fontsize=7)
+    ax.set_xscale("log", base=2);ax.set_yscale("log");ax.set_xticks(ns);ax.set_xticklabels([str(x) for x in ns]);ax.minorticks_off()
+    ax.set_xlabel("$N$ (cells per side)");ax.set_ylabel("entropy wave, density $L_1$ error")
+    ax.legend(handles=ax.get_legend_handles_labels()[0] + [Line2D([], [], color=INK, marker="o", markerfacecolor="white", linestyle=":", label="the same in fp32")],
+              fontsize=6.2, loc="lower left", handlelength=2.2);ticks(ax)
+    return fig
+
+
+def mhdale(sw):
+    """MHD-ALE at fixed grid: the published runs (cell values as initial state), the projected initial state, and the
+    projected state on degree-4/3 elements four cells wide, against the spread of every other set-up (grey band: their
+    10th to 90th percentile; line: median). test_diagnostics computes every error."""
+    import tomllib
+    import test_diagnostics as td
+    D = td.Data()
+    tests = (("entropy", "entropy wave"), ("blast_2d_b50", r"blast, $B_0=50/\sqrt{4\pi}$"), ("rotor", "rotor"), ("gem", "GEM reconnection"))
+    var = (("ale", "published (cell values)", "o"), ("ale_l2", "projected initial state", "s"), ("ale_l2_q4", "projected, degree 4/3, $N/4$ elements", "D"))
+    def endpoint(test, n, v):
+        base = sw.results if v == "ale" else sweep_data.ROOT/"mhdale_l2_results"
+        p = base/f"{test}-mhdale-{v}-run-N{n}-s42/data/mhdale_{v}_r1"
+        if not (p/"run.toml").is_file():return np.nan
+        m = tomllib.loads((p/"run.toml").read_text());end = float(sw.configs[test]["t_end"]);mode, _, _ = td.metric(test, "density")
+        fr = [f for f in m.get("frames", []) if abs(f["time"] - end) <= 1e-6*max(1, end)]
+        if not fr:return np.nan
+        f = fr[-1]
+        if f.get("errors") and f["errors"].get(f"density_{mode}_L1") is not None:return f["errors"][f"density_{mode}_L1"]
+        ref, _ = D.reference(test, n, 42, f["time"]);q = p/f["file"]
+        if ref is None or not q.is_file():return np.nan
+        a = np.fromfile(q, dtype="<f4").reshape(ref.shape, order="F")
+        return td.compute_errors(a, ref)[f"density_{mode}_L1"] if np.isfinite(a).all() else np.nan
+    ns = (64, 128, 256);c = pc.color("mhdale_ale")
+    fig, axs = plt.subplots(2, 2, figsize=(COLUMN, 4.1), layout="constrained")
+    for ax, (t, title) in zip(axs.flat, tests):
+        lo, md, hi = [], [], []
+        for n in ns:
+            v = [x for r in D.select(t, n) if r.method != "mhdale_ale" and (x := D.endpoint(r, "density")) is not None]
+            lo.append(np.percentile(v, 10));md.append(np.median(v));hi.append(np.percentile(v, 90))
+        ax.fill_between(ns, lo, hi, color=RULE, alpha=.55, lw=0);ax.plot(ns, md, color=MUTED, lw=.8)
+        for (v, label, mk), shade in zip(var, (.55, .0, .0)):
+            ax.plot(ns, [endpoint(t, n, v) for n in ns], color=tint(c, shade) if shade else c, marker=mk, markerfacecolor="white" if v == "ale" else c,
+                    markeredgewidth=.9, linestyle=":" if v == "ale" else "-" if v == "ale_l2" else "--", label=label)
+        ax.set_xscale("log", base=2);ax.set_yscale("log");ax.set_xticks(ns);ax.set_xticklabels([str(x) for x in ns])
+        ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
+        ax.yaxis.set_major_locator(matplotlib.ticker.LogLocator(subs=(1.0, 2.0, 5.0) if t != "entropy" else (1.0,)))
+        ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda y, _: f"{y:g}" if y >= 1e-3 else f"$10^{{{int(round(np.log10(y)))}}}$"))
+        ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+        ax.set_title(title, fontsize=7.5);ticks(ax)
+    for ax in axs[1]:ax.set_xlabel("$N$")
+    for ax in axs[:, 0]:ax.set_ylabel("density $L_1$ error")
+    from matplotlib.patches import Patch
+    h = axs[0, 0].get_legend_handles_labels()[0] + [Line2D([], [], color=MUTED, lw=.8, label="median of the other set-ups"),
+                                                   Patch(color=RULE, alpha=.55, label="their 10th–90th percentile")]
+    fig.legend(handles=h, loc="outside lower center", ncol=2, fontsize=5.8, handlelength=2.0)
+    return fig
+
+
+# One marker per code in the paper's accuracy figure: every code's recommended set-up, and Abel et al.'s kernels
+ACC_BEST = (("athenak_best", "o"), ("athenapp_best", "s"), ("athenapk_best", "D"), ("cholla_ppmc", "^"), ("pluto_ct_best", "v"),
+            ("ramses_best", "<"), ("ramses2_uct", ">"), ("enzo_ct", "p"), ("arepo_moving", "h"), ("gizmo_mfm", "*"), ("phantom_sph", "P"),
+            ("mhdale_ale", "X"))
+ACC_ABEL = (("glm", "x"), ("glm_hll16", "o"), ("glm_fix_hll16", "o"), ("glm_fix_hlld", "s"), ("ct_fix", "d"))
+
+
+def accuracy_all(sw):
+    """End-time error of every code's recommended set-up and of Abel et al.'s kernels on the planar tests at 256^2 and
+    512^2, each over the median of the same-order CT set-ups (AthenaK, RAMSES and Athena++ matched) on that test."""
+    sets = ACC_ABEL + ACC_BEST
+    fig, axes = plt.subplots(1, 2, figsize=(FULL, 4.6), sharey=True)
+    rows = list(range(len(ACCURACY)))[::-1];top = [10.0];low = [.1]
+    for ax, n in zip(axes, (256, 512)):
+        ax.axvspan(1/1.25, 1.25, color=pc.PANEL, lw=0);ax.axvline(1, color=MUTED, lw=.7)
+        for y, (test, label, kind) in zip(rows, ACCURACY):
+            err = endpoint_errors(test, n, kind);base = [err[m] for m in MATCHED if m in err]
+            if len(base) < 2:continue
+            ref = statistics.median(base)
+            for k, (m, mk) in enumerate(sets):
+                if m not in err:continue
+                off = (k - (len(sets) - 1)/2)*.04;r = err[m]/ref;top.append(r);low.append(r)
+                faded = m == "glm_hll16"
+                ax.plot(r, y + off, ls="", marker=mk, color=tint(pc.color(m), .5) if faded else pc.color(m), ms=3.4,
+                        markerfacecolor="white" if m.startswith(("glm", "ct")) and m != "glm" else pc.color(m), markeredgewidth=.8)
+        ax.set_xscale("log");ax.set_title(f"${n}^2$", pad=4);ax.grid(False)
+        ax.set_xlabel("error / median of the second-order CT set-ups");ticks(ax)
+    for ax in axes:ax.set_xlim(.6*min(low), 1.6*max(top))
+    axes[0].set_yticks(rows);axes[0].set_yticklabels([label for _, label, _ in ACCURACY]);axes[0].set_ylim(-.7, len(ACCURACY) - .3)
+    for ax in axes:ax.tick_params(axis="y", length=0)
+    hs = [Line2D([], [], ls="", marker=mk, color=tint(pc.color(m), .5) if m == "glm_hll16" else pc.color(m), ms=4,
+                 markerfacecolor="white" if m.startswith(("glm", "ct")) and m != "glm" else pc.color(m), markeredgewidth=.8,
+                 label=pc.plain(pc.STYLE[m][2]) + (" (original)" if m == "glm_hll16" else "")) for m, mk in sets]
+    fig.legend(handles=hs, loc="lower center", ncol=6, bbox_to_anchor=(.5, -.01), fontsize=6.6, handletextpad=.2, columnspacing=.9)
+    fig.tight_layout(rect=(0, .12, 1, 1))
+    return fig
+
+
+FIGURES.update(driven=driven, precision_floor=precision_floor, mhdale=mhdale, accuracy_all=accuracy_all)
 
 def main(argv):
     preview = None

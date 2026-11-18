@@ -15,6 +15,7 @@ from pathlib import Path
 
 import numpy as np
 import matplotlib
+import matplotlib.ticker
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
@@ -50,7 +51,10 @@ def snap(case, kind, t, root=CMP):
 
 
 def snap_times(case, root=CMP):
-    return sorted(float(f.name[7:12]) for f in (root/case).glob("snap_c_*.bin"))
+    t = sorted(float(f.name[7:12]) for f in (root/case).glob("snap_c_*.bin"))
+    if not t and (root/case/"cube_spectra.npz").is_file():          # spectra computed on Sherlock (sherlock_nested/cube_spectra.py)
+        t = sorted(round(float(x), 3) for x in np.load(root/case/"cube_spectra.npz")["times"])
+    return t
 
 
 def midplane(s):
@@ -417,7 +421,12 @@ def fig_capped():
 
 # ---------------------------------------------------------------- spectra over a time window, with their error
 def snapshot_spectra(case, ts, root=CAP):
-    """E(k) of v, B, ρ in the central cube (Hann window) for every snapshot: an array (3, snapshots, shells)."""
+    """E(k) of v, B, ρ in the central cube (Hann window) for every snapshot: an array (3, snapshots, shells). For runs whose
+    snapshots stayed on Sherlock, the same spectra from cube_spectra.npz (sherlock_nested/cube_spectra.py, same function)."""
+    npz = root/case/"cube_spectra.npz"
+    if npz.is_file() and not (root/case/f"snap_c_{ts[0]:.3f}.bin").is_file():
+        d = np.load(npz);idx = [int(np.argmin(np.abs(d["times"] - t))) for t in ts];out = d["E"][idx]
+        return 4 * np.arange(out.shape[-1]), out.transpose(1, 0, 2) / 4
     out = np.array([[shells(s, True) for s in (lambda a: (a[1:4], a[4:7], a[0:1]))(snap(case, "c", t, root).astype(np.float64))] for t in ts])
     return 4 * np.arange(out.shape[-1]), out.transpose(1, 0, 2) / 4
 
@@ -428,7 +437,13 @@ def lag1(E):
     return float(np.nanmedian((d[1:] * d[:-1]).mean(0) / np.where(v > 0, v, np.nan))) if E.shape[0] > 2 else 0.0
 
 
-WINDOW_PAIRS = (("nest64", "uni256"), ("nest128", "uni512"))
+# The long windows (2026-11-17/18): the same capped runs continued, nest64_long/uni256_long to t = 3 and nest128_long/uni512_long
+# to t = 1.5 (their spectra computed on Sherlock); every snapshot from T_STAT, one per crossing time.
+LONG_CASES = {"nest64_long": dict(CAP_CASES["nest64"], label="nest 3 × 64³"), "uni256_long": dict(CAP_CASES["uni256"], label="uniform 256³"),
+              "nest128_long": dict(CAP_CASES["nest128"], label="nest 3 × 128³"), "uni512_long": dict(CAP_CASES["uni512"], label="uniform 512³")}
+WINDOW_CASES = {**CAP_CASES, **LONG_CASES}
+WINDOW_PAIRS = (("nest64_long", "uni256_long"), ("nest128_long", "uni512_long"))
+WINDOW_CURVES = {}          # per pair and field: k, time-averaged shape ratio, its 95 % interval, single-pair 10-90 % (for the paper figure)
 BOOT = 4000
 
 
@@ -446,7 +461,7 @@ def fig_window():
         ts = [t for t in snap_times(a, CAP) if t >= T_STAT - 1e-9 and t in set(snap_times(b, CAP))]
         k, Ea = snapshot_spectra(a, ts);_, Eb = snapshot_spectra(b, ts);n = len(ts)
         sel = (k >= 8) & (k <= 96);sel32 = (k >= 32) & (k <= 96)
-        sta, stb = CAP_CASES[a], CAP_CASES[b];r = dict(times=ts, snapshots=n)
+        sta, stb = WINDOW_CASES[a], WINDOW_CASES[b];r = dict(times=ts, snapshots=n);WINDOW_CURVES[f"{a}/{b}"] = {}
         ia = rng.integers(0, n, (BOOT, n));ib = rng.integers(0, n, (BOOT, n))
         for j, q in enumerate(keys):
             Sa = Ea[j] / Ea[j][:, 1:].sum(1, keepdims=True);Sb = Eb[j] / Eb[j][:, 1:].sum(1, keepdims=True)     # shapes
@@ -473,6 +488,7 @@ def fig_window():
                     ax.fill_between(k[kk], s10[kk], s90[kk], color=sta["color"], alpha=.10, lw=0)
                     ax.fill_between(k[kk], lo[kk], hi[kk], color=sta["color"], alpha=.30, lw=0)
                     ax.plot(k[kk], R[kk], color=sta["color"], ls=sta["ls"], lw=sta["lw"])
+                    WINDOW_CURVES[f"{a}/{b}"][q] = dict(k=k[kk], R=R[kk], lo=lo[kk], hi=hi[kk], s10=s10[kk], s90=s90[kk])
             out["lag1"] = dict(nest=lag1(Ea[j]), uniform=lag1(Eb[j]))
             r[q] = out
         res[f"{a}/{b}"] = r
@@ -484,19 +500,48 @@ def fig_window():
         axs[2, j].set_xlabel("$k$ (box units)")
     axs[0, 0].set_ylabel(r"$\langle k\,E(k)/\sigma^2\rangle_t$, central cube (95 % interval)")
     for row, (a, b) in enumerate(WINDOW_PAIRS, 1):
-        axs[row, 0].set_ylabel(tex(f"{CAP_CASES[a]['label']} / {CAP_CASES[b]['label']}"))
+        axs[row, 0].set_ylabel(tex(f"{WINDOW_CASES[a]['label']} / {WINDOW_CASES[b]['label']}"))
         for j, q in enumerate(keys):
             o = res[f"{a}/{b}"][q]["shape"]
             axs[row, j].text(.03, .05, f"k = 8–96: {o['ratio']:.2f} (95 %: {o['ci95'][0]:.2f}–{o['ci95'][1]:.2f})\none pair at one time: {o['single_min']:.2f}–{o['single_max']:.2f}",
                              transform=axs[row, j].transAxes, fontsize=9.5, color=ps.INK, va="bottom")
     hs = [Line2D([], [], color=s["color"], ls=s["ls"], lw=s["lw"]) for s in CAP_CASES.values()]
     fig.legend(hs, [tex(s["label"]) for s in CAP_CASES.values()], loc="outside lower center", ncol=4)
-    n1, n2 = (res[f"{a}/{b}"]["snapshots"] for a, b in WINDOW_PAIRS)
+    (n1, e1), (n2, e2) = ((res[f"{a}/{b}"]["snapshots"], res[f"{a}/{b}"]["times"][-1]) for a, b in WINDOW_PAIRS)
     fig.suptitle(f"Spectra over a window of time, both grids capped at $v_A$ = 30 $c_s$: every snapshot from $t$ = {T_STAT:g}, one per crossing time "
-                 f"({n1} to $t$ = 1 at 256$^3$, {n2} to $t$ = 0.5 at 512$^3$); each normalised by its variance in the cube,\nthen averaged; "
+                 f"({n1} to $t$ = {e1:g} at 256$^3$, {n2} to $t$ = {e2:g} at 512$^3$); each normalised by its variance in the cube,\nthen averaged; "
                  "intervals by bootstrap over the snapshots. Lower rows: the nest's time-averaged shape over the uniform grid's, 95 % (dark); pale: a single pair of snapshots at one time, 10–90 %", fontsize=11.5)
     fig.savefig(OUT/"nested-window.png", dpi=140);plt.close(fig)
+    paper_window(res)
     return res
+
+
+def paper_window(res):
+    """The paper's figure (paper_figures/nested_window.pdf): the nest's time-averaged spectral shape over the uniform grid's,
+    with its 95 % bootstrap interval (dark) and the 10-90 % range of a single pair of snapshots at one time (pale)."""
+    import sys
+    sys.path.insert(0, str(ROOT/"scripts"));import manuscript_figures as mf
+    mf.style()
+    fig, axs = plt.subplots(2, 3, figsize=(mf.FULL, 3.9), sharex=True, sharey=True, layout="constrained")
+    titles = ("velocity", "magnetic field", "density")
+    for row, (a, b) in enumerate(WINDOW_PAIRS):
+        c = WINDOW_CASES[a]["color"];n = res[f"{a}/{b}"]["snapshots"]
+        for j, q in enumerate(("v", "B", "rho")):
+            d = WINDOW_CURVES[f"{a}/{b}"][q];ax = axs[row, j]
+            ax.fill_between(d["k"], d["s10"], d["s90"], color=c, alpha=.12, lw=0)
+            ax.fill_between(d["k"], d["lo"], d["hi"], color=c, alpha=.35, lw=0)
+            ax.plot(d["k"], d["R"], color=c, lw=1.1);ax.axhline(1, color=mf.MUTED, lw=.6, ls=":")
+            ax.axvspan(3, 8, color=mf.RULE, alpha=.5, lw=0)
+            o = res[f"{a}/{b}"][q]["shape"]
+            ax.text(.04, .06, f"$k=8$–96: {o['ratio']:.2f} [{o['ci95'][0]:.2f}, {o['ci95'][1]:.2f}]", transform=ax.transAxes, fontsize=6.6)
+            ax.set_xscale("log");ax.set_yscale("log");ax.set_xlim(4, 300 if row else 150);ax.set_ylim(.25, 4);mf.ticks(ax)
+            ax.set_yticks((.25, .5, 1, 2, 4));ax.set_yticklabels(("0.25", "0.5", "1", "2", "4"));ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+            if row == 0:ax.set_title(titles[j], pad=3)
+            if row == 1:ax.set_xlabel("$k$ (box units)")
+        lab = "nest $3\\times64^3$ / uniform $256^3$" if row == 0 else "nest $3\\times128^3$ / uniform $512^3$"
+        axs[row, 0].set_ylabel(lab + f"\n({n} snapshots)", fontsize=7)
+    for ax in axs[0]:ax.set_xlim(4, 300)
+    fig.savefig(ROOT/"paper_figures"/"nested_window.pdf");plt.close(fig)
 
 
 # ---------------------------------------------------------------- Tom's ergodicity test in 3-D (ergodic.jl): 8 seeds

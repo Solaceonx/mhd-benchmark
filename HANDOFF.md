@@ -99,6 +99,19 @@ shared login is used only while they are present). Done on the Mac:
   macro; `tables/decay.tex`; refs.bib). Kept OUT of git (`.git/info/exclude`): the repository is public and the draft names
   Tom and Eric as authors; lyxia decides where it lives. Build: `cd manuscript && latexmk -pdf main.tex`.
 
+**2026-11-18 (lyxia: write the ApJ paper; authors Xia, Abel, Moseley):** `manuscript/main.tex` rewritten in full (23 pages,
+AASTeX 7 twocolumn, appendices A-G; still out of git). Every number is a macro from `scripts/manuscript_numbers.py`
+(new: precision, mhdale, benchmark, scorecard -> `manuscript/tables/scorecard.tex`, equal_steps, fofc, selfconv, refcheck,
+nodes_per_gpu, turbulence_ramses2). New figures in `scripts/manuscript_figures.py`: accuracy_all, driven, precision_floor,
+mhdale; `nested_figures.py` writes `paper_figures/nested_window.pdf` from the long windows (512^3 spectra computed on
+Sherlock by `sherlock_nested/cube_spectra.py`, only `cube_spectra.npz` fetched). Two internal referee rounds in
+`manuscript/review/`. Findings from them: RAMSES II takes as many steps as AthenaK (its Courant 0.8 is a sum rule), the
+GLM kernels 3.1x; the two references (AthenaK 4096^2, Athena++ 2048^2) agree to 5-16 % of the median error except the
+current sheet (1.2x: not interpretable); decay ratios agree between seeds to 4 % (Re) and 9.5 % (E_M); fp32 floor of
+AthenaPK PPM = 0.55 x 2^-24 x steps; Athena++ PPM/HLLD robustness now 121/130 (non-finite decay runs no longer counted).
+Open for the paper: Castro/Nyx production (arrays 52860617/22/24, nyx 52860681; trial passed except Castro's 3D B=50 blast,
+a genuine failure), AthenaPK FOFC Mach 9 decay at all grids (52854104), confirm Eric's affiliation/email and funding text.
+
 **2026-11-17 (Tom via lyxia: add Castro and Nyx; can MHD-ALE be made competitive, "supposed to have low error at least
 for a fixed number of zones"):**
 - *AthenaPK fix confirmed* (job 52536645, `check_fofc.py`): with `first_order_flux_correct` the 512³ seed-42 decay holds

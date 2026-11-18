@@ -176,9 +176,9 @@ def fmt(x, d=2):
 
 def latex(out):
     """The table for the manuscript (AASTeX deluxetable*, small type): one line per set-up."""
-    lines = [r"\begin{deluxetable*}{lccccccccc}", r"\tabletypesize{\scriptsize}", r"\tablecaption{The Mach 9 decay test after Table 1 of K11: every set-up "
+    lines = [r"\begin{deluxetable*}{lccccccccc}", r"\tabletypesize{\scriptsize}", r"\tablecaption{The Mach 9 decay test after Table 1 of K11: every setup "
              r"against the reference, " + out["reference_label"].replace("_", r"\_") + r" at $512^3$.\label{tab:decay}}",
-             r"\tablehead{\colhead{Set-up} & \colhead{Finished} & \colhead{$E_{\rm K}$} & \colhead{$E_{\rm M}$} & \colhead{$\langle 2\Omega+\frac{4}{3}\Delta\rangle$} & "
+             r"\tablehead{\colhead{Setup} & \colhead{Finished} & \colhead{$E_{\rm K}$} & \colhead{$E_{\rm M}$} & \colhead{$\langle 2\Omega+\frac{4}{3}\Delta\rangle$} & "
              r"\colhead{$\langle J^2\rangle$} & \colhead{$u$-ESB} & \colhead{$B$-ESB} & \colhead{$\bar\chi(k>100)$} & \colhead{Cost}}", r"\startdata"]
     for m, e in out["setups"].items():
         st = e["status"];done = sum(v == "complete" for v in st.values());ran = sum(v != "not run" for v in st.values())
@@ -189,11 +189,11 @@ def latex(out):
                      f"{fmt(e.get('esb_u'))} & {fmt(e.get('esb_b'))} & {fmt(e.get('chi_k100_window', e.get('chi_k100')))} & "
                      f"{'--' if cost_ is None else f'{cost_:.2g}\\,{unit}'} \\\\")
     lines += [r"\enddata", r"\tablecomments{Finished: runs that reached $t=0.2$ of those run at $256^3$ and $512^3$, two seeds (and the latest time a "
-              r"stopped set-up reached). Energies at $t=0.2$ and small-scale measures (time-averaged over $t=0.02$--$0.2$) at $512^3$, relative to the "
+              r"stopped setup reached). Energies at $t=0.2$ and small-scale measures (time-averaged over $t=0.02$--$0.2$) at $512^3$, relative to the "
               r"reference. Effective spectral bandwidths (ESB, K11 sec.~5.4) at $256^3$ against the reference at $512^3$, from spectra averaged over "
               f"$t={WINDOW[0]}$--${WINDOW[1]}$, tolerance $\\pm{int(100*TOL)}\\%$; $\\bar\\chi$ over the same window at $512^3$. Cost to $t=0.2$ at $512^3$: "
               r"g, hours on one H100; n, hours on 128-core nodes. Every metric is the mean over the seeds, each against the reference's run of "
-              r"the same seed." + "".join(f" $^{{\\rm a}}$Not used: {pc.label(v['setup'], True)} at ${v['N']}^3$, seed {v['seed'] - 41}, whose total "
+              r"the same seed." + "".join(f" $^{{\\rm a}}$Not used: {pc.label(v['setup'], True)} at ${v['N']}^3$, seed {v['seed']}, whose total "
               f"energy moved by {100*v['drift']:.0f}\\%." for v in out["energy_violations"]) + "}", r"\end{deluxetable*}"]
     return "\n".join(lines) + "\n"
 

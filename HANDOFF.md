@@ -105,7 +105,7 @@ AASTeX 7 twocolumn, appendices A-G; still out of git). Every number is a macro f
 nodes_per_gpu, turbulence_ramses2). New figures in `scripts/manuscript_figures.py`: accuracy_all, driven, precision_floor,
 mhdale; `nested_figures.py` writes `paper_figures/nested_window.pdf` from the long windows (512^3 spectra computed on
 Sherlock by `sherlock_nested/cube_spectra.py`, only `cube_spectra.npz` fetched). Two internal referee rounds in
-`manuscript/review/`. Findings from them: RAMSES II takes as many steps as AthenaK (its Courant 0.8 is a sum rule), the
+`manuscript/review/` (round 3 recommends acceptance after author details and funding; new figure rate_accuracy replaces speed). Findings from them: RAMSES II takes as many steps as AthenaK (its Courant 0.8 is a sum rule), the
 GLM kernels 3.1x; the two references (AthenaK 4096^2, Athena++ 2048^2) agree to 5-16 % of the median error except the
 current sheet (1.2x: not interpretable); decay ratios agree between seeds to 4 % (Re) and 9.5 % (E_M); fp32 floor of
 AthenaPK PPM = 0.55 x 2^-24 x steps; Athena++ PPM/HLLD robustness now 121/130 (non-finite decay runs no longer counted).

@@ -933,7 +933,35 @@ def accuracy_all(sw):
     return fig
 
 
-FIGURES.update(driven=driven, precision_floor=precision_floor, mhdale=mhdale, accuracy_all=accuracy_all)
+def rate_accuracy(sw):
+    """Every setup: its rate of cell updates at full occupancy (per H100, or per 128-core node) against its median time to
+    the yardstick accuracy over the least (build_benchmark.time_ratio); filled GPU, open CPU; marker size grows with the
+    number of tests on which it reached the yardstick."""
+    import json
+    import build_benchmark as bb
+    import work_precision as wp
+    rows = json.loads(bb.DATA.read_text());tests, methods, fastest = bb.setups(rows)
+    fig, ax = plt.subplots(figsize=(COLUMN, 3.3), layout="constrained")
+    lab = {"ramses2f32_uct": "RAMSES II UCT-HLLD fp32", "ramses2_uct": "RAMSES II UCT-HLLD", "glm": "GLM LLF", "glm_fix_hlld": "GLM HLLD",
+           "cholla_ppmc": "Cholla PPMC", "athenak_best": "AthenaK PPM4", "athenak_matched": "AthenaK PLM", "athenapk_best": "AthenaPK PPM",
+           "athenapp_best": "Athena++ PPM", "ramses_best": "RAMSES HLLD", "enzo_ct": "Enzo CT", "phantom_sph": "Phantom", "pluto_ct_best": "gPLUTO CT"}
+    for m in methods:
+        med, n, ran = bb.time_ratio(rows, tests, fastest, m);r = wp.full_rate(sw, m)
+        if not med or not r:continue
+        cpu = any("CPU" in (x.get("resource") or "") for x in wp.runs_of(r[1].split()[0]).values() if x["method"] == m)
+        rate = r[0]*(128 if cpu else 1);c = pc.color(m)
+        ax.plot(rate, med, ls="", marker="s" if cpu else "o", ms=2.2 + 3.5*n/len(tests), color=c, markerfacecolor="white" if cpu else c, markeredgewidth=.8)
+        off = {"cholla_ppmc": (4, -7), "athenak_best": (-34, 5), "enzo_ct": (2, 5), "ramses_best": (4, -6), "glm_fix_hlld": (5, -1),
+               "athenapp_best": (4, -1), "pluto_ct_best": (4, -1)}.get(m, (3, 2))
+        if m in lab:ax.annotate(lab[m], (rate, med), xytext=off, textcoords="offset points", fontsize=5.6, color=INK)
+    ax.set_xscale("log");ax.set_yscale("log");ticks(ax)
+    ax.set_xlabel("cell updates per second (one H100, or one 128-core node)");ax.set_ylabel("time to accuracy / least")
+    ax.legend(handles=[Line2D([], [], ls="", marker="o", color=MUTED, label="GPU"), Line2D([], [], ls="", marker="s", color=MUTED, markerfacecolor="white", label="CPU (128 cores)")],
+              loc="upper right", fontsize=6.5)
+    return fig
+
+
+FIGURES.update(driven=driven, precision_floor=precision_floor, mhdale=mhdale, accuracy_all=accuracy_all, rate_accuracy=rate_accuracy)
 
 def main(argv):
     preview = None

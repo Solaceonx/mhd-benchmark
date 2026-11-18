@@ -430,6 +430,9 @@ def benchmark():
     os_ = [statistics.median(o) for m in second if m in methods and (o := [rows[t]["methods"][m]["order"] for t in ("entropy", "alfven", "alfven_oblique")
                                                                           if t in rows and (rows[t]["methods"].get(m) or {}).get("order") is not None])]
     put("orderSecondMin", g(min(os_), 1));put("orderSecondMax", g(max(os_), 1), "median smooth-wave order over the second-order grid set-ups")
+    for m, key in (("ramses2f32_uct", "RamsesTwoFpUct"), ("ramses2_uct", "RamsesTwoUct"), ("cholla_ppmc", "ChollaPPMC"), ("athenak_best", "AthenaKBest")):
+        rs = [rows[t]["methods"][m]["cost"]/fastest[t] for t in tests if (rows[t]["methods"].get(m) or {}).get("cost")]
+        put(f"bench{key}Lo", g(np.percentile(rs, 25), 1));put(f"bench{key}Hi", g(np.percentile(rs, 75), 1), f"{m}: interquartile range of the per-test time ratio")
     best = sorted(((bb.time_ratio(rows, tests, fastest, m)[0], m) for m in methods if bb.time_ratio(rows, tests, fastest, m)[0]), key=lambda x: x[0])
     put("benchFastestName", pc_label(best[0][1]), "the set-up with the least median time to the accuracy")
 

@@ -111,6 +111,16 @@ for a fixed number of zones"):**
   `ale_l2` and `ale_l2_q4` (degree 4/3, N/4 elements) in `mhdale_run.py`; build `build-abel-l2` (published `build-abel`
   untouched). Smoke at 32²: entropy 1.8e-3 -> 7.1e-4 (l2) -> 2.9e-4 (q4). Pilot arrays 52702616/21 (ale_l2), 52702625/32
   (q4): 8 tests at 64-256² (KH to 128²), results `$SCRATCH/mhd-results-mhdale-l2`.
+  *Pilot done* (fetched: `mhdale_l2_results/`, records + last state only). Endpoint rank among ~45 runs at fixed N:
+  entropy 128²/256² #32/#41 -> #5 (l2 and q4); smooth-density blast_2d_b50 256² #34 -> #31 (l2), #20 (q4); gem ~#9;
+  field loop #2 unchanged. Brio-Wu, Orszag-Tang, KH, rotor stay #43-46: their density is uniform or piecewise constant,
+  so the projection changes nothing; the shock/vortex error is the scheme's, not the initial state's. q4 is worse on
+  rotor and gem at 64².
+- *Castro build 1 failed* (52704067): its make scripts run `#!/usr/bin/env python` = Python 2 on the nodes. `build.sh`
+  now loads python/3.12.1 and puts a `python` -> python3 shim first on PATH for Castro. Nyx built fine. Rebuild
+  52743607 then failed on `#include <format>` (needs GCC 13+): Castro now builds and runs with gcc/14.2.0 + cuda/12.8.0
+  (12.4 stops at GCC 13), gcc loaded LAST because cuda/12.8.0 pulls in gcc/12.4.0 (`castro_mods` in build.sh, the castro
+  line of production.sbatch). Rebuild 52827629, trial 52827678 (afterok), 2026-11-18.
 - *Castro + Nyx:* `sherlock_newcodes/castro/abel_suite` (problem dir; MHD is 3-D only, planar tests on an 8-cell slab;
   CTU + HLLD + CT; set-ups plm, ppm), `nyx/abel_suite` + `nyx/patch_nyx.py` (hydro only: entropy, blast_2d_b0,
   blast_3d_b0, kh_uniform; exact output times patched), runner + AMReX plotfile reader in `newcodes_run.py`, tasks,

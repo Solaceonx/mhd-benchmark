@@ -24,6 +24,8 @@ step() {    # name, file that proves it is done, command...
     tail -n 10 "$logs/$name.log" | cut -c1-240; return 1
 }
 cuda_mods="${NEWCODES_CUDA_MODULES:-devel system git/2.45.1 gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0 cmake/3.31.4 hdf5/1.14.4}"
+# Castro 26.11 includes <format> (C++20 library): GCC 14, so CUDA 12.8 (12.4 stops at GCC 13); Python 3 for its scripts
+castro_mods="${NEWCODES_CASTRO_MODULES:-devel system git/2.45.1 openmpi/4.1.6 cuda/12.8.0 python/3.12.1 gcc/14.2.0}"   # gcc last: cuda/12.8.0 pulls in gcc/12.4.0
 nvhpc_mods="${NEWCODES_NVHPC_MODULES:-devel system git/2.45.1 nvhpc/24.7 python/3.12.1}"
 cpu_mods="${NEWCODES_CPU_MODULES:-devel system git/2.45.1 gcc/12.4.0 openmpi/4.1.6 cmake/3.31.4 hdf5/1.14.4}"
 use() { module purge >/dev/null 2>&1; module load $1 >/dev/null 2>&1 || { echo "module load $1 failed"; module load $1; }; }
@@ -121,9 +123,11 @@ build_phantom() {
 }
 
 build_castro() {     # the problem directory is ours (castro/abel_suite); Castro's own sources are not changed
+    # Castro's build scripts run as "#!/usr/bin/env python" and use f-strings: point "python" at the module's python3
     local t="$root/castro/tree" p="$root/castro/tree/Exec/mhd_tests/AbelSuite"
     fresh "$src/castro" "$t" && rm -rf "$p" && cp -r "$here/castro/abel_suite" "$p" && cp "$header" "$p/" \
-    && (cd "$p" && make -j "$jobs" USE_CUDA=TRUE CUDA_ARCH=90 CASTRO_HOME="$t") \
+    && mkdir -p "$root/castro/pyshim" && ln -sf "$(command -v python3)" "$root/castro/pyshim/python" \
+    && (cd "$p" && PATH="$root/castro/pyshim:$PATH" make -j "$jobs" USE_CUDA=TRUE CUDA_ARCH=90 CASTRO_HOME="$t") \
     && { exe="$(ls "$p"/Castro3d*.ex 2>/dev/null | head -n 1)"; [[ -n "$exe" ]] && ln -sf "$exe" "$root/castro/castro"; }
 }
 build_nyx() {
@@ -147,7 +151,7 @@ for code in "${want[@]}"; do
                for s in ct_matched ct_best glm_matched glm_best; do for d in 2 3; do step "pluto-$s-${d}d" "$root/pluto/$s-${d}d/pluto" build_pluto $s $d || bad=1; done; done ;;
         enzo) use "$cpu_mods"; step enzo "$root/enzo/enzo" build_enzo || bad=1 ;;
         phantom) use "$cpu_mods binutils/2.38"; step phantom "$root/phantom/tree/bin/phantomanalysis" build_phantom || bad=1 ;;
-        castro) use "$cuda_mods"; mkdir -p "$root/castro"; step castro "$root/castro/castro" build_castro || bad=1 ;;
+        castro) use "$castro_mods"; mkdir -p "$root/castro"; step castro "$root/castro/castro" build_castro || bad=1 ;;
         nyx) use "$cuda_mods"; mkdir -p "$root/nyx"; step nyx "$root/nyx/nyx" build_nyx || bad=1 ;;
         *) echo "unknown code $code"; bad=1 ;;
     esac

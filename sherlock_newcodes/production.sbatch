@@ -29,7 +29,7 @@ while IFS='|' read -r code variant test seed grids geometry; do
         pluto) mods="devel nvhpc/24.7"; exe="$root/pluto/$variant-2d/pluto"; mpi="srun -n $SLURM_NTASKS" ;;   # an MPI build: started directly it hangs in MPI_Init
         enzo) mods="devel gcc/12.4.0 openmpi/4.1.6 hdf5/1.14.4"; exe="$root/enzo/enzo"; mpi="srun -n $SLURM_NTASKS"; kind=cpu ;;
         # AMReX-Astro (2026-11-17; build.sh castro nyx): MPI + CUDA builds, a rank per GPU
-        castro) mods="devel gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0"; exe="$root/castro/castro"; mpi="srun -n $SLURM_NTASKS" ;;
+        castro) mods="devel openmpi/4.1.6 cuda/12.8.0 gcc/14.2.0"; exe="$root/castro/castro"; mpi="srun -n $SLURM_NTASKS" ;;   # as build.sh castro_mods
         nyx) mods="devel gcc/12.4.0 openmpi/4.1.6 cuda/12.4.0"; exe="$root/nyx/nyx"; mpi="srun -n $SLURM_NTASKS" ;;
         phantom) mods="devel gcc/12.4.0"; exe="$root/phantom/tree/bin/phantom"; mpi=""; kind=cpu ;;
     esac

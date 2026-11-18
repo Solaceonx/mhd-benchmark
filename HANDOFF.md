@@ -121,6 +121,10 @@ for a fixed number of zones"):**
   52743607 then failed on `#include <format>` (needs GCC 13+): Castro now builds and runs with gcc/14.2.0 + cuda/12.8.0
   (12.4 stops at GCC 13), gcc loaded LAST because cuda/12.8.0 pulls in gcc/12.4.0 (`castro_mods` in build.sh, the castro
   line of production.sbatch). Rebuild 52827629, trial 52827678 (afterok), 2026-11-18.
+  Built. Trial: Castro 2-D runs fine (Alfven 64² B error 3.8e-3, AthenaPK 1.2e-3, Cholla 3.1e-4); 3-D blast_3d_b50
+  went to negative density in step 1 at every retry -> amrex::Abort (too many subcycles), which srun reported as a kill,
+  so the trial stopped before Nyx. Now: castro.small_dens/small_pres 1e-6 (AthenaPK's floors; Castro's default 1e-100
+  leaves its interface/HLLD floors idle) and run_amrex records amrex::Abort as the code's stop. Trial rerun 52853782.
 - *Castro + Nyx:* `sherlock_newcodes/castro/abel_suite` (problem dir; MHD is 3-D only, planar tests on an 8-cell slab;
   CTU + HLLD + CT; set-ups plm, ppm), `nyx/abel_suite` + `nyx/patch_nyx.py` (hydro only: entropy, blast_2d_b0,
   blast_3d_b0, kh_uniform; exact output times patched), runner + AMReX plotfile reader in `newcodes_run.py`, tasks,

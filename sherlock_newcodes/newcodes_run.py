@@ -544,6 +544,9 @@ def castro_input(config, n, settings, geometry, outputs):
     lines = amrex_common(config, n, geometry, outputs, "castro") + [
         "castro.do_hydro = 1", "castro.do_react = 0", f"castro.ppm_type = {settings['ppm_type']}", f"castro.cfl = {settings['cfl']}",
         "castro.plot_per_is_exact = 1", "castro.sum_interval = -1", "castro.v = 1",
+        # AthenaPK's floors (dfloor, pfloor 1e-6); Castro's default 1e-100 leaves its interface and HLLD floors idle: the
+        # 3-D blast (bx = 50, beta ~ 1e-4) went to negative density in step 1 at every retry (trial 52827678)
+        "castro.small_dens = 1.e-6", "castro.small_pres = 1.e-6",
         "amr.plot_vars = density xmom ymom zmom rho_E", "amr.derive_plot_vars = B_x B_y B_z",
         f"eos.eos_gamma = {X.gamma_of(config)!r}", "eos.eos_assume_neutral = 1"]
     return "\n".join(lines) + "\n"
@@ -588,6 +591,10 @@ def run_amrex(code, args, config, spec, settings, rundir, rep, outputs, resume=F
     perf["ranks"] = int(m.group(1)) if (m := re.search(r"-n\s*(\d+)", args.mpi or "")) else 1
     text = (rundir/f"{code}.log").read_text(errors="replace")
     code_clock(code, text, perf)
+    # The code's own stop (amrex::Abort: too many subcycles after its retries, say) is an MPI abort that srun reports as
+    # the rank killed: a result, not a lost job (as Cholla's and Enzo's)
+    stop = text.find("amrex::Abort::")
+    if stop >= 0:code_rc, text = 1, text[:text.find("\n", stop) + 1]
     dirs = sorted((d for d in rundir.glob("plt*") if (d/"Header").is_file() and ".old" not in d.name), key=lambda d: int(re.sub(r"\D", "", d.name) or 0))
     found = []
     for d in dirs:

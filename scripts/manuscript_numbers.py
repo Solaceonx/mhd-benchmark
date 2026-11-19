@@ -86,6 +86,8 @@ def decay():
     put("decayNeverList", ", ".join(S[m]["label"] for m in never))
     best = [m for m in never if m.endswith("_best") or m == "cholla_ppmc"]
     put("decayNeverBest", str(len(best)), "of them the PPM-type/HLLD/RK3 'best' set-ups")
+    nb = len({S[m]["family"] for m in best})
+    put("decayNeverBestCodes", {4: "four", 5: "five", 6: "six", 7: "seven"}.get(nb, str(nb)), "the codes those set-ups belong to (gPLUTO has two)")
     put("decayAlways", str(sum(all(runs[m]) for m in runs)), "set-ups that finished every grid and seed they ran")
     for key, short in (("glm", "GlmLLF"), ("ct", "CTproto"), ("athenak_matched", "AthenaK"), ("athenapp_matched", "Athenapp"), ("ramses_best", "Ramses"),
                        ("ramses2_best", "RamsesTwo"), ("athenapk_matched", "AthenaPK"), ("cholla_plmc", "Cholla"), ("pluto_ct_matched", "PlutoCT"),

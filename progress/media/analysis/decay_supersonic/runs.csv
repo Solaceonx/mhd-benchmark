@@ -3112,6 +3112,550 @@ phantom_sph,Phantom SPH,256,43,failed,False,0.04000000000000022,,0,incomplete or
 
  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
 "
+castro_plm,Castro PLM,64,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-plm-run-N64-s42/data/castro_plm_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 8.944614563e-06
+[0m
+
+[1m[32m  Beginning subcycle 7 starting at time 0.01628111999 with dt = 8.944614563e-06[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.0002214 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 8.944614563e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.472307281e-06
+[0m
+
+[1m[32m  Beginning subcycle 7 starting at time 0.01628111999 with dt = 4.472307281e-06[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000222232 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 4.472307281e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 2.236153641e-06
+[0m
+
+[1m[32m  Beginning subcycle 7 starting at time 0.01628111999 with dt = 2.236153641e-06[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000250384 on level 0
+
+...estimated hydro-limited timestep at level 0: 2.928381334e-08
+...hydro-limited CFL timestep constrained at (i,j,k) = (49,19,49)
+Castro::estTimeStep (hydro-limited) at level 0:  estdt = 2.928381334e-08
+
+Advance was unsuccessful with reason: post-advance timestep validity check failed; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 2.236153641e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.11807682e-06
+[0m
+
+  The subcycle mechanism requested 16 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,64,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-plm-run-N64-s43/data/castro_plm_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+.000293561 on level 0
+
+Castro::do_old_sources() time = 0.000262811 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.000131527271 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 6.576363548e-05
+[0m
+
+[1m[32m  Beginning subcycle 2 starting at time 0.01771023871 with dt = 6.576363548e-05[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000254684 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 6.576363548e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 3.288181774e-05
+[0m
+
+[1m[32m  Beginning subcycle 2 starting at time 0.01771023871 with dt = 3.288181774e-05[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000272368 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 3.288181774e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.644090887e-05
+[0m
+
+[1m[32m  Beginning subcycle 2 starting at time 0.01771023871 with dt = 1.644090887e-05[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000272584 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 1.644090887e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 8.220454435e-06
+[0m
+
+  The subcycle mechanism requested 16 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,128,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-plm-run-N128-s42/data/castro_plm_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+mum length dt = 3.561521787e-05
+[0m
+
+[1m[32m  Beginning subcycle 2 starting at time 0.01502393777 with dt = 3.561521787e-05[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.001038465 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 3.561521787e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.780760893e-05
+[0m
+
+[1m[32m  Beginning subcycle 2 starting at time 0.01502393777 with dt = 1.780760893e-05[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.001035128 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[32m  Beginning subcycle 3 starting at time 0.01504174538 with dt = 1.780760893e-05[0m
+  Estimated number of subcycles remaining: 3
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.001206953 on level 0
+
+Castro::do_old_sources() time = 0.001020119 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 1.780760893e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 8.903804466e-06
+[0m
+
+[1m[32m  Beginning subcycle 3 starting at time 0.01504174538 with dt = 8.903804466e-06[0m
+  Estimated number of subcycles remaining: 6
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.001023296 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 8.903804466e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.451902233e-06
+[0m
+
+  The subcycle mechanism requested 12 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,128,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-plm-run-N128-s43/data/castro_plm_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ng subcycle 5 starting at time 0.01618210766 with dt = 8.167036341e-06[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.001199019 on level 0
+
+Castro::do_old_sources() time = 0.001039829 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 8.167036341e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.083518171e-06
+[0m
+
+[1m[32m  Beginning subcycle 5 starting at time 0.01618210766 with dt = 4.083518171e-06[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.001033991 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 4.083518171e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 2.041759085e-06
+[0m
+
+[1m[32m  Beginning subcycle 5 starting at time 0.01618210766 with dt = 2.041759085e-06[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.001062903 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[32m  Beginning subcycle 6 starting at time 0.01618414942 with dt = 2.041759085e-06[0m
+  Estimated number of subcycles remaining: 7
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.001249681 on level 0
+
+Castro::do_old_sources() time = 0.001043787 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 2.041759085e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.020879543e-06
+[0m
+
+  The subcycle mechanism requested 14 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,256,42,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-plm-run-N256-s42/data/castro_plm_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ning: 1
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.006908591 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 7.110424952e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 3.555212476e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01400998544 with dt = 3.555212476e-05[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.006962828 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 3.555212476e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.777606238e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01400998544 with dt = 1.777606238e-05[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.00695993 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 1.777606238e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 8.88803119e-06
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01400998544 with dt = 8.88803119e-06[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.006948639 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 8.88803119e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.444015595e-06
+[0m
+
+  The subcycle mechanism requested 16 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,256,43,failed,False,0.0,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-plm-run-N256-s43/data/castro_plm_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+sity; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 8.153115321e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.076557661e-06
+[0m
+
+[1m[32m  Beginning subcycle 5 starting at time 0.01531318121 with dt = 4.076557661e-06[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.007042297 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 4.076557661e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 2.03827883e-06
+[0m
+
+[1m[32m  Beginning subcycle 5 starting at time 0.01531318121 with dt = 2.03827883e-06[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.006963735 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[32m  Beginning subcycle 6 starting at time 0.01531521949 with dt = 2.03827883e-06[0m
+  Estimated number of subcycles remaining: 7
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.008184128 on level 0
+
+Castro::do_old_sources() time = 0.006953955 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[32m  Beginning subcycle 7 starting at time 0.01531725777 with dt = 2.03827883e-06[0m
+  Estimated number of subcycles remaining: 6
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.008145728 on level 0
+
+Castro::do_old_sources() time = 0.006937442 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 2.03827883e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.019139415e-06
+[0m
+
+  The subcycle mechanism requested 12 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,512,42,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-plm-run-N512-s42/data/castro_plm_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+g: 1
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028052015 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 3.553704764e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.776852382e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01375637332 with dt = 1.776852382e-05[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028374705 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 1.776852382e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 8.884261911e-06
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01375637332 with dt = 8.884261911e-06[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.02804975 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 8.884261911e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.442130956e-06
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01375637332 with dt = 4.442130956e-06[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028065416 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 4.442130956e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 2.221065478e-06
+[0m
+
+  The subcycle mechanism requested 16 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,512,43,failed,False,0.0,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-plm-run-N512-s43/data/castro_plm_r1,"exit code 1; missing output times [0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
+ning: 1
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028041689 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 3.25978001e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.629890005e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01509495724 with dt = 1.629890005e-05[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028044065 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 1.629890005e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 8.149450026e-06
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01509495724 with dt = 8.149450026e-06[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028041 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 8.149450026e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.074725013e-06
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.01509495724 with dt = 4.074725013e-06[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028035833 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 4.074725013e-06 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 2.037362507e-06
+[0m
+
+  The subcycle mechanism requested 16 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::1::Error: too many subcycles. !!!
+"
+castro_ppm,Castro PPM,64,42,complete,True,0.2,3.653159576,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-ppm-run-N64-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,64,43,complete,True,0.2,3.417770985,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-ppm-run-N64-s43/data/castro_ppm_r1,
+castro_ppm,Castro PPM,128,42,complete,True,0.2,39.67467579,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-ppm-run-N128-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,128,43,complete,True,0.2,33.39297956,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-ppm-run-N128-s43/data/castro_ppm_r1,
+castro_ppm,Castro PPM,256,42,complete,True,0.2,646.6787434,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-ppm-run-N256-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,256,43,complete,True,0.2,566.639641,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-ppm-run-N256-s43/data/castro_ppm_r1,
+castro_ppm,Castro PPM,512,42,complete,True,0.2,7115.774361,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-ppm-run-N512-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,512,43,complete,True,0.2,6340.788315,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/decay_supersonic-castro-ppm-run-N512-s43/data/castro_ppm_r1,
 ramses2_matched,RAMSES II HLL,64,42,failed,False,0.06,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/decay_supersonic-ramses2-matched-run-N64-s42/data/ramses2_matched_r1,"exit code 1; missing output times [0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2]
 Mb
  Used memory: 386.4 Mb

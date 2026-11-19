@@ -665,7 +665,7 @@ def arepo(sw):
 WP_TESTS = (("alfven_oblique", "Alfvén wave, oblique"), ("brio_wu_rotated", "Brio–Wu at 45°"), ("orszag_tang", "Orszag–Tang"),
             ("rotor", "Rotor"), ("kh_uniform", "Kelvin–Helmholtz"), ("field_loop_3d", "Field loop, 3D"))
 WP_SHOW = ("glm", "glm_fix_hll16", "glm_fix_hlld", "athenak_matched", "athenak_best", "athenapp_best", "athenapk_best", "cholla_ppmc",
-           "pluto_ct_best", "ramses_best", "ramses2_uct", "ramses2f32_uct", "enzo_ct")
+           "pluto_ct_best", "ramses_best", "ramses2_uct", "ramses2f32_uct", "enzo_ct", "castro_ppm")
 
 
 def work_precision(sw):
@@ -898,7 +898,7 @@ def mhdale(sw):
 # One marker per code in the paper's accuracy figure: every code's recommended set-up, and Abel et al.'s kernels
 ACC_BEST = (("athenak_best", "o"), ("athenapp_best", "s"), ("athenapk_best", "D"), ("cholla_ppmc", "^"), ("pluto_ct_best", "v"),
             ("ramses_best", "<"), ("ramses2_uct", ">"), ("enzo_ct", "p"), ("arepo_moving", "h"),
-            ("gizmo_mfm", "*"), ("phantom_sph", "P"), ("mhdale_ale", "X"))
+            ("gizmo_mfm", "*"), ("phantom_sph", "P"), ("mhdale_ale", "X"), ("castro_ppm", "8"), ("nyx_ppm", "H"))
 ACC_ABEL = (("glm", "x"), ("glm_hll16", "o"), ("glm_fix_hll16", "o"), ("glm_fix_hlld", "s"), ("ct_fix", "d"))
 
 
@@ -947,14 +947,13 @@ def rate_accuracy(sw):
            "athenapp_best": "Athena++ PPM", "ramses_best": "RAMSES HLLD", "enzo_ct": "Enzo CT", "phantom_sph": "Phantom", "pluto_ct_best": "gPLUTO CT",
            "castro_ppm": "Castro PPM", "nyx_ppm": "Nyx PPM"}
     for m in methods:
-        if m.startswith(("castro", "nyx")):continue        # added once their production runs are complete
         med, n, ran = bb.time_ratio(rows, tests, fastest, m);r = wp.full_rate(sw, m)
         if not med or not r:continue
         cpu = any("CPU" in (x.get("resource") or "") for x in wp.runs_of(r[1].split()[0]).values() if x["method"] == m)
         rate = r[0]*(128 if cpu else 1);c = pc.color(m)
         ax.plot(rate, med, ls="", marker="s" if cpu else "o", ms=2.2 + 3.5*n/len(tests), color=c, markerfacecolor="white" if cpu else c, markeredgewidth=.8)
         off = {"cholla_ppmc": (4, -7), "athenak_best": (-34, 5), "enzo_ct": (2, 5), "ramses_best": (4, -6), "glm_fix_hlld": (5, -1),
-               "athenapp_best": (4, -1), "pluto_ct_best": (4, -1)}.get(m, (3, 2))
+               "athenapp_best": (4, -1), "pluto_ct_best": (4, -1), "castro_ppm": (-34, 1), "nyx_ppm": (4, 1), "athenapk_best": (-40, -3)}.get(m, (3, 2))
         if m in lab:ax.annotate(lab[m], (rate, med), xytext=off, textcoords="offset points", fontsize=5.6, color=INK)
     ax.set_xscale("log");ax.set_yscale("log");ticks(ax)
     ax.set_xlabel("cell updates per second (one H100, or one 128-core node)");ax.set_ylabel("time to accuracy / least")

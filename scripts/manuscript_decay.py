@@ -32,7 +32,7 @@ import paper_common as pc  # noqa: E402
 import sweep_data as sd  # noqa: E402
 
 TEST = "decay_supersonic"
-SETUPS = (tuple(sd.METHODS) + tuple(m for m in sd.NEWCODES if not m.startswith(("castro", "nyx"))) + tuple(sd.RAMSES2)   # Castro/Nyx held out until complete
+SETUPS = (tuple(sd.METHODS) + tuple(m for m in sd.NEWCODES if not m.startswith("nyx")) + tuple(sd.RAMSES2)   # Nyx (hydrodynamics) does not run it
           + tuple(sd.FOFC))
 # The reference pool and the spreads: double precision (and Abel et al.'s kernels), each code as its authors recommend --
 # not AthenaPK with its first-order flux correction, an option switched on after its high-order set-up failed here

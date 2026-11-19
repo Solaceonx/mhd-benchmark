@@ -332,6 +332,83 @@ phantom_sph,Phantom SPH,64,42,complete,True,0.15000000000000022,21.22,1,Code-rep
 phantom_sph,Phantom SPH,128,42,complete,True,0.15000000000000022,74.293,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/rotor-phantom-sph-run-N128-s42/data/phantom_sph_r1,
 phantom_sph,Phantom SPH,256,42,complete,True,0.15000000000000022,382.56,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/rotor-phantom-sph-run-N256-s42/data/phantom_sph_r1,
 phantom_sph,Phantom SPH,512,42,complete,True,0.15000000000000022,1336.6,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/rotor-phantom-sph-run-N512-s42/data/phantom_sph_r1,
+castro_plm,Castro PLM,32,42,failed,False,0.05,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-plm-run-N32-s42/data/castro_plm_r1,"exit code 1; missing output times [0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14, 0.15]
+of maximum length dt = 0.00158874934
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.05322501266 with dt = 0.00158874934[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.00015097 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.00158874934 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 0.0007943746698
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.05322501266 with dt = 0.0007943746698[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000129535 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[32m  Beginning subcycle 2 starting at time 0.05401938733 with dt = 0.0007943746698[0m
+  Estimated number of subcycles remaining: 3
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.000152205 on level 0
+
+Castro::do_old_sources() time = 0.000129255 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0007943746698 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 0.0003971873349
+[0m
+
+[1m[32m  Beginning subcycle 2 starting at time 0.05401938733 with dt = 0.0003971873349[0m
+  Estimated number of subcycles remaining: 6
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000129989 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0003971873349 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 0.0001985936674
+[0m
+
+  The subcycle mechanism requested 12 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,64,42,complete,True,0.15,0.471557013,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-plm-run-N64-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,128,42,complete,True,0.15,1.336148771,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-plm-run-N128-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,256,42,complete,True,0.15,6.720204254,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-plm-run-N256-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,512,42,complete,True,0.15,47.73031233,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-plm-run-N512-s42/data/castro_plm_r1,
+castro_ppm,Castro PPM,32,42,complete,True,0.15,0.26824369,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-ppm-run-N32-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,64,42,complete,True,0.15,0.501122754,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-ppm-run-N64-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,128,42,complete,True,0.15,1.481510087,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-ppm-run-N128-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,256,42,complete,True,0.15,7.823015604,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-ppm-run-N256-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,512,42,complete,True,0.15,54.00730359,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/rotor-castro-ppm-run-N512-s42/data/castro_ppm_r1,
 ramses2_matched,RAMSES II HLL,32,42,complete,True,0.15,0.3964429,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/rotor-ramses2-matched-run-N32-s42/data/ramses2_matched_r1,
 ramses2_matched,RAMSES II HLL,64,42,complete,True,0.15,0.7315948,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/rotor-ramses2-matched-run-N64-s42/data/ramses2_matched_r1,
 ramses2_matched,RAMSES II HLL,128,42,complete,True,0.15,4.2228353,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/rotor-ramses2-matched-run-N128-s42/data/ramses2_matched_r1,

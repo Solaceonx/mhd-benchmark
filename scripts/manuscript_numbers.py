@@ -48,9 +48,6 @@ def thousands(n):
 def counts():
     import build_home as bh
     c = bh.count()
-    # Castro and Nyx (2026-11-18) are held out of the paper until their production runs are complete
-    held = {"Castro", "Nyx"};held_runs = sum(c["code"].pop(h, 0) for h in held)
-    c["campaign"]["newcodes"] = c["campaign"].get("newcodes", 0) - held_runs
     put("nRuns", thousands(sum(c["campaign"].values()) + c["turb"] + c["nested"]), "every run of every campaign, turbulence and nests included (build_home.count)")
     put("nRunsBench", thousands(sum(c["campaign"].values())), "runs of the test-suite campaigns")
     put("nCodes", str(len(c["code"])), "codes")
@@ -66,7 +63,7 @@ def counts():
     labels = set()
     for f in (sd.SITE/"media"/"analysis").glob("*/data.json"):
         d = json.loads(f.read_text())
-        if isinstance(d, dict) and "runs" in d:labels |= {r["method"] for r in d["runs"] if not r["method"].endswith("_reference") and not r["method"].startswith(("castro", "nyx"))}
+        if isinstance(d, dict) and "runs" in d:labels |= {r["method"] for r in d["runs"] if not r["method"].endswith("_reference")}
     put("nSetups", str(len(labels)), "distinct set-ups (code, scheme, precision) with a run in the test analysis, references excluded")
 
 
@@ -92,7 +89,7 @@ def decay():
     put("decayAlways", str(sum(all(runs[m]) for m in runs)), "set-ups that finished every grid and seed they ran")
     for key, short in (("glm", "GlmLLF"), ("ct", "CTproto"), ("athenak_matched", "AthenaK"), ("athenapp_matched", "Athenapp"), ("ramses_best", "Ramses"),
                        ("ramses2_best", "RamsesTwo"), ("athenapk_matched", "AthenaPK"), ("cholla_plmc", "Cholla"), ("pluto_ct_matched", "PlutoCT"),
-                       ("pluto_glm_matched", "PlutoGLM"), ("enzo_dedner", "EnzoDedner"), ("enzo_ct", "EnzoCT"), ("ramses2_uct", "RamsesTwoUCT")):
+                       ("pluto_glm_matched", "PlutoGLM"), ("enzo_dedner", "EnzoDedner"), ("enzo_ct", "EnzoCT"), ("ramses2_uct", "RamsesTwoUCT"), ("castro_ppm", "CastroPPM")):
         e = S.get(key, {})
         for f, nm in (("re_rel", "Re"), ("rm_rel", "Rm"), ("esb_u", "ESBu"), ("esb_b", "ESBb"), ("ek_ratio", "EK"), ("em_ratio", "EM"),
                       ("chi_k100_window", "Chi"), ("ps_k100", "Ps"), ("pd_k100", "Pd")):
@@ -111,7 +108,7 @@ def decay():
         v = [S[m][f] for m in fin];put(f"decay{nm}Min", g(min(v)));put(f"decay{nm}Max", g(max(v)), f"{f} over {len(v)} set-ups at 256^3")
     # By Riemann solver: the two-wave (HLL/HLLE) set-ups, the HLLD set-ups other than the reference's scheme, and RAMSES
     groups = (("HLL", ("athenak_matched", "athenapp_matched", "athenapk_matched", "pluto_ct_matched", "pluto_glm_matched", "enzo_dedner")),
-              ("HLLD", ("cholla_plmc", "enzo_ct")))
+              ("HLLD", ("cholla_plmc", "enzo_ct", "castro_ppm")))
     for nm, ms in groups:
         ms = [m for m in ms if m in S and "ps_k100" in S[m]]
         for f, q in (("ps_k100", "Ps"), ("pd_k100", "Pd"), ("chi_k100_window", "Chi")):
@@ -476,7 +473,8 @@ SCORE = (("Abel et al.\\ kernels (Julia, H100)", (("glm", "GLM, LLF"), ("glm_hll
                                ("athenapk_best", "AthenaPK PPM/HLLD/RK3"), ("cholla_plmc", "Cholla PLMC/HLLD"), ("cholla_ppmc", "Cholla PPMC/HLLD"),
                                ("pluto_ct_matched", "gPLUTO linear/HLL, CT"), ("pluto_ct_best", "gPLUTO parabolic/HLLD, CT"), ("pluto_glm_best", "gPLUTO parabolic/HLLD, GLM"),
                                ("ramses2_matched", "RAMSES II HLL, CT"), ("ramses2_best", "RAMSES II HLLD, CT"), ("ramses2_uct", "RAMSES II UCT-HLLD"),
-                               ("ramses2f32_uct", "RAMSES II UCT-HLLD, fp32"))),
+                               ("ramses2f32_uct", "RAMSES II UCT-HLLD, fp32"), ("castro_plm", "Castro PLM/HLLD/CTU"), ("castro_ppm", "Castro PPM/HLLD/CTU"),
+                               ("nyx_plm", "Nyx PLM (hydro)"), ("nyx_ppm", "Nyx PPM (hydro)"))),
          ("CPU codes (128 cores)", (("athenapp_matched", "Athena++ PLM/HLLE/VL2"), ("athenapp_best", "Athena++ PPM/HLLD/RK3"), ("ramses_matched", "RAMSES HLL"),
                                     ("ramses_best", "RAMSES HLLD"), ("enzo_dedner", "Enzo Dedner PLM/HLL"), ("enzo_ct", "Enzo CT PLM/HLLD"),
                                     ("arepo_moving", "AREPO moving mesh"), ("arepo_static", "AREPO static mesh"), ("gizmo_mfm", "GIZMO MFM"),
@@ -556,6 +554,25 @@ def scorecard():
     out[-1] = out[-1].rstrip(" \\\\")
     out += ["\\enddata", "\\end{deluxetable*}"]
     (ROOT/"manuscript"/"tables"/"scorecard.tex").write_text("\n".join(out) + "\n")
+
+
+def castro_nyx():
+    """Castro and Nyx (AMReX-Astro; production 2026-11-18): Castro's measured order on each smooth wave (both setups), the
+    effect of its shock flattening on them (the check castro_*_noflat: final states compared), and Nyx's tests."""
+    import glob
+    W = json.loads((sd.SITE/"media"/"analysis"/"work_precision.json").read_text())
+    for tests, nm in ((("alfven", "alfven_oblique"), "Alfven"), (("entropy",), "Entropy")):
+        o = [W[t]["methods"][m]["order"] for t in tests for m in ("castro_plm", "castro_ppm") if (W[t]["methods"].get(m) or {}).get("order") is not None]
+        put(f"castroOrder{nm}Min", g(min(o), 1));put(f"castroOrder{nm}Max", g(max(o), 1), f"Castro PLM and PPM: measured order on {tests}")
+    diffs = []
+    for f in glob.glob(str(sd.NEWCODES_RESULTS/"*-castro-*_noflat-run-N*-s42")):
+        a = sorted(glob.glob(f.replace("_noflat", "") + "/data/*_r1/state_*.bin"));b = sorted(glob.glob(f + "/data/*_r1/state_*.bin"))
+        if a and b:
+            x, y = np.fromfile(a[-1], dtype="<f4"), np.fromfile(b[-1], dtype="<f4");diffs.append(float(np.max(np.abs(x - y))/np.max(np.abs(x))))
+    put("castroNoflatRuns", str(len(diffs)), "smooth-wave runs repeated with castro.use_flattening = 0")
+    put("castroNoflatMax", f"{max(diffs):.0e}".replace("e-0", "\\times10^{-") + "}" if max(diffs) > 0 else "0", "largest relative difference of their final states from the default's")
+    sw = sd.Sweep();nyx = sorted({k[0] for k in sw.rows if k[1] == "nyx_ppm"})
+    put("nNyxTests", {4: "four", 3: "three", 5: "five"}.get(len(nyx), str(len(nyx))), f"tests Nyx ran: {nyx}")
 
 
 def fofc():
@@ -638,7 +655,7 @@ def refcheck():
 
 
 def main():
-    counts();decay();factorial();factorial_smooth();turbulence();turbulence_ramses2();nested();suite();accuracy();gem_precision();precision();mhdale();benchmark();scorecard();fofc();selfconv();refcheck();nodes_per_gpu()
+    counts();decay();factorial();factorial_smooth();turbulence();turbulence_ramses2();nested();suite();accuracy();gem_precision();precision();mhdale();benchmark();scorecard();fofc();castro_nyx();selfconv();refcheck();nodes_per_gpu()
     lines = ["% Written by scripts/manuscript_numbers.py from the records; do not edit by hand."]
     for name, value, comment in M:
         lines.append(f"\\newcommand{{\\{name}}}{{{value}}}" + (f"  % {comment}" if comment else ""))

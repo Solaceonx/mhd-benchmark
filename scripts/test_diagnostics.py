@@ -168,7 +168,7 @@ class Run:
                 <=1e-5*max(1,abs(self.diag["time"][-1])))
 
     @property
-    def gpu(self):return self.method in OURS or self.method.startswith("athenak") or self.method.split("_")[0] in ("athenapk","cholla","pluto","ramses2","ramses2f32")
+    def gpu(self):return self.method in OURS or self.method.startswith("athenak") or self.method.split("_")[0] in ("athenapk","cholla","pluto","ramses2","ramses2f32","castro","nyx")
 
     @functools.cached_property
     def environment(self):

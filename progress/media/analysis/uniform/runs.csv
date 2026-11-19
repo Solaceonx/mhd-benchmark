@@ -154,6 +154,126 @@ phantom_sph,Phantom SPH,64,42,complete,True,0.10000000000000023,33.17,1,Code-rep
 phantom_sph,Phantom SPH,128,42,complete,True,0.10000000000000023,55.37,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/uniform-phantom-sph-run-N128-s42/data/phantom_sph_r1,
 phantom_sph,Phantom SPH,256,42,complete,True,0.10000000000000023,114.93,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/uniform-phantom-sph-run-N256-s42/data/phantom_sph_r1,
 phantom_sph,Phantom SPH,512,42,complete,True,0.10000000000000023,494.49,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/uniform-phantom-sph-run-N512-s42/data/phantom_sph_r1,
+castro_plm,Castro PLM,32,42,failed,False,0.1,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-plm-run-N32-s42/data/castro_plm_r1,"exit code 0; missing output times [0.005]
+.00621995615
+...hydro-limited CFL timestep constrained at (i,j,k) = (0,0,0)
+Castro::estTimeStep (hydro-limited) at level 0:  estdt = 0.00621995615
+
+ ... limiting dt to 0.005 to hit the next plot interval.
+ ... limiting dt to 0.005 to hit the stop_time.
+[Level 0 step 20] ADVANCE at time 0.095 with dt = 0.005
+
+[1m[32m  Beginning subcycle 1 starting at time 0.095 with dt = 0.005[0m
+  Estimated number of subcycles remaining: 1
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000131553 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+  Subcycling complete
+
+  Zones advanced per microsecond at this level: 3.836632156
+
+[Level 0 step 20] Advanced 8192 cells
+
+STEP = 20 TIME = 0.1 DT = 0.005
+
+Castro::do_new_sources() time = 0.000169504 on level 0
+
+
+[STEP 20] Coarse TimeStep time: 0.002280385
+[STEP 20] FAB kilobyte spread across MPI nodes: [16909 ... 16909]
+
+PLOTFILE: file = plt00020
+Write plotfile time = 0.005608003  seconds
+
+
+Ending run at 23:09:25 UTC on 2026-11-18.
+Run time = 0.20162866
+Run time without initialization = 0.190481935
+
+  Average number of zones advanced per microsecond: 0.860
+  Average number of zones advanced per microsecond per rank: 0.860
+
+CPU(0): Heap Space (bytes) used by Coalescing FAB Arena: 63696912384
+Total GPU global memory (MB) spread across MPI: [80994 ... 80994]
+Free  GPU global memory (MB) spread across MPI: [19579 ... 19579]
+[The         Arena] max space (MB) allocated spread across MPI: [60746 ... 60746]
+[The         Arena] max space (MB) used      spread across MPI: [119 ... 119]
+[The Managed Arena] max space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] max space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] max space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] max space (MB) used      spread across MPI: [0 ... 0]
+[The   Comms Arena] max space (MB) allocated spread across MPI: [8 ... 8]
+[The   Comms Arena] max space (MB) used      spread across MPI: [0 ... 0]
+AMReX (26.11) finalized
+"
+castro_plm,Castro PLM,64,42,complete,True,0.1,0.284465608,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-plm-run-N64-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,128,42,complete,True,0.1,0.695720267,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-plm-run-N128-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,256,42,complete,True,0.1,2.247152656,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-plm-run-N256-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,512,42,complete,True,0.1,12.86278239,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-plm-run-N512-s42/data/castro_plm_r1,
+castro_ppm,Castro PPM,32,42,failed,False,0.1,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-ppm-run-N32-s42/data/castro_ppm_r1,"exit code 0; missing output times [0.005]
+00621995615
+...hydro-limited CFL timestep constrained at (i,j,k) = (0,0,0)
+Castro::estTimeStep (hydro-limited) at level 0:  estdt = 0.00621995615
+
+ ... limiting dt to 0.005 to hit the next plot interval.
+ ... limiting dt to 0.005 to hit the stop_time.
+[Level 0 step 20] ADVANCE at time 0.095 with dt = 0.005
+
+[1m[32m  Beginning subcycle 1 starting at time 0.095 with dt = 0.005[0m
+  Estimated number of subcycles remaining: 1
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000150708 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+  Subcycling complete
+
+  Zones advanced per microsecond at this level: 4.231896786
+
+[Level 0 step 20] Advanced 8192 cells
+
+STEP = 20 TIME = 0.1 DT = 0.005
+
+Castro::do_new_sources() time = 0.000218038 on level 0
+
+
+[STEP 20] Coarse TimeStep time: 0.002099994
+[STEP 20] FAB kilobyte spread across MPI nodes: [16909 ... 16909]
+
+PLOTFILE: file = plt00020
+Write plotfile time = 0.006103431  seconds
+
+
+Ending run at 03:40:41 UTC on 2026-11-19.
+Run time = 0.216382684
+Run time without initialization = 0.204325213
+
+  Average number of zones advanced per microsecond: 0.802
+  Average number of zones advanced per microsecond per rank: 0.802
+
+CPU(0): Heap Space (bytes) used by Coalescing FAB Arena: 63696912384
+Total GPU global memory (MB) spread across MPI: [80994 ... 80994]
+Free  GPU global memory (MB) spread across MPI: [19578 ... 19578]
+[The         Arena] max space (MB) allocated spread across MPI: [60746 ... 60746]
+[The         Arena] max space (MB) used      spread across MPI: [119 ... 119]
+[The Managed Arena] max space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] max space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] max space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] max space (MB) used      spread across MPI: [0 ... 0]
+[The   Comms Arena] max space (MB) allocated spread across MPI: [8 ... 8]
+[The   Comms Arena] max space (MB) used      spread across MPI: [0 ... 0]
+AMReX (26.11) finalized
+"
+castro_ppm,Castro PPM,64,42,complete,True,0.1,0.321345044,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-ppm-run-N64-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,128,42,complete,True,0.1,0.71241957,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-ppm-run-N128-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,256,42,complete,True,0.1,2.551229029,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-ppm-run-N256-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,512,42,complete,True,0.1,14.44969226,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/uniform-castro-ppm-run-N512-s42/data/castro_ppm_r1,
 ramses2_matched,RAMSES II HLL,32,42,complete,True,0.1,0.5720479,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/uniform-ramses2-matched-run-N32-s42/data/ramses2_matched_r1,
 ramses2_matched,RAMSES II HLL,64,42,complete,True,0.1,0.9748521,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/uniform-ramses2-matched-run-N64-s42/data/ramses2_matched_r1,
 ramses2_matched,RAMSES II HLL,128,42,complete,True,0.1,3.048337,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/uniform-ramses2-matched-run-N128-s42/data/ramses2_matched_r1,

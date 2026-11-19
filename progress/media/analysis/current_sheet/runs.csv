@@ -393,6 +393,217 @@ phantom_sph,Phantom SPH,64,42,complete,True,2.5,292.57,1,Code-reported: Phantom 
 phantom_sph,Phantom SPH,128,42,complete,True,2.5,662.14,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/current_sheet-phantom-sph-run-N128-s42/data/phantom_sph_r1,
 phantom_sph,Phantom SPH,256,42,complete,True,2.5,2236.5,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/current_sheet-phantom-sph-run-N256-s42/data/phantom_sph_r1,
 phantom_sph,Phantom SPH,512,42,complete,True,2.5,14905.0,1,Code-reported: Phantom total wall time (with its set-up and output); wall_seconds includes startup,32 CPU ranks (record),fp64 evolution; Float32 snapshots,,newcodes_results/mhd-results-newcodes/current_sheet-phantom-sph-run-N512-s42/data/phantom_sph_r1,
+castro_plm,Castro PLM,32,42,complete,True,2.5,1.365763178,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-plm-run-N32-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,64,42,complete,True,2.5,2.634613283,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-plm-run-N64-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,128,42,complete,True,2.5,8.108670208,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-plm-run-N128-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,256,42,failed,False,2.375,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-plm-run-N256-s42/data/castro_plm_r1,"exit code 1; missing output times [2.5]
+ of maximum length dt = 0.0003708699311
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 2.442773941 with dt = 0.0003708699311[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000600243 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0003708699311 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 0.0001854349656
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 2.442773941 with dt = 0.0001854349656[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000597911 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0001854349656 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 9.271748278e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 2.442773941 with dt = 9.271748278e-05[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000600236 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[32m  Beginning subcycle 2 starting at time 2.442866658 with dt = 9.271748278e-05[0m
+  Estimated number of subcycles remaining: 7
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.000618248 on level 0
+
+Castro::do_old_sources() time = 0.000563005 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 9.271748278e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.635874139e-05
+[0m
+
+  The subcycle mechanism requested 14 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_plm,Castro PLM,512,42,failed,False,1.5,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-plm-run-N512-s42/data/castro_plm_r1,"exit code 1; missing output times [1.625, 1.75, 1.875, 2.0, 2.125, 2.25, 2.375, 2.5]
+emaining: 1
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.001430943 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0002315930442 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 0.0001157965221
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 1.538858927 with dt = 0.0001157965221[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.001414836 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0001157965221 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 5.789826104e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 1.538858927 with dt = 5.789826104e-05[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.001441631 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 5.789826104e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 2.894913052e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 1.538858927 with dt = 2.894913052e-05[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.0024847 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 2.894913052e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.447456526e-05
+[0m
+
+  The subcycle mechanism requested 16 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_ppm,Castro PPM,32,42,complete,True,2.5,1.210709205,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-ppm-run-N32-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,64,42,complete,True,2.5,2.91776124,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-ppm-run-N64-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,128,42,complete,True,2.5,8.515857494,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-ppm-run-N128-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,256,42,failed,False,1.75,,0,incomplete or invalid,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-ppm-run-N256-s42/data/castro_ppm_r1,"exit code 1; missing output times [1.875, 2.0, 2.125, 2.25, 2.375, 2.5]
+maining: 1
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000980713 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0006690965275 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 0.0003345482638
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 1.861969512 with dt = 0.0003345482638[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000500875 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0003345482638 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 0.0001672741319
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 1.861969512 with dt = 0.0001672741319[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.00050141 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.0001672741319 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 8.363706594e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 1.861969512 with dt = 8.363706594e-05[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.000502714 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 8.363706594e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.181853297e-05
+[0m
+
+  The subcycle mechanism requested 16 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_ppm,Castro PPM,512,42,complete,True,2.5,369.519919,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/current_sheet-castro-ppm-run-N512-s42/data/castro_ppm_r1,
 ramses2_matched,RAMSES II HLL,32,42,complete,True,2.5,0.5531728,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/current_sheet-ramses2-matched-run-N32-s42/data/ramses2_matched_r1,
 ramses2_matched,RAMSES II HLL,64,42,complete,True,2.5,2.00125,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/current_sheet-ramses2-matched-run-N64-s42/data/ramses2_matched_r1,
 ramses2_matched,RAMSES II HLL,128,42,complete,True,2.5,15.8114393,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/current_sheet-ramses2-matched-run-N128-s42/data/ramses2_matched_r1,

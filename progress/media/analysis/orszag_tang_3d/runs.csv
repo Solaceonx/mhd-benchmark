@@ -403,6 +403,149 @@ phantom_sph,Phantom SPH,256,42,failed,False,0.30000000000000027,,0,incomplete or
 
  FATAL ERROR! evolve: h|divb|/b is too large; recommend to increase the overcleanfac
 "
+castro_plm,Castro PLM,32,42,complete,True,1.0,0.990762766,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-plm-run-N32-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,64,42,complete,True,1.0,3.99715395,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-plm-run-N64-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,128,42,complete,True,1.0,37.82134825,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-plm-run-N128-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,256,42,complete,True,1.0,598.4244068,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-plm-run-N256-s42/data/castro_plm_r1,
+castro_plm,Castro PLM,512,42,failed,False,0.3,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-plm-run-N512-s42/data/castro_plm_r1,"exit code 1; missing output times [0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0]
+inning subcycle 1 starting at time 0.3884180067 with dt = 9.922824766e-05[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.032694404 on level 0
+
+Castro::do_old_sources() time = 0.028009696 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 9.922824766e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.961412383e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.3884180067 with dt = 4.961412383e-05[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028049982 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 4.961412383e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 2.480706191e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.3884180067 with dt = 2.480706191e-05[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028045377 on level 0
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[32m  Beginning subcycle 2 starting at time 0.3884428137 with dt = 2.480706191e-05[0m
+  Estimated number of subcycles remaining: 7
+
+... mhd ...!!! 
+
+Castro::do_new_sources() time = 0.032603577 on level 0
+
+Castro::do_old_sources() time = 0.028030425 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 2.480706191e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.240353096e-05
+[0m
+
+  The subcycle mechanism requested 14 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
+castro_ppm,Castro PPM,32,42,complete,True,1.0,0.973086891,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-ppm-run-N32-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,64,42,complete,True,1.0,4.18786271,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-ppm-run-N64-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,128,42,complete,True,1.0,41.93511159,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-ppm-run-N128-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,256,42,complete,True,1.0,678.0807339,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-ppm-run-N256-s42/data/castro_ppm_r1,
+castro_ppm,Castro PPM,512,42,failed,False,0.3,,0,incomplete or invalid,2 H100,fp64 evolution; Float32 snapshots,0.3,newcodes_results/mhd-results-newcodes/orszag_tang_3d-castro-ppm-run-N512-s42/data/castro_ppm_r1,"exit code 1; missing output times [0.4, 0.5, 0.6000000000000001, 0.7000000000000001, 0.8, 0.9, 1.0]
+les remaining: 1
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028115813 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 0.000193898916 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 9.694945801e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.3798716518 with dt = 9.694945801e-05[0m
+  Estimated number of subcycles remaining: 2
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028018024 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 9.694945801e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 4.8474729e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.3798716518 with dt = 4.8474729e-05[0m
+  Estimated number of subcycles remaining: 4
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028016837 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 4.8474729e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 2.42373645e-05
+[0m
+
+[1m[32m  Beginning subcycle 1 starting at time 0.3798716518 with dt = 2.42373645e-05[0m
+  Estimated number of subcycles remaining: 8
+
+... mhd ...!!! 
+
+Castro::do_old_sources() time = 0.028016939 on level 0
+
+Advance was unsuccessful with reason: invalid density; proceeding to a retry.
+
+[1m[32m  Subcycle completed[0m
+
+
+[1m[31m  Timestep 2.42373645e-05 rejected at level 0.
+  Performing a retry, with subcycled timesteps of maximum length dt = 1.211868225e-05
+[0m
+
+  The subcycle mechanism requested 16 subcycled timesteps, which is larger than the maximum of 10.
+  If you would like to override this, increase the parameter castro.max_subcycles.
+amrex::Abort::0::Error: too many subcycles. !!!
+"
 ramses2_matched,RAMSES II HLL,32,42,complete,True,1.0,0.3261421,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/orszag_tang_3d-ramses2-matched-run-N32-s42/data/ramses2_matched_r1,
 ramses2_matched,RAMSES II HLL,64,42,complete,True,1.0,1.3038309,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/orszag_tang_3d-ramses2-matched-run-N64-s42/data/ramses2_matched_r1,
 ramses2_matched,RAMSES II HLL,128,42,complete,True,1.0,12.2243099,1,Code-reported evolution-loop time (includes its own output in repeat 1); wall_seconds includes startup,1 H100,fp64 evolution; Float32 snapshots,0.5,ramses2_results/orszag_tang_3d-ramses2-matched-run-N128-s42/data/ramses2_matched_r1,

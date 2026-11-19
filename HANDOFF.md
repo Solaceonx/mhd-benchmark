@@ -109,8 +109,17 @@ Sherlock by `sherlock_nested/cube_spectra.py`, only `cube_spectra.npz` fetched).
 GLM kernels 3.1x; the two references (AthenaK 4096^2, Athena++ 2048^2) agree to 5-16 % of the median error except the
 current sheet (1.2x: not interpretable); decay ratios agree between seeds to 4 % (Re) and 9.5 % (E_M); fp32 floor of
 AthenaPK PPM = 0.55 x 2^-24 x steps; Athena++ PPM/HLLD robustness now 121/130 (non-finite decay runs no longer counted).
-Open for the paper: Castro/Nyx production (arrays 52860617/22/24, nyx 52860681; trial passed except Castro's 3D B=50 blast,
-a genuine failure), AthenaPK FOFC Mach 9 decay at all grids (52854104), confirm Eric's affiliation/email and funding text.
+**2026-11-19 (paper, round 5):** Castro and Nyx are in the paper (Table 1, 2, Figs 1-4, decay table, appendices B and E).
+Castro: first order on the Alfven waves (PLM = PPM; flattening off gives bit-identical states; cause untraced), second order
+on entropy; both setups fail every magnetized blast (Castro's "invalid density" retries run out); PLM fails the Mach 9 decay
+before the first output, PPM finishes (Re_eff 0.73). ~0.06-0.08e9 updates/s per H100. Nyx (hydro, 4 tests) finishes all.
+Castro's start-up div B check (|div B| <= 1e-10 |B| per cell, no absolute floor) stopped kh_localized: our face fields now
+go through a non-inlined potential function (castro/abel_suite), built as `castro-next` and used for the 4 reruns
+(52896487, tasks/castro_rerun.txt). The full FOFC decay (52854104, sweep_data.FOFC, own decay rows) makes AthenaPK
+PPM/HLLD/RK3 finish and the LEAST diffusive setup (Re 1.22, Rm 1.13 of RAMSES II UCT, chi 0.67 inside K11's range); the
+reference stays RAMSES II UCT ("least diffusive run as recommended"). Fixed: Table 2's Finished column double-counted the
+fixed kernels, new codes and RAMSES II; test_diagnostics treated Castro/Nyx as CPU codes; build_benchmark.CODES lacked them.
+Open: funding/allocation acknowledgments, Eric's affiliation check, co-author approval.
 
 **2026-11-17 (Tom via lyxia: add Castro and Nyx; can MHD-ALE be made competitive, "supposed to have low error at least
 for a fixed number of zones"):**

@@ -547,6 +547,7 @@ def castro_input(config, n, settings, geometry, outputs):
         # AthenaPK's floors (dfloor, pfloor 1e-6); Castro's default 1e-100 leaves its interface and HLLD floors idle: the
         # 3-D blast (bx = 50, beta ~ 1e-4) went to negative density in step 1 at every retry (trial 52827678)
         "castro.small_dens = 1.e-6", "castro.small_pres = 1.e-6",
+        *(["castro.use_flattening = 0"] if settings.get("flattening") is False else []),
         "amr.plot_vars = density xmom ymom zmom rho_E", "amr.derive_plot_vars = B_x B_y B_z",
         f"eos.eos_gamma = {X.gamma_of(config)!r}", "eos.eos_assume_neutral = 1"]
     return "\n".join(lines) + "\n"
@@ -622,6 +623,9 @@ def run_nyx(*a, **k):return run_amrex("nyx", *a, **k)
 
 
 X.RUNNERS.update(castro=run_castro, nyx=run_nyx)
+# Castro with shock flattening off, as its own Alfven convergence test (Exec/mhd_tests/Alfven); a check, not a production set-up
+for _v in ("plm", "ppm"):
+    X.VARIANTS["castro"][_v + "_noflat"] = dict(X.VARIANTS["castro"][_v], flattening=False, limiter="no flattening (castro.use_flattening 0)")
 
 
 # Single precision (lyxia, 2026-11-12: every GPU code also in fp32, as Abel et al.'s kernels and RAMSES II): the same

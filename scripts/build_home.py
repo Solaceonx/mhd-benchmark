@@ -25,7 +25,7 @@ e = html.escape
 CODES = (("glm", "Abel et al. GPU kernels", "GPU"), ("ct", "Abel et al. GPU kernels", "GPU"), ("athenak", "AthenaK", "GPU"),
          ("athenapk", "AthenaPK", "GPU"), ("cholla", "Cholla", "GPU"), ("pluto", "gPLUTO", "GPU"), ("ramses2", "RAMSES II", "GPU"),
          ("ramses", "RAMSES", "CPU"), ("athenapp", "Athena++", "CPU"), ("arepo", "AREPO", "CPU"), ("gizmo", "GIZMO", "CPU"),
-         ("enzo", "Enzo", "CPU"), ("phantom", "Phantom", "CPU"), ("mhdale", "MHD-ALE", "CPU"))
+         ("enzo", "Enzo", "CPU"), ("phantom", "Phantom", "CPU"), ("mhdale", "MHD-ALE", "CPU"), ("castro", "Castro", "GPU"), ("nyx", "Nyx", "GPU"))
 # page (local name) -> (one line, lead picture or None); the picture is shrunk to a JPEG thumbnail
 CARDS = {
     "benchmark.html": ("Which code is good at what: the time each set-up needs to reach a given accuracy, and its order of accuracy, test by test.",

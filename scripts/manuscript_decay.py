@@ -32,7 +32,7 @@ import paper_common as pc  # noqa: E402
 import sweep_data as sd  # noqa: E402
 
 TEST = "decay_supersonic"
-SETUPS = tuple(sd.METHODS) + tuple(sd.NEWCODES) + tuple(sd.RAMSES2)
+SETUPS = tuple(sd.METHODS) + tuple(m for m in sd.NEWCODES if not m.startswith(("castro", "nyx"))) + tuple(sd.RAMSES2)   # Castro/Nyx held out until complete
 MAIN = tuple(m for m in SETUPS if m not in sd.RAMSES2_F32)          # the figures: double precision (and Abel et al.'s kernels)
 SEEDS = (42, 43)
 WINDOW = (0.1, 0.2)                                                   # spectra averaged over these outputs

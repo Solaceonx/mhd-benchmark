@@ -66,6 +66,11 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     "enzo_dedner": ("enzo", "Enzo Dedner (Wang & Abel), PLM/HLL/RK2", "Enzo Dedner", (0, (4.5, 4.5)), "s"),
     "enzo_ct": ("enzo", "Enzo CT (Collins et al.), PLM/HLLD", "Enzo CT", "-", "o"),
     "phantom_sph": ("phantom", "Phantom SPMHD, divergence cleaning", "Phantom SPH", "-", "^"),
+    # AMReX-Astro (2026-11-18): Castro's CTU MHD (HLLD, CT; 3D only, planar tests on a slab) and Nyx's hydrodynamics (4 tests)
+    "castro_plm": ("castro", "Castro PLM/HLLD/CTU, CT", "Castro PLM", (0, (4.5, 4.5)), "s"),
+    "castro_ppm": ("castro", "Castro PPM/HLLD/CTU, CT", "Castro PPM", "-", "o"),
+    "nyx_plm": ("nyx", "Nyx PLM/two-shock/CTU (hydro)", "Nyx PLM", (0, (4.5, 4.5)), "s"),
+    "nyx_ppm": ("nyx", "Nyx PPM/two-shock/CTU (hydro)", "Nyx PPM", "-", "o"),
     # RAMSES II, the official code (sweep_data.RAMSES2): three set-ups on one H100, in double and in single precision; in the new
     # codes' panels (the single-precision ones in the tables and the benchmark only: test_diagnostics.groups)
     "ramses2_matched": ("ramses2", "RAMSES II MUSCL-Hancock/HLL, CT", "RAMSES II HLL", (0, (4.5, 4.5)), "s"),

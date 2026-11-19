@@ -897,8 +897,8 @@ def mhdale(sw):
 
 # One marker per code in the paper's accuracy figure: every code's recommended set-up, and Abel et al.'s kernels
 ACC_BEST = (("athenak_best", "o"), ("athenapp_best", "s"), ("athenapk_best", "D"), ("cholla_ppmc", "^"), ("pluto_ct_best", "v"),
-            ("ramses_best", "<"), ("ramses2_uct", ">"), ("enzo_ct", "p"), ("arepo_moving", "h"), ("gizmo_mfm", "*"), ("phantom_sph", "P"),
-            ("mhdale_ale", "X"))
+            ("ramses_best", "<"), ("ramses2_uct", ">"), ("enzo_ct", "p"), ("arepo_moving", "h"),
+            ("gizmo_mfm", "*"), ("phantom_sph", "P"), ("mhdale_ale", "X"))
 ACC_ABEL = (("glm", "x"), ("glm_hll16", "o"), ("glm_fix_hll16", "o"), ("glm_fix_hlld", "s"), ("ct_fix", "d"))
 
 
@@ -944,8 +944,10 @@ def rate_accuracy(sw):
     fig, ax = plt.subplots(figsize=(COLUMN, 3.3), layout="constrained")
     lab = {"ramses2f32_uct": "RAMSES II UCT-HLLD fp32", "ramses2_uct": "RAMSES II UCT-HLLD", "glm": "GLM LLF", "glm_fix_hlld": "GLM HLLD",
            "cholla_ppmc": "Cholla PPMC", "athenak_best": "AthenaK PPM4", "athenak_matched": "AthenaK PLM", "athenapk_best": "AthenaPK PPM",
-           "athenapp_best": "Athena++ PPM", "ramses_best": "RAMSES HLLD", "enzo_ct": "Enzo CT", "phantom_sph": "Phantom", "pluto_ct_best": "gPLUTO CT"}
+           "athenapp_best": "Athena++ PPM", "ramses_best": "RAMSES HLLD", "enzo_ct": "Enzo CT", "phantom_sph": "Phantom", "pluto_ct_best": "gPLUTO CT",
+           "castro_ppm": "Castro PPM", "nyx_ppm": "Nyx PPM"}
     for m in methods:
+        if m.startswith(("castro", "nyx")):continue        # added once their production runs are complete
         med, n, ran = bb.time_ratio(rows, tests, fastest, m);r = wp.full_rate(sw, m)
         if not med or not r:continue
         cpu = any("CPU" in (x.get("resource") or "") for x in wp.runs_of(r[1].split()[0]).values() if x["method"] == m)
@@ -961,7 +963,38 @@ def rate_accuracy(sw):
     return fig
 
 
-FIGURES.update(driven=driven, precision_floor=precision_floor, mhdale=mhdale, accuracy_all=accuracy_all, rate_accuracy=rate_accuracy)
+def convergence_all(sw):
+    """End-time error against resolution on the three smooth waves for every code (its high-order setup), AthenaK's second-order
+    setup and the fixed GLM kernels; the same symbols as accuracy_all; guides of slope -1, -2 and -4 (data.json errors)."""
+    tests = (("entropy", "density", "Entropy wave"), ("alfven", "magnetic", "Alfv\u00e9n wave along $x$"), ("alfven_oblique", "magnetic", "Alfv\u00e9n wave, oblique"))
+    sets = (("athenak_matched", "s"),) + tuple((m, mk) for m, mk in ACC_ABEL if m in ("glm", "glm_fix_hll16", "glm_fix_hlld")) + ACC_BEST
+    fig, axes = plt.subplots(1, 3, figsize=(FULL, 3.3), sharey=False)
+    ns_all = (32, 64, 128, 256, 512)
+    for ax, (test, kind, title) in zip(axes, tests):
+        E = {n: endpoint_errors(test, n, kind) for n in ns_all};top = 0
+        for m, mk in sets:
+            pts = [(n, E[n][m]) for n in ns_all if m in E[n]]
+            if len(pts) < 2:continue
+            x, y = zip(*pts);c = pc.color(m);top = max(top, y[0])
+            ax.plot(x, y, color=c, marker=mk, ms=3.2, lw=.9, markerfacecolor="white" if m.startswith(("glm", "ct")) and m != "glm" else c,
+                    markeredgewidth=.8, ls="--" if m == "athenak_matched" else "-")
+        n = np.array([32.0, 512.0])
+        for k, ls in ((1, (0, (1, 2))), (2, (0, (4, 2))), (4, (0, (6, 2, 1, 2)))):
+            ax.plot(n, 2*top*(32/n)**k, color=MUTED, lw=.6, ls=ls)
+        ax.set_xscale("log", base=2);ax.set_yscale("log");ax.set_xticks(ns_all);ax.set_xticklabels([str(v) for v in ns_all])
+        ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator());ax.set_title(title, pad=4);ax.set_xlabel("$N$");ticks(ax)
+    axes[0].set_ylabel("end-time relative $L_1$ error")
+    hs = [Line2D([], [], color=pc.color(m), marker=mk, ms=4, markeredgewidth=.8, ls="--" if m == "athenak_matched" else "-",
+                 markerfacecolor="white" if m.startswith(("glm", "ct")) and m != "glm" else pc.color(m),
+                 label=pc.plain(pc.STYLE[m][2]) + (" (second order)" if m == "athenak_matched" else "")) for m, mk in sets
+          if m not in ("castro_ppm", "nyx_ppm") or any(m in endpoint_errors(t, 128, k) for t, k, _ in tests)]
+    hs += [Line2D([], [], color=MUTED, lw=.6, ls=ls, label=lab) for lab, ls in ((r"$\propto N^{-1}$", (0, (1, 2))), (r"$\propto N^{-2}$", (0, (4, 2))), (r"$\propto N^{-4}$", (0, (6, 2, 1, 2))))]
+    fig.legend(handles=hs, loc="lower center", ncol=6, fontsize=6.3, handlelength=2.2, columnspacing=.9, bbox_to_anchor=(.5, -.01))
+    fig.tight_layout(rect=(0, .2, 1, 1))
+    return fig
+
+
+FIGURES.update(driven=driven, precision_floor=precision_floor, mhdale=mhdale, accuracy_all=accuracy_all, rate_accuracy=rate_accuracy, convergence_all=convergence_all)
 
 def main(argv):
     preview = None

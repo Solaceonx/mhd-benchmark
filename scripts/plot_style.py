@@ -75,7 +75,10 @@ FAMILY.update(athenapk="#6250d6", cholla="#eda100", pluto="#b0479d", enzo="#7a8b
 # E. Moseley's RAMSES II shares those panels: its light violet against the five and the reference grey, normal vision 15.7,
 # protan 13.3, deutan 14.5 (OKLab x 100, 2026-11-09); 3.1:1 on white. Against classic RAMSES's indigo it stays apart too.
 FAMILY.update(ramses2="#a07dfb")
-FAMILY.update(mhdale="#227c89")     # MHD-ALE + our fixes: the teal the test pages gave it (test_diagnostics.style)
+FAMILY.update(mhdale="#227c89")
+# Castro and Nyx (2026-11-18): the best of a search of OKLCH space against every hue above and the reference grey, contrast
+# >= 3:1 on white; Castro's crimson: normal vision 16.2, protan/deutan 9.9; Nyx's purple: 13.9 and 11.8 (OKLab x 100).
+FAMILY.update(castro="#72020e", nyx="#5c1461")     # MHD-ALE + our fixes: the teal the test pages gave it (test_diagnostics.style)
 RUN = FAMILY["glm"]        # the green of Tom Abel's kernels: a run made with them
 REFERENCE = "#52514e"      # the grey of reference runs: the branch or code another is compared with
 COLUMN = {"glm": FAMILY["glm"], "ct": FAMILY["ct"], "truth": REFERENCE}     # the three columns of the first pages (progress/style.css)

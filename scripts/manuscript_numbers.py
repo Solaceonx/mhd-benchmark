@@ -48,6 +48,9 @@ def thousands(n):
 def counts():
     import build_home as bh
     c = bh.count()
+    # Castro and Nyx (2026-11-18) are held out of the paper until their production runs are complete
+    held = {"Castro", "Nyx"};held_runs = sum(c["code"].pop(h, 0) for h in held)
+    c["campaign"]["newcodes"] = c["campaign"].get("newcodes", 0) - held_runs
     put("nRuns", thousands(sum(c["campaign"].values()) + c["turb"] + c["nested"]), "every run of every campaign, turbulence and nests included (build_home.count)")
     put("nRunsBench", thousands(sum(c["campaign"].values())), "runs of the test-suite campaigns")
     put("nCodes", str(len(c["code"])), "codes")
@@ -63,7 +66,7 @@ def counts():
     labels = set()
     for f in (sd.SITE/"media"/"analysis").glob("*/data.json"):
         d = json.loads(f.read_text())
-        if isinstance(d, dict) and "runs" in d:labels |= {r["method"] for r in d["runs"] if not r["method"].endswith("_reference")}
+        if isinstance(d, dict) and "runs" in d:labels |= {r["method"] for r in d["runs"] if not r["method"].endswith("_reference") and not r["method"].startswith(("castro", "nyx"))}
     put("nSetups", str(len(labels)), "distinct set-ups (code, scheme, precision) with a run in the test analysis, references excluded")
 
 
@@ -155,6 +158,20 @@ def factorial():
     put("facPPMAthenaKShockMin", g(min(v), 1));put("facPPMAthenaKShockMax", g(max(v), 1), "AthenaK: PPM's cost gain on the shock tests")
 
 
+def factorial_smooth():
+    """The HLLD gain (two-wave over HLLD cost to the target, PLM, RK3) on the smooth waves in AthenaK and Athena++."""
+    d = json.loads((sd.SITE/"media"/"analysis"/"work_precision.json").read_text())
+    def gain(t):
+        out = []
+        for a, b in (("athenak_plm_hlle_rk3", "athenak_plm_hlld"), ("athenapp_plm_hlle_rk3", "athenapp_plm_hlld")):
+            r = d[t]["methods"]
+            if a in r and b in r and r[a]["cost"] and r[b]["cost"]:out.append(r[a]["cost"]/r[b]["cost"])
+        return out
+    e = gain("entropy");put("facHLLDEntropyMin", g(min(e), 1));put("facHLLDEntropyMax", g(max(e), 1), "HLLD gain on the entropy wave")
+    w = gain("alfven") + gain("alfven_oblique") + gain("field_loop_3d")
+    put("facHLLDWaveMax", g(100*(max(abs(x - 1) for x in w)), 0), "largest |HLLD gain - 1| on the Alfven waves and 3D field loop, per cent")
+
+
 def turbulence():
     """The driven-turbulence pilot (sherlock_turb/summarize.py -> turb_results/summary.csv): complete runs only. RAMSES as
     released and with its forcing projection corrected share the code name; the run name tells them apart."""
@@ -216,7 +233,8 @@ def suite():
     names = dict(glm="GlmLLF", glm_hll16="GlmFSixteen", glm_fix_hll16="GlmFSixteenFixed", glm_hlld="GlmHLLD", ct="CTproto", ct_fix="CTprotoFixed",
                  athenak_matched="AthenaK", athenak_best="AthenaKBest", ramses_best="Ramses", athenapp_best="AthenappBest", ramses2_uct="RamsesTwoUCT",
                  ramses2_best="RamsesTwo", ramses2_matched="RamsesTwoHLL", ramses2f32_uct="RamsesTwoFpUCT", enzo_ct="EnzoCT", enzo_dedner="EnzoDedner", cholla_plmc="Cholla", cholla_ppmc="CholloPPMC",
-                 pluto_ct_best="PlutoCTBest", pluto_ct_matched="PlutoCT", athenapk_best="AthenaPKBest", athenapk_matched="AthenaPK", phantom_sph="Phantom")
+                 pluto_ct_best="PlutoCTBest", pluto_ct_matched="PlutoCT", athenapk_best="AthenaPKBest", athenapk_matched="AthenaPK", phantom_sph="Phantom",
+                 castro_plm="CastroPLM", castro_ppm="CastroPPM", nyx_plm="NyxPLM", nyx_ppm="NyxPPM")
     for m, nm in names.items():
         if m in count:
             d, t = count[m];put(f"rob{nm}", f"{d} of {t}", f"{m}: runs that reached the end, of those planned")
@@ -406,7 +424,8 @@ BENCH_KEYS = {"glm": "GlmLLF", "glm_hll16": "GlmFSixteen", "glm_hlld": "GlmHLLD"
               "ramses2_uct": "RamsesTwoUct", "ramses2_best": "RamsesTwoCT", "ramses2_matched": "RamsesTwoHLL", "ramses2f32_uct": "RamsesTwoFpUct",
               "ramses2f32_best": "RamsesTwoFpCT", "athenapp_matched": "AthenappMatched", "athenapp_best": "AthenappBest", "ramses_matched": "RamsesHLL",
               "ramses_best": "RamsesHLLD", "enzo_dedner": "EnzoDedner", "enzo_ct": "EnzoCT", "arepo_moving": "ArepoMoving", "arepo_static": "ArepoStatic",
-              "gizmo_mfm": "Gizmo", "mhdale_ale": "Mhdale", "phantom_sph": "Phantom"}
+              "gizmo_mfm": "Gizmo", "mhdale_ale": "Mhdale", "phantom_sph": "Phantom", "castro_plm": "CastroPLM", "castro_ppm": "CastroPPM",
+              "nyx_plm": "NyxPLM", "nyx_ppm": "NyxPPM"}
 
 
 def benchmark():
@@ -602,7 +621,7 @@ def refcheck():
 
 
 def main():
-    counts();decay();factorial();turbulence();turbulence_ramses2();nested();suite();accuracy();gem_precision();precision();mhdale();benchmark();scorecard();fofc();selfconv();refcheck();nodes_per_gpu()
+    counts();decay();factorial();factorial_smooth();turbulence();turbulence_ramses2();nested();suite();accuracy();gem_precision();precision();mhdale();benchmark();scorecard();fofc();selfconv();refcheck();nodes_per_gpu()
     lines = ["% Written by scripts/manuscript_numbers.py from the records; do not edit by hand."]
     for name, value, comment in M:
         lines.append(f"\\newcommand{{\\{name}}}{{{value}}}" + (f"  % {comment}" if comment else ""))

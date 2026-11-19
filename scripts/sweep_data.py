@@ -67,7 +67,7 @@ ORDER_RESULTS = Path(os.environ.get("MHD_ORDER_RESULTS", ROOT/"order_results"/"m
 # driver, one directory per run (<test>-<code>-<variant>-run-N<n>-s<seed>, part <code>_<variant>_r1), fetched into
 # newcodes_results/ (git-ignored) by sherlock_newcodes/pack_for_mac.sh. Outside the plan.
 NEWCODES = ("athenapk_matched", "athenapk_best", "cholla_plmc", "cholla_ppmc", "pluto_ct_matched", "pluto_ct_best",
-            "pluto_glm_matched", "pluto_glm_best", "enzo_dedner", "enzo_ct", "phantom_sph")
+            "pluto_glm_matched", "pluto_glm_best", "enzo_dedner", "enzo_ct", "phantom_sph", "castro_plm", "castro_ppm", "nyx_plm", "nyx_ppm")
 NEWCODES_RESULTS = Path(os.environ.get("MHD_NEWCODES_RESULTS", ROOT/"newcodes_results"/"mhd-results-newcodes"))
 NEWCODE_CLOCKS = {}            # (run directory, part) -> (seconds, timer): each code's own clock (sherlock_newcodes/code_clocks.py)
 if (NEWCODES_RESULTS.parent/"code_clocks.tsv").is_file():

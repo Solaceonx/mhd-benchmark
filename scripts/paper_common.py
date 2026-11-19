@@ -57,6 +57,9 @@ STYLE = {   # method: (family, label, short label, line style, marker)
     # five codes run after the sweep (sweep_data.NEWCODES): their own panels, a hue per code, matched dashed and best solid
     "athenapk_matched": ("athenapk", "AthenaPK PLM/HLLE/VL2, GLM", "AthenaPK PLM/HLLE", (0, (4.5, 4.5)), "s"),
     "athenapk_best": ("athenapk", "AthenaPK PPM/HLLD/RK3, GLM", "AthenaPK PPM/HLLD", "-", "o"),
+    # AthenaPK with first-order flux correction, Mach 9 decay only (sweep_data.FOFC)
+    "athenapk_matched_fofc": ("athenapk", "AthenaPK PLM/HLLE/VL2, GLM, FOFC", "AthenaPK PLM/HLLE + FOFC", (0, (1, 1.5)), "x"),
+    "athenapk_best_fofc": ("athenapk", "AthenaPK PPM/HLLD/RK3, GLM, FOFC", "AthenaPK PPM/HLLD + FOFC", "-.", "D"),
     "cholla_plmc": ("cholla", "Cholla PLMC/HLLD/VL, CT", "Cholla PLMC", (0, (4.5, 4.5)), "s"),
     "cholla_ppmc": ("cholla", "Cholla PPMC/HLLD/VL, CT", "Cholla PPMC", "-", "o"),
     "pluto_ct_matched": ("pluto", "gPLUTO linear/HLL/RK2, CT", "gPLUTO CT PLM/HLL", (0, (4.5, 4.5)), "s"),

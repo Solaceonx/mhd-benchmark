@@ -72,7 +72,7 @@ def counts():
 
 def decay():
     J = json.loads((sd.SITE/"media"/"analysis"/"decay_k11.json").read_text());S = J["setups"]
-    main = [m for m in S if m not in sd.RAMSES2_F32]
+    main = [m for m in S if m not in sd.RAMSES2_F32 and m not in sd.FOFC]      # as manuscript_decay.MAIN
     put("decayRef", J["reference_label"], "the reference: least diffusive finished 512^3 set-up");put("decayFinished", str(J["spread"]["finished_512"]), "set-ups finished at 512^3")
     fam = {S[m]["family"] for m in main if S[m].get("ek_ratio") is not None}
     put("decayFinishedCodes", {9: "nine", 10: "ten", 8: "eight", 11: "eleven", 12: "twelve", 13: "thirteen"}.get(len(fam), str(len(fam))), "codes among them")
@@ -92,12 +92,20 @@ def decay():
     put("decayAlways", str(sum(all(runs[m]) for m in runs)), "set-ups that finished every grid and seed they ran")
     for key, short in (("glm", "GlmLLF"), ("ct", "CTproto"), ("athenak_matched", "AthenaK"), ("athenapp_matched", "Athenapp"), ("ramses_best", "Ramses"),
                        ("ramses2_best", "RamsesTwo"), ("athenapk_matched", "AthenaPK"), ("cholla_plmc", "Cholla"), ("pluto_ct_matched", "PlutoCT"),
-                       ("pluto_glm_matched", "PlutoGLM"), ("enzo_dedner", "EnzoDedner"), ("enzo_ct", "EnzoCT")):
+                       ("pluto_glm_matched", "PlutoGLM"), ("enzo_dedner", "EnzoDedner"), ("enzo_ct", "EnzoCT"), ("ramses2_uct", "RamsesTwoUCT")):
         e = S.get(key, {})
         for f, nm in (("re_rel", "Re"), ("rm_rel", "Rm"), ("esb_u", "ESBu"), ("esb_b", "ESBb"), ("ek_ratio", "EK"), ("em_ratio", "EM"),
                       ("chi_k100_window", "Chi"), ("ps_k100", "Ps"), ("pd_k100", "Pd")):
             if e.get(f) is not None:put(f"decay{nm}{short}", g(e[f], 3 if f == "ek_ratio" else 2), f"{key}: {f}")
         if e.get("re_rel"):put(f"decayPm{short}", g(e["rm_rel"]/e["re_rel"]), f"{key}: relative magnetic Prandtl number, <J^2> over <2 Omega + 4/3 Delta>, both relative")
+    # AthenaPK with its first-order flux correction (sweep_data.FOFC): its own rows, outside the reference pool and the ranges
+    for key, short in (("athenapk_best_fofc", "FofcBest"), ("athenapk_matched_fofc", "FofcMatched")):
+        e = S.get(key, {})
+        for f, nm in (("re_rel", "Re"), ("rm_rel", "Rm"), ("esb_u", "ESBu"), ("esb_b", "ESBb"), ("ek_ratio", "EK"), ("em_ratio", "EM"),
+                      ("chi_k100_window", "Chi"), ("ps_k100", "Ps"), ("pd_k100", "Pd")):
+            if e.get(f) is not None:put(f"decay{nm}{short}", g(e[f], 3 if f == "ek_ratio" else 2), f"{key}: {f}")
+        if e.get("cost_h_512") is not None:put(f"decayCost{short}", g(e["cost_h_512"], 2), f"{key}: H100-hours to t = 0.2 at 512^3, seed 42")
+    put("decayCostFofcOverRef", g(S["athenapk_best_fofc"]["cost_h_512"]/S[J["reference"]]["cost_h_512"], 0), "AthenaPK PPM/HLLD + FOFC over the reference: H100-hours at 512^3")
     fin = [m for m in main if "esb_u" in S[m]]
     for f, nm in (("esb_u", "ESBu"), ("esb_b", "ESBb")):
         v = [S[m][f] for m in fin];put(f"decay{nm}Min", g(min(v)));put(f"decay{nm}Max", g(max(v)), f"{f} over {len(v)} set-ups at 256^3")
@@ -226,7 +234,7 @@ def suite():
     """Robustness over the whole suite (finished of planned, every test and grid) and speed at full occupancy."""
     import work_precision as wp
     sw = sd.Sweep();count = {}
-    for table in (sw.rows, sw.newcodes, sw.ramses2, sw.fixed):
+    for table in (sw.rows,):            # sw.rows already holds the new codes', RAMSES II's and the fixed kernels' rows
         for (test, label, n, seed), row in table.items():
             ok = row.get("state") == "done" and sw.went_bad(test, label, n, seed) is None     # reached the end with a finite state
             d, t = count.get(label, (0, 0));count[label] = (d + ok, t + 1)
@@ -273,6 +281,12 @@ def accuracy():
                 f = lambda x: f"{x:.2g}" if x < 10 else f"{x:.0f}"
                 put(f"acc{nm}{tn}Min", f(min(r)));put(f"acc{nm}{tn}Max", f(max(r)), f"{m}: end error over the same-order CT codes' median, 512^2, {tn.lower()} tests")
     put("accNonlinTests", str(len(nonlinear)), "nonlinear planar tests of the accuracy figure")
+    # Near discontinuities (shock tubes, Orszag-Tang, rotor): each setup's median ratio over those four tests, by scheme
+    shocks = ("brio_wu", "brio_wu_rotated", "orszag_tang", "rotor")
+    for ms, nm in ((("athenak_best", "athenapp_best", "athenapk_best", "cholla_ppmc", "pluto_ct_best", "pluto_glm_best"), "PPM"),
+                   (("ramses_best", "ramses2_best", "ramses2_uct"), "PLM")):
+        v = [statistics.median(r) for m in ms if (r := ratios(m, 512, shocks))]
+        put(f"accShock{nm}Min", g(min(v)));put(f"accShock{nm}Max", g(max(v)), f"{nm}-HLLD setups {ms}: median over {shocks} of the end error over the CT codes' median, 512^2; range over setups")
 
 
 def gem_precision():
@@ -507,7 +521,7 @@ def scorecard():
             put(f"steps{key}", g(EQ[m][0], 1), f"{m}: median steps over AthenaK PLM/HLLE's, same test and grid")
             if EQ[m][1] is not None:put(f"benchEq{key}", f"{EQ[m][1]:.1f}" if EQ[m][1] < 10 else f"{EQ[m][1]:.0f}", f"{m}: median time to accuracy at AthenaK's step count")
     sw = sd.Sweep();count = {}
-    for table in (sw.rows, sw.newcodes, sw.ramses2, sw.fixed):
+    for table in (sw.rows,):            # sw.rows already holds the new codes', RAMSES II's and the fixed kernels' rows
         for (test, label, n, seed), row in table.items():
             ok = row.get("state") == "done" and sw.went_bad(test, label, n, seed) is None     # reached the end with a finite state
             d, t = count.get(label, (0, 0));count[label] = (d + ok, t + 1)
@@ -546,26 +560,29 @@ def scorecard():
 
 def fofc():
     """AthenaPK's density floor (dfloor keeps the momentum of a cell it refills, so the velocity and, through the pressure
-    floor, the total energy jump) and its first-order flux correction (newcodes_results/fofc_test/, job 52536645): the
-    largest |E/E0 - 1| of the Mach 9 decay with and without it, and how far the high-order set-up gets."""
-    def drift(path):
-        rows = list(csv.DictReader(open(path)));e0 = float(rows[0]["energy"])
-        return max(abs(float(r["energy"])/e0 - 1) for r in rows if r["energy"] not in ("", "nan", "NaN")), float(rows[-1]["time"]), rows[-1]["finite"]
-    base = ROOT/"newcodes_results"
-    d0, _, _ = drift(base/"mhd-results-newcodes"/"decay_supersonic-athenapk-matched-run-N512-s42"/"data"/"athenapk_matched_r1"/"diagnostics.csv")
-    d1, t1, _ = drift(base/"fofc_test"/"decay_supersonic-athenapk-matched_fofc-run-N512-s42"/"data"/"athenapk_matched_fofc_r1"/"diagnostics.csv")
-    put("fofcDriftOff", g(100*d0, 0), "AthenaPK PLM/HLLE 512^3 seed 42 without FOFC: largest |E/E0 - 1|, per cent")
-    put("fofcDriftOn", f"{d1:.0e}".replace("e-0", "\\times10^{-") + "}", "the same with first-order flux correction")
-    b0 = ROOT/"newcodes_results"/"mhd-results-newcodes"/"decay_supersonic-athenapk-best-run-N256-s42"/"data"/"athenapk_best_r1"/"diagnostics.csv"
-    rows = list(csv.DictReader(open(b0)));fin = [r for r in rows if r["finite"] == "true"]
-    put("fofcBestOffT", g(float(fin[-1]["time"]) if fin else 0.0, 2), "AthenaPK PPM/HLLD 256^3 seed 42 without FOFC: last finite output time")
-    d2, t2, f2 = drift(base/"fofc_test"/"decay_supersonic-athenapk-best_fofc-run-N256-s42"/"data"/"athenapk_best_fofc_r1"/"diagnostics.csv")
-    put("fofcBestOnT", g(t2, 1), "with FOFC: last output time")
+    floor, the total energy jump) and its first-order flux correction: the Mach 9 decay with it at 64^3-512^3, two seeds
+    (job 52854104; newcodes_results/mhd-results-newcodes/*_fofc-*): the largest |E/E0 - 1| with and without it, how far the
+    high-order set-up gets without it, and the cost (seed 43, where the run without it is unaffected; seed 42, where it is not)."""
     import tomllib
-    a = tomllib.loads((base/"fofc_test"/"decay_supersonic-athenapk-matched_fofc-run-N512-s42"/"data"/"athenapk_matched_fofc_r1"/"run.toml").read_text())
-    b = tomllib.loads((base/"mhd-results-newcodes"/"decay_supersonic-athenapk-matched-run-N512-s42"/"data"/"athenapk_matched_r1"/"run.toml").read_text())
-    put("fofcRate", g(a["zone_cycles_per_second"]/b["zone_cycles_per_second"], 2), "FOFC over default: cell-update rate, matched 512^3 seed 42 (different nodes)")
-    put("fofcSteps", g(a["steps"]/b["steps"], 2), "FOFC over default: steps to t = 0.2");put("fofcTime", g(a["solve_seconds"]/b["solve_seconds"], 2), "and solver time");put("fofcBestOnDrift", f"{d2:.0e}".replace("e-0", "\\times10^{-") + "}", "its largest |E/E0 - 1|")
+    sw = sd.Sweep()
+    def drift(m, n, s):
+        d = sw.diag("decay_supersonic", m, n, s);k = sw.finite_rows("decay_supersonic", m, n, s);e = d["energy"][:k]
+        return float(np.max(np.abs(e/e[0] - 1)))
+    put("fofcDriftOff", g(100*drift("athenapk_matched", 512, 42), 0), "AthenaPK PLM/HLLE 512^3 seed 42 without FOFC: largest |E/E0 - 1|, per cent")
+    sci = lambda x: f"{x:.0e}".replace("e-0", "\\times10^{-") + "}"
+    for m, nm in (("athenapk_matched_fofc", "On"), ("athenapk_best_fofc", "BestOn")):
+        v = [drift(m, n, s) for n in (256, 512) for s in (42, 43)]
+        put(f"fofc{'Drift' + nm if nm == 'On' else 'BestOnDrift'}", sci(max(v)), f"{m}: largest |E/E0 - 1| at 256^3 and 512^3, both seeds")
+    reached = [float(sw.diag("decay_supersonic", "athenapk_best", n, s)["time"][sw.finite_rows("decay_supersonic", "athenapk_best", n, s) - 1])
+               if sw.finite_rows("decay_supersonic", "athenapk_best", n, s) else 0.0 for n in (256, 512) for s in (42, 43) if sw.diag("decay_supersonic", "athenapk_best", n, s) is not None]
+    put("fofcBestOffT", g(max(reached), 2), "AthenaPK PPM/HLLD without FOFC: latest finite output, 256^3 and 512^3, both seeds")
+    meta = lambda m, s: sw.meta("decay_supersonic", m, 512, s)
+    for s, nm in ((43, "Clean"), (42, "")):
+        a, b = meta("athenapk_matched_fofc", s), meta("athenapk_matched", s)
+        put(f"fofcRate{nm}", g(a["zone_cycles_per_second"]/b["zone_cycles_per_second"], 2), f"FOFC over default, PLM/HLLE 512^3 seed {s}: cell-update rate (different nodes)")
+        put(f"fofcSteps{nm}", g(a["steps"]/b["steps"], 2), f"steps to t = 0.2, seed {s}");put(f"fofcTime{nm}", g(a["solve_seconds"]/b["solve_seconds"], 2), f"solver time, seed {s}")
+    a, b = meta("athenapk_best_fofc", 42), meta("athenapk_matched_fofc", 42)
+    put("fofcBestTime", g(a["solve_seconds"]/b["solve_seconds"], 1), "PPM/HLLD over PLM/HLLE, both with FOFC, 512^3 seed 42: solver time")
 
 
 def selfconv():

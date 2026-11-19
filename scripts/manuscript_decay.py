@@ -32,8 +32,12 @@ import paper_common as pc  # noqa: E402
 import sweep_data as sd  # noqa: E402
 
 TEST = "decay_supersonic"
-SETUPS = tuple(sd.METHODS) + tuple(m for m in sd.NEWCODES if not m.startswith(("castro", "nyx"))) + tuple(sd.RAMSES2)   # Castro/Nyx held out until complete
-MAIN = tuple(m for m in SETUPS if m not in sd.RAMSES2_F32)          # the figures: double precision (and Abel et al.'s kernels)
+SETUPS = (tuple(sd.METHODS) + tuple(m for m in sd.NEWCODES if not m.startswith(("castro", "nyx"))) + tuple(sd.RAMSES2)   # Castro/Nyx held out until complete
+          + tuple(sd.FOFC))
+# The reference pool and the spreads: double precision (and Abel et al.'s kernels), each code as its authors recommend --
+# not AthenaPK with its first-order flux correction, an option switched on after its high-order set-up failed here
+MAIN = tuple(m for m in SETUPS if m not in sd.RAMSES2_F32 and m not in sd.FOFC)
+FIGS = MAIN + ("athenapk_best_fofc",)       # the figures: MAIN and that corrected high-order set-up
 SEEDS = (42, 43)
 WINDOW = (0.1, 0.2)                                                   # spectra averaged over these outputs
 TOL = 0.25
@@ -72,9 +76,11 @@ def bandwidth(k, ratio, nyquist, tol=TOL):
     return float(k[bad[0]])/nyquist if bad.size else 1.0
 
 
-def cost(rows, m, n, seed=42):
+def cost(rows, m, n, seed=42, sw=None):
     """(hours on one H100, or on 128-core nodes; resource text) of a finished run, else (None, text)."""
     r = rows.get((m, n, seed))
+    if r is None and sw is not None and m in sd.FOFC and (meta := sw.meta(TEST, m, n, seed)):   # not in the site's tables: its record
+        r = dict(status=meta.get("status"), solver_seconds=meta.get("solve_seconds"), resource="1 H100")
     if not r or r["status"] != "complete" or not r.get("solver_seconds"):return None, (r or {}).get("resource")
     res = r.get("resource") or "";s = float(r["solver_seconds"])
     if "CPU" in res:
@@ -161,7 +167,7 @@ def analyse(sw=None):
             e["re_rel_256"] = mean([S[m, 256, s]["omega"][1:].mean()/R[s]["omega"][1:].mean() for s in ss])
             e["rm_rel_256"] = mean([S[m, 256, s]["j2"][1:].mean()/R[s]["j2"][1:].mean() for s in ss])
         for n in (256, 512):
-            h, res = cost(rows, m, n);e[f"cost_h_{n}"] = h;e[f"resource_{n}"] = res
+            h, res = cost(rows, m, n, sw=sw);e[f"cost_h_{n}"] = h;e[f"resource_{n}"] = res
         out["setups"][m] = e
     ek = [e["ek_ratio"] for m, e in out["setups"].items() if e.get("ek_ratio") is not None and m in MAIN]
     em = [e["em_ratio"] for m, e in out["setups"].items() if e.get("em_ratio") is not None and m in MAIN]
@@ -229,7 +235,7 @@ def _legend(fig, methods, ncol=4, y=0.0, extra=()):
 
 
 def finished(out, n=512):
-    return [m for m in MAIN if out["setups"][m].get(f"seeds_{n}")]
+    return [m for m in FIGS if out["setups"][m].get(f"seeds_{n}")]
 
 
 def fig_rates(sw, out=None):
@@ -277,8 +283,8 @@ def fig_dissipation(sw, out=None):
     for m in ms:
         e = out["setups"][m];mk = pc.STYLE[m][4] or "o"
         ax.plot(e["ps_k100"], e["pd_k100"], marker=mk, color=pc.color(m), ms=5, ls="none")
-    ax.plot([0.01, 2], [0.01, 2], color=pc.MUTED, lw=.6, ls=":")
-    ax.set_xscale("log");ax.set_yscale("log");ax.set_xlim(0.01, 1.6);ax.set_ylim(0.05, 1.6)
+    ax.plot([0.01, 4], [0.01, 4], color=pc.MUTED, lw=.6, ls=":")
+    ax.set_xscale("log");ax.set_yscale("log");ax.set_xlim(0.01, 3.5);ax.set_ylim(0.05, 2)
     ax.set_xlabel(r"solenoidal power at $k>100$ / reference");ax.set_ylabel(r"dilatational power at $k>100$ / reference")
     ax.text(.04, .93, f"(b)  $512^3$, $t={WINDOW[0]:g}$–${WINDOW[1]:g}$", transform=ax.transAxes, fontsize=8)
     for a in axs:a.tick_params(which="both", top=True, right=True)
@@ -292,7 +298,7 @@ def fig_bandwidth(sw, out=None):
     the reference's at 512^3; the ±25 % band sets the effective spectral bandwidth. (c): that bandwidth against the cost
     of the 256^3 run to t = 0.2."""
     import matplotlib.pyplot as plt
-    out = out or analyse(sw);ms = [m for m in MAIN if "esb_u" in out["setups"][m]]
+    out = out or analyse(sw);ms = [m for m in FIGS if "esb_u" in out["setups"][m]]
     fig = plt.figure(figsize=(7.1, 3.9));gs = fig.add_gridspec(1, 3, width_ratios=(1, 1, 1.05), wspace=.32)
     axs = [fig.add_subplot(gs[i]) for i in range(3)]
     for j, key in enumerate(("ratio_u", "ratio_b")):

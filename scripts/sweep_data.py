@@ -69,6 +69,9 @@ ORDER_RESULTS = Path(os.environ.get("MHD_ORDER_RESULTS", ROOT/"order_results"/"m
 NEWCODES = ("athenapk_matched", "athenapk_best", "cholla_plmc", "cholla_ppmc", "pluto_ct_matched", "pluto_ct_best",
             "pluto_glm_matched", "pluto_glm_best", "enzo_dedner", "enzo_ct", "phantom_sph", "castro_plm", "castro_ppm", "nyx_plm", "nyx_ppm")
 NEWCODES_RESULTS = Path(os.environ.get("MHD_NEWCODES_RESULTS", ROOT/"newcodes_results"/"mhd-results-newcodes"))
+# AthenaPK with its first-order flux correction, on the Mach 9 decay only (job 52854104, 2026-11-18): kept apart from
+# NEWCODES (Sweep.fofc, not Sweep.newcodes) so that run counts and the site's pages are not changed by it
+FOFC = ("athenapk_matched_fofc", "athenapk_best_fofc")
 NEWCODE_CLOCKS = {}            # (run directory, part) -> (seconds, timer): each code's own clock (sherlock_newcodes/code_clocks.py)
 if (NEWCODES_RESULTS.parent/"code_clocks.tsv").is_file():
     for _line in (NEWCODES_RESULTS.parent/"code_clocks.tsv").read_text().splitlines():
@@ -175,12 +178,12 @@ class Sweep:
                                 row["note"] = m.get("arepo_stopped", "") if code == "arepo" else \
                                     next((l for l in lines if l.startswith("Step limit")), lines[0] if lines else "")
                         getattr(self, code)[key] = row;self.rows[key] = row
-        self.fixed, self.order, self.newcodes, self.ramses2 = {}, {}, {}, {}      # (test, label, n, seed) -> status row, from the fetched records
+        self.fixed, self.order, self.newcodes, self.ramses2, self.fofc = {}, {}, {}, {}, {}      # (test, label, n, seed) -> status row, from the fetched records
         for root, known, code in ((RERUN, FIXES, "fixed"), (ORDER_RESULTS, ORDER, "order"), (NEWCODES_RESULTS, NEWCODES, "newcodes"),
-                                  (RAMSES2_RESULTS, RAMSES2, "ramses2")):
+                                  (RAMSES2_RESULTS, RAMSES2, "ramses2"), (NEWCODES_RESULTS, FOFC, "fofc")):
             for d in sorted(root.glob("*-N*-s*")) if root.is_dir() else ():
                 m = re.fullmatch(r"(.+)-N(\d+)-s(\d+)-(\w+)", d.name)
-                if code in ("newcodes", "ramses2"):           # <test>-<code>-<variant>-run-N<n>-s<seed>
+                if code in ("newcodes", "ramses2", "fofc"):   # <test>-<code>-<variant>-run-N<n>-s<seed>
                     m = re.fullmatch(r"(.+)-([a-z][a-z0-9]*)-(\w+)-run-N(\d+)-s(\d+)", d.name)
                     m = m and (None, m[1], m[4], m[5], f"{m[2]}_{m[3]}")
                 if not m or m[4] not in known or m[1] not in self.configs:continue
@@ -200,7 +203,8 @@ class Sweep:
                         row["reached"] = float(meta.get("time_reached", 0.0));row["note"] = next((l.strip() for l in lines if STOP_TEXT.search(l)), lines[0])
                     if row["state"] == "stopped" and code == "ramses2":row.update(self.ramses2_stop(d, label, row))
                     if row["state"] == "stopped":row["frac"] = min(1.0, row["reached"]/t_end) if t_end else None
-                getattr(self, code)[key] = row;self.rows[key] = row
+                getattr(self, code)[key] = row
+                if code != "fofc":self.rows[key] = row          # self.rows: every table at once (FOFC kept out of it)
         # The new codes' planned runs with no fetched record: not finished (their plan is the task lists production.sh submits)
         for code in NEWCODE_TASKS.VARIANTS:
             for variant, test, seed, grids, _ in NEWCODE_TASKS.runs(code):

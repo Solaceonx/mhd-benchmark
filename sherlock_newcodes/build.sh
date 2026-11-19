@@ -122,13 +122,13 @@ build_phantom() {
     && (cd "$t" && make $opts && make setup $opts && make analysis $opts)        # serial: its Fortran modules need order
 }
 
-build_castro() {     # the problem directory is ours (castro/abel_suite); Castro's own sources are not changed
+build_castro() {     # [name]: the problem directory is ours (castro/abel_suite); Castro's own sources are not changed
     # Castro's build scripts run as "#!/usr/bin/env python" and use f-strings: point "python" at the module's python3
-    local t="$root/castro/tree" p="$root/castro/tree/Exec/mhd_tests/AbelSuite"
+    local n="${1:-castro}"; local t="$root/$n/tree" p="$root/$n/tree/Exec/mhd_tests/AbelSuite"
     fresh "$src/castro" "$t" && rm -rf "$p" && cp -r "$here/castro/abel_suite" "$p" && cp "$header" "$p/" \
     && mkdir -p "$root/castro/pyshim" && ln -sf "$(command -v python3)" "$root/castro/pyshim/python" \
     && (cd "$p" && PATH="$root/castro/pyshim:$PATH" make -j "$jobs" USE_CUDA=TRUE CUDA_ARCH=90 CASTRO_HOME="$t") \
-    && { exe="$(ls "$p"/Castro3d*.ex 2>/dev/null | head -n 1)"; [[ -n "$exe" ]] && ln -sf "$exe" "$root/castro/castro"; }
+    && { exe="$(ls "$p"/Castro3d*.ex 2>/dev/null | head -n 1)"; [[ -n "$exe" ]] && ln -sf "$exe" "$root/$n/castro"; }
 }
 build_nyx() {
     local t="$root/nyx/tree"
@@ -152,6 +152,8 @@ for code in "${want[@]}"; do
         enzo) use "$cpu_mods"; step enzo "$root/enzo/enzo" build_enzo || bad=1 ;;
         phantom) use "$cpu_mods binutils/2.38"; step phantom "$root/phantom/tree/bin/phantomanalysis" build_phantom || bad=1 ;;
         castro) use "$castro_mods"; mkdir -p "$root/castro"; step castro "$root/castro/castro" build_castro || bad=1 ;;
+        # The same build in castro-next/, beside a castro/ that running jobs still use (2026-11-18: div B-exact face fields)
+        castro-next) use "$castro_mods"; mkdir -p "$root/castro-next"; step castro-next "$root/castro-next/castro" build_castro castro-next || bad=1 ;;
         nyx) use "$cuda_mods"; mkdir -p "$root/nyx"; step nyx "$root/nyx/nyx" build_nyx || bad=1 ;;
         *) echo "unknown code $code"; bad=1 ;;
     esac

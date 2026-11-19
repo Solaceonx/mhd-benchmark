@@ -593,9 +593,9 @@ def run_amrex(code, args, config, spec, settings, rundir, rep, outputs, resume=F
     perf["ranks"] = int(m.group(1)) if (m := re.search(r"-n\s*(\d+)", args.mpi or "")) else 1
     text = (rundir/f"{code}.log").read_text(errors="replace")
     code_clock(code, text, perf)
-    # The code's own stop (amrex::Abort: too many subcycles after its retries, say) is an MPI abort that srun reports as
-    # the rank killed: a result, not a lost job (as Cholla's and Enzo's)
-    stop = text.find("amrex::Abort::")
+    # The code's own stop (amrex::Abort: too many subcycles after its retries, say; amrex::Error: Castro's start-up div B
+    # check) is an MPI abort that srun reports as the rank killed: a result, not a lost job (as Cholla's and Enzo's)
+    stop = min((i for i in (text.find("amrex::Abort::"), text.find("amrex::Error::")) if i >= 0), default=-1)
     if stop >= 0:code_rc, text = 1, text[:text.find("\n", stop) + 1]
     dirs = sorted((d for d in rundir.glob("plt*") if (d/"Header").is_file() and ".old" not in d.name), key=lambda d: int(re.sub(r"\D", "", d.name) or 0))
     found = []

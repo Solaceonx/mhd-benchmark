@@ -3,42 +3,57 @@
 One set of magnetohydrodynamics tests, run with every code we could get onto the same grids and measured with the
 same diagnostics. The question behind it: can divergence cleaning (Dedner/GLM) on a GPU stand in for constrained
 transport (CT), and at what cost in accuracy? A rotation project of Luke Xia with Tom Abel (KIPAC, Stanford), with
-Eric Moseley; started July 2026, most runs from September and October 2026 on Stanford's Sherlock cluster.
+Eric Moseley; started July 2026, most runs from September to November 2026 on Stanford's Sherlock cluster.
 
 To continue the work, on another computer or with another assistant, start with [HANDOFF.md](HANDOFF.md).
 
 ## What was run
 
-| Code | Divergence control | Where | Runs |
-|---|---|---|---|
-| Tom Abel's GLM kernels (Julia, five variants) | Dedner cleaning | one H100 | every test |
-| Tom Abel's CT prototype | constrained transport | one H100 | every test |
-| AthenaK | constrained transport | one H100 | every test, two set-ups |
-| RAMSES | constrained transport | CPU | every test, two set-ups |
-| Athena++ | constrained transport | CPU | every test, two set-ups |
-| AREPO | Powell source terms | CPU | 17 planar tests, static and moving mesh |
-| RAMSES II | constrained transport | H100 | speed test only |
-| MHD-ALE | exact by construction | CPU | 13 planar tests; 45 of 62 runs complete |
+Fifteen codes, 51 set-ups, about 5,900 runs, all from the same initial states and measured by one analysis pipeline.
 
-26 tests, grids from 32 to 512 cells a side (references to 4096²), 1,261 runs in the main sweep plus 164 with AREPO,
-and a pilot of driven turbulence at Mach 3 to 50 (48 runs so far, plus 4 of a cross-check). Details: [codes](docs/codes.md), [tests](docs/tests.md).
+| Code | Method | Divergence control | Where |
+|---|---|---|---|
+| Tom Abel's GLM kernels (Julia) | finite volume | Dedner cleaning | H100, single and half precision |
+| Tom Abel's CT prototype | finite volume | constrained transport | H100 |
+| AthenaK | finite volume | constrained transport | H100 |
+| AthenaPK | finite volume | Dedner cleaning | H100 |
+| Cholla | finite volume | constrained transport | H100 |
+| gPLUTO | finite volume | constrained transport or cleaning | H100 |
+| RAMSES II | finite volume | constrained transport, upwind CT | H100, double and single precision |
+| Castro | finite volume | constrained transport | H100 |
+| Nyx | finite volume (hydrodynamics only) | none | H100 |
+| Athena++ | finite volume | constrained transport | CPU |
+| RAMSES | finite volume | constrained transport | CPU |
+| Enzo | finite volume | Dedner cleaning or constrained transport | CPU |
+| AREPO | moving mesh | Powell source terms | CPU |
+| GIZMO | meshless finite mass | Dedner cleaning and constrained gradients | CPU |
+| Phantom | smoothed particles | cleaning | CPU |
+| MHD-ALE (Tom Abel's fork) | moving-mesh finite elements | exact by construction | CPU |
+
+Most grid codes ran two set-ups: a textbook second-order one and the one their authors recommend for accuracy. The
+suite has 24 tests (17 planar, 7 in 3D) on grids of 32 to 512 cells a side, plus the Mach 9 decaying turbulence of
+Kritsuk et al. (2011) for every code, driven turbulence at Mach 3 to 50, and Tom Abel's nested grids against uniform
+ones. Details: [codes](docs/codes.md), [tests](docs/tests.md).
 
 ## What came out
 
-- **Speed.** The GLM kernels reach 2.0 × 10⁹ cell updates per second on one H100 (3.1 to 3.4 × 10⁹ on grids divisible
-  by 6), against 0.2 to 0.4 × 10⁹ for AthenaK and 0.9 × 10⁹ for RAMSES II's constrained transport on the same card.
-  [Sweep results](docs/results-sweep.md).
-- **Accuracy.** The single-precision GLM kernels are second order and within about 25 % of same-order CT codes on
-  shock tubes, Kelvin–Helmholtz, blasts and reconnection. The half-precision kernels stop converging past 64 to 128
-  cells.
-- **Leakage.** GLM lets magnetic field leak into a field-free vortex, 8 to 13 times the reference at 512², and it
-  levels off instead of converging away. CT codes do not. This reproduces Tomida et al. 2026.
-- **Robustness.** The simplest GLM kernel finishes 139 of 140 runs, including Mach 9 turbulence where AthenaK's and
-  RAMSES's sharper set-ups stall.
-- **Turbulence.** With one definition of the driving, Tom's Euler kernel and RAMSES agree to 1 % in Mach number.
-  [Turbulence results](docs/results-turbulence.md).
-- **Faults found on the way**, in RAMSES's turbulence driving, in the CT prototype, in the half-precision kernels and
-  elsewhere: [issues found](docs/issues-found.md).
+- **The Riemann solver matters more than the reconstruction** wherever the flow is not smooth. Within one code, HLLD
+  instead of a two-wave solver reaches the same error on reconnection 13 to 65 times sooner, more than any change of
+  reconstruction.
+- **GPUs win on time to accuracy, and single precision is often free.** The best GPU set-ups reach a standard accuracy
+  tens to thousands of times sooner than a CPU node. The fastest, RAMSES II's upwind-CT HLLD scheme, loses nothing in
+  single precision; high-order schemes hit a single-precision round-off floor.
+- **Mach 9 decaying turbulence.** The extra compressive power that two-wave solvers show near the grid scale is missing
+  vortical power. The recommended high-order set-ups of five codes fail this test; with its first-order flux correction
+  switched on, AthenaPK's finishes and is the least diffusive of all.
+- **Tom Abel's GLM kernels** are the fastest per cell update (about 2 × 10⁹ per second on one H100) and finish nearly
+  every run, but divergence cleaning leaks field into a field-free layer where CT codes do not.
+- **Faults found on the way**: RAMSES's turbulence driving (fixed in RAMSES II, open upstream as
+  ramses-organisation/ramses#361), AthenaPK's density floor, MHD-ALE's projection tolerance, Castro's start-up check of
+  the initial field, and several in the GLM kernels and the CT prototype:
+  [issues found](docs/issues-found.md). Castro converges at first order on Alfven waves; the cause is not traced.
+- **Being rerun:** Enzo's CT set-up, which ran with a non-default electric field (`MHD_CT_Method` 2) and was first
+  order on Alfven waves; it is being rerun with the default.
 
 ## Where things are
 
@@ -49,7 +64,9 @@ and a pilot of driven turbulence at Mach 3 to 50 (48 runs so far, plus 4 of a cr
 | `sherlock_sweep/` | The sweep as it ran on Sherlock: tests, adapters for each code, the job coordinator |
 | `sherlock_turb/` | Driven turbulence: one driver for Tom's kernels and RAMSES |
 | `sherlock_checks/` | Tom's kernels at other Courant numbers and with single-precision tiles |
-| `sherlock_arepo/`, `sherlock_ramses2/`, `sherlock_mhdale/` | Add-on codes |
+| `sherlock_newcodes/` | AthenaPK, Cholla, gPLUTO, Enzo, Phantom, Castro and Nyx: patches, runner, build and production jobs |
+| `sherlock_arepo/`, `sherlock_gizmo/`, `sherlock_ramses2/`, `sherlock_miniramses/`, `sherlock_mhdale/` | The other add-on codes |
+| `sherlock_order/`, `sherlock_fixes/`, `sherlock_nested/` | Reconstruction x Riemann solver study; Tom Abel's kernels with the fixes; nested grids |
 | `sherlock_mhd/`, `sherlock_rerun/`, `sherlock_movies/`, `sherlock_gem/`, `marlowe_mhd/` | The first campaign (21 tests) and its follow-ups |
 | `scripts/` | Analysis, figures, the notebook builders, the first CPU studies on a laptop |
 | `scripts/solver_checks/` | Small CPU runs that trace the sweep's findings to places in the solver source |
@@ -60,7 +77,7 @@ and a pilot of driven turbulence at Mach 3 to 50 (48 runs so far, plus 4 of a cr
 ## What is not here
 
 Tom Abel's solver source is public at [yipihey/GLMMHDTurb](https://github.com/yipihey/GLMMHDTurb) but has no licence,
-so it is not copied into this repository. `bash scripts/fetch_solver.sh` puts it where the bundles expect it, at the
+so it is not copied into this repository (nor are gPLUTO's and MHD-ALE's, for the same reason). `bash scripts/fetch_solver.sh` puts it where the bundles expect it, at the
 commit every run used, and checks it against the recorded checksums. The other codes are fetched by the build
 scripts at pinned commits. The raw results (about 2.5 TB on Sherlock's scratch, 55 GB of archives on a laptop) are not
 here either: [data](docs/data.md).

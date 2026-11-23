@@ -73,6 +73,13 @@ for code in "$@"; do
         # 128 ranks, 50676336_8) before it wrote the record: on full nodes, again
         enzo-512-again) grep "^enzo|dedner|decay_supersonic|43|512|" tasks/enzo_3d_512.txt > tasks/enzo_3d_512_again.txt
               submit "enzo 3D 512, the run killed in postprocessing" tasks/enzo_3d_512_again.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
+        # Enzo CT again with its default electric field (MHD_CT_Method 3; newcodes_run.py), 2026-11-23, into its own results
+        # folder (--resume would keep the old runs): planar on 16 ranks, 3D to 256^3 on 32, 512^3 on 128, as "enzo" above
+        enzo-ct3) export NEWCODES_RESULTS="$SCRATCH/mhd-results-enzo-ct3"
+              NEWCODES_DIM=planar "$py" tasks.py enzo ct > tasks/enzo_ct3_2d.txt && submit "enzo ct 2D" tasks/enzo_ct3_2d.txt --partition=normal,owners --requeue --ntasks=16 --mem-per-cpu=4G --time=24:00:00
+              NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 "$py" tasks.py enzo ct > tasks/enzo_ct3_3d.txt && submit "enzo ct 3D to 256" tasks/enzo_ct3_3d.txt --partition=normal,owners --requeue --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
+              NEWCODES_DIM=3d NEWCODES_GRIDS=512 "$py" tasks.py enzo ct > tasks/enzo_ct3_512.txt && submit "enzo ct 3D 512" tasks/enzo_ct3_512.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00
+              unset NEWCODES_RESULTS ;;
         phantom) "$py" tasks.py phantom > tasks/phantom.txt && submit phantom tasks/phantom.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         *) echo "unknown code $code" ;;
     esac

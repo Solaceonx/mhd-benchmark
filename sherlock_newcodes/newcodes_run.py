@@ -52,7 +52,10 @@ X.VARIANTS["pluto"] = {
 }
 X.VARIANTS["enzo"] = {
     "dedner": dict(HydroMethod=4, RiemannSolver=1, ReconstructionMethod=0, cfl=0.3, divb="Dedner (Wang & Abel 2009), HLL, PLM, RK2"),
-    "ct": dict(HydroMethod=6, RiemannSolver=6, ReconstructionMethod=0, MHD_CT_Method=2, cfl=0.3, divb="CT (Collins et al. 2010), HLLD, PLM"),
+    # MHD_CT_Method 3 = Enzo's default, the upwinded electric field of Gardiner & Stone (2005). The first production
+    # (2026-10-30) set 2, the Lax-Friedrichs-type field with a fixed dissipation speed (CT_AthenaDissipation 0.1): a
+    # resistivity proportional to the cell width, first order on the Alfven waves. Rerun 2026-11-23 (production.sh enzo-ct3).
+    "ct": dict(HydroMethod=6, RiemannSolver=6, ReconstructionMethod=0, MHD_CT_Method=3, cfl=0.3, divb="CT (Collins et al. 2010; upwind EMF, MHD_CT_Method 3), HLLD, PLM"),
 }
 
 

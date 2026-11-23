@@ -66,6 +66,16 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**2026-11-23 (Enzo CT rerun):** the first Enzo production ran CT with `MHD_CT_Method = 2` (Lax-Friedrichs electric
+field, fixed dissipation speed: first order on the Alfven waves); Enzo's default is 3 (upwind, Gardiner & Stone 2005).
+`newcodes_run.py` now sets 3. Submitted with `bash -l production.sh none enzo-ct3` into `$SCRATCH/mhd-results-enzo-ct3`:
+arrays 53449941 (planar, 3 tasks of 6 lines) and 53449945 (3D to 256^3, 5 tasks of 2 lines). NOT submitted: 512^3
+(`production.sh none enzo-ct3-512`, optionally `ENZO_CT3_TESTS="decay_supersonic|decay"`; about 17,000 core-h, runs
+0.2-31 h on 128 ranks); lyxia to decide. When done: fetch, move the old `*-enzo-ct-*` records of newcodes_results aside
+(superseded), put the new ones in their place, regenerate, and remove the "electric field we chose" caveats from
+main.tex (sections 2.1, 3.1, 5). Also 2026-11-23: README rewritten for all 15 codes; RAMSES forcing bug is open
+upstream as ramses-organisation/ramses#361 (Teyssier); PRs to Tom drafted in manuscript/outreach_drafts.md.
+
 **2026-11-16, overnight (lyxia: get the paper ready, "like Kritsuk et al. 2011 but way more in-depth"; time-averaged
 windows for the nested spectra; RAMSES II driven turbulence with UCT-HLLD).** Sherlock was not touched (lyxia asleep: the
 shared login is used only while they are present). Done on the Mac:

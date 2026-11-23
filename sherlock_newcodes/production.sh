@@ -74,11 +74,17 @@ for code in "$@"; do
         enzo-512-again) grep "^enzo|dedner|decay_supersonic|43|512|" tasks/enzo_3d_512.txt > tasks/enzo_3d_512_again.txt
               submit "enzo 3D 512, the run killed in postprocessing" tasks/enzo_3d_512_again.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00 ;;
         # Enzo CT again with its default electric field (MHD_CT_Method 3; newcodes_run.py), 2026-11-23, into its own results
-        # folder (--resume would keep the old runs): planar on 16 ranks, 3D to 256^3 on 32, 512^3 on 128, as "enzo" above
+        # folder (--resume would keep the old runs). Planar on 16 ranks, six lines a task (the old runs took 1-48 min a line);
+        # 3D to 256^3 on 32 ranks, two lines a task. 512^3 (128 ranks, 0.2-31 h a run, ~17,000 core-h) separately: enzo-ct3-512
         enzo-ct3) export NEWCODES_RESULTS="$SCRATCH/mhd-results-enzo-ct3"
-              NEWCODES_DIM=planar "$py" tasks.py enzo ct > tasks/enzo_ct3_2d.txt && submit "enzo ct 2D" tasks/enzo_ct3_2d.txt --partition=normal,owners --requeue --ntasks=16 --mem-per-cpu=4G --time=24:00:00
-              NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 "$py" tasks.py enzo ct > tasks/enzo_ct3_3d.txt && submit "enzo ct 3D to 256" tasks/enzo_ct3_3d.txt --partition=normal,owners --requeue --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
-              NEWCODES_DIM=3d NEWCODES_GRIDS=512 "$py" tasks.py enzo ct > tasks/enzo_ct3_512.txt && submit "enzo ct 3D 512" tasks/enzo_ct3_512.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00
+              NEWCODES_DIM=planar "$py" tasks.py enzo ct > tasks/enzo_ct3_2d.txt && LINES_PER_TASK=6 submit "enzo ct 2D" tasks/enzo_ct3_2d.txt --partition=normal,owners --requeue --ntasks=16 --mem-per-cpu=4G --time=24:00:00
+              NEWCODES_DIM=3d NEWCODES_GRIDS=32,64,128,256 "$py" tasks.py enzo ct > tasks/enzo_ct3_3d.txt && LINES_PER_TASK=2 submit "enzo ct 3D to 256" tasks/enzo_ct3_3d.txt --partition=normal,owners --requeue --ntasks=32 --ntasks-per-node=32 --mem-per-cpu=4G --time=24:00:00
+              unset NEWCODES_RESULTS ;;
+        enzo-ct3-512) export NEWCODES_RESULTS="$SCRATCH/mhd-results-enzo-ct3"
+              NEWCODES_DIM=3d NEWCODES_GRIDS=512 "$py" tasks.py enzo ct > tasks/enzo_ct3_512.txt
+              # ENZO_CT3_TESTS="decay_supersonic|decay": only those tests
+              [[ -n "${ENZO_CT3_TESTS:-}" ]] && { grep -E "\|(${ENZO_CT3_TESTS})\|" tasks/enzo_ct3_512.txt > tasks/enzo_ct3_512.sel; mv tasks/enzo_ct3_512.sel tasks/enzo_ct3_512.txt; }
+              submit "enzo ct 3D 512" tasks/enzo_ct3_512.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00
               unset NEWCODES_RESULTS ;;
         phantom) "$py" tasks.py phantom > tasks/phantom.txt && submit phantom tasks/phantom.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         *) echo "unknown code $code" ;;

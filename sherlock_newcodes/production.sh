@@ -86,6 +86,15 @@ for code in "$@"; do
               [[ -n "${ENZO_CT3_TESTS:-}" ]] && { grep -E "\|(${ENZO_CT3_TESTS})\|" tasks/enzo_ct3_512.txt > tasks/enzo_ct3_512.sel; mv tasks/enzo_ct3_512.sel tasks/enzo_ct3_512.txt; }
               submit "enzo ct 3D 512" tasks/enzo_ct3_512.txt --partition=normal,owners --requeue --ntasks=128 --ntasks-per-node=32 --mem-per-cpu=6G --time=48:00:00
               unset NEWCODES_RESULTS ;;
+        # Time-step check (2026-11-24, newcodes_run.py): Enzo CT and Castro PPM on the Alfven waves at half and a quarter of
+        # their Courant number, each code in one task (the runs are short), into their own results folder
+        timestep-check) export NEWCODES_RESULTS="$SCRATCH/mhd-results-timestep"
+              for c in enzo castro; do v=$([[ $c == enzo ]] && echo ct || echo ppm)
+                  { for t in alfven alfven_oblique; do echo "$c|${v}_cfl15|$t|42|64,128,256,512|plane"; done
+                    echo "$c|${v}_cfl075|alfven|42|64,128,256|plane"; } > tasks/timestep_$c.txt; done
+              LINES_PER_TASK=3 submit "enzo ct, smaller steps" tasks/timestep_enzo.txt --partition=normal,owners --requeue --ntasks=16 --mem-per-cpu=4G --time=04:00:00
+              LINES_PER_TASK=3 submit "castro ppm, smaller steps" tasks/timestep_castro.txt "${gpu[@]/--time=24:00:00/--time=02:00:00}"
+              unset NEWCODES_RESULTS ;;
         phantom) "$py" tasks.py phantom > tasks/phantom.txt && submit phantom tasks/phantom.txt --partition=normal,owners --requeue --ntasks=1 --cpus-per-task=32 --mem=128G --time=24:00:00 ;;
         *) echo "unknown code $code" ;;
     esac

@@ -629,6 +629,12 @@ X.RUNNERS.update(castro=run_castro, nyx=run_nyx)
 # Castro with shock flattening off, as its own Alfven convergence test (Exec/mhd_tests/Alfven); a check, not a production set-up
 for _v in ("plm", "ppm"):
     X.VARIANTS["castro"][_v + "_noflat"] = dict(X.VARIANTS["castro"][_v], flattening=False, limiter="no flattening (castro.use_flattening 0)")
+# Time-step check (2026-11-24): Enzo CT and Castro are first order on the Alfven waves (Enzo's wave grows, Castro's
+# decays) with every other setting tried. The same runs at half and a quarter of the Courant number: an error that halves
+# with the step is a first-order time error. A check, not a production set-up (production.sh timestep-check).
+for _c, _v in (("enzo", "ct"), ("castro", "ppm")):
+    for _f, _tag in ((0.5, "cfl15"), (0.25, "cfl075")):
+        X.VARIANTS[_c][f"{_v}_{_tag}"] = dict(X.VARIANTS[_c][_v], cfl=X.VARIANTS[_c][_v]["cfl"]*_f)
 
 
 # Single precision (lyxia, 2026-11-12: every GPU code also in fp32, as Abel et al.'s kernels and RAMSES II): the same

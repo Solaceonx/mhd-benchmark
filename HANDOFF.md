@@ -66,6 +66,12 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**2026-11-24 (time-step check, submitted):** `production.sh none timestep-check` -> `$SCRATCH/mhd-results-timestep`:
+Enzo CT (method 3) array 53515764, Castro PPM array 53515773; Alfven 64-512 and oblique at half the Courant number
+(variants `*_cfl15`), Alfven 64-256 at a quarter (`*_cfl075`). Read: amplitude error (|B_perp| mode amplitude vs 1)
+against the CFL 0.3 runs at the same N; halving with the step = first-order time error. lyxia: wait and see before
+choosing the Enzo CT runs for the paper; 512^3 rerun on hold.
+
 **2026-11-24 (Enzo CT rerun result):** method 3 did NOT fix it: Alfven amplitude error the same as method 2 (first
 order; Enzo CT's wave GROWS +1.9/+1.0/+0.5 % at 64/128/256, Castro's DECAYS -3.8/-1.9/-1.0 %; initial states exact to
 2e-8, phase errors small). Suspect a first-order time error in the field update; test = same runs at half the CFL.

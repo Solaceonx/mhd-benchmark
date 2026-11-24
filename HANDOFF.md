@@ -66,6 +66,13 @@ Tools: figure and page scripts run with the conda `python3` (numpy, matplotlib, 
 
 ## 4. In flight (as of this note)
 
+**2026-11-24 (Enzo CT rerun result):** method 3 did NOT fix it: Alfven amplitude error the same as method 2 (first
+order; Enzo CT's wave GROWS +1.9/+1.0/+0.5 % at 64/128/256, Castro's DECAYS -3.8/-1.9/-1.0 %; initial states exact to
+2e-8, phase errors small). Suspect a first-order time error in the field update; test = same runs at half the CFL.
+Method 3 also fails 9 runs (2D blast b100 128/512, 3D blast b100 128/256 and b50 256, decay 256, field_loop 256/512,
+field_loop_3d 128) where method 2 failed 4 (3D blasts b50/b100 at 256/512). Paper text corrected (method 2 shown,
+method 3 same error). Which Enzo CT runs the paper uses, and the 512^3 rerun, are lyxia's call.
+
 **2026-11-23 (Enzo CT rerun):** the first Enzo production ran CT with `MHD_CT_Method = 2` (Lax-Friedrichs electric
 field, fixed dissipation speed: first order on the Alfven waves); Enzo's default is 3 (upwind, Gardiner & Stone 2005).
 `newcodes_run.py` now sets 3. Submitted with `bash -l production.sh none enzo-ct3` into `$SCRATCH/mhd-results-enzo-ct3`:
